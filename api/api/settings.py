@@ -31,7 +31,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "api.supply_chain_update"
+    "api.supply_chain_update",
+    "api.accounts"
 ]
 
 MIDDLEWARE = [
@@ -93,6 +94,9 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
+AUTH_USER_MODEL = "accounts.User"
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
