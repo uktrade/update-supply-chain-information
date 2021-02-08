@@ -11,43 +11,113 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('accounts', '0001_initial'),
+        ("accounts", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='SupplyChain',
+            name="SupplyChain",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=250)),
-                ('last_submission_date', models.DateField(null=True)),
-                ('gov_department', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='supply_chains', to='accounts.govdepartment')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("name", models.CharField(max_length=250)),
+                ("last_submission_date", models.DateField(null=True)),
+                (
+                    "gov_department",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="supply_chains",
+                        to="accounts.govdepartment",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='StrategicAction',
+            name="StrategicAction",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=250)),
-                ('start_date', models.DateField()),
-                ('description', models.TextField()),
-                ('is_archived', models.BooleanField()),
-                ('supply_chain', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='strategic_actions', to='supply_chain_update.supplychain')),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("name", models.CharField(max_length=250)),
+                ("start_date", models.DateField()),
+                ("description", models.TextField()),
+                ("is_archived", models.BooleanField()),
+                (
+                    "supply_chain",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="strategic_actions",
+                        to="supply_chain_update.supplychain",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='MonthlyUpdate',
+            name="MonthlyUpdate",
             fields=[
-                ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('is_draft', models.BooleanField(default=True)),
-                ('submission_date', models.DateField()),
-                ('content', models.TextField()),
-                ('implementation_rag_rating', models.CharField(choices=[('RED', 'Red'), ('AMBER', 'Amber'), ('GREEN', 'Green')], max_length=5)),
-                ('reason_for_delays', models.TextField()),
-                ('strategic_action', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='monthly_updates', to='supply_chain_update.strategicaction')),
-                ('supply_chain', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='monthly_updates', to='supply_chain_update.supplychain')),
-                ('user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='monthly_updates', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.UUIDField(
+                        default=uuid.uuid4,
+                        editable=False,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                ("is_draft", models.BooleanField(default=True)),
+                ("submission_date", models.DateField()),
+                ("content", models.TextField()),
+                (
+                    "implementation_rag_rating",
+                    models.CharField(
+                        choices=[
+                            ("RED", "Red"),
+                            ("AMBER", "Amber"),
+                            ("GREEN", "Green"),
+                        ],
+                        max_length=5,
+                    ),
+                ),
+                ("reason_for_delays", models.TextField()),
+                (
+                    "strategic_action",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="monthly_updates",
+                        to="supply_chain_update.strategicaction",
+                    ),
+                ),
+                (
+                    "supply_chain",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="monthly_updates",
+                        to="supply_chain_update.supplychain",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="monthly_updates",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
     ]
