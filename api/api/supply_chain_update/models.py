@@ -28,7 +28,7 @@ class StrategicAction(models.Model):
     )
 
 
-class MonthlyUpdate(models.Model):
+class StrategicActionUpdate(models.Model):
     IMPLEMENTATION_RAG_CHOICES = [
         ("RED", "Red"),
         ("AMBER", "Amber"),
