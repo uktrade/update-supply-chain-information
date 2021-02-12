@@ -41,7 +41,7 @@ class StrategicActionUpdateSerializer(serializers.ModelSerializer):
         model = StrategicActionUpdate
         fields = [
             "id",
-            "is_draft",
+            "status",
             "submission_date",
             "content",
             "implementation_rag_rating",

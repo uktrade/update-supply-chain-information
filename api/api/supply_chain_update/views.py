@@ -1,3 +1,5 @@
+from distutils.util import strtobool
+
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count
@@ -71,4 +73,12 @@ class StrategicActionUpdateViewset(viewsets.ModelViewSet):
         strategic_action_id = self.request.query_params.get("strategic_action_id")
         if strategic_action_id:
             queryset = queryset.filter(strategic_action__id=strategic_action_id)
+
+        is_submitted = self.request.query_params.get("is_submitted")
+        if is_submitted:
+            is_submitted = strtobool(is_submitted)
+            if is_submitted:
+                queryset = queryset.filter(status="submitted")
+            else:
+                queryset = queryset.exclude(status="submitted")
         return queryset
