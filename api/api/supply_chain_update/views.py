@@ -67,7 +67,8 @@ class StrategicActionUpdateViewset(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = StrategicActionUpdate.objects.all()
-        is_draft = self.request.query_params.get("is_draft")
-        if is_draft:
-            queryset = queryset.filter(is_draft=True)
+
+        strategic_action_id = self.request.query_params.get("strategic_action_id")
+        if strategic_action_id:
+            queryset = queryset.filter(strategic_action__id=strategic_action_id)
         return queryset

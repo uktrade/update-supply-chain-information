@@ -200,3 +200,39 @@ def test_get_all_strategic_action_updates(
     assert response.status_code == 200
     assert len(response.data) == num_updates
     assert response.data[0]["id"] == str(updates[0].id)
+
+
+@pytest.mark.django_db()
+def test_filter_updates_by_strategic_action(
+    test_client_with_token,
+):
+    """
+    Test that when a strategic action id is given in query paramters,
+    the '/strategic-action-updates' endpoint returns a list of updates
+    related to that strategic action.
+    """
+    strategic_action = StrategicActionFactory()
+    strategic_action_update = StrategicActionUpdateFactory(
+        strategic_action=strategic_action,
+    )
+    # Create additional updates not linked to this strategic action
+    StrategicActionUpdateFactory.create_batch(5)
+    client = test_client_with_token
+    response = client.get(
+        "/strategic-action-updates/", {"strategic_action_id": strategic_action.id}
+    )
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]["id"] == str(strategic_action_update.id)
+
+
+@pytest.mark.django_db()
+def test_all_updates_returned_if_strat_action_id_empty(
+    test_client_with_token,
+):
+    StrategicActionUpdateFactory.create_batch(5)
+    num_updates = StrategicActionUpdate.objects.count()
+    client = test_client_with_token
+    response = client.get("/strategic-action-updates/", {"strategic_action_id": ""})
+    assert response.status_code == 200
+    assert len(response.data) == num_updates
