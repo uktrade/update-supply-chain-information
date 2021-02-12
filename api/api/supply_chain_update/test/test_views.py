@@ -3,9 +3,14 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from api.supply_chain_update.models import StrategicAction, SupplyChain
+from api.supply_chain_update.models import (
+    StrategicAction,
+    StrategicActionUpdate,
+    SupplyChain,
+)
 from api.supply_chain_update.test.factories import (
     StrategicActionFactory,
+    StrategicActionUpdateFactory,
     SupplyChainFactory,
 )
 from api.accounts.test.factories import GovDepartmentFactory
@@ -14,8 +19,9 @@ from api.accounts.test.factories import GovDepartmentFactory
 @pytest.mark.parametrize(
     "url_name",
     (
-        ("supply-chain-list"),
-        ("strategic-action-list"),
+        "supply-chain-list",
+        "strategic-action-list",
+        "strategic-action-update-list",
     ),
 )
 def test_fails_if_unauthenticated(url_name):
@@ -176,3 +182,21 @@ def test_all_supply_chains_returned_if_query_param_empty(
     response = client.get("/supply-chains/", {"supply_chain_id": ""})
     assert response.status_code == 200
     assert len(response.data) == num_chains
+
+
+@pytest.mark.django_db()
+def test_get_all_strategic_action_updates(
+    test_client_with_token,
+):
+    """
+    Test that all strategic action update objects are returned when an
+    authorised request is made to the '/strategic-action-update' endpoint.
+    """
+    updates = StrategicActionUpdateFactory.create_batch(5)
+    num_updates = StrategicActionUpdate.objects.count()
+    client = test_client_with_token
+    url = reverse("strategic-action-update-list")
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == num_updates
+    assert response.data[0]["id"] == str(updates[0].id)

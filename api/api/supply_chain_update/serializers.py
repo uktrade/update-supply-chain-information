@@ -1,6 +1,10 @@
 from rest_framework import serializers
 
-from api.supply_chain_update.models import StrategicAction, SupplyChain
+from api.supply_chain_update.models import (
+    StrategicAction,
+    StrategicActionUpdate,
+    SupplyChain,
+)
 
 
 class StrategicActionSerializer(serializers.ModelSerializer):
@@ -30,3 +34,19 @@ class SupplyChainSerializer(serializers.ModelSerializer):
             "strategic_action_count",
         ]
         depth = 1
+
+
+class StrategicActionUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StrategicActionUpdate
+        fields = [
+            "id",
+            "is_draft",
+            "submission_date",
+            "content",
+            "implementation_rag_rating",
+            "reason_for_delays",
+            "user",
+            "strategic_action",
+            "supply_chain",
+        ]

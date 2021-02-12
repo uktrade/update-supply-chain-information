@@ -2,9 +2,14 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count
 
-from api.supply_chain_update.models import StrategicAction, SupplyChain
+from api.supply_chain_update.models import (
+    StrategicAction,
+    StrategicActionUpdate,
+    SupplyChain,
+)
 from api.supply_chain_update.serializers import (
     StrategicActionSerializer,
+    StrategicActionUpdateSerializer,
     SupplyChainSerializer,
 )
 
@@ -49,4 +54,20 @@ class SupplyChainViewset(viewsets.ModelViewSet):
             queryset = queryset.annotate(
                 strategic_action_count=Count("strategic_actions")
             )
+        return queryset
+
+
+class StrategicActionUpdateViewset(viewsets.ModelViewSet):
+    """
+    A viewset that returns Strategic Action update objects.
+    """
+
+    serializer_class = StrategicActionUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = StrategicActionUpdate.objects.all()
+        is_draft = self.request.query_params.get("is_draft")
+        if is_draft:
+            queryset = queryset.filter(is_draft=True)
         return queryset
