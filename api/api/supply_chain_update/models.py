@@ -29,13 +29,25 @@ class StrategicAction(models.Model):
 
 
 class StrategicActionUpdate(models.Model):
+    class Status(models.TextChoices):
+        IN_PROGRESS = ("in_progress", "In progress")
+        COMPLETED = ("completed", "Completed")
+        SUBMITTED = ("submitted", "Submitted")
+
     IMPLEMENTATION_RAG_CHOICES = [
         ("RED", "Red"),
         ("AMBER", "Amber"),
         ("GREEN", "Green"),
     ]
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    is_draft = models.BooleanField(default=True)
+    status = models.CharField(
+        max_length=11,
+        choices=Status.choices,
+        default=Status.IN_PROGRESS,
+        help_text="""The 'completed' and 'in_progress' statuses are used to help
+ users know whether they have completed all required fields for an update.
+ The 'submitted' status refers to when a user can no longer edit an update.""",
+    )
     submission_date = models.DateField()
     content = models.TextField()
     implementation_rag_rating = models.CharField(
