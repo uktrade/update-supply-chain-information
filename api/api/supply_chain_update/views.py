@@ -22,8 +22,13 @@ class StrategicActionViewset(viewsets.ModelViewSet):
         supply_chain_id = self.request.query_params.get(
             "supply_chain_id",
         )
+        is_archived = self.request.query_params.get(
+            "is_archived",
+        )
         if supply_chain_id:
             queryset = queryset.filter(supply_chain__id=supply_chain_id)
+        if is_archived:
+            queryset = queryset.filter(is_archived=is_archived.capitalize())
         return queryset
 
 

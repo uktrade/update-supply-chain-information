@@ -70,13 +70,59 @@ def test_get_all_strategic_actions_from_a_given_supply_chain(
 
 
 @pytest.mark.django_db()
+def test_get_all_strategic_actions_that_are_archived(
+    test_client_with_token,
+):
+    """
+    Test that when is_archived is True in query parameters,
+    the '/strategic-action' endpoint returns a list of strategic actions
+    that are archived.
+    """
+    supply_chain = SupplyChainFactory()
+    strategic_action = StrategicActionFactory(
+        supply_chain=supply_chain, is_archived=True
+    )
+    # Create additional strategic action not linked to this supply chain
+    StrategicActionFactory()
+    client = test_client_with_token
+    response = client.get("/strategic-actions/", {"is_archived": True})
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]["id"] == str(strategic_action.id)
+
+
+@pytest.mark.django_db()
+def test_get_all_strategic_actions_that_are_not_archived(
+    test_client_with_token,
+):
+    """
+    Test that when is_archived is False in query parameters,
+    the '/strategic-action' endpoint returns a list of strategic actions
+    that are not archived.
+    """
+    supply_chain = SupplyChainFactory()
+    strategic_action = StrategicActionFactory(
+        supply_chain=supply_chain, is_archived=False
+    )
+    # Create additional strategic action not linked to this supply chain
+    StrategicActionFactory(is_archived=True)
+    client = test_client_with_token
+    response = client.get("/strategic-actions/", {"is_archived": False})
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]["id"] == str(strategic_action.id)
+
+
+@pytest.mark.django_db()
 def test_all_strategic_actions_returned_if_query_param_empty(
     test_client_with_token,
 ):
     StrategicActionFactory()
     num_actions = StrategicAction.objects.count()
     client = test_client_with_token
-    response = client.get("/strategic-actions/", {"supply_chain_id": ""})
+    response = client.get(
+        "/strategic-actions/", {"supply_chain_id": "", "is_archived": ""}
+    )
     assert response.status_code == 200
     assert len(response.data) == num_actions
 
