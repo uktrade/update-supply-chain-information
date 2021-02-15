@@ -48,12 +48,14 @@ class StrategicActionUpdate(models.Model):
  users know whether they have completed all required fields for an update.
  The 'submitted' status refers to when a user can no longer edit an update.""",
     )
-    submission_date = models.DateField()
-    content = models.TextField()
+    submission_date = models.DateField(null=True)
+    content = models.TextField(blank=True)
     implementation_rag_rating = models.CharField(
-        max_length=5, choices=IMPLEMENTATION_RAG_CHOICES
+        max_length=5,
+        choices=IMPLEMENTATION_RAG_CHOICES,
+        blank=True,
     )
-    reason_for_delays = models.TextField()
+    reason_for_delays = models.TextField(blank=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
