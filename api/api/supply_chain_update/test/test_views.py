@@ -3,9 +3,14 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from api.supply_chain_update.models import StrategicAction, SupplyChain
+from api.supply_chain_update.models import (
+    StrategicAction,
+    StrategicActionUpdate,
+    SupplyChain,
+)
 from api.supply_chain_update.test.factories import (
     StrategicActionFactory,
+    StrategicActionUpdateFactory,
     SupplyChainFactory,
 )
 from api.accounts.test.factories import GovDepartmentFactory
@@ -14,8 +19,9 @@ from api.accounts.test.factories import GovDepartmentFactory
 @pytest.mark.parametrize(
     "url_name",
     (
-        ("supply-chain-list"),
-        ("strategic-action-list"),
+        "supply-chain-list",
+        "strategic-action-list",
+        "strategic-action-update-list",
     ),
 )
 def test_fails_if_unauthenticated(url_name):
@@ -176,3 +182,90 @@ def test_all_supply_chains_returned_if_query_param_empty(
     response = client.get("/supply-chains/", {"supply_chain_id": ""})
     assert response.status_code == 200
     assert len(response.data) == num_chains
+
+
+@pytest.mark.django_db()
+def test_get_all_strategic_action_updates(
+    test_client_with_token,
+):
+    """
+    Test that all strategic action update objects are returned when an
+    authorised request is made to the '/strategic-action-update' endpoint.
+    """
+    updates = StrategicActionUpdateFactory.create_batch(5)
+    num_updates = StrategicActionUpdate.objects.count()
+    client = test_client_with_token
+    url = reverse("strategic-action-update-list")
+    response = client.get(url)
+    assert response.status_code == 200
+    assert len(response.data) == num_updates
+    assert response.data[0]["id"] == str(updates[0].id)
+
+
+@pytest.mark.django_db()
+def test_filter_updates_by_strategic_action(
+    test_client_with_token,
+):
+    """
+    Test that when a strategic action id is given in query paramters,
+    the '/strategic-action-updates' endpoint returns a list of updates
+    related to that strategic action.
+    """
+    strategic_action = StrategicActionFactory()
+    strategic_action_update = StrategicActionUpdateFactory(
+        strategic_action=strategic_action,
+    )
+    # Create additional updates not linked to this strategic action
+    StrategicActionUpdateFactory.create_batch(5)
+    client = test_client_with_token
+    response = client.get(
+        "/strategic-action-updates/", {"strategic_action_id": strategic_action.id}
+    )
+    assert response.status_code == 200
+    assert len(response.data) == 1
+    assert response.data[0]["id"] == str(strategic_action_update.id)
+
+
+@pytest.mark.django_db()
+def test_all_updates_returned_if_strat_action_id_empty(
+    test_client_with_token,
+):
+    """
+    Test that all strategi action update objects are returned
+    when the 'strategic_action_id' query param is empty.
+    """
+    StrategicActionUpdateFactory.create_batch(5)
+    num_updates = StrategicActionUpdate.objects.count()
+    client = test_client_with_token
+    response = client.get("/strategic-action-updates/", {"strategic_action_id": ""})
+    assert response.status_code == 200
+    assert len(response.data) == num_updates
+
+
+@pytest.mark.parametrize(
+    "filter_value, expected_num_objects",
+    (("True", 1), ("true", 1), ("False", 2), ("false", 2), ("", 3)),
+)
+@pytest.mark.django_db()
+def test_filter_updates_by_if_submitted(
+    test_client_with_token,
+    filter_value,
+    expected_num_objects,
+    test_in_progress_strategic_action_update,
+    test_completed_strategic_action_update,
+    test_submitted_strategic_action_update,
+):
+    """
+    Test that when is_submitted is given in query paramters with a value of
+    either true or false, the '/strategic-action-updates' endpoint returns
+    the appropriate SrategicActionUpdate objects.
+    When false, updates with a status of either completed or in_progress
+    should be returned.
+    """
+    client = test_client_with_token
+    response = client.get(
+        "/strategic-action-updates/",
+        {"is_submitted": filter_value},
+    )
+    assert response.status_code == 200
+    assert len(response.data) == expected_num_objects

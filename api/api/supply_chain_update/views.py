@@ -1,10 +1,17 @@
+from distutils.util import strtobool
+
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count
 
-from api.supply_chain_update.models import StrategicAction, SupplyChain
+from api.supply_chain_update.models import (
+    StrategicAction,
+    StrategicActionUpdate,
+    SupplyChain,
+)
 from api.supply_chain_update.serializers import (
     StrategicActionSerializer,
+    StrategicActionUpdateSerializer,
     SupplyChainSerializer,
 )
 
@@ -49,4 +56,29 @@ class SupplyChainViewset(viewsets.ModelViewSet):
             queryset = queryset.annotate(
                 strategic_action_count=Count("strategic_actions")
             )
+        return queryset
+
+
+class StrategicActionUpdateViewset(viewsets.ModelViewSet):
+    """
+    A viewset that returns Strategic Action update objects.
+    """
+
+    serializer_class = StrategicActionUpdateSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = StrategicActionUpdate.objects.all()
+
+        strategic_action_id = self.request.query_params.get("strategic_action_id")
+        if strategic_action_id:
+            queryset = queryset.filter(strategic_action__id=strategic_action_id)
+
+        is_submitted = self.request.query_params.get("is_submitted")
+        if is_submitted:
+            is_submitted = strtobool(is_submitted)
+            if is_submitted:
+                queryset = queryset.filter(status="submitted")
+            else:
+                queryset = queryset.exclude(status="submitted")
         return queryset
