@@ -11,6 +11,9 @@ To run the API:
 - If you have already created a local db, run `make setup` or `docker-compose up` to bring up the database
 - cd into the `/api` folder and run `python manage.py run server`
 
+To add fixture data to the API: 
+- If you've followed the instructions above, you can run `make load-data` to load in the fixtures data to the database.
+
 To run API tests:
 - Run `make tests`
 
