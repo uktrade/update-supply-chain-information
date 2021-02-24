@@ -2,70 +2,80 @@
         "model": "accounts.govdepartment",
         "pk": "15fb0d63-2ee6-4652-8acd-222bd2718703",
         "fields": {
-            "name": "Government Department 1"
+            "name": "Government Department 1",
+            "email_domains": ["gov1.gov.uk", "gov1-digtial.gov.uk"]
         }
     },
     {
         "model": "accounts.govdepartment",
         "pk": "18d885cd-5553-42ae-bc52-236363067383",
         "fields": {
-            "name": "Government Department 2"
+            "name": "Government Department 2",
+            "email_domains": ["gov2.gov.uk", "gov2-digtial.gov.uk"]
         }
     },
     {
         "model": "accounts.govdepartment",
         "pk": "1d7da793-ea1f-4d1b-b800-37b3f78b0acb",
         "fields": {
-            "name": "Government Department 3"
+            "name": "Government Department 3",
+            "email_domains": ["gov3.gov.uk", "gov3-digtial.gov.uk"]
         }
     },
     {
         "model": "accounts.govdepartment",
         "pk": "220a8e91-2354-4aea-9e14-04d3d3e28d06",
         "fields": {
-            "name": "Government Department 4"
+            "name": "Government Department 4",
+            "email_domains": ["gov4.gov.uk"]
         }
     },
     {
         "model": "accounts.govdepartment",
         "pk": "40d188ef-184b-4dff-804e-401c3fc873fa",
         "fields": {
-            "name": "Government Department 5"
+            "name": "Government Department 5",
+            "email_domains": ["gov5.gov.uk"]
         }
     },
     {
         "model": "accounts.govdepartment",
         "pk": "507cb4b0-0568-4e82-a5d8-3524578957bc",
         "fields": {
-            "name": "Government Department 6"
+            "name": "Government Department 6",
+            "email_domains": ["gov6.gov.uk"]
         }
     },
     {
         "model": "accounts.govdepartment",
         "pk": "575bfc51-0381-43bd-bd87-93533e8748d4",
         "fields": {
-            "name": "Government Department 7"
+            "name": "Government Department 7",
+            "email_domains": ["gov7.gov.uk"]
         }
     },
     {
         "model": "accounts.govdepartment",
         "pk": "884b5e57-8f84-4583-bf13-f5e247fd6890",
         "fields": {
-            "name": "Government Department 8"
+            "name": "Government Department 8",
+            "email_domains": ["gov8.gov.uk"]
         }
     },
     {
         "model": "accounts.govdepartment",
         "pk": "b9a202b1-5752-494a-b3a2-d867c2acd731",
         "fields": {
-            "name": "Government Department 9"
+            "name": "Government Department 9",
+            "email_domains": ["gov9.gov.uk"]
         }
     },
     {
         "model": "accounts.govdepartment",
         "pk": "da72a77b-9fc8-41ff-b34f-2c8f82b33c08",
         "fields": {
-            "name": "Government Department 10"
+            "name": "Government Department 10",
+            "email_domains": ["gov10.gov.uk"]
         }
     },
     {
