@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
+from django.contrib.postgres.fields import ArrayField
 import uuid
 
 
@@ -35,3 +36,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 class GovDepartment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
+    email_domains = ArrayField(models.CharField(max_length=100))
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.email_domains = [domain.lower() for domain in self.email_domains]
+        super(GovDepartment, self).save(*args, **kwargs)

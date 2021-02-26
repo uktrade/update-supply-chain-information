@@ -3,6 +3,7 @@ import factory
 
 class GovDepartmentFactory(factory.django.DjangoModelFactory):
     name = "A Government Department"
+    email_domains = factory.Sequence(lambda n: [f"department{n}.gov.uk"])
 
     class Meta:
         model = "accounts.GovDepartment"
