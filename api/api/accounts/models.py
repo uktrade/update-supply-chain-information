@@ -40,3 +40,7 @@ class GovDepartment(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        self.email_domains = [domain.lower() for domain in self.email_domains]
+        super(GovDepartment, self).save(*args, **kwargs)
