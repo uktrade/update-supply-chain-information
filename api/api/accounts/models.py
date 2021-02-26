@@ -2,6 +2,8 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
+from django.contrib.postgres.fields import ArrayField
+from django.core.exceptions import ValidationError
 import uuid
 
 
@@ -32,6 +34,28 @@ class User(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = "sso_email_user_id"
 
 
+def _check_email_domains_unique(email_domains):
+    for email in email_domains:
+        if GovDepartment.objects.filter(email_domains__contains=[email]):
+            raise ValidationError(
+                f"The domain '{email}' already exists for another government department.",
+            )
+
+
 class GovDepartment(models.Model):
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
+    email_domains = ArrayField(models.CharField(max_length=100))
+
+    def __str__(self):
+        return self.name
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        self.email_domains = [domain.lower() for domain in self.email_domains]
+        _check_email_domains_unique(self.email_domains)
+
+    def save(self, *args, **kwargs):
+        self.clean_fields()
+        super(GovDepartment, self).save(*args, **kwargs)
