@@ -37,3 +37,6 @@ class GovDepartment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     email_domains = ArrayField(models.CharField(max_length=100))
+
+    def __str__(self):
+        return self.name
