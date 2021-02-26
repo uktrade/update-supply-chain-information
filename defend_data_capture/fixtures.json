@@ -2,8 +2,8 @@
         "model": "accounts.govdepartment",
         "pk": "15fb0d63-2ee6-4652-8acd-222bd2718703",
         "fields": {
-            "name": "Government Department 1",
-            "email_domains": ["gov1.gov.uk", "gov1-digtial.gov.uk"]
+            "name": "DIT",
+            "email_domains": ["trade.gov.uk", "digital.trade.gov.uk"]
         }
     },
     {

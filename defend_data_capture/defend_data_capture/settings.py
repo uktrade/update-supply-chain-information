@@ -2,6 +2,8 @@ from pathlib import Path
 import environ
 import os
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -25,6 +27,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "authbroker_client",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -104,8 +107,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = "accounts.User"
+AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",
+    "accounts.auth.CustomAuthbrokerBackend",
+]
 
+LOGIN_URL = reverse_lazy("authbroker_client:login")
+LOGIN_REDIRECT_URL = env("LOGIN_REDIRECT_URL")
+
+AUTH_USER_MODEL = "accounts.User"
+AUTHBROKER_URL = env("AUTHBROKER_URL")
+AUTHBROKER_CLIENT_ID = env("AUTHBROKER_CLIENT_ID")
+AUTHBROKER_CLIENT_SECRET = env("AUTHBROKER_CLIENT_SECRET")
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

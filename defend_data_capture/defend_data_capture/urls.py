@@ -22,6 +22,7 @@ router.register(
 )
 
 urlpatterns = [
+    path("auth/", include("authbroker_client.urls")),
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
 ]
