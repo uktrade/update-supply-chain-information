@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from api.accounts.models import GovDepartment
+from accounts.models import GovDepartment
 import uuid
 
 

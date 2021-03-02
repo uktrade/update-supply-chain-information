@@ -1,6 +1,6 @@
 import pytest
 
-from api.accounts.test.factories import GovDepartmentFactory
+from accounts.test.factories import GovDepartmentFactory
 
 
 @pytest.mark.django_db()

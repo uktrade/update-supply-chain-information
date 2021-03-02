@@ -3,14 +3,14 @@ setup:
 
 create-db: setup
 	docker exec defend-data-capture_db_1 psql -h localhost -U postgres -c "CREATE DATABASE defend WITH OWNER postgres ENCODING 'UTF8';"
-	python api/manage.py migrate
+	python defend_data_capture/manage.py migrate
 
 drop-db: setup
 	docker exec defend-data-capture_db_1 psql -h localhost -U postgres -c "DROP DATABASE defend"
 
 tests: setup
-	pytest api
+	pytest defend_data_capture
 
 load-data: setup
-	python api/manage.py loaddata api/api/fixtures.json
+	python defend_data_capture/manage.py loaddata defend_data_capture/fixtures.json
 

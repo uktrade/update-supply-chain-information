@@ -3,9 +3,9 @@ import pytest
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from api.accounts.test.factories import UserFactory
-from api.supply_chain_update.models import StrategicActionUpdate
-from api.supply_chain_update.test.factories import StrategicActionUpdateFactory
+from accounts.test.factories import UserFactory
+from supply_chains.models import StrategicActionUpdate
+from supply_chains.test.factories import StrategicActionUpdateFactory
 
 
 @pytest.fixture

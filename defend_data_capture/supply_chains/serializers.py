@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.supply_chain_update.models import (
+from supply_chains.models import (
     StrategicAction,
     StrategicActionUpdate,
     SupplyChain,

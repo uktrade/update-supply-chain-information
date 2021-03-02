@@ -3,17 +3,17 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from api.supply_chain_update.models import (
+from supply_chains.models import (
     StrategicAction,
     StrategicActionUpdate,
     SupplyChain,
 )
-from api.supply_chain_update.test.factories import (
+from supply_chains.test.factories import (
     StrategicActionFactory,
     StrategicActionUpdateFactory,
     SupplyChainFactory,
 )
-from api.accounts.test.factories import GovDepartmentFactory
+from accounts.test.factories import GovDepartmentFactory
 
 
 @pytest.mark.parametrize(
@@ -61,7 +61,7 @@ def test_get_all_strategic_actions_from_a_given_supply_chain(
 ):
     """
     Test that when a supply chain id is given in query parameters,
-    the '/strategic-action' endpoint returns a list of strategic actions
+    the '/api/strategic-action' endpoint returns a list of strategic actions
     related to that supply chain.
     """
     supply_chain = SupplyChainFactory()
@@ -69,7 +69,9 @@ def test_get_all_strategic_actions_from_a_given_supply_chain(
     # Create additional strategic action not linked to this supply chain
     StrategicActionFactory()
     client = test_client_with_token
-    response = client.get("/strategic-actions/", {"supply_chain_id": supply_chain.id})
+    response = client.get(
+        "/api/strategic-actions/", {"supply_chain_id": supply_chain.id}
+    )
     assert response.status_code == 200
     assert len(response.data) == 1
     assert response.data[0]["id"] == str(strategic_action.id)
@@ -81,7 +83,7 @@ def test_get_all_strategic_actions_that_are_archived(
 ):
     """
     Test that when is_archived is True in query parameters,
-    the '/strategic-action' endpoint returns a list of strategic actions
+    the '/api/strategic-action' endpoint returns a list of strategic actions
     that are archived.
     """
     supply_chain = SupplyChainFactory()
@@ -91,7 +93,7 @@ def test_get_all_strategic_actions_that_are_archived(
     # Create additional strategic action not linked to this supply chain
     StrategicActionFactory()
     client = test_client_with_token
-    response = client.get("/strategic-actions/", {"is_archived": True})
+    response = client.get("/api/strategic-actions/", {"is_archived": True})
     assert response.status_code == 200
     assert len(response.data) == 1
     assert response.data[0]["id"] == str(strategic_action.id)
@@ -103,7 +105,7 @@ def test_get_all_strategic_actions_that_are_not_archived(
 ):
     """
     Test that when is_archived is False in query parameters,
-    the '/strategic-action' endpoint returns a list of strategic actions
+    the '/api/strategic-action' endpoint returns a list of strategic actions
     that are not archived.
     """
     supply_chain = SupplyChainFactory()
@@ -113,7 +115,7 @@ def test_get_all_strategic_actions_that_are_not_archived(
     # Create additional strategic action not linked to this supply chain
     StrategicActionFactory(is_archived=True)
     client = test_client_with_token
-    response = client.get("/strategic-actions/", {"is_archived": False})
+    response = client.get("/api/strategic-actions/", {"is_archived": False})
     assert response.status_code == 200
     assert len(response.data) == 1
     assert response.data[0]["id"] == str(strategic_action.id)
@@ -127,7 +129,7 @@ def test_all_strategic_actions_returned_if_query_param_empty(
     num_actions = StrategicAction.objects.count()
     client = test_client_with_token
     response = client.get(
-        "/strategic-actions/", {"supply_chain_id": "", "is_archived": ""}
+        "/api/strategic-actions/", {"supply_chain_id": "", "is_archived": ""}
     )
     assert response.status_code == 200
     assert len(response.data) == num_actions
@@ -139,7 +141,7 @@ def test_get_all_supply_chains(
 ):
     """
     Test that all supply chain objects are returned when an
-    authorised request is made to the '/supply-chain' endpoint.
+    authorised request is made to the 'api/supply-chain' endpoint.
     """
     supply_chains = SupplyChainFactory.create_batch(4)
     num_chains = SupplyChain.objects.count()
@@ -157,7 +159,7 @@ def test_get_all_supply_chain_from_a_given_government_department(
 ):
     """
     Test that when a government department id is given in query parameters,
-    the '/supply-chain' endpoint returns a list of supply chains
+    the '/api/supply-chain' endpoint returns a list of supply chains
     related to that government department.
     """
     gov_department = GovDepartmentFactory()
@@ -165,7 +167,9 @@ def test_get_all_supply_chain_from_a_given_government_department(
     # Create additional supply chain that is not linked to this gov department
     SupplyChainFactory()
     client = test_client_with_token
-    response = client.get("/supply-chains/", {"gov_department_id": gov_department.id})
+    response = client.get(
+        "/api/supply-chains/", {"gov_department_id": gov_department.id}
+    )
 
     assert response.status_code == 200
     assert len(response.data) == 1
@@ -179,7 +183,7 @@ def test_all_supply_chains_returned_if_query_param_empty(
     SupplyChainFactory.create_batch(5)
     num_chains = SupplyChain.objects.count()
     client = test_client_with_token
-    response = client.get("/supply-chains/", {"supply_chain_id": ""})
+    response = client.get("/api/supply-chains/", {"supply_chain_id": ""})
     assert response.status_code == 200
     assert len(response.data) == num_chains
 
@@ -190,7 +194,7 @@ def test_get_all_strategic_action_updates(
 ):
     """
     Test that all strategic action update objects are returned when an
-    authorised request is made to the '/strategic-action-update' endpoint.
+    authorised request is made to the 'api/strategic-action-update' endpoint.
     """
     updates = StrategicActionUpdateFactory.create_batch(5)
     num_updates = StrategicActionUpdate.objects.count()
@@ -208,7 +212,7 @@ def test_filter_updates_by_strategic_action(
 ):
     """
     Test that when a strategic action id is given in query paramters,
-    the '/strategic-action-updates' endpoint returns a list of updates
+    the '/api/strategic-action-updates' endpoint returns a list of updates
     related to that strategic action.
     """
     strategic_action = StrategicActionFactory()
@@ -219,7 +223,7 @@ def test_filter_updates_by_strategic_action(
     StrategicActionUpdateFactory.create_batch(5)
     client = test_client_with_token
     response = client.get(
-        "/strategic-action-updates/", {"strategic_action_id": strategic_action.id}
+        "/api/strategic-action-updates/", {"strategic_action_id": strategic_action.id}
     )
     assert response.status_code == 200
     assert len(response.data) == 1
@@ -231,13 +235,13 @@ def test_all_updates_returned_if_strat_action_id_empty(
     test_client_with_token,
 ):
     """
-    Test that all strategi action update objects are returned
+    Test that all strategic action update objects are returned
     when the 'strategic_action_id' query param is empty.
     """
     StrategicActionUpdateFactory.create_batch(5)
     num_updates = StrategicActionUpdate.objects.count()
     client = test_client_with_token
-    response = client.get("/strategic-action-updates/", {"strategic_action_id": ""})
+    response = client.get("/api/strategic-action-updates/", {"strategic_action_id": ""})
     assert response.status_code == 200
     assert len(response.data) == num_updates
 
@@ -257,14 +261,14 @@ def test_filter_updates_by_if_submitted(
 ):
     """
     Test that when is_submitted is given in query paramters with a value of
-    either true or false, the '/strategic-action-updates' endpoint returns
+    either true or false, the '/api/strategic-action-updates' endpoint returns
     the appropriate SrategicActionUpdate objects.
     When false, updates with a status of either completed or in_progress
     should be returned.
     """
     client = test_client_with_token
     response = client.get(
-        "/strategic-action-updates/",
+        "/api/strategic-action-updates/",
         {"is_submitted": filter_value},
     )
     assert response.status_code == 200

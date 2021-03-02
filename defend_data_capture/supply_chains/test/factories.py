@@ -1,6 +1,6 @@
 import factory
 
-from api.accounts.test.factories import GovDepartmentFactory, UserFactory
+from accounts.test.factories import GovDepartmentFactory, UserFactory
 
 
 class SupplyChainFactory(factory.django.DjangoModelFactory):
@@ -9,7 +9,7 @@ class SupplyChainFactory(factory.django.DjangoModelFactory):
     gov_department = factory.SubFactory(GovDepartmentFactory)
 
     class Meta:
-        model = "supply_chain_update.SupplyChain"
+        model = "supply_chains.SupplyChain"
 
 
 class StrategicActionFactory(factory.django.DjangoModelFactory):
@@ -20,7 +20,7 @@ class StrategicActionFactory(factory.django.DjangoModelFactory):
     supply_chain = factory.SubFactory(SupplyChainFactory)
 
     class Meta:
-        model = "supply_chain_update.StrategicAction"
+        model = "supply_chains.StrategicAction"
 
 
 class StrategicActionUpdateFactory(factory.django.DjangoModelFactory):
@@ -32,4 +32,4 @@ class StrategicActionUpdateFactory(factory.django.DjangoModelFactory):
     supply_chain = factory.SubFactory(SupplyChainFactory)
 
     class Meta:
-        model = "supply_chain_update.StrategicActionUpdate"
+        model = "supply_chains.StrategicActionUpdate"
