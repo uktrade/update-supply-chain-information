@@ -4,12 +4,12 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count
 
-from api.supply_chain_update.models import (
+from supply_chains.models import (
     StrategicAction,
     StrategicActionUpdate,
     SupplyChain,
 )
-from api.supply_chain_update.serializers import (
+from supply_chains.serializers import (
     StrategicActionSerializer,
     StrategicActionUpdateSerializer,
     SupplyChainSerializer,

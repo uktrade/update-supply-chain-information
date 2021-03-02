@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
-from api.accounts.views import UserViewSet
-from api.supply_chain_update.views import (
+from accounts.api_views import UserViewSet
+from supply_chains.api_views import (
     StrategicActionViewset,
     StrategicActionUpdateViewset,
     SupplyChainViewset,

@@ -3,17 +3,17 @@ import pytest
 from django.urls import reverse
 from rest_framework.test import APIClient
 
-from api.supply_chain_update.models import (
+from supply_chains.models import (
     StrategicAction,
     StrategicActionUpdate,
     SupplyChain,
 )
-from api.supply_chain_update.test.factories import (
+from supply_chains.test.factories import (
     StrategicActionFactory,
     StrategicActionUpdateFactory,
     SupplyChainFactory,
 )
-from api.accounts.test.factories import GovDepartmentFactory
+from accounts.test.factories import GovDepartmentFactory
 
 
 @pytest.mark.parametrize(
@@ -141,7 +141,7 @@ def test_get_all_supply_chains(
 ):
     """
     Test that all supply chain objects are returned when an
-    authorised request is made to the '/supply-chain' endpoint.
+    authorised request is made to the 'api/supply-chain' endpoint.
     """
     supply_chains = SupplyChainFactory.create_batch(4)
     num_chains = SupplyChain.objects.count()
@@ -194,7 +194,7 @@ def test_get_all_strategic_action_updates(
 ):
     """
     Test that all strategic action update objects are returned when an
-    authorised request is made to the '/strategic-action-update' endpoint.
+    authorised request is made to the 'api/strategic-action-update' endpoint.
     """
     updates = StrategicActionUpdateFactory.create_batch(5)
     num_updates = StrategicActionUpdate.objects.count()
@@ -235,7 +235,7 @@ def test_all_updates_returned_if_strat_action_id_empty(
     test_client_with_token,
 ):
     """
-    Test that all strategi action update objects are returned
+    Test that all strategic action update objects are returned
     when the 'strategic_action_id' query param is empty.
     """
     StrategicActionUpdateFactory.create_batch(5)

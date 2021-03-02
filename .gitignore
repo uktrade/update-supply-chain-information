@@ -1,4 +1,4 @@
 __pycache__/
 *.py[cod]
-api/env/
+defend_data_capture/env/
 .env

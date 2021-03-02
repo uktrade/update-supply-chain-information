@@ -79,7 +79,7 @@
         }
     },
     {
-        "model": "supply_chain_update.supplychain",
+        "model": "supply_chains.supplychain",
         "pk": "107f8ea4-aec0-4bea-b68d-a65720c97022",
         "fields": {
             "name": "Supply Chain 1",
@@ -88,7 +88,7 @@
         }
     },
     {
-        "model": "supply_chain_update.supplychain",
+        "model": "supply_chains.supplychain",
         "pk": "14201f69-2d95-4b4c-9523-b44c6c732a80",
         "fields": {
             "name": "Supply Chain 2",
@@ -97,7 +97,7 @@
         }
     },
     {
-        "model": "supply_chain_update.supplychain",
+        "model": "supply_chains.supplychain",
         "pk": "4c8fcc98-aa4e-402b-9ff4-b06ae3c3dcd1",
         "fields": {
             "name": "Supply Chain 3",
@@ -106,7 +106,7 @@
         }
     },
     {
-        "model": "supply_chain_update.supplychain",
+        "model": "supply_chains.supplychain",
         "pk": "a69d5624-1316-49a6-8a1a-4ac935ad13e3",
         "fields": {
             "name": "Supply Chain 4",
@@ -115,7 +115,7 @@
         }
     },
     {
-        "model": "supply_chain_update.supplychain",
+        "model": "supply_chains.supplychain",
         "pk": "e7e81077-399f-4004-a907-e0a2862a84de",
         "fields": {
             "name": "Supply Chain 5",
@@ -124,7 +124,7 @@
         }
     },
     {
-        "model": "supply_chain_update.supplychain",
+        "model": "supply_chains.supplychain",
         "pk": "f6787b31-a016-4c9a-92a9-03be1b656cb4",
         "fields": {
             "name": "Supply Chain 6",
@@ -133,7 +133,7 @@
         }
     },
     {
-        "model": "supply_chain_update.strategicaction",
+        "model": "supply_chains.strategicaction",
         "pk": "e3ff7167-9298-45ed-bcca-7c8a923be491",
         "fields": {
             "name": "Strategic action 1",
@@ -144,7 +144,7 @@
         }
     },
     {
-        "model": "supply_chain_update.strategicaction",
+        "model": "supply_chains.strategicaction",
         "pk": "eec5752e-55ac-4f3e-a96e-75825526b313",
         "fields": {
             "name": "Strategic action 2",
@@ -155,7 +155,7 @@
         }
     },
     {
-        "model": "supply_chain_update.strategicaction",
+        "model": "supply_chains.strategicaction",
         "pk": "fd317f3e-9ce0-4ed0-9a6a-baf7c6e65989",
         "fields": {
             "name": "Strategic action 0",
