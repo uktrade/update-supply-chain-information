@@ -8,6 +8,7 @@ from supply_chains.api_views import (
     StrategicActionUpdateViewset,
     SupplyChainViewset,
 )
+from supply_chains import views
 
 router = routers.DefaultRouter()
 router.register(r"users", UserViewSet, basename="user")
@@ -25,4 +26,5 @@ urlpatterns = [
     path("auth/", include("authbroker_client.urls")),
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
+    path("", views.index, name="index"),
 ]
