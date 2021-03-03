@@ -1,5 +1,7 @@
 from django.db import models
 from django.conf import settings
+import reversion
+
 from accounts.models import GovDepartment
 import uuid
 
@@ -15,6 +17,7 @@ class SupplyChain(models.Model):
     )
 
 
+@reversion.register()
 class StrategicAction(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
