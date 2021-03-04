@@ -35,3 +35,20 @@ def test_user_mapping_adds_gov_department_id():
     auth_backend = CustomAuthbrokerBackend()
     new_profile = auth_backend.user_create_mapping(mock_profile)
     assert new_profile["gov_department_id"] == gov_department.id
+
+
+@pytest.mark.django_db()
+def test_unauthenticated_user():
+    """
+    Test that when a user with an unlisted email domain attempts to login,
+    government_department_id is None is returned.
+    """
+    GovDepartmentFactory(email_domains=["email.gov.uk"])
+    mock_profile = {
+        "email": "mr.unauth@shouldfail.gov.uk",
+        "first_name": "Mr",
+        "last_name": "Unauth",
+    }
+    auth_backend = CustomAuthbrokerBackend()
+    new_profile = auth_backend.user_create_mapping(mock_profile)
+    assert new_profile["gov_department_id"] == None
