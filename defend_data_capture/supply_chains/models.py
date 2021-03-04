@@ -19,10 +19,52 @@ class SupplyChain(models.Model):
 
 @reversion.register()
 class StrategicAction(models.Model):
+    class Category(models.TextChoices):
+        CREATE = ("create", "Create")
+        DIVERSIFY = ("diversify", "Diversify")
+        EXPAND = ("expand", "Expand")
+        PARTNER = ("partner", "Partner")
+
+    class GeographicScope(models.TextChoices):
+        UK_WIDE = ("uk_wide", "UK-wide")
+        ENGLAND_ONLY = ("england_only", "England only")
+
+    class SupportingOrgs(models.TextChoices):
+        HMT = ("HMT", "Treasury")
+        DHSC = ("DHSC", "DHSC")
+        BEIS = ("BEIS", "BEIS")
+        DCMS = ("DCMS", "DCMS")
+        DIT = ("DIT", "DIT")
+        DEFRA = ("DEFRA", "DEFRA")
+        CABINET_OFFICE = ("CABINET_OFFICE", "Cabinet Office")
+        MOD = ("MOD", "MoD")
+        HOME_OFFICE = ("HOME_OFFICE", "Home Office")
+        FCDO = ("FCDO", "FCDO")
+        DEVOLVED_ADMINISTRATIONS = (
+            "DEVOLVED_ADMINISTRATIONS",
+            "Devolved administrations",
+        )
+        DFT = ("DFT", "DfT")
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     start_date = models.DateField()
     description = models.TextField()
+    impact = models.TextField()
+    category = models.CharField(
+        choices=Category.choices,
+        max_length=9,
+    )
+    geographic_scope = models.CharField(
+        choices=GeographicScope.choices,
+        max_length=12,
+    )
+    supporting_organisations = models.CharField(
+        max_length=24,
+        choices=SupportingOrgs.choices,
+    )
+    is_ongoing = models.BooleanField(default=False)
+    target_completion_date = models.DateField(null=True)
     is_archived = models.BooleanField()
     supply_chain = models.ForeignKey(
         SupplyChain,
@@ -37,11 +79,11 @@ class StrategicActionUpdate(models.Model):
         COMPLETED = ("completed", "Completed")
         SUBMITTED = ("submitted", "Submitted")
 
-    IMPLEMENTATION_RAG_CHOICES = [
-        ("RED", "Red"),
-        ("AMBER", "Amber"),
-        ("GREEN", "Green"),
-    ]
+    class RAGRating(models.TextChoices):
+        RED = ("RED", "Red")
+        AMBER = ("AMBER", "Amber")
+        GREEN = ("GREEN", "Green")
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(
         max_length=11,
@@ -55,7 +97,7 @@ class StrategicActionUpdate(models.Model):
     content = models.TextField(blank=True)
     implementation_rag_rating = models.CharField(
         max_length=5,
-        choices=IMPLEMENTATION_RAG_CHOICES,
+        choices=RAGRating.choices,
         blank=True,
     )
     reason_for_delays = models.TextField(blank=True)
