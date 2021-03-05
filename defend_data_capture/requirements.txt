@@ -10,6 +10,7 @@ distlib==0.3.1
 Django==3.1.5
 django-environ==0.4.5
 django-staff-sso-client==3.1.0
+django-reversion==3.0.9
 djangorestframework==3.12.2
 factory-boy==3.2.0
 Faker==6.0.0
