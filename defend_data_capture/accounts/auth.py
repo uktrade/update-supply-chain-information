@@ -1,6 +1,9 @@
 from authbroker_client.backends import AuthbrokerBackend
+from django.contrib.auth import get_user_model
 
 from accounts.models import GovDepartment
+
+UserModel = get_user_model()
 
 
 def get_gov_department_id_from_user_email(email):
@@ -20,9 +23,23 @@ def get_gov_department_id_from_user_email(email):
 
 class CustomAuthbrokerBackend(AuthbrokerBackend):
     def get_or_create_user(self, profile):
-        if profile["gov_department_id"] is None:
+        id_key = self.get_profile_id_name()
+        try:
+            return UserModel.objects.get(**{UserModel.USERNAME_FIELD: profile[id_key]})
+        except UserModel.DoesNotExist:
+            return self.create_user(profile)
+
+    def create_user(self, profile):
+        id_key = self.get_profile_id_name()
+        user_data = {UserModel.USERNAME_FIELD: profile[id_key]}
+        user_mapping = self.user_create_mapping(profile)
+        if user_mapping["gov_department_id"] is None:
             return None
-        return super().get_or_create_user(profile)
+        user_data.update(user_mapping)
+        user = UserModel.objects.create(**user_data)
+        user.set_unusable_password()
+        user.save()
+        return user
 
     def user_create_mapping(self, profile):
         gov_dep_id = get_gov_department_id_from_user_email(profile["email"])
