@@ -2,13 +2,24 @@ import factory
 import factory.fuzzy
 
 from accounts.test.factories import GovDepartmentFactory, UserFactory
-from supply_chains.models import StrategicAction, StrategicActionUpdate
+from supply_chains.models import (
+    StrategicAction,
+    StrategicActionUpdate,
+    RAGRating,
+    SupplyChain,
+)
 
 
 class SupplyChainFactory(factory.django.DjangoModelFactory):
     name = "Product"
     last_submission_date = factory.Faker("date_object")
     gov_department = factory.SubFactory(GovDepartmentFactory)
+    contact_name = factory.Faker("name")
+    contact_email = factory.Faker("email")
+    vulnerability_status = factory.fuzzy.FuzzyChoice(SupplyChain.StatusRating)
+    vulnerability_status_disagree_reason = factory.Faker("sentence")
+    risk_severity_status = factory.fuzzy.FuzzyChoice(SupplyChain.StatusRating)
+    risk_severity_status_disagree_reason = factory.Faker("sentence")
 
     class Meta:
         model = "supply_chains.SupplyChain"
@@ -34,7 +45,7 @@ class StrategicActionUpdateFactory(factory.django.DjangoModelFactory):
     submission_date = factory.Faker("date_object")
     content = factory.Faker("sentence")
     implementation_rag_rating = factory.fuzzy.FuzzyChoice(
-        StrategicActionUpdate.RAGRating,
+        RAGRating,
     )
     user = factory.SubFactory(UserFactory)
     strategic_action = factory.SubFactory(StrategicActionFactory)

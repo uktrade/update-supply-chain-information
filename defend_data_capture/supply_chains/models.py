@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.db import models
 from django.conf import settings
 import reversion
@@ -6,7 +8,18 @@ from accounts.models import GovDepartment
 import uuid
 
 
+class RAGRating(models.TextChoices):
+    RED = ("RED", "Red")
+    AMBER = ("AMBER", "Amber")
+    GREEN = ("GREEN", "Green")
+
+
 class SupplyChain(models.Model):
+    class StatusRating(models.TextChoices):
+        LOW = ("low", "Low")
+        MEDIUM = ("medium", "Medium")
+        HIGH = ("high", "High")
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     last_submission_date = models.DateField(null=True)
@@ -15,6 +28,18 @@ class SupplyChain(models.Model):
         on_delete=models.PROTECT,
         related_name="supply_chains",
     )
+    contact_name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
+    contact_email = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
+    vulnerability_status = models.CharField(
+        choices=StatusRating.choices,
+        max_length=6,
+    )
+    vulnerability_status_disagree_reason = models.TextField(blank=True)
+    risk_severity_status = models.CharField(
+        choices=StatusRating.choices,
+        max_length=6,
+    )
+    risk_severity_status_disagree_reason = models.TextField(blank=True)
 
 
 @reversion.register()
@@ -79,11 +104,6 @@ class StrategicActionUpdate(models.Model):
         COMPLETED = ("completed", "Completed")
         SUBMITTED = ("submitted", "Submitted")
 
-    class RAGRating(models.TextChoices):
-        RED = ("RED", "Red")
-        AMBER = ("AMBER", "Amber")
-        GREEN = ("GREEN", "Green")
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(
         max_length=11,
@@ -116,4 +136,136 @@ class StrategicActionUpdate(models.Model):
         SupplyChain,
         on_delete=models.PROTECT,
         related_name="monthly_updates",
+    )
+
+
+class MaturitySelfAssessment(models.Model):
+    class RatingLevel(models.TextChoices):
+        LEVEL_1 = ("level_1", "Level 1")
+        LEVEL_2 = ("level_2", "Level 2")
+        LEVEL_3 = ("level_3", "Level 3")
+        LEVEL_4 = ("level_4", "Level 4")
+        LEVEL_5 = ("level_5", "Level 5")
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    date_created = models.DateField(default=datetime.today())
+    maturity_rating_reason = models.TextField()
+    maturity_rating_level = models.CharField(
+        choices=RatingLevel.choices,
+        max_length=7,
+    )
+    supply_chain = models.ForeignKey(
+        SupplyChain,
+        on_delete=models.PROTECT,
+        related_name="maturity_self_assessment",
+    )
+
+
+class VulnerabilityAssessment(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    date_created = models.DateField(default=datetime.today())
+    supply_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    supply_rating_reason = models.TextField(
+        help_text="""This field collects information about the characteristics that
+        contribute to the vulnerability of the supply element of the chain.""",
+    )
+    make_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    make_rating_reason = models.TextField(
+        help_text="""This field collects information about the characteristics that 
+        contribute to the vulnerability of the make element of the chain.""",
+    )
+    receive_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    receive_rating_reason = models.TextField(
+        help_text="""This field collects information about the characteristics that 
+        contribute to the vulnerability of the receive element of the chain.""",
+    )
+    store_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    store_rating_reason = models.TextField(
+        help_text="""This field collects information about the characteristics that 
+        contribute to the vulnerability of the store element of the chain.""",
+    )
+    deliver_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    deliver_rating_reason = models.TextField(
+        help_text="""This field collects information about the characteristics that 
+        contribute to the vulnerability of the deliver element of the chain.""",
+    )
+    supply_chain = models.ForeignKey(
+        SupplyChain,
+        on_delete=models.PROTECT,
+        related_name="vulnerability_assessment",
+    )
+
+
+class ScenarioAssessment(models.Model):
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    date_created = models.DateField(default=datetime.today())
+    borders_closed_impact = models.TextField(
+        help_text="""This field collects information about the potential impacts that would occur should
+        the borders close.""",
+    )
+    borders_closed_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    storage_full_impact = models.TextField(
+        help_text="""This field collects information about the potential impacts that would occur should
+        storage facilities be full.""",
+    )
+    storage_full_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    ports_blocked_impact = models.TextField(
+        help_text="""This field collects information about the potential impacts that would occur should
+        the ports be blocked.""",
+    )
+    ports_blocked_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    raw_material_shortage_impact = models.TextField(
+        help_text="""This field collects information about the potential impacts that would occur should
+        there be a raw material shortage.""",
+    )
+    raw_material_shortage_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    labour_shortage_impact = models.TextField(
+        help_text="""This field collects information about the potential impacts that would occur should
+        there be a labour shortage.""",
+    )
+    labour_shortage_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    demand_spike_impact = models.TextField(
+        help_text="""This field collects information about the potential impacts that would occur should
+        the demand spike.""",
+    )
+    demand_spike_rag_rating = models.CharField(
+        max_length=5,
+        choices=RAGRating.choices,
+    )
+    supply_chain = models.ForeignKey(
+        SupplyChain,
+        on_delete=models.PROTECT,
+        related_name="scenario_assessment",
     )
