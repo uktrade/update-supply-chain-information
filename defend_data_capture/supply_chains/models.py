@@ -1,7 +1,6 @@
-from datetime import datetime
-
 from django.db import models
 from django.conf import settings
+from django.utils.timezone import now
 import reversion
 
 from accounts.models import GovDepartment
@@ -148,7 +147,7 @@ class MaturitySelfAssessment(models.Model):
         LEVEL_5 = ("level_5", "Level 5")
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date_created = models.DateField(default=datetime.today())
+    date_created = models.DateField(default=now)
     maturity_rating_reason = models.TextField()
     maturity_rating_level = models.CharField(
         choices=RatingLevel.choices,
@@ -164,7 +163,7 @@ class MaturitySelfAssessment(models.Model):
 class VulnerabilityAssessment(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date_created = models.DateField(default=datetime.today())
+    date_created = models.DateField(default=now)
     supply_rag_rating = models.CharField(
         max_length=5,
         choices=RAGRating.choices,
@@ -215,7 +214,7 @@ class VulnerabilityAssessment(models.Model):
 class ScenarioAssessment(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date_created = models.DateField(default=datetime.today())
+    date_created = models.DateField(default=now)
     borders_closed_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
         the borders close.""",
