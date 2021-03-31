@@ -11,3 +11,23 @@ $govuk-image-url-function: frontend-image-url;
 
 @import "~govuk-frontend/govuk/all";
 @import "~@ministryofjustice/frontend/moj/components/pagination/pagination";
+
+.app-header-span {
+  float: right;
+  font-size: 16px;
+  font-weight: 600;
+  padding-top: 5px;
+}
+
+.app-header-item {
+  margin: 0;
+}
+
+.app-phase-banner-content {
+  display: inline;
+}
+
+.app-switch-to-tool-link {
+  float: right;
+  padding-top: 4px;
+}
