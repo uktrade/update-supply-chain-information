@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "reversion",
+    "webpack_loader",
 ]
 
 MIDDLEWARE = [
@@ -139,6 +140,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+# webpack-stats file is generated at the top level of the project
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "STATS_FILE": os.path.join(BASE_DIR, "../webpack-stats.json"),
+    },
+}
+
 STATIC_URL = "/static/"
 
 CHARFIELD_MAX_LENGTH = 250
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "assets"),
+]

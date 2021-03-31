@@ -2,3 +2,8 @@ __pycache__/
 *.py[cod]
 defend_data_capture/env/
 .env
+
+node_modules
+npm-debug.log*
+defend_data_capture/assets/webpack_bundles
+webpack-stats.json
