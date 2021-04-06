@@ -1,3 +1,5 @@
+from datetime import date, datetime, timedelta
+
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -7,6 +9,7 @@ import reversion
 
 from accounts.models import GovDepartment
 import uuid
+from .utils import get_last_day_of_this_month, get_last_working_day_of_month
 
 
 class RAGRating(models.TextChoices):
@@ -194,6 +197,9 @@ class StrategicActionUpdate(models.Model):
             self.slug = self.date_created.strftime("%m-%Y")
 
         return super().save(*args, **kwargs)
+
+    def previous_submitted_update(self):
+        return self.strategic_action.monthly_updates.last_submitted_update()
 
 
 class MaturitySelfAssessment(models.Model):
