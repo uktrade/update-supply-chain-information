@@ -9,6 +9,9 @@ from django.db.models import Count, QuerySet
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import TemplateView
 from django.shortcuts import redirect, render
+from django.urls import reverse
+from django.views import View
+from django.views.generic import ListView, UpdateView, CreateView
 
 from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
 from accounts.models import User, GovDepartment
@@ -196,6 +199,72 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
 
         kwargs.setdefault("view", self)
         return render(request, self.template_name, context=kwargs)
+
+# @login_required
+# class MonthlyUpdate
+class StrategicActionListView(ListView):
+    model = models.StrategicAction
+    template_name = 'supply_chains/temp-sa-list.html'
+    context_object_name = 'strategic_actions'
+
+
+class MonthlyUpdateMixin:
+    def get_strategic_action(self, strategic_action_id):
+        return models.StrategicAction.objects.get(id=strategic_action_id)
+
+class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
+    model = models.StrategicActionUpdate
+    pk_url_kwarg = 'id'
+    template_name = 'supply_chains/temp_mu_info_form.html'
+    form_class = forms.MonthlyUpdateInfoForm
+    context_object_name = 'strategic_action_update'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['strategic_action'] = self.get_strategic_action(self.kwargs['strategic_action_id'])
+        return context
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        strategic_action = self.get_strategic_action(self.kwargs['strategic_action_id'])
+        form.instance.strategic_action = strategic_action
+        form.instance.supply_chain = strategic_action.supply_chain
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        # TODO: decide which the next page is according to current state of affairs
+        url_kwargs = {
+            'id': self.object.id,
+            'strategic_action_id': self.object.strategic_action.id
+        }
+        return reverse('monthly-update-status-edit', kwargs=url_kwargs)
+
+    # form_class = forms.MonthlyUpdateInfoForm
+
+    # def form_valid(self, form):
+    #     strategic_action_id = self.kwargs.get('strategic_action_id')
+    #     form.instance.strategic_action = strategic_action_id
+    #     return super().form_valid(form)
+
+
+class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
+    model = models.StrategicActionUpdate
+    pk_url_kwarg = 'id'
+    template_name = 'supply_chains/temp_mu_info_form.html'
+    form_class = forms.MonthlyUpdateInfoForm
+    context_object_name = 'strategic_action_update'
+
+
+class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
+    model = models.StrategicActionUpdate
+    pk_url_kwarg = 'id'
+    template_name = 'supply_chains/temp_mu_status_form.html'
+    form_class = forms.MonthlyUpdateInfoForm
+    context_object_name = 'strategic_action_update'
+
+
 
 
 class SASummaryView(
