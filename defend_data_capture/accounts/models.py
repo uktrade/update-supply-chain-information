@@ -76,6 +76,14 @@ class User(AbstractBaseUser, PermissionsMixin):
         "Unselect this instead of deleting accounts.",
     )
     USERNAME_FIELD = "sso_email_user_id"
+    @property
+    def is_staff(self):
+        return True
+
+    @property
+    def is_superuser(self):
+        return True
+
 
 
 class GovDepartment(models.Model):
