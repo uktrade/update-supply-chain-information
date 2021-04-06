@@ -4,30 +4,15 @@
     <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
     {% with strategic_action.last_submitted_update as previous_update %}
         {% if previous_update.content %}
-            <div class="dit-panel">
-                <h2 class="govuk-heading-m">Last update</h2>
-                {{ previous_update.content }}
+            <div class="app-dit-panel">
+                <h2 class="govuk-heading-m">There is no expected completion data against this action</h2>
             </div>
         {% endif %}
     {% endwith %}
     {% block form %}
         <form method="post" action="">
             {% csrf_token %}
-            <div class="govuk-form-group">
-                <h2 class="govuk-label-wrapper govuk-heading-l"><label class="govuk-label govuk-label--l" for="{{ form.content.id_for_label }}">
-                    Current delivery status
-                </label>
-                </h2>
-{#                <div class="">#}
-{#                    <p>Include details of:</p>#}
-{#                    <ul class="govuk-list govuk-list--bullet">#}
-{#                        <li>activities undertaken</li>#}
-{#                        <li>milestones reached</li>#}
-{#                        <li>any other strategic action developments.</li>#}
-{#                    </ul>#}
-{#                </div>#}
-{#                {{ form.content }}#}
-            </div>
+            {% include 'supply_chains/includes/yes-no.html' with yes_no_field=form.is_completion_date_known %}
             <div class="govuk-button-group">
                 <button class="govuk-button" data-module="govuk-button" type="submit">
                     Save and continue
@@ -36,6 +21,7 @@
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
                     Cancel
                 </button>
-            </div>        </form>
+            </div>
+        </form>
     {% endblock form %}
 {% endblock body %}
