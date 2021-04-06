@@ -1,0 +1,55 @@
+{% extends 'supply_chains/monthly-update-form-base.html' %}
+
+{% block body %}
+    <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
+    {% with strategic_action.last_submitted_update as previous_update %}
+        {% if previous_update.content %}
+            <div class="app-dit-panel">
+                <h2 class="govuk-heading-m">Last update</h2>
+                {{ previous_update.content }}
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% block form %}
+        <form method="post" action="">
+            {% csrf_token %}
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            {{ form.implementation_rag_rating.label }}
+                        </h1>
+                    </legend>
+                    <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+                        {% for radio in form.implementation_rag_rating %}
+                            <div class="govuk-radios__item">
+                                {{ radio.tag }}
+                                <label class="govuk-label govuk-radios__label govuk-!-font-weight-bold" for="{{ radio.id_for_label }}">
+                                    {{ radio.choice_label }}
+                                </label>
+                                {% if radio.data.dit_hint %}
+                                    <div id="{{ radio.id_for_label }}-hint" class="govuk-hint govuk-radios__hint">
+                                        {{ radio.data.dit_hint }}
+                                    </div>
+                                {% endif %}
+                                {% if radio.data.dit_detail %}
+                                    <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="{{ radio.id_for_label }}-detail">
+                                        {% include radio.data.dit_detail.template with form=radio.data.dit_detail.form %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" type="submit">
+                    Save and continue
+                </button>
+
+                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
+                    Cancel
+                </button>
+            </div>        </form>
+    {% endblock form %}
+{% endblock body %}
