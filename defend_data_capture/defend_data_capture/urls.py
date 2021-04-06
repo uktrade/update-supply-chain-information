@@ -34,6 +34,10 @@ urlpatterns = [
     path("", views.index, name="index"),
     path("<slug:sc_slug>", SCTaskListView.as_view(), name="tlist"),
     path("<slug:sc_slug>/complete", SCCompleteView.as_view(), name="update_complete"),
+    path("strategic-actions/", views.StrategicActionListView.as_view(), name="strategic-actions"),
+    path("strategic-actions/<uuid:strategic_action_id>/update/start/", views.MonthlyUpdateInfoCreateView.as_view(), name="monthly-update-create"),
+    path("strategic-actions/<uuid:strategic_action_id>/update/<uuid:id>/info/", views.MonthlyUpdateInfoEditView.as_view(), name="monthly-update-info-edit"),
+    path("strategic-actions/<uuid:strategic_action_id>/update/<uuid:id>/delivery-status/", views.MonthlyUpdateStatusEditView.as_view(), name="monthly-update-status-edit"),
     path(
         "<slug:sc_slug>/strategic-actions",
         SASummaryView.as_view(),
