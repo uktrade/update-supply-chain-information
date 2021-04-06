@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Strategic Actions</title>
+</head>
+<body>
+<h1>Strategic Actions</h1>
+<ol>
+    {% for strategic_action in strategic_actions %}
+        <li>
+            {{ strategic_action.name }}
+            {{ strategic_action.id }}
+            {% if strategic_action.update_in_progress %}
+                In Progress
+            {% elif strategic_action.update_submitted %}
+                Completed
+            {% else %}
+                Not started
+            {% endif %}
+            <a href="{% url 'monthly-update-create' strategic_action_id=strategic_action.id %}">Start Monthly Update</a>
+        </li>
+    {% empty %}
+        <li>(No Strategic Actions)</li>
+    {% endfor %}
+</ol>
+</body>
+</html>
