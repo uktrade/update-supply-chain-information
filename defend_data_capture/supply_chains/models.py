@@ -13,12 +13,18 @@ class RAGRating(models.TextChoices):
     GREEN = ("GREEN", "Green")
 
 
+class SupplyChainQuerySet(models.QuerySet):
+    def submitted_since(self, deadline):
+        return self.filter(last_submission_date__gt=deadline)
+
+
 class SupplyChain(models.Model):
     class StatusRating(models.TextChoices):
         LOW = ("low", "Low")
         MEDIUM = ("medium", "Medium")
         HIGH = ("high", "High")
 
+    objects = SupplyChainQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     last_submission_date = models.DateField(null=True)
