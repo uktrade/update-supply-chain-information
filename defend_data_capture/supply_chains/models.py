@@ -16,6 +16,33 @@ class RAGRating(models.TextChoices):
     RED = ("RED", "Red")
     AMBER = ("AMBER", "Amber")
     GREEN = ("GREEN", "Green")
+    # __empty__ = (None, '')
+
+
+RAGRatingHintsText = [
+    'There is an issue with delivery of an action. This will require escalation and further support. There is a '
+    'potential risk to the expected completion date.',
+    'There\'s a potential risk to delivery that needs monitoring.',
+    'Delivery is on track with no issues',
+]
+
+RAGRatingHints = {
+    rating[0]: help_text
+    for rating, help_text in zip(reversed(RAGRating.choices), reversed(RAGRatingHintsText))
+}
+
+
+class SupplyChainQuerySet(models.QuerySet):
+    def since(self, deadline):
+        return self.filter(last_submission_date__gt=deadline)
+
+    def submitted(self):
+        return self.exclude(last_submission_date__isnull=True)
+        # could also be
+        # return self.filter(last_submission_date__isnull=False)
+
+    def submitted_since(self, deadline):
+        return self.submitted().since(deadline)
 
 
 class SupplyChainQuerySet(models.QuerySet):
@@ -24,6 +51,8 @@ class SupplyChainQuerySet(models.QuerySet):
 
 
 class SupplyChain(models.Model):
+    objects = SupplyChainQuerySet.as_manager()
+
     class StatusRating(models.TextChoices):
         LOW = ("low", "Low")
         MEDIUM = ("medium", "Medium")
@@ -142,11 +171,37 @@ class StrategicAction(models.Model):
         self.full_clean()
         return super().save(*args, **kwargs)
 
+    def last_submitted_update(self):
+        return self.monthly_updates.last_month()
 
+
+class StrategicActionUpdateQuerySet(models.QuerySet):
+    def for_month_of(self, date_in_month=None):
+        if date_in_month is None:
+            date_in_month = datetime.now().date()
+        timedelta()
+
+
+    def last_month(self, before_date=None):
+        if before_date is None:
+            before_date = datetime.now().date()
+        last_day_of_previous_month = before_date.replace(day=1) - timedelta(1)
+        last_month_deadline = get_last_working_day_of_month(
+            last_day_of_previous_month
+        )
+        return self.filter(submission_date__lte=last_month_deadline).order_by('-submission_date').first()
 class SAUQuerySet(models.QuerySet):
     def since(self, deadline, *args, **kwargs):
         return self.filter(date_created__gt=deadline, *args, **kwargs)
 
+    def in_progress(self):
+        return self.filter(status=StrategicActionUpdate.Status.IN_PROGRESS).first()
+
+    def completed(self):
+        return self.filter(status=StrategicActionUpdate.Status.COMPLETED).first()
+
+    def submitted(self):
+        return self.filter(status=StrategicActionUpdate.Status.SUBMITTED).first()
 
 class StrategicActionUpdate(models.Model):
     class Status(models.TextChoices):
@@ -167,11 +222,13 @@ class StrategicActionUpdate(models.Model):
     )
     submission_date = models.DateField(null=True)
     date_created = models.DateField(auto_now_add=True)
+    submission_date = models.DateField(null=True, blank=True)
     content = models.TextField(blank=True)
     implementation_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
-        blank=True,
+        choices=reversed(RAGRating.choices),
+        blank=False,
+        default=None,
     )
     reason_for_delays = models.TextField(blank=True)
     user = models.ForeignKey(
@@ -199,7 +256,7 @@ class StrategicActionUpdate(models.Model):
         return super().save(*args, **kwargs)
 
     def previous_submitted_update(self):
-        return self.strategic_action.monthly_updates.last_submitted_update()
+        return self.strategic_action.monthly_updates.last_month()
 
 
 class MaturitySelfAssessment(models.Model):
