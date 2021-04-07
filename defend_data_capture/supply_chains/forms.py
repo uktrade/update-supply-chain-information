@@ -1,5 +1,6 @@
 from django import forms
-from .models import StrategicActionUpdate
+from .widgets import HintedDisclosingRadioSelect
+from .models import StrategicActionUpdate, RAGRatingHints
 
 
 class MonthlyUpdateInfoForm(forms.ModelForm):
@@ -12,12 +13,19 @@ class MonthlyUpdateInfoForm(forms.ModelForm):
             })
         }
 
+
 class MonthlyUpdateStatusForm(forms.ModelForm):
     class Meta:
         model = StrategicActionUpdate
-        fields = ['implementation_rag_rating',]
+        fields = ['implementation_rag_rating', 'reason_for_delays']
         widgets = {
-            'content': forms.RadioSelect(attrs={
-                'class': 'govuk-radios__input',
-            })
+            'implementation_rag_rating': HintedDisclosingRadioSelect(attrs={
+                    'class': 'govuk-radios__input',
+                    'data-aria-controls': "{id}-disclosure"
+                },
+                hints=RAGRatingHints,
+                disclosures = {
+                    'RED': 'Have a banana!'
+                }
+            )
         }
