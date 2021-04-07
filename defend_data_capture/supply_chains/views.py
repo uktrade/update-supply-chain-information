@@ -252,7 +252,7 @@ class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
     model = models.StrategicActionUpdate
     pk_url_kwarg = 'id'
     template_name = 'supply_chains/temp_mu_status_form.html'
-    form_class = forms.MonthlyUpdateInfoForm
+    form_class = forms.MonthlyUpdateStatusForm
     context_object_name = 'strategic_action_update'
 
 
