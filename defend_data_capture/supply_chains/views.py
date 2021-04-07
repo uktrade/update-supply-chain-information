@@ -211,6 +211,15 @@ class MonthlyUpdateMixin:
     def get_strategic_action(self, strategic_action_id):
         return models.StrategicAction.objects.get(id=strategic_action_id)
 
+    def get_success_url(self):
+        # TODO: decide which the next page is according to current state of affairs
+        url_kwargs = {
+            'id': self.object.id,
+            'strategic_action_id': self.object.strategic_action.id
+        }
+        return reverse('monthly-update-status-edit', kwargs=url_kwargs)
+
+
 class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
     model = models.StrategicActionUpdate
     pk_url_kwarg = 'id'
@@ -223,29 +232,11 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
         context['strategic_action'] = self.get_strategic_action(self.kwargs['strategic_action_id'])
         return context
 
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
-
     def form_valid(self, form):
         strategic_action = self.get_strategic_action(self.kwargs['strategic_action_id'])
         form.instance.strategic_action = strategic_action
         form.instance.supply_chain = strategic_action.supply_chain
         return super().form_valid(form)
-
-    def get_success_url(self):
-        # TODO: decide which the next page is according to current state of affairs
-        url_kwargs = {
-            'id': self.object.id,
-            'strategic_action_id': self.object.strategic_action.id
-        }
-        return reverse('monthly-update-status-edit', kwargs=url_kwargs)
-
-    # form_class = forms.MonthlyUpdateInfoForm
-
-    # def form_valid(self, form):
-    #     strategic_action_id = self.kwargs.get('strategic_action_id')
-    #     form.instance.strategic_action = strategic_action_id
-    #     return super().form_valid(form)
 
 
 class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
