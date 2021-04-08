@@ -13,16 +13,16 @@ class HintedSelectMixin:
         return option
 
 
-class DisclosingSelectMixin:
+class DetailSelectMixin:
 
-    def __init__(self, disclosures=None, **kwargs):
+    def __init__(self, details=None, **kwargs):
         super().__init__(**kwargs)
-        self.disclosures = {} if disclosures is None else disclosures
+        self.details = {} if details is None else details
 
     def create_option(self, name, value, label, selected, index, subindex=None, attrs=None):
         option =  super().create_option(name, value, label, selected, index, subindex, attrs)
-        if value in self.disclosures.keys():
-            option['dit_disclosure'] = self.disclosures[value]
+        if value in self.details.keys():
+            option['dit_detail'] = self.details[value]
             try:
                 option['attrs']['data-aria-controls'] = option['attrs']['data-aria-controls'].format(**option['attrs'])
             except KeyError:
@@ -40,5 +40,5 @@ class HintedRadioSelect(HintedSelectMixin, RadioSelect):
     pass
 
 
-class HintedDisclosingRadioSelect(DisclosingSelectMixin, HintedSelectMixin, RadioSelect):
+class HintedDetailRadioSelect(DetailSelectMixin, HintedSelectMixin, RadioSelect):
     pass
