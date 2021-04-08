@@ -208,6 +208,10 @@ class StrategicActionListView(ListView):
 
 
 class MonthlyUpdateMixin:
+    model = models.StrategicActionUpdate
+    context_object_name = 'strategic_action_update'
+    pk_url_kwarg = 'id'
+
     def get_strategic_action(self, strategic_action_id):
         return models.StrategicAction.objects.get(id=strategic_action_id)
 
@@ -221,11 +225,8 @@ class MonthlyUpdateMixin:
 
 
 class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
-    model = models.StrategicActionUpdate
-    pk_url_kwarg = 'id'
     template_name = 'supply_chains/temp_mu_info_form.html'
     form_class = forms.MonthlyUpdateInfoForm
-    context_object_name = 'strategic_action_update'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -240,21 +241,18 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
 
 
 class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
-    model = models.StrategicActionUpdate
-    pk_url_kwarg = 'id'
     template_name = 'supply_chains/temp_mu_info_form.html'
     form_class = forms.MonthlyUpdateInfoForm
-    context_object_name = 'strategic_action_update'
 
 
 class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
-    model = models.StrategicActionUpdate
-    pk_url_kwarg = 'id'
     template_name = 'supply_chains/temp_mu_status_form.html'
     form_class = forms.MonthlyUpdateStatusForm
-    context_object_name = 'strategic_action_update'
 
 
+class MonthlyUpdateTimingEditView(MonthlyUpdateMixin, UpdateView):
+    template_name = 'supply_chains/temp_mu_timing_form.html'
+    form_class = forms.MonthlyUpdateTimingForm
 
 
 class SASummaryView(
