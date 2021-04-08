@@ -6,17 +6,25 @@ The app uses the standard Django MVC architecture, alongside some Django REST fr
 
 ## Running the app and its tests
 
+Python version 3.8 is required to run this project - [install here](https://www.python.org/downloads/release/python-380/).
+
 The project uses a `Makefile` to make running commands easier. `make` commands need to be run at the same directory level as the Makefile.
+
+Setting up environment variables:
+- Environment variables can be found in the `defend_data_capture/sample.env`
+- Copy these to a `.env` file in the `defend_data_capture` folder
+- The `AUTHBROKER_CLIENT_ID` and `AUTHBROKER_CLIENT_SECRET` values needed for staff SSO can be found in [passman](https://passman.ci.uktrade.digital/2fa/verify/?next=/secret/61f0a3bf-33f3-427e-8ade-cdee0c637031/)
 
 To run the app:
 - Create a virtual environment using `python3 -m venv env`, and activate it using `source env/bin/activate`
-- Run `pip install -r requirements.txt` to install the dependencies into your environment
-- If you haven't yet created a local database, run `make create-db`
-- If you have already created a local db, run `make setup` or `docker-compose up` to bring up the database
-- cd into the `/defend_data_capture` folder and run `python manage.py run server`
+- Run `pip install -r defend_data_capture/requirements.txt` to install the dependencies into your environment
+- If you haven't yet created a local database, run `make create-db`. This will create the database, run migrations, create  initial reversions and load fixture data.
+- If you have already created a local db, run `make setup` to bring up the database container, or `make setup-db` to bring up the container, apply database migrations and load fixture data.
+- cd into the `/defend_data_capture` folder and run `python manage.py runserver`
+- You must access the app on http://localhost:8000 as this is the URL which is configured as the 'redirect URL' for our authbroker credentials in staff SSO
 
-To add fixture data: 
-- If you've followed the instructions above, you can run `make load-data` to load in the fixtures data to the database.
+To just load fixture data: 
+- When you have your database container running and with up-to-date migrations, you can run `make load-data` to load fixture data into the database.
 
 To run tests:
 - Run `make tests`
