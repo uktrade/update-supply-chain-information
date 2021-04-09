@@ -116,8 +116,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_URL = reverse_lazy("authbroker_client:login")
-LOGIN_REDIRECT_URL = env("LOGIN_REDIRECT_URL")
-
+LOGIN_REDIRECT_URL = reverse_lazy("index")
 AUTH_USER_MODEL = "accounts.User"
 AUTHBROKER_URL = env("AUTHBROKER_URL")
 AUTHBROKER_CLIENT_ID = env("AUTHBROKER_CLIENT_ID")
