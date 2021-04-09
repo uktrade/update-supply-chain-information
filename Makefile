@@ -19,3 +19,5 @@ tests:
 load-data: setup
 	python defend_data_capture/manage.py loaddata defend_data_capture/fixtures.json
 
+functional-tests:
+	sh run_functional_tests.sh

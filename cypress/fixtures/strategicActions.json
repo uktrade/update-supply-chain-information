@@ -1,0 +1,35 @@
+[
+  {
+    "model": "supply_chains.strategicaction",
+    "pk": "e3ff7167-9298-45ed-bcca-7c8a923be491",
+    "fields": {
+      "name": "Strategic action 1",
+      "start_date": "1982-03-07",
+      "description": "Cover than item risk difficult.",
+      "is_archived": false,
+      "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022"
+    }
+  },
+  {
+    "model": "supply_chains.strategicaction",
+    "pk": "eec5752e-55ac-4f3e-a96e-75825526b313",
+    "fields": {
+      "name": "Strategic action 2",
+      "start_date": "1984-08-20",
+      "description": "Stock marriage idea add expect visit director.",
+      "is_archived": false,
+      "supply_chain": "14201f69-2d95-4b4c-9523-b44c6c732a80"
+    }
+  },
+  {
+    "model": "supply_chains.strategicaction",
+    "pk": "fd317f3e-9ce0-4ed0-9a6a-baf7c6e65989",
+    "fields": {
+      "name": "Strategic action 0",
+      "start_date": "1978-03-23",
+      "description": "Garden together job.",
+      "is_archived": false,
+      "supply_chain": "4c8fcc98-aa4e-402b-9ff4-b06ae3c3dcd1"
+    }
+  }
+]

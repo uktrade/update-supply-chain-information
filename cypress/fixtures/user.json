@@ -1,0 +1,13 @@
+[{
+    "model": "accounts.user",
+    "pk": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
+    "fields": {
+      "sso_email_user_id": "vyvyan.holland-20a0353f@id.mock-sso",
+      "first_name": "Vyvyan",
+      "last_name": "Holland",
+      "email": "vyvyan.holland@email.com",
+      "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
+      "is_superuser": "True"
+    }
+  }
+]
