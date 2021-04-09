@@ -226,7 +226,7 @@ class MonthlyUpdateMixin:
 
 
 class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
-    template_name = 'supply_chains/temp_mu_info_form.html'
+    template_name = 'supply_chains/monthly-update-info-form.html'
     form_class = forms.MonthlyUpdateInfoForm
 
     def get_context_data(self, **kwargs):
@@ -242,12 +242,12 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
 
 
 class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
-    template_name = 'supply_chains/temp_mu_info_form.html'
+    template_name = 'supply_chains/monthly-update-info-form.html'
     form_class = forms.MonthlyUpdateInfoForm
 
 
 class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
-    template_name = 'supply_chains/temp_mu_status_form.html'
+    template_name = 'supply_chains/monthly-update-status-form.html'
     form_class = forms.MonthlyUpdateStatusForm
 
 
