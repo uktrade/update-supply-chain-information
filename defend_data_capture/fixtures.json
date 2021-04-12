@@ -84,7 +84,7 @@
         "fields": {
             "name": "Supply Chain 1",
             "last_submission_date": "1976-12-26",
-            "gov_department": "18d885cd-5553-42ae-bc52-236363067383",
+            "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
             "contact_name": "Supply Chain Contact 1",
             "contact_email": "supplychaincontact1@contact.gov.uk",
             "vulnerability_status": "low",
@@ -99,7 +99,7 @@
         "fields": {
             "name": "Supply Chain 2",
             "last_submission_date": "1970-03-24",
-            "gov_department": "884b5e57-8f84-4583-bf13-f5e247fd6890",
+            "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
             "contact_name": "Supply Chain Contact 2",
             "contact_email": "supplychaincontact2@contact.gov.uk",
             "vulnerability_status": "low",
@@ -114,7 +114,7 @@
         "fields": {
             "name": "Supply Chain 3",
             "last_submission_date": "1994-03-29",
-            "gov_department": "b9a202b1-5752-494a-b3a2-d867c2acd731",
+            "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
             "contact_name": "Supply Chain Contact 3",
             "contact_email": "supplychaincontact3@contact.gov.uk",
             "vulnerability_status": "low",
@@ -129,7 +129,7 @@
         "fields": {
             "name": "Supply Chain 4",
             "last_submission_date": "2016-06-18",
-            "gov_department": "220a8e91-2354-4aea-9e14-04d3d3e28d06",
+            "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
             "contact_name": "Supply Chain Contact 4",
             "contact_email": "supplychaincontact4@contact.gov.uk",
             "vulnerability_status": "low",
@@ -159,7 +159,7 @@
         "fields": {
             "name": "Supply Chain 6",
             "last_submission_date": "2019-04-08",
-            "gov_department": "1d7da793-ea1f-4d1b-b800-37b3f78b0acb",
+            "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
             "contact_name": "Supply Chain Contact 6",
             "contact_email": "supplychaincontact6@contact.gov.uk",
             "vulnerability_status": "low",

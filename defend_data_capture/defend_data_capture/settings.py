@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "reversion",
+    "webpack_loader",
 ]
 
 MIDDLEWARE = [
@@ -115,8 +116,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_URL = reverse_lazy("authbroker_client:login")
-LOGIN_REDIRECT_URL = env("LOGIN_REDIRECT_URL")
-
+LOGIN_REDIRECT_URL = reverse_lazy("index")
 AUTH_USER_MODEL = "accounts.User"
 AUTHBROKER_URL = env("AUTHBROKER_URL")
 AUTHBROKER_CLIENT_ID = env("AUTHBROKER_CLIENT_ID")
@@ -139,6 +139,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+# webpack-stats file is generated at the top level of the project
+WEBPACK_LOADER = {
+    "DEFAULT": {
+        "STATS_FILE": os.path.join(BASE_DIR, "../webpack-stats.json"),
+    },
+}
+
 STATIC_URL = "/static/"
 
 CHARFIELD_MAX_LENGTH = 250
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "assets"),
+]

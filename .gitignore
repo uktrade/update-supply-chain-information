@@ -2,3 +2,16 @@ __pycache__/
 *.py[cod]
 defend_data_capture/env/
 .env
+
+node_modules
+npm-debug.log*
+defend_data_capture/assets/webpack_bundles
+webpack-stats.json
+
+backend.pid
+
+# Folders and file auto-generated when cypress is run
+cypress/plugins/
+cypress/support/
+cypress/videos/
+cypress.json
