@@ -12,7 +12,7 @@
     "mini-css-extract-plugin": "^0.8.0",
     "node-sass": "^4.13.0",
     "sass-loader": "^8.0.0",
-    "webpack": "^4.41.2",
+    "webpack": "^5.31.2",
     "webpack-bundle-tracker": "^0.4.3",
     "webpack-cli": "^3.3.10"
   },
@@ -21,7 +21,7 @@
     "webpack-dev-server": "^3.9.0"
   },
   "scripts": {
-    "dev": "webpack --config webpack.config.js --watch",
+    "dev": "webpack --config webpack.config.js --mode development --watch",
     "build": "webpack --config webpack.config.js",
     "clean": "rm -f .defend-data-capture/assets/webpack_bundles/*"
   }
