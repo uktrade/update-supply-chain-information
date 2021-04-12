@@ -105,6 +105,7 @@ class StrategicAction(models.Model):
 
 class StrategicActionUpdate(models.Model):
     class Status(models.TextChoices):
+        NOT_STARTED = ("not_started", "Not started")
         IN_PROGRESS = ("in_progress", "In progress")
         COMPLETED = ("completed", "Completed")
         SUBMITTED = ("submitted", "Submitted")
@@ -119,6 +120,7 @@ class StrategicActionUpdate(models.Model):
  The 'submitted' status refers to when a user can no longer edit an update.""",
     )
     submission_date = models.DateField(null=True)
+    date_created = models.DateField(default=now)
     content = models.TextField(blank=True)
     implementation_rag_rating = models.CharField(
         max_length=5,

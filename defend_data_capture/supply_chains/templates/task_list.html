@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="govuk-grid-column-two-thirds">
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+          <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href={% url 'index' %}>Home</a>
+          </li>
+          <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="#">Update {{ view.sc_name }}</a>
+          </li>
+        </ol>
+      </div>
+      <br>
+
+    <h1 class="govuk-heading-l"> Update {{ view.sc_name }} </h1>
+
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            Update Incomplete
+        </strong>
+        <div style="padding-left: 45px;padding-top: 5px;">You have completed {{ view.completed_sa }} of {{ view.total_sa }}
+            mandatory sections.</div>
+    </div>
+
+
+    <table class="govuk-table">
+        <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header">
+                    <h2 style="display: inline;" class="govuk-heading-m">Give monthly strategic<br> actions updates</h2>
+                </th>
+                <th scope="col" class="govuk-table__header"></th>
+            </tr>
+        </thead>
+        <tbody class="govuk-table__body">
+            {% for update in view.sa_updates %}
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">
+                    <a href="#" class="govuk-link">Update strategic action {{ forloop.counter }} </a>
+                    <p style="color: grey; margin-top: 3px; margin-bottom: 8px; width: 420px;word-wrap: break-word;"> {{ update.description }} </p>
+                </td>
+                <td class="govuk-table__cell">
+                    {% if update.status.label == "Not started" %}
+                        <strong class="govuk-tag govuk-tag--grey">
+                            {{ update.status.label }}
+                        </strong>
+                    {% elif update.status.label == "In progress" %}
+                        <strong class="govuk-tag govuk-tag--blue">
+                            {{ update.status.label }}
+                        </strong>
+                    {% else %}
+                    <strong class="govuk-tag">
+                        {{ update.status }}
+                    </strong>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% if view.sa_updates.has_other_pages %}
+            <nav class="moj-pagination">
+                <ul class="moj-pagination__list">
+                    {% if view.sa_updates.has_previous %}
+                        <li class="moj-pagination__item  moj-pagination__item--prev">
+                            <a class="moj-pagination__link" href="?page={{ view.sa_updates.previous_page_number }}">Previous<span class="govuk-visually-hidden"> set of pages</span></a>
+                        </li>
+                    {% else %}
+                        <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in view.sa_updates.paginator.page_range %}
+                        {% if view.sa_updates.number == i %}
+                            <li class="moj-pagination__item moj-pagination__item--active">
+                                <span>{{ i }}</span>
+                            </li>
+                        {% else %}
+                            <li class="moj-pagination__item">
+                                <a class="moj-pagination__link" href="?page={{ i }}">{{ i }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if view.sa_updates.has_next %}
+                        <li class="moj-pagination__item  moj-pagination__item--next">
+                            <a class="moj-pagination__link" href="?page={{ view.sa_updates.next_page_number }}">Next<span class="govuk-visually-hidden"> set of pages</span></a>
+                        </li>
+                    {% else %}
+                        <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                </ul>
+                <p class="moj-pagination__results">Displaying Strategic Actions <b>{{ view.sa_updates.start_index }}</b> - <b>{{ view.sa_updates.end_index }}</b> of <b>{{ view.sa_updates.paginator.count }}</b></p>
+            </nav>
+        {% endif %}
+    <br>
+
+    <h2 class="govuk-heading-m">Before you submit</h2>
+    <p class="govuk-body">
+        You can view and update:
+    </p>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>
+            <a href="#" class="govuk-link">Supply chain summary</a>
+            <span>
+                - key information, risk 1, vulnerability<br>
+                assessment, archived strategic actions
+            </span>
+        </li>
+        <li>
+            <a href="#" class="govuk-link">Strategic action summary</a>
+            <span>
+                - short description of strategic action details<br>
+                goes here
+            </span>
+        </li>
+    </ul>
+
+
+    <form action="#" method="post">
+        {% csrf_token %}
+        <button class="govuk-button" data-module="govuk-button" type="submit" {% if not view.enable_submit %}disabled{%endif%}>
+            Submit update
+        </button>
+    </form>
+</div>
+
+{% endblock %}

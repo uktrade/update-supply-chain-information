@@ -2,6 +2,7 @@ import calendar
 from datetime import date, datetime, timedelta
 
 import holidays
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 
 def get_last_working_day_of_a_month(last_day_of_month: date) -> date:
@@ -22,6 +23,21 @@ def get_last_day_of_this_month() -> date:
     return date(
         today.year, today.month, calendar.monthrange(today.year, today.month)[1]
     )
+
+
+class PageMixin:
+    def paginate(self, paged_object: object, entries_per_page: int) -> object:
+        page = self.request.GET.get("page", 1)
+        paginator = Paginator(paged_object, entries_per_page)
+
+        try:
+            paged_object = paginator.page(page)
+        except PageNotAnInteger:
+            paged_object = paginator.page(1)
+        except EmptyPage:
+            paged_object = paginator.page(paginator.num_pages)
+
+        return paged_object
 
 
 def get_last_working_day_of_previous_month() -> date:

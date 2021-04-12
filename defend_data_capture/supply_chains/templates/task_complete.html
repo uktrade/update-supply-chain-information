@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="govuk-grid-column-three-quarters">
+    <div class="govuk-breadcrumbs">
+        <ol class="govuk-breadcrumbs__list">
+            <li class="govuk-breadcrumbs__list-item">
+                <a class="govuk-breadcrumbs__link" href={% url 'index' %}>Home</a>
+            </li>
+            <li class="govuk-breadcrumbs__list-item">
+                <a class="govuk-breadcrumbs__link" href="#">Update complete</a>
+            </li>
+        </ol>
+    </div>
+    <br>
+
+
+    <div class="govuk-panel govuk-panel--confirmation">
+        <h1 class="govuk-panel__title">
+            Update complete
+        </h1>
+        <div class="govuk-panel__body">
+            Thank you for submitting your monthly<br>
+            update for the <strong>{{ view.sc_name }}</strong> supply chain.
+        </div>
+    </div>
+
+    <br>
+    <h2 class="govuk-heading-m">What happens next</h2>
+
+    <p class="govuk-body">
+        We’ve sent your update to the Global supply chains team. who will<br>
+        use this data to inform Programme Board decision making.
+    </p>
+    <p class="govuk-body">
+        They will contact you if anything needs addressing or following up.
+    </p>
+
+    <div class="govuk-inset-text">
+        You have given updates for <storng>
+            {{ view.num_updated_supply_chains }} of {{ view.sum_of_supply_chains }} supply chains.
+        </storng>
+    </div>
+
+    <p class="govuk-body">
+        <span>
+            You can go back and
+            <a href={% url 'index' %} class="govuk-link">give an update for another supply chain.</a>
+        </span>
+
+    </p>
+</div>
+
+{% endblock %}

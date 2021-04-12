@@ -9,6 +9,7 @@ from supply_chains.api_views import (
     SupplyChainViewset,
 )
 from supply_chains import views
+from supply_chains.views import SCTaskListView, SCCompleteView
 
 router = routers.DefaultRouter()
 router.register(r"users", UserViewSet, basename="user")
@@ -27,4 +28,6 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("", views.index, name="index"),
+    path("sctasks/<str:chain>", SCTaskListView.as_view(), name="tlist"),
+    path("sctasks/<str:chain>/complete", SCCompleteView.as_view(), name="tcomplete"),
 ]
