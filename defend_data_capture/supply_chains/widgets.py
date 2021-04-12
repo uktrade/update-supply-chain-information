@@ -42,3 +42,7 @@ class HintedRadioSelect(HintedSelectMixin, RadioSelect):
 
 class HintedDetailRadioSelect(DetailSelectMixin, HintedSelectMixin, RadioSelect):
     pass
+
+
+class DetailRadioSelect(DetailSelectMixin, RadioSelect):
+    pass
