@@ -19,8 +19,7 @@ The project uses a `Makefile` to make running commands easier. `make` commands n
 The project uses (webpack)[https://webpack.js.org/] to build static files, to setup:
 - Install node version 14.x
 - Run `npm install` to install all node modules, including webpack and the govuk-frontend npm package
-- Run `npm run dev --watch` - webpack will then bundle all static files in the `defend_data_capture/assets` and create 'bundles' in `defend_data_capture/assets/webpack_bundles`.
-- When making changes to static files, e.g. updating `application.scss`, if you have run `npm run dev --watch` webpack will recompile the files when edited and create a new bundle.
+- Run `npm run dev` - webpack will then bundle all static files in `defend_data_capture/assets` and create 'bundles' in `defend_data_capture/assets/webpack_bundles`. When making changes to static files, e.g. updating `application.scss`, webpack will recompile the files when edited and create a new bundle.
 
 ### Styles
 The project mainly uses styles from the (govuk-frontend)[https://github.com/alphagov/govuk-frontend] npm package. Examples of how to use these styles can be found in components on the (GOVUK design system)[https://design-system.service.gov.uk/components/].
