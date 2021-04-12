@@ -11,7 +11,7 @@ from django.views.generic import ListView, TemplateView
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
-from django.views.generic import ListView, UpdateView, CreateView
+from django.views.generic import ListView, UpdateView, CreateView, FormView
 
 from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
 from accounts.models import User, GovDepartment
@@ -251,8 +251,17 @@ class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
 
 
 class MonthlyUpdateTimingEditView(MonthlyUpdateMixin, UpdateView):
-    template_name = 'supply_chains/temp_mu_timing_form.html'
+    template_name = 'supply_chains/monthly-update-timing-form.html'
     form_class = forms.MonthlyUpdateTimingForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        instance = kwargs.get('instance', None)
+        if instance is not None:
+            kwargs['instance'] = instance.strategic_action
+        return kwargs
+
+
 
 
 class SASummaryView(
