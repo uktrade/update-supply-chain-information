@@ -11,7 +11,5 @@ webpack-stats.json
 backend.pid
 
 # Folders and file auto-generated when cypress is run
-cypress/plugins/
-cypress/support/
 cypress/videos/
 cypress.json
