@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "reversion",
     "webpack_loader",
+    "django.forms",
 ]
 
 MIDDLEWARE = [
@@ -152,3 +153,5 @@ CHARFIELD_MAX_LENGTH = 250
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "assets"),
 ]
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
