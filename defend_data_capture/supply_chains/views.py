@@ -72,45 +72,52 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
 
             sau = StrategicActionUpdate.modified_objects.since(
                 self.last_deadline,
-                supply_chain__name=self.sc_name,
+                supply_chain=self.supply_chain,
                 strategic_action=sa,
             )
 
+            # Note: route property could be replaced with URL of StrategicActionUpdate view
+            # method, when its available
             if sau:
                 update["status"] = sau[0].status
+                update["route"] = f"{self.supply_chain.slug}/{sa.slug}/{sau[0].slug}"
             else:
                 update["status"] = StrategicActionUpdate.Status.NOT_STARTED
+                update["route"] = f"{self.supply_chain.slug}/{sa.slug}/new"
 
             sa_updates.append(update)
 
         return sorted(sa_updates, key=lambda x: x["description"], reverse=True)
 
     def _extract_view_data(self, *args, **kwargs):
-        self.sc_name = kwargs.get("chain", "DEFAULT")
+        sc_slug = kwargs.get("sc_slug", "DEFAULT")
+        self.supply_chain = SupplyChain.objects.get(slug=sc_slug)
 
-        sa_qset = StrategicAction.objects.filter(supply_chain__name=self.sc_name)
+        sa_qset = StrategicAction.objects.filter(supply_chain=self.supply_chain)
         self.total_sa = sa_qset.count()
 
         self.sa_updates = self._get_sa_update_list(sa_qset)
         print(self.sa_updates)
 
         self.completed_sa = StrategicActionUpdate.objects.filter(
-            supply_chain__name=self.sc_name,
+            supply_chain=self.supply_chain,
             status=StrategicActionUpdate.Status.COMPLETED,
         ).count()
 
         self.enable_submit = self.total_sa == self.completed_sa and self.completed_sa
-        self.update_complete = (
-            self.total_sa
-            == StrategicActionUpdate.objects.filter(
-                supply_chain__name=self.sc_name,
-                status=StrategicActionUpdate.Status.SUBMITTED,
-            ).count()
-        )
+
+        current_submissions = StrategicActionUpdate.modified_objects.since(
+            self.last_deadline,
+            supply_chain=self.supply_chain,
+            status=StrategicActionUpdate.Status.SUBMITTED,
+        ).count()
+
+        self.update_complete = self.total_sa == current_submissions
 
         if self.update_complete:
             self.update_message = "Update Complete"
 
+            # TODO : Would it affect below post handling.. ?
             # To keep the template code light, (re)set completed actions with total actions
             self.completed_sa = self.total_sa
         else:
@@ -128,13 +135,12 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
 
         print()
         if self.total_sa == self.completed_sa:
-            sc = SupplyChain.objects.get(name=self.sc_name)
-            sc.last_submission_date = date.today()
-            sc.save()
+            self.supply_chain.last_submission_date = date.today()
+            self.supply_chain.save()
 
             updates = StrategicActionUpdate.modified_objects.since(
                 self.last_deadline,
-                supply_chain=sc,
+                supply_chain=self.supply_chain,
                 status=StrategicActionUpdate.Status.COMPLETED,
             )
 
@@ -143,14 +149,15 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
                 update.status = StrategicActionUpdate.Status.SUBMITTED
                 update.save()
 
-            return redirect("tcomplete", chain=self.sc_name)
+            return redirect("tcomplete", sc_slug=self.supply_chain.name)
 
 
 class SCCompleteView(LoginRequiredMixin, TemplateView):
     template_name = "task_complete.html"
 
     def dispatch(self, request, *args, **kwargs):
-        self.sc_name = kwargs.get("chain", None)
+        sc_slug = kwargs.get("sc_slug", "DEFAULT")
+        self.supply_chain = SupplyChain.objects.get(slug=sc_slug)
 
         supply_chains = self.request.user.gov_department.supply_chains.order_by("name")
 

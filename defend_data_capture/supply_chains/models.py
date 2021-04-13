@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.timezone import now
+from django.template.defaultfilters import slugify
 import reversion
 
 from accounts.models import GovDepartment
@@ -45,6 +46,13 @@ class SupplyChain(models.Model):
         max_length=6,
     )
     risk_severity_status_disagree_reason = models.TextField(blank=True)
+    slug = models.SlugField(null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+
+        return super().save(*args, **kwargs)
 
 
 @reversion.register()
@@ -101,6 +109,13 @@ class StrategicAction(models.Model):
         on_delete=models.PROTECT,
         related_name="strategic_actions",
     )
+    slug = models.SlugField(null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+
+        return super().save(*args, **kwargs)
 
 
 class SAUQuerySet(models.QuerySet):
@@ -151,6 +166,13 @@ class StrategicActionUpdate(models.Model):
         on_delete=models.PROTECT,
         related_name="monthly_updates",
     )
+    slug = models.SlugField(null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self.date_created.strftime("%m-%Y")
+
+        return super().save(*args, **kwargs)
 
 
 class MaturitySelfAssessment(models.Model):
@@ -192,7 +214,7 @@ class VulnerabilityAssessment(models.Model):
         choices=RAGRating.choices,
     )
     make_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that 
+        help_text="""This field collects information about the characteristics that
         contribute to the vulnerability of the make element of the chain.""",
     )
     receive_rag_rating = models.CharField(
@@ -200,7 +222,7 @@ class VulnerabilityAssessment(models.Model):
         choices=RAGRating.choices,
     )
     receive_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that 
+        help_text="""This field collects information about the characteristics that
         contribute to the vulnerability of the receive element of the chain.""",
     )
     store_rag_rating = models.CharField(
@@ -208,7 +230,7 @@ class VulnerabilityAssessment(models.Model):
         choices=RAGRating.choices,
     )
     store_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that 
+        help_text="""This field collects information about the characteristics that
         contribute to the vulnerability of the store element of the chain.""",
     )
     deliver_rag_rating = models.CharField(
@@ -216,7 +238,7 @@ class VulnerabilityAssessment(models.Model):
         choices=RAGRating.choices,
     )
     deliver_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that 
+        help_text="""This field collects information about the characteristics that
         contribute to the vulnerability of the deliver element of the chain.""",
     )
     supply_chain = models.ForeignKey(
