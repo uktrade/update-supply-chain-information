@@ -4,17 +4,17 @@
   "description": "A Django app focused on collecting data about the UK's most valuable supply chains. This app is primarily a form in which other government departments can submit updates and provide information about the supply chains they manage.",
   "private": true,
   "dependencies": {
-    "@ministryofjustice/frontend": "^0.2.1",
+    "@ministryofjustice/frontend": "^0.2.2",
     "css-loader": "^3.3.0",
     "extract-loader": "^3.1.0",
     "file-loader": "^5.0.2",
-    "govuk-frontend": "^3.4.0",
-    "mini-css-extract-plugin": "^0.8.0",
+    "govuk-frontend": "^3.11.0",
+    "mini-css-extract-plugin": "^1.4.1",
     "node-sass": "^4.13.0",
     "sass-loader": "^8.0.0",
     "webpack": "^5.31.2",
     "webpack-bundle-tracker": "^0.4.3",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^4.6.0"
   },
   "devDependencies": {
     "cypress": "^7.0.1",
