@@ -103,6 +103,11 @@ class StrategicAction(models.Model):
     )
 
 
+class SAUQuerySet(models.QuerySet):
+    def since(self, deadline, *args, **kwargs):
+        return self.filter(date_created__gt=deadline, *args, **kwargs)
+
+
 class StrategicActionUpdate(models.Model):
     class Status(models.TextChoices):
         NOT_STARTED = ("not_started", "Not started")
@@ -110,6 +115,8 @@ class StrategicActionUpdate(models.Model):
         COMPLETED = ("completed", "Completed")
         SUBMITTED = ("submitted", "Submitted")
 
+    objects = models.Manager()
+    modified_objects = SAUQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(
         max_length=11,

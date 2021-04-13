@@ -16,15 +16,15 @@ The project uses a `Makefile` to make running commands easier. `make` commands n
 - The `AUTHBROKER_CLIENT_ID` and `AUTHBROKER_CLIENT_SECRET` values needed for staff SSO can be found in [passman](https://passman.ci.uktrade.digital/2fa/verify/?next=/secret/61f0a3bf-33f3-427e-8ade-cdee0c637031/)
 
 ### Setting up static files
-The project uses (webpack)[https://webpack.js.org/] to build static files, to setup:
+The project uses [webpack](https://webpack.js.org/) to build static files, to setup:
 - Install node version 14.x
 - Run `npm install` to install all node modules, including webpack and the govuk-frontend npm package
 - Run `npm run dev` - webpack will then bundle all static files in `defend_data_capture/assets` and create 'bundles' in `defend_data_capture/assets/webpack_bundles`. When making changes to static files, e.g. updating `application.scss`, webpack will recompile the files when edited and create a new bundle.
 
 ### Styles
-The project mainly uses styles from the (govuk-frontend)[https://github.com/alphagov/govuk-frontend] npm package. Examples of how to use these styles can be found in components on the (GOVUK design system)[https://design-system.service.gov.uk/components/].
+The project mainly uses styles from the [govuk-frontend](https://github.com/alphagov/govuk-frontend) npm package. Examples of how to use these styles can be found in components on the [GOVUK design system](https://design-system.service.gov.uk/components/).
 
-Where it is not possible to use a govuk style, the (moj-frontend)[https://github.com/ministryofjustice/moj-frontend] library (an extension of govuk-frontend) has been used, and any custom styles added to `defend_data_capture/assets/application.scss`, with classes prefixed with `.app-`.
+Where it is not possible to use a govuk style, the [moj-frontend](https://github.com/ministryofjustice/moj-frontend) library (an extension of govuk-frontend) has been used, and any custom styles added to `defend_data_capture/assets/application.scss`, with classes prefixed with `.app-`.
 
 ### To run the app:
 - Create a virtual environment using `python3 -m venv env`, and activate it using `source env/bin/activate`
@@ -40,7 +40,7 @@ Where it is not possible to use a govuk style, the (moj-frontend)[https://github
 ### To run tests:
 
 - To run the suite of python unit tests, written in pytest, run `make tests`
-- To run the suite of functional tests, using cypress, run `make functional-tests`. These run against DIT's (mock-sso)[https://github.com/uktrade/mock-sso] application which runs in a docker container on port 8080. As mock-sso's `api/v1/user/me` endpoint returns (a specific user profile fixture)[https://github.com/uktrade/mock-sso/blob/master/app/oauth/user.js#L51], the same fixture has been created for use in the functional tests at `cypress/fixtures/user.json`.
+- To run the suite of functional tests, using cypress, run `make functional-tests`. These run against DIT's [mock-sso](https://github.com/uktrade/mock-sso) application which runs in a docker container on port 8080. As mock-sso's `api/v1/user/me` endpoint returns [a specific user profile fixture](https://github.com/uktrade/mock-sso/blob/master/app/oauth/user.js#L51), the same fixture has been created for use in the functional tests at `cypress/fixtures/user.json`.
 
 ## Adding Black pre-commit hook
 

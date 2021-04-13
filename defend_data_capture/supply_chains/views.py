@@ -57,6 +57,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
     template_name = "task_list.html"
     sa_desc_limit = 50
     tasks_per_page = 5
+    last_deadline = get_last_working_day_of_previous_month()
 
     def _get_sa_update_list(self, sa_qset) -> List[Dict]:
         sa_updates = list()
@@ -69,10 +70,10 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
             if len(update["description"]) is self.sa_desc_limit:
                 update["description"] += "..."
 
-            sau = StrategicActionUpdate.objects.filter(
+            sau = StrategicActionUpdate.modified_objects.since(
+                self.last_deadline,
                 supply_chain__name=self.sc_name,
-                strategic_action__id=sa.id,
-                date_created__gt=datetime(2019, 3, 31),
+                strategic_action=sa,
             )
 
             if sau:
@@ -91,16 +92,31 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
         self.total_sa = sa_qset.count()
 
         self.sa_updates = self._get_sa_update_list(sa_qset)
+        print(self.sa_updates)
 
         self.completed_sa = StrategicActionUpdate.objects.filter(
             supply_chain__name=self.sc_name,
             status=StrategicActionUpdate.Status.COMPLETED,
         ).count()
 
-        self.enable_submit = self.total_sa == self.completed_sa
+        self.enable_submit = self.total_sa == self.completed_sa and self.completed_sa
+        self.update_complete = (
+            self.total_sa
+            == StrategicActionUpdate.objects.filter(
+                supply_chain__name=self.sc_name,
+                status=StrategicActionUpdate.Status.SUBMITTED,
+            ).count()
+        )
+
+        if self.update_complete:
+            self.update_message = "Update Complete"
+
+            # To keep the template code light, (re)set completed actions with total actions
+            self.completed_sa = self.total_sa
+        else:
+            self.update_message = "Update Incomplete"
 
     def dispatch(self, request, *args, **kwargs):
-        print("DISPATCH")
         self._extract_view_data(*args, **kwargs)
         self.sa_updates = self.paginate(self.sa_updates, self.tasks_per_page)
 
@@ -116,17 +132,17 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
             sc.last_submission_date = date.today()
             sc.save()
 
-            sau = StrategicActionUpdate.objects.get(
+            updates = StrategicActionUpdate.modified_objects.since(
+                self.last_deadline,
                 supply_chain=sc,
                 status=StrategicActionUpdate.Status.COMPLETED,
-            )  # Include since condition
+            )
 
-            sau.submission_date = date.today()
-            sau.status = StrategicActionUpdate.Status.SUBMITTED
-            sau.save()
+            for update in updates.iterator():
+                update.submission_date = date.today()
+                update.status = StrategicActionUpdate.Status.SUBMITTED
+                update.save()
 
-            print("Post processing done!")
-            # return HttpResponse('Done')
             return redirect("tcomplete", chain=self.sc_name)
 
 
@@ -135,5 +151,14 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         self.sc_name = kwargs.get("chain", None)
+
+        supply_chains = self.request.user.gov_department.supply_chains.order_by("name")
+
+        self.sum_of_supply_chains = supply_chains.count()
+
+        last_deadline = get_last_working_day_of_previous_month()
+        self.num_updated_supply_chains = supply_chains.submitted_since(
+            last_deadline
+        ).count()
 
         return super().dispatch(request, *args, **kwargs)
