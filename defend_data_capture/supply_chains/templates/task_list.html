@@ -14,7 +14,7 @@
       </div>
       <br>
 
-    <h1 class="govuk-heading-l"> Update {{ view.sc_name }} </h1>
+    <h1 class="govuk-heading-xl"> Update {{ view.sc_name }} </h1>
 
     <div class="govuk-warning-text">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -22,8 +22,8 @@
             <span class="govuk-warning-text__assistive">Warning</span>
             {{ view.update_message }}
         </strong>
-        <div style="padding-left: 45px;padding-top: 5px;">You have completed {{ view.completed_sa }} of {{ view.total_sa }}
-            mandatory sections.</div>
+        <div class="tasklist-summary">{{ view.completed_sa }} of {{ view.total_sa }}
+            mandatory actions are complete.</div>
     </div>
 
 
@@ -31,7 +31,7 @@
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">
-                    <h2 style="display: inline;" class="govuk-heading-m">Give monthly strategic<br> actions updates</h2>
+                    <h2 class="govuk-heading-l tasklist-actions-header">Monthly strategic actions updates</h2>
                 </th>
                 <th scope="col" class="govuk-table__header"></th>
             </tr>
@@ -41,7 +41,7 @@
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
                     <a href="#" class="govuk-link">Update strategic action {{ forloop.counter }} </a>
-                    <p style="color: grey; margin-top: 3px; margin-bottom: 8px; width: 420px;word-wrap: break-word;"> {{ update.description }} </p>
+                    <p class="tasklist-action-description"> {{ update.description }} </p>
                 </td>
                 <td class="govuk-table__cell">
                     {% if update.status.label == "Not started" %}
@@ -97,23 +97,22 @@
         {% endif %}
     <br>
 
-    <h2 class="govuk-heading-m">Before you submit</h2>
+    <h2 class="govuk-heading-l">Before you submit</h2>
     <p class="govuk-body">
-        You can view and update:
+        Before you submit, make sure you have updated and completed all<br>relevant sections. This includes:
     </p>
     <ul class="govuk-list govuk-list--bullet">
         <li>
             <a href="#" class="govuk-link">Supply chain summary</a>
             <span>
-                - key information, risk 1, vulnerability<br>
-                assessment, archived strategic actions
+                - key information, vulnerability assessment,<br>
+                scenario assessment, maturity self assessment, risk monitoring,<br>archived strategic actions
             </span>
         </li>
         <li>
             <a href="#" class="govuk-link">Strategic action summary</a>
             <span>
-                - short description of strategic action details<br>
-                goes here
+                - description of the action, impact, strategic<br>action framework category and depedencies
             </span>
         </li>
     </ul>
