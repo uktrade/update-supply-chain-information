@@ -5,14 +5,14 @@
     {% with strategic_action.last_submitted_update as previous_update %}
         {% if previous_update.content %}
             <div class="dit-panel">
-                <h2 class="govuk-heading-m">There is no expected completion data against this action</h2>
+                <h2 class="govuk-heading-m">There is no expected completion date against this action</h2>
             </div>
         {% endif %}
     {% endwith %}
     {% block form %}
         <form method="post" action="">
             {% csrf_token %}
-            {% include 'supply_chains/includes/yes-no.html' with yes_no_field=form.is_completion_date_known %}
+            {{ form.is_completion_date_known }}
             <div class="govuk-button-group">
                 <button class="govuk-button" data-module="govuk-button" type="submit">
                     Save and continue
