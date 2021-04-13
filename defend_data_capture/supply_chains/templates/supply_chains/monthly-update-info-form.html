@@ -14,9 +14,10 @@
         <form method="post" action="">
             {% csrf_token %}
             <div class="govuk-form-group">
-                <h2 class="govuk-label-wrapper govuk-heading-l"><label class="govuk-label govuk-label--l" for="{{ form.content.id_for_label }}">
+                <h2 class="govuk-label-wrapper govuk-heading-l">
+                    <label class="govuk-label govuk-label--l" for="{{ form.content.id_for_label }}">
                     Latest monthly update
-                </label>
+                    </label>
                 </h2>
                 <div class="govuk-hint">
                     <p>Include details of:</p>
