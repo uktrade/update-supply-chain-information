@@ -11,6 +11,7 @@ from django.views.generic import TemplateView
 from django.shortcuts import redirect
 
 from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
+from accounts.models import User, GovDepartment
 from supply_chains.utils import (
     get_last_day_of_this_month,
     get_last_working_day_of_a_month,
@@ -25,6 +26,9 @@ def index(request):
     all_supply_chains = supply_chains.annotate(
         strategic_action_count=Count("strategic_actions")
     )
+    print("+++++++++++")
+    print(f"User : {request.user}")
+    print(f"gov_department : {request.user.gov_department}")
 
     deadline = get_last_working_day_of_a_month(get_last_day_of_this_month())
     last_deadline = get_last_working_day_of_previous_month()
@@ -79,7 +83,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
             # Note: route property could be replaced with URL of StrategicActionUpdate view
             # method, when its available
             if sau:
-                update["status"] = sau[0].status
+                update["status"] = StrategicActionUpdate.Status(sau[0].status)
                 update["route"] = f"{self.supply_chain.slug}/{sa.slug}/{sau[0].slug}"
             else:
                 update["status"] = StrategicActionUpdate.Status.NOT_STARTED
@@ -97,7 +101,6 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
         self.total_sa = sa_qset.count()
 
         self.sa_updates = self._get_sa_update_list(sa_qset)
-        print(self.sa_updates)
 
         self.completed_sa = StrategicActionUpdate.objects.filter(
             supply_chain=self.supply_chain,
@@ -126,16 +129,19 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
             self.update_message = "Update Incomplete"
 
     def dispatch(self, request, *args, **kwargs):
+        print("+++++++++++")
+        print(f"User : {self.request.user}")
+        # u = User.objects.get(sso_email_user_id=self.request.user)
+
+        # print(f'dept: {u.gov_department}')
+
+        # print(f'gov_department : {self.request.user.gov_department}')
         self._extract_view_data(*args, **kwargs)
         self.sa_updates = self.paginate(self.sa_updates, self.tasks_per_page)
 
         return super().dispatch(request, *args, **kwargs)
 
     def post(self, *args, **kwargs):
-        print("POST")
-        print(f"Total : {self.total_sa}")
-
-        print()
         if self.total_sa == self.completed_sa:
             self.supply_chain.last_submission_date = date.today()
             self.supply_chain.save()
@@ -157,11 +163,24 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
 class SCCompleteView(LoginRequiredMixin, TemplateView):
     template_name = "task_complete.html"
 
+    def get_context_data(self, *args, **kwargs):
+        print("+++++ context_data ++++++")
+        print(f"User : {self.request.user}")
+
     def dispatch(self, request, *args, **kwargs):
         sc_slug = kwargs.get("sc_slug", "DEFAULT")
         self.supply_chain = SupplyChain.objects.filter(slug=sc_slug)[0]
 
-        supply_chains = self.request.user.gov_department.supply_chains.order_by("name")
+        print("+++++++++++")
+        print(f"User : {self.request.user}")
+        # print(f'gov_department : {self.request.user.gov_department}')
+
+        u = User.objects.get(sso_email_user_id=self.request.user)
+
+        print(f"dept: {u.gov_department}")
+        supply_chains = SupplyChain.objects.filter(gov_department=u.gov_department)
+
+        # supply_chains = self.request.user.gov_department.supply_chains.order_by("name")
 
         self.sum_of_supply_chains = supply_chains.count()
 

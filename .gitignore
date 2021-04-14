@@ -14,4 +14,4 @@ backend.pid
 cypress/plugins/
 cypress/support/
 cypress/videos/
-cypress.json
+# cypress.json

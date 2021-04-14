@@ -6,7 +6,7 @@ const govDepartment = govDepartments[0].fields
 
 describe('The Home Page', () => {
   it('successfully loads', () => {
-    cy.visit('http://localhost:8001')
+    cy.visit(Cypress.config('baseUrl'))
   })
   it("displays user's name and department in header", () => {
     cy.get('.app-header-item').should(
@@ -21,7 +21,7 @@ describe('The Home Page', () => {
     cy.get('h2').contains('Monthly update Incomplete')
     cy.get('li').contains('The deadline for this monthly update is')
     cy.get('li').contains(
-      'You have given updates for 0 out of 6 supply chains.'
+      'You have given updates for 1 out of 6 supply chains.'
     )
   })
   it('displays correct table headers', () => {
@@ -41,11 +41,11 @@ describe('The Home Page', () => {
   })
   it('displays second page of supply chains after clicking Next', () => {
     cy.contains('Next').click()
-    cy.url().should('eq', 'http://localhost:8001/?page=2')
+    cy.url().should('eq', Cypress.config('baseUrl') + '/?page=2')
     cy.get('tbody').find('tr').should('have.length', 1)
   })
   it('displays first page of supply chains after clicking Previous', () => {
     cy.contains('Previous').click()
-    cy.url().should('eq', 'http://localhost:8001/?page=1')
+    cy.url().should('eq', Cypress.config('baseUrl') + '/?page=1')
   })
 })
