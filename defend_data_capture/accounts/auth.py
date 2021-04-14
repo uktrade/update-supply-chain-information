@@ -1,8 +1,6 @@
 from authbroker_client.backends import AuthbrokerBackend
 from django.contrib.auth import get_user_model
 
-from accounts.models import get_gov_department_id_from_user_email
-
 UserModel = get_user_model()
 
 
