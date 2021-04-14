@@ -2,6 +2,7 @@ version: '3'
 services:
   db:
     image: postgres:12
+    restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: password
     ports:

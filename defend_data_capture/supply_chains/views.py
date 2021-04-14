@@ -104,7 +104,9 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
             status=StrategicActionUpdate.Status.COMPLETED,
         ).count()
 
-        self.enable_submit = self.total_sa == self.completed_sa and self.completed_sa
+        self.enable_submit = (
+            self.total_sa == self.completed_sa and self.completed_sa and True
+        )
 
         current_submissions = StrategicActionUpdate.modified_objects.since(
             self.last_deadline,

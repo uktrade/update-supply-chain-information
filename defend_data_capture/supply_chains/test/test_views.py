@@ -1,6 +1,6 @@
-import pytest
 from datetime import date, timedelta
 
+import pytest
 from django.test import Client
 from django.urls import reverse
 
