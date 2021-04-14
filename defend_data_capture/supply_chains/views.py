@@ -159,7 +159,7 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, request, *args, **kwargs):
         sc_slug = kwargs.get("sc_slug", "DEFAULT")
-        self.supply_chain = SupplyChain.objects.get(slug=sc_slug)
+        self.supply_chain = SupplyChain.objects.filter(slug=sc_slug)[0]
 
         supply_chains = self.request.user.gov_department.supply_chains.order_by("name")
 

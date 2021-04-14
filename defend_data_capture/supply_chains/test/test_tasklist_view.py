@@ -5,8 +5,6 @@ from django.test import Client
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 
-# from accounts.models import User
-# from accounts.test.factories import GovDepartmentFactory
 from supply_chains.models import SupplyChain, StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,
