@@ -22,7 +22,7 @@ def test_gov_department_domains_lower_case():
 @pytest.mark.django_db()
 def test_manager_create_user_creates_user():
     """
-    Test that UserMode.objects.create_user does  that.
+    Test that UserModel.objects.create_user does that.
     """
     new_dep = GovDepartmentFactory(
         email_domains=[
@@ -47,7 +47,7 @@ def test_manager_create_user_creates_user():
 @pytest.mark.django_db()
 def test_manager_create_user_calls_set_unusable_password():
     """
-    Test that UserMode.objects.create_user does  that.
+    Test that UserModel.objects.create_user correctly prevents password login.
     """
     new_dep = GovDepartmentFactory(
         email_domains=[
@@ -69,7 +69,7 @@ def test_manager_create_user_calls_set_unusable_password():
 @pytest.mark.django_db()
 def test_manager_create_user_adds_department_using_email_address():
     """
-    Test that UserMode.objects.create_user sets the department.
+    Test that UserModel.objects.create_user sets the department.
     """
     expected_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
@@ -85,7 +85,7 @@ def test_manager_create_user_adds_department_using_email_address():
 @pytest.mark.django_db()
 def test_manager_create_user_for_unknown_email_domain_returns_none():
     """
-    Test that UserMode.objects.create_user returns None for an unknown email domain.
+    Test that UserModel.objects.create_user returns None for an unknown email domain.
     """
     expected_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
@@ -113,7 +113,7 @@ def test_get_gov_department_id_from_user_email():
 @pytest.mark.django_db()
 def test_manager_create_superuser_creates_superuser():
     """
-    Test that UserMode.objects.create_user does  that.
+    Test that UserModel.objects.create_superuser does that.
     """
     new_dep = GovDepartmentFactory(
         email_domains=[
@@ -135,7 +135,7 @@ def test_manager_create_superuser_creates_superuser():
 @pytest.mark.django_db()
 def test_manager_create_user_does_not_create_staff_user():
     """
-    Test that UserMode.objects.create_user does  that.
+    Test that a normal user isn't created as a staff user.
     """
     new_dep = GovDepartmentFactory(
         email_domains=[
@@ -156,7 +156,7 @@ def test_manager_create_user_does_not_create_staff_user():
 @pytest.mark.django_db()
 def test_manager_create_user_does_not_create_superuser():
     """
-    Test that UserMode.objects.create_user does  that.
+    Test that a normal user isn't created as a superuser.
     """
     new_dep = GovDepartmentFactory(
         email_domains=[

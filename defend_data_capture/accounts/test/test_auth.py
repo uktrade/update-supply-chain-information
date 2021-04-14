@@ -11,8 +11,7 @@ from accounts.auth import (
 @pytest.mark.django_db()
 def test_backend_create_user_does_not_create_user_for_unknown_department():
     """
-    Test that when create_user is called, object creation is acieved
-    by calling the create_user method of models.UserManager.
+    Test that no user is created if the email domain is not from a known department.
     """
     gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
@@ -29,7 +28,7 @@ def test_backend_create_user_does_not_create_user_for_unknown_department():
 @pytest.mark.django_db()
 def test_new_user_calls_user_manager_create_user_method():
     """
-    Test that when create_user is called, object creation is acieved
+    Test that when create_user is called, object creation is achieved
     by calling the create_user method of models.UserManager.
     """
     gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
@@ -48,8 +47,7 @@ def test_new_user_calls_user_manager_create_user_method():
 @pytest.mark.django_db()
 def test_backend_create_user_creates_user_with_valid_data():
     """
-    Test that when create_user is called, object creation is acieved
-    by calling the create_user method of models.UserManager.
+    Test that the newly-created user has all the bits we intended them to have.
     """
     gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
