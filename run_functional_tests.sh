@@ -14,7 +14,7 @@ python defend_data_capture/manage.py testserver \
     cypress/fixtures/govDepartment.json cypress/fixtures/user.json \
     cypress/fixtures/supplyChains.json cypress/fixtures/strategicActions.json \
     & echo $! > backend.pid \
-    & (sleep 5 && npx cypress run --headless --browser chrome --config-file false)
+    & (sleep 5 && npx cypress run --headless --browser chrome)
 
 if [ "$running_locally" == true ]; then
     # Kill the application using the pid previously saved
