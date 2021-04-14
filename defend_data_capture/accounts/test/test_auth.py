@@ -1,54 +1,67 @@
+from unittest import mock
+
 import pytest
 
-from accounts.models import GovDepartment
 from accounts.test.factories import GovDepartmentFactory
 from accounts.auth import (
     CustomAuthbrokerBackend,
-    get_gov_department_id_from_user_email,
 )
 
 
 @pytest.mark.django_db()
-def test_get_gov_department_id_from_user_email():
+def test_backend_create_user_does_not_create_user_for_unknown_department():
     """
-    Test that the correct department id is returned according to
-    the email passed in.
-    """
-    gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
-    email = "mr.test@email.gov.uk"
-    gov_department_id = get_gov_department_id_from_user_email(email)
-    assert gov_department_id == gov_department.id
-
-
-@pytest.mark.django_db()
-def test_user_mapping_adds_gov_department_id():
-    """
-    Test that when create_user_mapping is called, an object with
-    a gov_department_id is returned with the correct id attached.
+    Test that when create_user is called, object creation is acieved
+    by calling the create_user method of models.UserManager.
     """
     gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
-        "email": "mr.test@email.gov.uk",
+        "email": "mr.test@dosac.gov.uk",
+        "email_user_id": "mr.test-1234@dosac.gov.uk",
         "first_name": "Mr",
         "last_name": "Test",
     }
     auth_backend = CustomAuthbrokerBackend()
-    new_profile = auth_backend.user_create_mapping(mock_profile)
-    assert new_profile["gov_department_id"] == gov_department.id
+    new_profile = auth_backend.create_user(mock_profile)
+    assert new_profile is None
 
 
 @pytest.mark.django_db()
-def test_unauthenticated_user():
+def test_new_user_calls_user_manager_create_user_method():
     """
-    Test that when a user with an unlisted email domain attempts to login,
-    government_department_id is None is returned.
+    Test that when create_user is called, object creation is acieved
+    by calling the create_user method of models.UserManager.
     """
-    GovDepartmentFactory(email_domains=["email.gov.uk"])
+    gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
-        "email": "mr.unauth@shouldfail.gov.uk",
+        "email": "mr.test@email.gov.uk",
+        "email_user_id": "mr.test-1234@email.gov.uk",
         "first_name": "Mr",
-        "last_name": "Unauth",
+        "last_name": "Test",
     }
     auth_backend = CustomAuthbrokerBackend()
-    new_profile = auth_backend.user_create_mapping(mock_profile)
-    assert new_profile["gov_department_id"] == None
+    with mock.patch("accounts.models.UserManager.create_user") as mocked_method:
+        new_profile = auth_backend.create_user(mock_profile)
+        assert mocked_method.called
+
+
+@pytest.mark.django_db()
+def test_backend_create_user_creates_user_with_valid_data():
+    """
+    Test that when create_user is called, object creation is acieved
+    by calling the create_user method of models.UserManager.
+    """
+    gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
+    mock_profile = {
+        "email": "mr.test@email.gov.uk",
+        "email_user_id": "mr.test-1234@email.gov.uk",
+        "first_name": "Mr",
+        "last_name": "Test",
+    }
+    auth_backend = CustomAuthbrokerBackend()
+    new_profile = auth_backend.create_user(mock_profile)
+    assert new_profile is not None
+    assert new_profile.email == mock_profile["email"]
+    assert new_profile.sso_email_user_id == mock_profile["email_user_id"]
+    assert new_profile.first_name == mock_profile["first_name"]
+    assert new_profile.last_name == mock_profile["last_name"]

@@ -6,15 +6,49 @@ from django.contrib.postgres.fields import ArrayField
 import uuid
 
 
-class UserManager(BaseUserManager):
-    def create_user(self):
-        pass
+def get_gov_department_id_from_user_email(email):
+    """
+    A function that takes in an email, obtains the domain and queries the database for a
+    government department with a matching domain listed under it's email_domains field. If successful
+    it returns the department, otherwise it returns None.
+    """
+    domain = email.split("@", 1)[1]
+    # A government department needs to be added to the db before new
+    # users from that department can access the app
+    try:
+        return GovDepartment.objects.get(email_domains__contains=[domain])
+    except GovDepartment.DoesNotExist:
+        return None
 
-    def create_superuser(self):
-        pass
+
+class UserManager(BaseUserManager):
+    def create_user(self, email=None, **kwargs):
+        email = self.normalize_email(email)
+        # Ensure the government department is set
+        gov_department = kwargs.get("gov_department", None)
+        if gov_department is None:
+            gov_department = get_gov_department_id_from_user_email(email)
+            if gov_department is None:
+                return None
+            kwargs["gov_department"] = gov_department
+        user = self.model(email=email, **kwargs)
+        # no password passed in => don't allow password authentication
+        password = kwargs.get("password", None)
+        if password is None:
+            user.set_unusable_password()
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, **kwargs):
+        user = self.create_user(**kwargs)
+        user.is_superuser = True
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    objects = UserManager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sso_email_user_id = models.EmailField(
         unique=True,
@@ -29,6 +63,17 @@ class User(AbstractBaseUser, PermissionsMixin):
         "GovDepartment",
         on_delete=models.PROTECT,
         related_name="users",
+    )
+    is_staff = models.BooleanField(
+        "Staff",
+        default=False,
+        help_text="Indicates whether the user can log in to the admin site.",
+    )
+    is_active = models.BooleanField(
+        "Active",
+        default=True,
+        help_text="Designates whether this user should be treated as active. "
+        "Unselect this instead of deleting accounts.",
     )
     USERNAME_FIELD = "sso_email_user_id"
 
