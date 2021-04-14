@@ -22,7 +22,7 @@ def get_gov_department_id_from_user_email(email):
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email=None, **kwargs):
+    def create_user(self, email, **kwargs):
         email = self.normalize_email(email)
         # Ensure the government department is set
         gov_department = kwargs.get("gov_department", None)
