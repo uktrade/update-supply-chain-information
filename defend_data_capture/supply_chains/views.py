@@ -128,18 +128,13 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
         else:
             self.update_message = "Update Incomplete"
 
-    def dispatch(self, request, *args, **kwargs):
-        print("+++++++++++")
-        print(f"User : {self.request.user}")
-        # u = User.objects.get(sso_email_user_id=self.request.user)
-
-        # print(f'dept: {u.gov_department}')
-
-        # print(f'gov_department : {self.request.user.gov_department}')
+    def get_context_data(self, *args, **kwargs):
+        # As template use view.$member to refer to View object, this method doesn't add anything
+        # and calls the super
         self._extract_view_data(*args, **kwargs)
         self.sa_updates = self.paginate(self.sa_updates, self.tasks_per_page)
 
-        return super().dispatch(request, *args, **kwargs)
+        return super().get_context_data(*args, **kwargs)
 
     def post(self, *args, **kwargs):
         if self.total_sa == self.completed_sa:
@@ -164,23 +159,12 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
     template_name = "task_complete.html"
 
     def get_context_data(self, *args, **kwargs):
-        print("+++++ context_data ++++++")
-        print(f"User : {self.request.user}")
-
-    def dispatch(self, request, *args, **kwargs):
+        # As template use view.$member to refer to View object, this method doesn't add anything
+        # and calls the super
         sc_slug = kwargs.get("sc_slug", "DEFAULT")
         self.supply_chain = SupplyChain.objects.filter(slug=sc_slug)[0]
 
-        print("+++++++++++")
-        print(f"User : {self.request.user}")
-        # print(f'gov_department : {self.request.user.gov_department}')
-
-        u = User.objects.get(sso_email_user_id=self.request.user)
-
-        print(f"dept: {u.gov_department}")
-        supply_chains = SupplyChain.objects.filter(gov_department=u.gov_department)
-
-        # supply_chains = self.request.user.gov_department.supply_chains.order_by("name")
+        supply_chains = self.request.user.gov_department.supply_chains.order_by("name")
 
         self.sum_of_supply_chains = supply_chains.count()
 
@@ -189,4 +173,4 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
             last_deadline
         ).count()
 
-        return super().dispatch(request, *args, **kwargs)
+        return super().get_context_data(*args, **kwargs)

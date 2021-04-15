@@ -43,8 +43,6 @@ def taskcomp_stub(test_user):
 
 
 class TestTaskCompleteView:
-    # TODO: Fix this!
-    @pytest.mark.skip
     def test_auth(self, taskcomp_stub):
         # Arrange
         # Act
