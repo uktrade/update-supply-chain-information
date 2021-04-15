@@ -21,7 +21,7 @@
         </h1>
         <div class="govuk-panel__body">
             Thank you for submitting your monthly<br>
-            update for the <strong>{{ view.supply_chain.name }}</strong> supply chain.
+            update for the <strong>{{ supply_chain_name }}</strong> supply chain.
         </div>
     </div>
 
@@ -38,14 +38,14 @@
 
     <div class="govuk-inset-text">
         You have given updates for <strong>
-            {{ view.num_updated_supply_chains }} of {{ view.sum_of_supply_chains }} supply chains.
+            {{ num_updated_supply_chains }} of {{ sum_of_supply_chains }} supply chains.
         </strong>
     </div>
 
     <p class="govuk-body">
         <span>
             You can go back and
-            <a href={% url 'index' %} class="govuk-link">give an update for another supply chain.</a>
+            <a id="home" href={% url 'index' %} class="govuk-link">give an update for another supply chain.</a>
         </span>
 
     </p>

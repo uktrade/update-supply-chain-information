@@ -1,5 +1,5 @@
 setup:
-	docker-compose up -d
+	docker-compose -f docker-compose.yaml up -d
 
 setup-db: setup
 	python defend_data_capture/manage.py migrate

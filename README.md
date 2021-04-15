@@ -38,9 +38,15 @@ Where it is not possible to use a govuk style, the [moj-frontend](https://github
 - When you have your database container running and with up-to-date migrations, you can run `make load-data` to load fixture data into the database.
 
 ### To run tests:
-
 - To run the suite of python unit tests, written in pytest, run `make tests`
 - To run the suite of functional tests, using cypress, run `make functional-tests`. These run against DIT's [mock-sso](https://github.com/uktrade/mock-sso) application which runs in a docker container on port 8080. As mock-sso's `api/v1/user/me` endpoint returns [a specific user profile fixture](https://github.com/uktrade/mock-sso/blob/master/app/oauth/user.js#L51), the same fixture has been created for use in the functional tests at `cypress/fixtures/user.json`.
+
+### Automated accessibility testing:
+The project uses the [cypress-axe](https://github.com/component-driven/cypress-axe) package which allows for the automation of accessibility testing within tests written with cypress.
+
+To add accessibility testing to a cypress spec:
+- Add the command `cy.injectA11y()` after wherever `cy.visit(url)` is called. This injects the axe-core runtime into the page being tested.
+- Add a test to check for accessibility issues on a page using the command `cy.runA11y()`. This will output details of any accessibility violations into a table in the terminal where cypress is running.
 
 ## Adding Black pre-commit hook
 

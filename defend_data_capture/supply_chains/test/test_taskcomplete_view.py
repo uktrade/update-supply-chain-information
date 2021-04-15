@@ -57,9 +57,8 @@ class TestTaskCompleteView:
         resp = logged_in_client.get(taskcomp_stub["url"])
 
         # Assert
-        v = resp.context["view"]
         assert resp.status_code == 200
-        assert v.supply_chain.name == taskcomp_stub["sc_name"]
+        assert resp.context["supply_chain_name"] == taskcomp_stub["sc_name"]
 
     def test_action_summary(self, logged_in_client, taskcomp_stub):
         # Arrange
@@ -67,6 +66,5 @@ class TestTaskCompleteView:
         resp = logged_in_client.get(taskcomp_stub["url"])
 
         # Assert
-        v = resp.context["view"]
-        assert v.sum_of_supply_chains == 3
-        assert v.num_updated_supply_chains == 1
+        assert resp.context["sum_of_supply_chains"] == 3
+        assert resp.context["num_updated_supply_chains"] == 1

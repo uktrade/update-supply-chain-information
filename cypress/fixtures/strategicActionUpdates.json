@@ -17,6 +17,22 @@
 },
 {
   "model": "supply_chains.strategicactionupdate",
+  "pk": "7c18ca98-5947-4ea1-9e2d-2a834462a453",
+  "fields": {
+    "status": "completed",
+    "submission_date": null,
+    "date_created": "2021-04-15",
+    "content": "",
+    "implementation_rag_rating": "",
+    "reason_for_delays": "",
+    "user": null,
+    "strategic_action": "fa87e1d4-baaa-4317-89b6-fcade510b015",
+    "supply_chain": "14201f69-2d95-4b4c-9523-b44c6c732a80",
+    "slug": "04-2021"
+  }
+},
+{
+  "model": "supply_chains.strategicactionupdate",
   "pk": "c9325de0-8233-4758-a908-b31042b0cb66",
   "fields": {
     "status": "in_progress",
@@ -44,6 +60,22 @@
     "user": null,
     "strategic_action": "fd317f3e-9ce0-4ed0-9a6a-baf7c6e65989",
     "supply_chain": "e7e81077-399f-4004-a907-e0a2862a84de",
+    "slug": "04-2021"
+  }
+},
+{
+  "model": "supply_chains.strategicactionupdate",
+  "pk": "f49fddb2-02e1-4ea2-a3bb-e8a20a107fc9",
+  "fields": {
+    "status": "completed",
+    "submission_date": null,
+    "date_created": "2021-04-15",
+    "content": "",
+    "implementation_rag_rating": "",
+    "reason_for_delays": "",
+    "user": null,
+    "strategic_action": "eec5752e-55ac-4f3e-a96e-75825526b313",
+    "supply_chain": "14201f69-2d95-4b4c-9523-b44c6c732a80",
     "slug": "04-2021"
   }
 }

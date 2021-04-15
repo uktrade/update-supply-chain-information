@@ -7,6 +7,10 @@ const govDepartment = govDepartments[0].fields
 describe('The Home Page', () => {
   it('successfully loads', () => {
     cy.visit(Cypress.config('baseUrl'))
+    cy.injectAxe()
+  })
+  it('has no accessibility issues', () => {
+    cy.runA11y()
   })
   it("displays user's name and department in header", () => {
     cy.get('.app-header-item').should(

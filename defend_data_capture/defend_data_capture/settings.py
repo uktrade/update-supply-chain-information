@@ -16,7 +16,7 @@ environ.Env.read_env(env_file=os.path.join(BASE_DIR, ".env"))
 
 env = environ.Env()
 
-SECRET_KEY = env("DJANGO_SECRET_KEY")
+SECRET_KEY = env("DJANGO_SECRET_KEY", default="secret-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -118,9 +118,9 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_URL = reverse_lazy("authbroker_client:login")
 LOGIN_REDIRECT_URL = reverse_lazy("index")
 AUTH_USER_MODEL = "accounts.User"
-AUTHBROKER_URL = env("AUTHBROKER_URL")
-AUTHBROKER_CLIENT_ID = env("AUTHBROKER_CLIENT_ID")
-AUTHBROKER_CLIENT_SECRET = env("AUTHBROKER_CLIENT_SECRET")
+AUTHBROKER_URL = env("AUTHBROKER_URL", default="")
+AUTHBROKER_CLIENT_ID = env("AUTHBROKER_CLIENT_ID", default="")
+AUTHBROKER_CLIENT_SECRET = env("AUTHBROKER_CLIENT_SECRET", default="")
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

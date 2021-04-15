@@ -98,12 +98,19 @@ class StrategicAction(models.Model):
         max_length=12,
     )
     supporting_organisations = models.CharField(
-        max_length=24,
-        choices=SupportingOrgs.choices,
+        max_length=24, choices=SupportingOrgs.choices, blank=True
     )
     is_ongoing = models.BooleanField(default=False)
     target_completion_date = models.DateField(null=True)
     is_archived = models.BooleanField()
+    specific_related_products = models.TextField(
+        help_text="Details of specific products within the supply chain which the action applies to, if applicable.",
+        blank=True,
+    )
+    other_dependencies = models.TextField(
+        help_text="Any other dependencies or requirements for completing the action.",
+        blank=True,
+    )
     supply_chain = models.ForeignKey(
         SupplyChain,
         on_delete=models.PROTECT,

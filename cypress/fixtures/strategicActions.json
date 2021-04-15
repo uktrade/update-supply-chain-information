@@ -37,6 +37,60 @@
 },
 {
   "model": "supply_chains.strategicaction",
+  "pk": "4fa80be8-3edc-40be-8989-9b5a9f1e0e34",
+  "fields": {
+    "name": "SA 05",
+    "start_date": "2009-03-01",
+    "description": "",
+    "impact": "",
+    "category": "",
+    "geographic_scope": "",
+    "supporting_organisations": "",
+    "is_ongoing": false,
+    "target_completion_date": null,
+    "is_archived": false,
+    "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+    "slug": "sa-05"
+  }
+},
+{
+  "model": "supply_chains.strategicaction",
+  "pk": "6becafd3-d19e-4118-999a-b069debcac54",
+  "fields": {
+    "name": "SA 04",
+    "start_date": "2009-03-01",
+    "description": "",
+    "impact": "",
+    "category": "",
+    "geographic_scope": "",
+    "supporting_organisations": "",
+    "is_ongoing": false,
+    "target_completion_date": null,
+    "is_archived": false,
+    "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+    "slug": "sa-04"
+  }
+},
+{
+  "model": "supply_chains.strategicaction",
+  "pk": "a38838d0-362a-411c-a7c8-65db9981d0bf",
+  "fields": {
+    "name": "SA 02",
+    "start_date": "2009-03-01",
+    "description": "",
+    "impact": "",
+    "category": "",
+    "geographic_scope": "",
+    "supporting_organisations": "",
+    "is_ongoing": false,
+    "target_completion_date": null,
+    "is_archived": false,
+    "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+    "slug": "sa-02"
+  }
+},
+{
+  "model": "supply_chains.strategicaction",
   "pk": "e3ff7167-9298-45ed-bcca-7c8a923be491",
   "fields": {
     "name": "Strategic action 1",
@@ -69,6 +123,24 @@
     "is_archived": false,
     "supply_chain": "14201f69-2d95-4b4c-9523-b44c6c732a80",
     "slug": "strategic-action-2"
+  }
+},
+{
+  "model": "supply_chains.strategicaction",
+  "pk": "f12777b8-c2f7-4f1e-ae52-acf79809b0b6",
+  "fields": {
+    "name": "SA 03",
+    "start_date": "2009-03-01",
+    "description": "",
+    "impact": "",
+    "category": "",
+    "geographic_scope": "",
+    "supporting_organisations": "",
+    "is_ongoing": false,
+    "target_completion_date": null,
+    "is_archived": false,
+    "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+    "slug": "sa-03"
   }
 },
 {
