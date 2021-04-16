@@ -25,7 +25,7 @@ def get_last_day_of_this_month() -> date:
     )
 
 
-class PageMixin:
+class PaginationMixin:
     def paginate(self, paged_object: object, entries_per_page: int) -> object:
         page = self.request.GET.get("page", 1)
         paginator = Paginator(paged_object, entries_per_page)

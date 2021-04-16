@@ -149,7 +149,7 @@ class StrategicActionUpdate(models.Model):
  The 'submitted' status refers to when a user can no longer edit an update.""",
     )
     submission_date = models.DateField(null=True)
-    date_created = models.DateField(default=now)
+    date_created = models.DateField(auto_now_add=True)
     content = models.TextField(blank=True)
     implementation_rag_rating = models.CharField(
         max_length=5,
@@ -191,7 +191,7 @@ class MaturitySelfAssessment(models.Model):
         LEVEL_5 = ("level_5", "Level 5")
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date_created = models.DateField(default=now)
+    date_created = models.DateField(auto_now_add=True)
     maturity_rating_reason = models.TextField()
     maturity_rating_level = models.CharField(
         choices=RatingLevel.choices,
@@ -207,7 +207,7 @@ class MaturitySelfAssessment(models.Model):
 class VulnerabilityAssessment(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date_created = models.DateField(default=now)
+    date_created = models.DateField(auto_now_add=True)
     supply_rag_rating = models.CharField(
         max_length=5,
         choices=RAGRating.choices,
@@ -258,7 +258,7 @@ class VulnerabilityAssessment(models.Model):
 class ScenarioAssessment(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date_created = models.DateField(default=now)
+    date_created = models.DateField(auto_now_add=True)
     borders_closed_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
         the borders close.""",

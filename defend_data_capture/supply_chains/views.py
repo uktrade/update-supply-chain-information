@@ -17,7 +17,7 @@ from supply_chains.utils import (
     get_last_day_of_this_month,
     get_last_working_day_of_a_month,
     get_last_working_day_of_previous_month,
-    PageMixin,
+    PaginationMixin,
 )
 
 
@@ -55,7 +55,7 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
-class SCTaskListView(LoginRequiredMixin, TemplateView, PageMixin):
+class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
     template_name = "task_list.html"
     sa_desc_limit = 50
     tasks_per_page = 5

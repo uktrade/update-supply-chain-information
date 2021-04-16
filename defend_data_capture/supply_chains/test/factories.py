@@ -1,5 +1,6 @@
 import factory
 import factory.fuzzy
+from datetime import date
 
 from accounts.test.factories import GovDepartmentFactory, UserFactory
 from supply_chains.models import (
@@ -43,6 +44,7 @@ class StrategicActionFactory(factory.django.DjangoModelFactory):
 
 class StrategicActionUpdateFactory(factory.django.DjangoModelFactory):
     submission_date = factory.Faker("date_object")
+    date_created = date.today()
     content = factory.Faker("sentence")
     implementation_rag_rating = factory.fuzzy.FuzzyChoice(
         RAGRating,
