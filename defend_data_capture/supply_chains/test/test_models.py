@@ -37,13 +37,13 @@ class TestSAUModel:
         )
 
         # Act
-        sau_prog = StrategicActionUpdate.modified_objects.since(
+        sau_prog = StrategicActionUpdate.updates.since(
             deadline=date.today() - timedelta(days=1),
             supply_chain=sc,
             status=StrategicActionUpdate.Status.IN_PROGRESS,
         )
 
-        sau_comp = StrategicActionUpdate.modified_objects.since(
+        sau_comp = StrategicActionUpdate.updates.since(
             deadline=date.today() - timedelta(days=1),
             supply_chain=sc,
             status=StrategicActionUpdate.Status.COMPLETED,

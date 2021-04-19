@@ -38,7 +38,7 @@ def taskcomp_stub(test_user):
 
     yield {
         "sc_name": sc_name,
-        "url": reverse("tcomplete", kwargs={"sc_slug": slugify(sc_name)}),
+        "url": reverse("update_complete", kwargs={"sc_slug": slugify(sc_name)}),
     }
 
 

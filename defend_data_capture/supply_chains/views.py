@@ -61,7 +61,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
     tasks_per_page = 5
     last_deadline = get_last_working_day_of_previous_month()
 
-    def _arrange_updates(self, updates: List) -> List:
+    def _sort_updates(self, updates: List) -> List:
         SORT_ORDER = {
             "Not started": 0,
             "In progress": 1,
@@ -84,7 +84,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
             if len(update["description"]) is self.sa_desc_limit:
                 update["description"] += "..."
 
-            sau = StrategicActionUpdate.modified_objects.since(
+            sau = StrategicActionUpdate.updates.since(
                 self.last_deadline,
                 supply_chain=self.supply_chain,
                 strategic_action=sa,
@@ -101,7 +101,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
 
             sa_updates.append(update)
 
-        return self._arrange_updates(sa_updates)
+        return self._sort_updates(sa_updates)
 
     def _extract_view_data(self, *args, **kwargs):
         sc_slug = kwargs.get("sc_slug", "DEFAULT")
@@ -112,31 +112,31 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
 
         self.sa_updates = self._get_sa_update_list(sa_qset)
 
-        self.completed_sa = StrategicActionUpdate.modified_objects.since(
+        self.completed_updates = StrategicActionUpdate.updates.since(
             self.last_deadline,
             supply_chain=self.supply_chain,
             status=StrategicActionUpdate.Status.COMPLETED,
         ).count()
 
         self.enable_submit = (
-            self.total_sa == self.completed_sa and self.completed_sa and True
+            self.total_sa == self.completed_updates and self.completed_updates != 0
         )
 
-        current_submissions = StrategicActionUpdate.modified_objects.since(
+        submitted_updates = StrategicActionUpdate.updates.since(
             self.last_deadline,
             supply_chain=self.supply_chain,
             status=StrategicActionUpdate.Status.SUBMITTED,
         ).count()
 
-        self.update_complete = self.total_sa == current_submissions
+        self.update_complete = self.total_sa == submitted_updates
 
         if self.update_complete:
-            self.update_message = "Update Complete"
+            self.update_message = "Update complete"
 
             # To keep the template code light, (re)set completed actions with total actions
-            self.completed_sa = self.total_sa
+            self.completed_updates = self.total_sa
         else:
-            self.update_message = "Update Incomplete"
+            self.update_message = "Update incomplete"
 
     def dispatch(self, *args, **kwargs):
         self._extract_view_data(*args, **kwargs)
@@ -145,11 +145,11 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
         return super().dispatch(*args, **kwargs)
 
     def post(self, *args, **kwargs):
-        if self.total_sa == self.completed_sa:
+        if self.total_sa == self.completed_updates:
             self.supply_chain.last_submission_date = date.today()
             self.supply_chain.save()
 
-            updates = StrategicActionUpdate.modified_objects.since(
+            updates = StrategicActionUpdate.updates.since(
                 self.last_deadline,
                 supply_chain=self.supply_chain,
                 status=StrategicActionUpdate.Status.COMPLETED,
@@ -160,7 +160,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
                 update.status = StrategicActionUpdate.Status.SUBMITTED
                 update.save()
 
-            return redirect("tcomplete", sc_slug=self.supply_chain.slug)
+            return redirect("update_complete", sc_slug=self.supply_chain.slug)
 
 
 class SCCompleteView(LoginRequiredMixin, TemplateView):
@@ -170,7 +170,7 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
         total_sa = StrategicAction.objects.filter(
             supply_chain=self.supply_chain
         ).count()
-        submitted = StrategicActionUpdate.modified_objects.since(
+        submitted = StrategicActionUpdate.updates.since(
             self.last_deadline,
             supply_chain=self.supply_chain,
             status=StrategicActionUpdate.Status.SUBMITTED,

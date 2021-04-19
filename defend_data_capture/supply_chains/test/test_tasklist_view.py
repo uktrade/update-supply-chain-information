@@ -117,7 +117,7 @@ class TestTaskListView:
         # Assert
         v = resp.context["view"]
         assert v.total_sa == 4
-        assert v.completed_sa == 0
+        assert v.completed_updates == 0
         assert v.enable_submit == False
         assert v.supply_chain.name == tasklist_stub["sc_name"]
 
@@ -131,7 +131,7 @@ class TestTaskListView:
         status_set = set([x["status"] for x in v.sa_updates])
 
         assert v.total_sa == 4
-        assert v.completed_sa == 0
+        assert v.completed_updates == 0
         assert v.enable_submit == False
         assert status_set == {Status.NOT_STARTED, Status.IN_PROGRESS}
 
@@ -145,7 +145,7 @@ class TestTaskListView:
         status_set = set([x["status"] for x in v.sa_updates])
 
         assert v.total_sa == 4
-        assert v.completed_sa == 1
+        assert v.completed_updates == 1
         assert v.enable_submit == False
         assert status_set == {Status.NOT_STARTED, Status.COMPLETED}
 
@@ -159,7 +159,7 @@ class TestTaskListView:
         status_set = set([x["status"] for x in v.sa_updates])
 
         assert v.total_sa == 4
-        assert v.completed_sa == 4
+        assert v.completed_updates == 4
         assert v.enable_submit is True
         assert status_set == {Status.COMPLETED}
 
@@ -173,7 +173,7 @@ class TestTaskListView:
         status_set = set([x["status"] for x in v.sa_updates])
 
         assert v.total_sa == 4
-        assert v.completed_sa == 4
+        assert v.completed_updates == 4
         assert v.enable_submit is False
         assert status_set == {Status.SUBMITTED}
 

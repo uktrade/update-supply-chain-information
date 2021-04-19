@@ -29,5 +29,5 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("", views.index, name="index"),
     path("<slug:sc_slug>", SCTaskListView.as_view(), name="tlist"),
-    path("<slug:sc_slug>/complete", SCCompleteView.as_view(), name="tcomplete"),
+    path("<slug:sc_slug>/complete", SCCompleteView.as_view(), name="update_complete"),
 ]

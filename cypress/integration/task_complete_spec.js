@@ -56,7 +56,7 @@ describe('Validate complete view for manual access', () => {
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
-    cy.get('div').contains(`Update Incomplete`)
+    cy.get('div').contains(`Update incomplete`)
     cy.get('div').contains(`2 of 2 mandatory actions are complete.`)
   })
   it('displays correct table headers', () => {
@@ -68,7 +68,7 @@ describe('Validate complete view for manual access', () => {
     cy.get('tbody').find('td').should('have.length', 4)
     cy.get('td').contains('completed')
   })
-  it('displays disabled submit bottm', () => {
+  it('displays disabled submit button', () => {
     cy.get('form').find('button').should('be.enabled')
   })
 })

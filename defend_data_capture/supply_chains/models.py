@@ -138,7 +138,7 @@ class StrategicActionUpdate(models.Model):
         SUBMITTED = ("submitted", "Submitted")
 
     objects = models.Manager()
-    modified_objects = SAUQuerySet.as_manager()
+    updates = SAUQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(
         max_length=11,

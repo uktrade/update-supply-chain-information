@@ -27,7 +27,7 @@ describe('The Supply Chain Tasklist Page', () => {
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${supplyChain.name}`)
-    cy.get('div').contains(`Update Complete`)
+    cy.get('div').contains(`Update complete`)
     cy.get('div').contains(`1 of 1 mandatory actions are complete.`)
   })
   it('displays correct table headers', () => {
@@ -39,7 +39,7 @@ describe('The Supply Chain Tasklist Page', () => {
     cy.get('tbody').find('td').should('have.length', 2)
     cy.get('td').contains('submitted')
   })
-  it('displays disabled submit bottm', () => {
+  it('displays disabled submit button', () => {
     cy.get('form').find('button').should('be.disabled')
   })
 })
@@ -53,7 +53,7 @@ describe('Allowed to submit completed Supply Chains', () => {
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
-    cy.get('div').contains(`Update Incomplete`)
+    cy.get('div').contains(`Update incomplete`)
     cy.get('div').contains(`2 of 2 mandatory actions are complete.`)
   })
   it('displays 2 strategic action in the table', () => {
@@ -61,18 +61,18 @@ describe('Allowed to submit completed Supply Chains', () => {
     cy.get('tbody').find('td').should('have.length', 4)
     cy.get('td').contains('completed')
   })
-  it('displays disabled submit bottm', () => {
+  it('displays enabled submit button', () => {
     cy.get('form').find('button').should('be.enabled')
   })
 })
 
 const largeSC = supplyChains[0].fields
 
-describe('Paginate Supply Chains with more Strategic actions', () => {
+describe('Paginate Strategic actions', () => {
   it('successfully loads', () => {
     cy.visit(Cypress.config('baseUrl') + `/${largeSC.slug}`)
   })
-  it('displays 5 supply chains in the table', () => {
+  it('displays 5 strategic actions in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 5)
   })
   it('displays correct items in pagination list', () => {
@@ -81,16 +81,16 @@ describe('Paginate Supply Chains with more Strategic actions', () => {
     cy.get('.moj-pagination__item').contains('2')
     cy.get('.moj-pagination__item').contains('Next')
   })
-  it('displays second page of supply chains after clicking Next', () => {
+  it('displays second page of strategic actions after clicking Next', () => {
     cy.contains('Next').click()
     cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}?page=2`)
     cy.get('tbody').find('tr').should('have.length', 2)
   })
-  it('displays first page of supply chains after clicking Previous', () => {
+  it('displays first page of strategic actions after clicking Previous', () => {
     cy.contains('Previous').click()
     cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}?page=1`)
   })
-  it('displays disabled submit bottm', () => {
+  it('displays disabled submit button', () => {
     cy.get('form').find('button').should('be.disabled')
   })
 })
