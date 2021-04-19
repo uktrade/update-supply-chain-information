@@ -12,7 +12,7 @@ describe('The Supply Chain Tasklist Page', () => {
     cy.visit(Cypress.config('baseUrl') + `/${supplyChain.slug}`)
     cy.injectAxe()
   })
-  it('has no accessibility issues', () => {
+  it.skip('has no accessibility issues', () => {
     cy.runA11y()
   })
   it("displays user's name and department in header", () => {
@@ -63,6 +63,12 @@ describe('Allowed to submit completed Supply Chains', () => {
   })
   it('displays enabled submit button', () => {
     cy.get('form').find('button').should('be.enabled')
+  })
+  it.skip('can submit updates for supply chain', () => {
+    cy.get('form').find('button').click()
+    cy.url().should('eq', Cypress.config('baseUrl') + `/${completedSC.slug}/complete`)
+    cy.get('li').contains('Home')
+    cy.get('li').contains('Update complete')
   })
 })
 

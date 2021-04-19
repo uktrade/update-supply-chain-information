@@ -1,18 +1,20 @@
 {% extends "base.html" %}
 
+{% block breadcrumbs %}
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href={% url 'index' %}>Home</a>
+      </li>
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="#">Update {{ view.supply_chain.name }}</a>
+      </li>
+    </ol>
+  </div>
+{% endblock %}
+
 {% block body %}
 <div class="govuk-grid-column-three-quarters">
-    <div class="govuk-breadcrumbs">
-        <ol class="govuk-breadcrumbs__list">
-          <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href={% url 'index' %}>Home</a>
-          </li>
-          <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="#">Update {{ view.supply_chain.name }}</a>
-          </li>
-        </ol>
-      </div>
-      <br>
 
     <h1 class="govuk-heading-xl"> Update {{ view.supply_chain.name }} </h1>
 
@@ -118,7 +120,7 @@
     </ul>
 
 
-    <form action="#" method="post">
+    <form action={% url 'tlist' sc_slug=view.supply_chain.slug %} method="post">
         {% csrf_token %}
         <button class="govuk-button" data-module="govuk-button" type="submit" {% if not view.enable_submit %}disabled{%endif%}>
             Submit update

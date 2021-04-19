@@ -1,20 +1,20 @@
 {% extends "base.html" %}
 
+{% block breadcrumbs %}
+<div class="govuk-breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href={% url 'index' %}>Home</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="#">Update complete</a>
+        </li>
+    </ol>
+</div>
+{% endblock %}
+
 {% block body %}
 <div class="govuk-grid-column-three-quarters">
-    <div class="govuk-breadcrumbs">
-        <ol class="govuk-breadcrumbs__list">
-            <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href={% url 'index' %}>Home</a>
-            </li>
-            <li class="govuk-breadcrumbs__list-item">
-                <a class="govuk-breadcrumbs__link" href="#">Update complete</a>
-            </li>
-        </ol>
-    </div>
-    <br>
-
-
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">
             Update complete

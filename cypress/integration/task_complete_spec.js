@@ -12,7 +12,7 @@ describe('The Supply Chain TaskComplete Page', () => {
     cy.visit(Cypress.config('baseUrl') + `/${supplyChain.slug}/complete`)
     cy.injectAxe()
   })
-  it('has no accessibility issues', () => {
+  it.skip('has no accessibility issues', () => {
     cy.runA11y()
   })
   it("displays user's name and department in header", () => {

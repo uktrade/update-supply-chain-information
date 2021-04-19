@@ -63,6 +63,8 @@
         </div>
     </header>
     <div class="govuk-width-container">
+        {% block breadcrumbs %}
+        {% endblock %}
         <main id="main-content" class="govuk-main-wrapper">
             <div class="govuk-grid-row">
                 {% block body %}
