@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block breadcrumbs %}
-<div class="govuk-breadcrumbs">
+<nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
     <ol class="govuk-breadcrumbs__list">
         <li class="govuk-breadcrumbs__list-item">
             <a class="govuk-breadcrumbs__link" href={% url 'index' %}>Home</a>
@@ -10,18 +10,16 @@
             <a class="govuk-breadcrumbs__link" href="#">Update complete</a>
         </li>
     </ol>
-</div>
+</nav>
 {% endblock %}
 
 {% block body %}
-<div class="govuk-grid-column-three-quarters">
     <div class="govuk-panel govuk-panel--confirmation">
         <h1 class="govuk-panel__title">
             Update complete
         </h1>
         <div class="govuk-panel__body">
-            Thank you for submitting your monthly<br>
-            update for the <strong>{{ supply_chain_name }}</strong> supply chain.
+            Thank you for submitting your monthly update for the <strong>{{ view.supply_chain.name }}</strong> supply chain.
         </div>
     </div>
 
@@ -30,7 +28,7 @@
 
     <p class="govuk-body">
         You have given updates for <strong>
-            {{ num_updated_supply_chains }} of {{ sum_of_supply_chains }} supply chains.
+            {{ view.num_updated_supply_chains }} of {{ view.sum_of_supply_chains }} supply chains.
         </strong>
     </p>
 
@@ -50,6 +48,5 @@
         </span>
 
     </p>
-</div>
 
 {% endblock %}

@@ -12,7 +12,7 @@ describe('The Supply Chain TaskComplete Page', () => {
     cy.visit(Cypress.config('baseUrl') + `/${supplyChain.slug}/complete`)
     cy.injectAxe()
   })
-  it.skip('has no accessibility issues', () => {
+  it('has no accessibility issues', () => {
     cy.runA11y()
   })
   it("displays user's name and department in header", () => {
@@ -56,7 +56,7 @@ describe('Validate complete view for manual access', () => {
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
-    cy.get('div').contains(`Update incomplete`)
+    cy.get('div').contains(`Update complete`)
     cy.get('div').contains(`2 of 2 mandatory actions are complete.`)
   })
   it('displays correct table headers', () => {

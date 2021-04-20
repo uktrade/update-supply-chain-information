@@ -2,7 +2,6 @@
 
 {% block body %}
 
-<div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-l"> Update supply chain information for {{ gov_department_name }}</h1>
 
     <p class="govuk-body">
@@ -82,6 +81,5 @@
             <p class="moj-pagination__results">Showing <b>{{ supply_chains.start_index }}</b> to <b>{{ supply_chains.end_index }}</b> of <b>{{ supply_chains.paginator.count }}</b> supply chains</p>
         </nav>
     {% endif %}
-</div>
 
 {% endblock %}

@@ -67,8 +67,10 @@
         {% endblock %}
         <main id="main-content" class="govuk-main-wrapper">
             <div class="govuk-grid-row">
-                {% block body %}
-                {% endblock %}
+                <div class="govuk-grid-column-two-thirds">
+                    {% block body %}
+                    {% endblock %}
+                </div>
             </div>
         </main>
     </div>

@@ -12,7 +12,7 @@ describe('The Supply Chain Tasklist Page', () => {
     cy.visit(Cypress.config('baseUrl') + `/${supplyChain.slug}`)
     cy.injectAxe()
   })
-  it.skip('has no accessibility issues', () => {
+  it('has no accessibility issues', () => {
     cy.runA11y()
   })
   it("displays user's name and department in header", () => {
@@ -39,9 +39,9 @@ describe('The Supply Chain Tasklist Page', () => {
     cy.get('tbody').find('td').should('have.length', 2)
     cy.get('td').contains('submitted')
   })
-  it('displays disabled submit button', () => {
-    cy.get('form').find('button').should('be.disabled')
-  })
+  // it('displays enabled submit button', () => {
+  //   cy.get('form').find('button').should('be.enabled')
+  // })
 })
 
 
@@ -53,7 +53,7 @@ describe('Allowed to submit completed Supply Chains', () => {
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
-    cy.get('div').contains(`Update incomplete`)
+    cy.get('div').contains(`Update complete`)
     cy.get('div').contains(`2 of 2 mandatory actions are complete.`)
   })
   it('displays 2 strategic action in the table', () => {
@@ -96,7 +96,7 @@ describe('Paginate Strategic actions', () => {
     cy.contains('Previous').click()
     cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}?page=1`)
   })
-  it('displays disabled submit button', () => {
-    cy.get('form').find('button').should('be.disabled')
+  it('displays enabled submit button', () => {
+    cy.get('form').find('button').should('be.enabled')
   })
 })

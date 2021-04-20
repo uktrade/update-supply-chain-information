@@ -8,8 +8,7 @@ from django.template import loader
 from django.db.models import Count, QuerySet
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import TemplateView
-from django.template.response import TemplateResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
 from accounts.models import User, GovDepartment
@@ -115,28 +114,26 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
         self.completed_updates = StrategicActionUpdate.updates.since(
             self.last_deadline,
             supply_chain=self.supply_chain,
-            status=StrategicActionUpdate.Status.COMPLETED,
+            status__in=[
+                StrategicActionUpdate.Status.COMPLETED,
+                StrategicActionUpdate.Status.SUBMITTED,
+            ],
         ).count()
 
-        self.enable_submit = (
-            self.total_sa == self.completed_updates and self.completed_updates != 0
-        )
-
-        submitted_updates = StrategicActionUpdate.updates.since(
+        self.submitted_only_updates = StrategicActionUpdate.updates.since(
             self.last_deadline,
             supply_chain=self.supply_chain,
             status=StrategicActionUpdate.Status.SUBMITTED,
         ).count()
 
-        self.update_complete = self.total_sa == submitted_updates
+        self.total_sa == self.completed_updates and self.completed_updates != 0
 
-        if self.update_complete:
-            self.update_message = "Update complete"
-
-            # To keep the template code light, (re)set completed actions with total actions
-            self.completed_updates = self.total_sa
-        else:
-            self.update_message = "Update incomplete"
+        self.update_complete = (
+            self.total_sa == self.completed_updates and self.total_sa != 0
+        )
+        self.update_submitted = (
+            self.total_sa == self.submitted_only_updates and self.total_sa != 0
+        )
 
     def dispatch(self, *args, **kwargs):
         self._extract_view_data(*args, **kwargs)
@@ -145,7 +142,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
         return super().dispatch(*args, **kwargs)
 
     def post(self, *args, **kwargs):
-        if self.total_sa == self.completed_updates:
+        if self.total_sa == self.completed_updates and self.total_sa:
             self.supply_chain.last_submission_date = date.today()
             self.supply_chain.save()
 
@@ -161,6 +158,10 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
                 update.save()
 
             return redirect("update_complete", sc_slug=self.supply_chain.slug)
+        else:
+            self.submit_error = True
+            kwargs.setdefault("view", self)
+            return render(self.request, self.template_name, context=kwargs)
 
 
 class SCCompleteView(LoginRequiredMixin, TemplateView):
@@ -178,7 +179,7 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
 
         return total_sa == submitted
 
-    def get(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         sc_slug = kwargs.get("sc_slug", "DEFAULT")
         self.last_deadline = get_last_working_day_of_previous_month()
         self.supply_chain = SupplyChain.objects.filter(slug=sc_slug)[0]
@@ -187,7 +188,7 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
         if not self._validate():
             return redirect("tlist", sc_slug=self.supply_chain.slug)
 
-        supply_chains = self.request.user.gov_department.supply_chains.order_by("name")
+        supply_chains = request.user.gov_department.supply_chains.order_by("name")
 
         self.sum_of_supply_chains = supply_chains.count()
 
@@ -195,12 +196,5 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
             self.last_deadline
         ).count()
 
-        return TemplateResponse(
-            self.request,
-            self.template_name,
-            {
-                "supply_chain_name": self.supply_chain.name,
-                "sum_of_supply_chains": self.sum_of_supply_chains,
-                "num_updated_supply_chains": self.num_updated_supply_chains,
-            },
-        )
+        kwargs.setdefault("view", self)
+        return render(request, self.template_name, context=kwargs)
