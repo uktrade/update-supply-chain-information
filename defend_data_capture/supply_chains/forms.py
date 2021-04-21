@@ -103,14 +103,10 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
         strategic_action_update: StrategicActionUpdate = kwargs.get("instance", None)
         if strategic_action_update is not None:
             if strategic_action_update.strategic_action.target_completion_date is None:
-                implementation_rag_rating_field = self.fields[
-                    "implementation_rag_rating"
-                ]
-                details_form = implementation_rag_rating_field.widget.details["RED"][
-                    "form"
-                ]
-                unrequired_field = details_form.fields["will_completion_date_change"]
-                unrequired_field.required = False
+                will_completion_date_change_field = self.detail_form_for_key(
+                    "RED"
+                ).fields["will_completion_date_change"]
+                will_completion_date_change_field.required = False
 
     class Meta:
         model = StrategicActionUpdate
