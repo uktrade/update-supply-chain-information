@@ -211,3 +211,19 @@ class TestDetailForms:
             == expected_outer_form_selected_option_value
         )
         assert instance.reason_for_delays == expected_inner_form_field_value
+
+    def test_detail_forms_can_be_accessed_by_associated_outer_form_value(self):
+        outer_form = OuterTestDetailForm()
+        inner_red_form = outer_form.detail_form_for_key("RED")
+        inner_amber_form = outer_form.detail_form_for_key("AMBER")
+        assert isinstance(inner_red_form, InnerTestDetailForm)
+        assert inner_red_form.prefix == "RED"
+        assert isinstance(inner_amber_form, InnerTestDetailForm)
+        assert inner_amber_form.prefix == "AMBER"
+
+    def test_detail_forms_have_associated_option_value_as_form_prefix(self):
+        outer_form = OuterTestDetailForm()
+        inner_red_form = outer_form.detail_form_for_key("RED")
+        inner_amber_form = outer_form.detail_form_for_key("AMBER")
+        assert inner_red_form.prefix == "RED"
+        assert inner_amber_form.prefix == "AMBER"

@@ -14,13 +14,18 @@ from .models import StrategicActionUpdate, RAGRatingHints, StrategicAction
 class DetailFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self._detail_forms_dict = {}
         for field_name, key, config in self.detail_forms:
             try:
                 form_class = config["form_class"]
                 kwargs["prefix"] = key
                 config["form"] = form_class(*args, **kwargs)
+                self._detail_forms_dict[key] = config["form"]
             except KeyError:
                 pass
+
+    def detail_form_for_key(self, key):
+        return self._detail_forms_dict[key]
 
     def is_valid(self):
         # this should only be called for the option that's selected
