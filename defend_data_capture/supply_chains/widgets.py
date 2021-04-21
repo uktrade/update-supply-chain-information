@@ -1,4 +1,4 @@
-from django.forms.widgets import RadioSelect, Textarea
+from django.forms.widgets import RadioSelect, Textarea, MultiWidget, TextInput
 
 
 class GDSRadioSelect(RadioSelect):
@@ -34,9 +34,10 @@ class HintedSelectMixin:
 
 
 class DetailSelectMixin:
-    def __init__(self, details=None, **kwargs):
+    def __init__(self, details=None, select_label=None, **kwargs):
         super().__init__(**kwargs)
         self.details = {} if details is None else details
+        self.select_label = select_label
 
     def create_option(
         self, name, value, label, selected, index, subindex=None, attrs=None
@@ -62,7 +63,8 @@ class DetailSelectMixin:
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
         context["has_details"] = bool(self.details)
-        # context['subwidgets'] = self.subwidgets(name, value, attrs)
+        if self.select_label:
+            context["select_label"] = self.select_label
         return context
 
 
