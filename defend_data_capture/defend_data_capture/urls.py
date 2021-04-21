@@ -32,6 +32,41 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("", views.index, name="index"),
+    path(
+        "strategic-actions/",
+        views.StrategicActionListView.as_view(),
+        name="strategic-actions",
+    ),
+    path(
+        "strategic-actions/<uuid:strategic_action_id>/update/start/",
+        views.MonthlyUpdateInfoCreateView.as_view(),
+        name="monthly-update-create",
+    ),
+    path(
+        "strategic-actions/<uuid:strategic_action_id>/update/<uuid:id>/info/",
+        views.MonthlyUpdateInfoEditView.as_view(),
+        name="monthly-update-info-edit",
+    ),
+    path(
+        "strategic-actions/<uuid:strategic_action_id>/update/<uuid:id>/timing/",
+        views.MonthlyUpdateTimingEditView.as_view(),
+        name="monthly-update-timing-edit",
+    ),
+    path(
+        "strategic-actions/<uuid:strategic_action_id>/update/<uuid:id>/delivery-status/",
+        views.MonthlyUpdateStatusEditView.as_view(),
+        name="monthly-update-status-edit",
+    ),
+    path(
+        "strategic-actions/<uuid:strategic_action_id>/update/<uuid:id>/revised-timing/",
+        views.MonthlyUpdateRevisedTimingEditView.as_view(),
+        name="monthly-update-revised-timing-edit",
+    ),
+    path(
+        "strategic-actions/<uuid:strategic_action_id>/update/<uuid:id>/summary/",
+        views.MonthlyUpdateSummaryView.as_view(),
+        name="monthly-update-summary",
+    ),
     path("<slug:sc_slug>", SCTaskListView.as_view(), name="tlist"),
     path("<slug:sc_slug>/complete", SCCompleteView.as_view(), name="update_complete"),
     path("strategic-actions/", views.StrategicActionListView.as_view(), name="strategic-actions"),
