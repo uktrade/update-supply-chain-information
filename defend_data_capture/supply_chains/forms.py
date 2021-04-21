@@ -92,6 +92,20 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
 
 
 class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        strategic_action_update: StrategicActionUpdate = kwargs.get("instance", None)
+        if strategic_action_update is not None:
+            if strategic_action_update.strategic_action.target_completion_date is None:
+                implementation_rag_rating_field = self.fields[
+                    "implementation_rag_rating"
+                ]
+                details_form = implementation_rag_rating_field.widget.details["RED"][
+                    "form"
+                ]
+                unrequired_field = details_form.fields["will_completion_date_change"]
+                unrequired_field.required = False
+
     class Meta:
         model = StrategicActionUpdate
         fields = ["implementation_rag_rating"]
@@ -118,10 +132,24 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
 
 
 class CompletionDateForm(forms.ModelForm):
+    target_completion_date = forms.DateField(
+        widget=DateMultiTextInputWidget(
+            attrs={},
+            hint="For example 14 11 2021",
+            labels={
+                "day": "Day",
+                "month": "Month",
+                "year": "Year",
+            },
+        ),
+        label="Date for intended completion",
+        required=False,
+        input_formats=["%Y-%m-%d"],
+    )
+
     class Meta:
         model = StrategicAction
         fields = ["target_completion_date"]
-        labels = {"target_completion_date": "Date for intended completion"}
 
 
 class ApproximateTimings(TextChoices):
@@ -136,6 +164,7 @@ class ApproximateTimingForm(forms.ModelForm):
     surrogate_is_ongoing = forms.ChoiceField(
         choices=ApproximateTimings.choices,
         label="What is the approximate time for completion?",
+        required=False,
     )
 
     def __init__(self, *args, **kwargs):
@@ -170,10 +199,11 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
                     "form_class": ApproximateTimingForm,
                 },
             },
+            select_label="Is there an expected completion date?",
         ),
-        label="Is there an expected completion date?",
     )
 
     class Meta:
         model = StrategicAction
         fields = []
+        labels = {"is_completion_date_known": "Is there an expected completion date?"}
