@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.forms.widgets import RadioSelect, Textarea, MultiWidget, TextInput
 
 
@@ -81,3 +83,58 @@ class HintedDetailRadioSelect(DetailSelectMixin, HintedSelectMixin, RadioSelect)
 class DetailRadioSelect(DetailSelectMixin, RadioSelect):
     template_name = "supply_chains/forms/widgets/gds-radio-group.html"
     option_template_name = "supply_chains/forms/widgets/gds-radio-option.html"
+
+
+class DateMultiTextInputWidget(MultiWidget):
+    template_name = "supply_chains/forms/widgets/gds-date-multiwidget.html"
+
+    def __init__(self, attrs=None, hint=None, labels=None):
+        widgets = {
+            "day": TextInput(
+                attrs={
+                    "class": "govuk-input govuk-date-input__input govuk-input--width-2"
+                }
+            ),
+            "month": TextInput(
+                attrs={
+                    "class": "govuk-input govuk-date-input__input govuk-input--width-2"
+                }
+            ),
+            "year": TextInput(
+                attrs={
+                    "class": "govuk-input govuk-date-input__input govuk-input--width-4"
+                }
+            ),
+        }
+        super().__init__(widgets, attrs)
+        self.labels = labels
+        self.govuk_hint = hint
+
+    def get_context(self, name, value, attrs):
+        context = super().get_context(name, value, attrs)
+        if self.labels is not None:
+            labelled_widgets = []
+            for index, (field_name, label) in enumerate(self.labels.items()):
+                labelled_widgets.append(
+                    {
+                        "field_name": field_name,
+                        "label": label,
+                        "widget": context["widget"]["subwidgets"][index],
+                    }
+                )
+            context["labelled_widgets"] = labelled_widgets
+        if self.govuk_hint is not None:
+            context["hint"] = self.govuk_hint
+        return context
+
+    def decompress(self, value):
+        if isinstance(value, date):
+            return [value.day, value.month, value.year]
+        if isinstance(value, str):
+            year, month, day = value.split("-")
+            return [day, month, year]
+        return [None, None, None]
+
+    def value_from_datadict(self, data, files, name):
+        day, month, year = super().value_from_datadict(data, files, name)
+        return f"{year}-{month}-{day}"
