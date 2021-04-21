@@ -49,6 +49,10 @@ class OuterTestDetailForm(our_forms.DetailFormMixin, forms.ModelForm):
                         "template": "supply_chains/includes/reason-for-delays.html",
                         "form_class": InnerTestDetailForm,
                     },
+                    "AMBER": {
+                        "template": "supply_chains/includes/reason-for-delays.html",
+                        "form_class": InnerTestDetailForm,
+                    },
                 },
             )
         }
@@ -74,6 +78,10 @@ class OuterTestDetailInvalidForm(our_forms.DetailFormMixin, forms.ModelForm):
                         "template": "supply_chains/includes/reason-for-delays.html",
                         "form_class": InnerTestDetailInvalidForm,
                     },
+                    "AMBER": {
+                        "template": "supply_chains/includes/reason-for-delays.html",
+                        "form_class": InnerTestDetailForm,
+                    },
                 },
             )
         }
@@ -85,9 +93,10 @@ class TestDetailForms:
         outer_form = OuterTestDetailForm()
         assert hasattr(outer_form, "detail_forms")
         detail_forms = list(outer_form.detail_forms)
-        assert len(detail_forms) == 1
-        for key, config in outer_form.detail_forms:
-            assert key == "RED"
+        expected_keys = ("RED", "AMBER")
+        assert len(detail_forms) == 2
+        for index, (field_name, key, config) in enumerate(outer_form.detail_forms):
+            assert key == expected_keys[index]
             assert isinstance(config, dict)
             assert "form_class" in config.keys()
             assert isinstance(config["form_class"], InnerTestDetailForm.__class__)
@@ -97,66 +106,108 @@ class TestDetailForms:
     def test_detail_form_initialises_inner_form(self):
         outer_form = OuterTestDetailForm()
         assert hasattr(outer_form, "detail_forms")
-        for _, config in outer_form.detail_forms:
+        for field_name, key, config in outer_form.detail_forms:
             assert "form" in config
             assert isinstance(config["form"], InnerTestDetailForm)
 
     def test_detail_form_initialises_data_for_inner_form(self):
         expected_outer_form_field_value = "RED"
         expected_inner_form_field_value = "inner form field value"
+        not_expected_inner_form_field_value = "this should not be validated"
+        inner_form_field_values = {
+            "RED": expected_inner_form_field_value,
+            "AMBER": not_expected_inner_form_field_value,
+        }
         form_data = {
             "implementation_rag_rating": expected_outer_form_field_value,
-            "RED-reason_for_delays": expected_inner_form_field_value,
+            "RED-reason_for_delays": inner_form_field_values["RED"],
+            "AMBER-reason_for_delays": inner_form_field_values["AMBER"],
         }
         outer_form = OuterTestDetailForm(data=form_data)
-        for _, config in outer_form.detail_forms:
+        for field_name, key, config in outer_form.detail_forms:
             inner_form = config["form"]
             assert inner_form.is_bound
             assert "reason_for_delays" in inner_form.fields.keys()
-            actual_inner_form_field_value = inner_form.data["RED-reason_for_delays"]
+            expected_inner_form_field_value = inner_form_field_values[key]
+            actual_inner_form_field_value = inner_form.data[f"{key}-reason_for_delays"]
             assert actual_inner_form_field_value == expected_inner_form_field_value
 
-    def test_detail_form_validates_data_for_valid_inner_form(self):
-        expected_outer_form_field_value = "RED"
+    def test_detail_form_validates_data_only_for_selected_valid_inner_form(self):
+        # the form should only validate the detail form for the submitted option
+        expected_outer_form_selected_option_value = "RED"
         expected_inner_form_field_value = "inner form field value"
+        not_expected_inner_form_field_value = "this should not be validated"
+        inner_form_field_values = {
+            "RED": expected_inner_form_field_value,
+            "AMBER": not_expected_inner_form_field_value,
+        }
         form_data = {
-            "implementation_rag_rating": expected_outer_form_field_value,
+            "implementation_rag_rating": expected_outer_form_selected_option_value,
             "RED-reason_for_delays": expected_inner_form_field_value,
+            "AMBER-reason_for_delays": not_expected_inner_form_field_value,
         }
         outer_form = OuterTestDetailForm(data=form_data)
         assert outer_form.is_valid()
-        for _, config in outer_form.detail_forms:
+        for field_name, key, config in outer_form.detail_forms:
             inner_form = config["form"]
-            assert inner_form._errors is not None
+            if key == form_data["implementation_rag_rating"]:
+                # this is the value that should have been validated
+                assert inner_form._errors is not None
+            else:
+                # this is the form that should NOT have been validated
+                assert inner_form._errors is None
 
-    def test_detail_form_validates_data_for_invalid_inner_form(self):
-        expected_outer_form_field_value = "RED"
+    def test_detail_form_validates_data_only_for_selected_invalid_inner_form(self):
+        # the form should only validate the detail form for the submitted option
+        expected_outer_form_selected_option_value = "RED"
         expected_inner_form_field_value = "inner form field value"
+        not_expected_inner_form_field_value = "this should not be validated"
+        inner_form_field_values = {
+            "RED": expected_inner_form_field_value,
+            "AMBER": not_expected_inner_form_field_value,
+        }
         form_data = {
-            "implementation_rag_rating": expected_outer_form_field_value,
+            "implementation_rag_rating": expected_outer_form_selected_option_value,
             "RED-reason_for_delays": expected_inner_form_field_value,
+            "AMBER-reason_for_delays": not_expected_inner_form_field_value,
         }
         outer_form = OuterTestDetailInvalidForm(data=form_data)
         assert not outer_form.is_valid()
-        for _, config in outer_form.detail_forms:
+        for field_name, key, config in outer_form.detail_forms:
             inner_form = config["form"]
-            assert inner_form._errors is not None
-            assert "reason_for_delays" in inner_form.errors.keys()
+            if key == form_data["implementation_rag_rating"]:
+                # this is the value that should have been validated
+                assert inner_form._errors is not None
+                assert "reason_for_delays" in inner_form.errors.keys()
+            else:
+                # this is the form that should NOT have been validated
+                assert inner_form._errors is None
 
     def test_detail_form_saves_data_for_inner_form(self):
-        expected_outer_form_field_value = "RED"
+        # the form should only validate the detail form for the submitted option
+        expected_outer_form_selected_option_value = "RED"
         expected_inner_form_field_value = "inner form field value"
+        not_expected_inner_form_field_value = "this should not be saved"
+        inner_form_field_values = {
+            "RED": expected_inner_form_field_value,
+            "AMBER": not_expected_inner_form_field_value,
+        }
         strategic_action_update = StrategicActionUpdateFactory()
         form_data = {
-            "implementation_rag_rating": expected_outer_form_field_value,
+            "implementation_rag_rating": expected_outer_form_selected_option_value,
             "RED-reason_for_delays": expected_inner_form_field_value,
+            "AMBER-reason_for_delays": not_expected_inner_form_field_value,
         }
         outer_form = OuterTestDetailForm(
             instance=strategic_action_update, data=form_data
         )
+        outer_form.is_valid()
         outer_form.save()
         instance = outer_form.instance
         instance.refresh_from_db()
         assert instance.pk is not None
-        assert instance.implementation_rag_rating == expected_outer_form_field_value
+        assert (
+            instance.implementation_rag_rating
+            == expected_outer_form_selected_option_value
+        )
         assert instance.reason_for_delays == expected_inner_form_field_value
