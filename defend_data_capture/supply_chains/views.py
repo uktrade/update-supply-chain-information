@@ -4,6 +4,7 @@ from typing import List, Dict
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.template import loader
 from django.db.models import Count, QuerySet
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -11,10 +12,24 @@ from django.views.generic import TemplateView
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views import View
-from django.views.generic import ListView, UpdateView, CreateView, FormView
+from django.views.generic import (
+    ListView,
+    UpdateView,
+    CreateView,
+    FormView,
+    TemplateView,
+)
 
 from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
 from accounts.models import User, GovDepartment
+from supply_chains.models import (
+    SupplyChain,
+    StrategicAction,
+    StrategicActionUpdate,
+    RAGRating,
+)
+from supply_chains import forms
+
 from supply_chains.utils import (
     get_last_day_of_this_month,
     get_last_working_day_of_a_month,
@@ -56,6 +71,7 @@ def index(request):
         "update_complete": num_updated_supply_chains == all_supply_chains.count(),
     }
     return HttpResponse(template.render(context, request))
+
 
 
 class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
@@ -203,66 +219,186 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
 # @login_required
 # class MonthlyUpdate
 class StrategicActionListView(ListView):
-    model = models.StrategicAction
-    template_name = 'supply_chains/temp-sa-list.html'
-    context_object_name = 'strategic_actions'
+    model = StrategicAction
+    template_name = "supply_chains/temp-sa-list.html"
+    context_object_name = "strategic_actions"
 
 
 class MonthlyUpdateMixin:
-    model = models.StrategicActionUpdate
-    context_object_name = 'strategic_action_update'
-    pk_url_kwarg = 'id'
+    model = StrategicActionUpdate
+    context_object_name = "strategic_action_update"
+    pk_url_kwarg = "id"
 
     def get_strategic_action(self, strategic_action_id):
-        return models.StrategicAction.objects.get(id=strategic_action_id)
+        return StrategicAction.objects.get(id=strategic_action_id)
 
     def get_success_url(self):
-        # TODO: decide which the next page is according to current state of affairs
-        url_kwargs = {
-            'id': self.object.id,
-            'strategic_action_id': self.object.strategic_action.id
-        }
-        return reverse('monthly-update-status-edit', kwargs=url_kwargs)
+        # This method needs to be implemented by the pages
+        # so as to express their rules for what the "next" page is
+        raise NotImplementedError(
+            f"get_success_url() not implemented by {self.__class__}"
+        )
 
 
 class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
-    template_name = 'supply_chains/monthly-update-info-form.html'
+    template_name = "supply_chains/monthly-update-info-form.html"
     form_class = forms.MonthlyUpdateInfoForm
+
+    def get(self, request, *args, **kwargs):
+        last_deadline = get_last_working_day_of_previous_month()
+        strategic_action: StrategicAction = self.get_strategic_action(
+            kwargs["strategic_action_id"]
+        )
+        current_month_updates = strategic_action.monthly_updates.since(last_deadline)
+        if current_month_updates.exists():
+            current_month_update: StrategicActionUpdate = (
+                current_month_updates.order_by("date_created").last()
+            )
+        else:
+            current_month_update: StrategicActionUpdate = (
+                strategic_action.monthly_updates.create(
+                    status=StrategicActionUpdate.Status.IN_PROGRESS,
+                    supply_chain=strategic_action.supply_chain,
+                )
+            )
+        update_url = reverse(
+            "monthly-update-info-edit",
+            kwargs={
+                "strategic_action_id": current_month_update.strategic_action.pk,
+                "id": current_month_update.id,
+            },
+        )
+        return redirect(update_url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['strategic_action'] = self.get_strategic_action(self.kwargs['strategic_action_id'])
+        context["strategic_action"] = self.get_strategic_action(
+            self.kwargs["strategic_action_id"]
+        )
         return context
 
     def form_valid(self, form):
-        strategic_action = self.get_strategic_action(self.kwargs['strategic_action_id'])
+        strategic_action = self.get_strategic_action(self.kwargs["strategic_action_id"])
         form.instance.strategic_action = strategic_action
         form.instance.supply_chain = strategic_action.supply_chain
         return super().form_valid(form)
 
+    # def get_success_url(self):
+    #     return super().get_success_url()
+    #
+
 
 class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
-    template_name = 'supply_chains/monthly-update-info-form.html'
+    template_name = "supply_chains/monthly-update-info-form.html"
     form_class = forms.MonthlyUpdateInfoForm
+
+    def get_success_url(self):
+        if self.object.strategic_action.target_completion_date is None:
+            next_page_url = "monthly-update-timing-edit"
+        else:
+            next_page_url = "monthly-update-status-edit"
+        url_kwargs = {
+            "id": self.object.id,
+            "strategic_action_id": self.object.strategic_action.id,
+        }
+        return reverse(next_page_url, kwargs=url_kwargs)
 
 
 class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
-    template_name = 'supply_chains/monthly-update-status-form.html'
+    template_name = "supply_chains/monthly-update-status-form.html"
     form_class = forms.MonthlyUpdateStatusForm
+
+    completion_date_change_form = None
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if "RED-will_completion_date_change" in self.request.POST:
+            self.completion_date_change_form = form.fields[
+                "implementation_rag_rating"
+            ].widget.details["RED"]["form"]
+        return form
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        return form_kwargs
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        next_page_url = "monthly-update-summary"
+        if self.completion_date_change_form:
+            if self.completion_date_change_form.is_valid():
+                if (
+                    self.completion_date_change_form.cleaned_data[
+                        "will_completion_date_change"
+                    ]
+                    == "True"
+                ):
+                    next_page_url = "monthly-update-revised-timing-edit"
+        url_kwargs = {
+            "id": self.object.id,
+            "strategic_action_id": self.object.strategic_action.id,
+        }
+        return reverse(next_page_url, kwargs=url_kwargs)
 
 
 class MonthlyUpdateTimingEditView(MonthlyUpdateMixin, UpdateView):
-    template_name = 'supply_chains/monthly-update-timing-form.html'
+    template_name = "supply_chains/monthly-update-timing-form.html"
     form_class = forms.MonthlyUpdateTimingForm
+
+    def get_object(self, queryset=None):
+        return super().get_object(queryset)
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        instance = kwargs.get('instance', None)
+        instance = kwargs.get("instance", None)
         if instance is not None:
-            kwargs['instance'] = instance.strategic_action
+            kwargs["instance"] = instance.strategic_action
         return kwargs
 
+    def form_valid(self, form):
+        # The superclass form_valid will overwrite our object as it's saving to a StrategicAction
+        # and in a superclass higher up, it calls get_success_url
+        # so save it
+        self.original_object = self.object
+        response = super().form_valid(form)
+        # then restore it
+        self.object = self.original_object
+        return response
 
+    def form_invalid(self, form):
+        return super().form_invalid(form)
+
+    def get_success_url(self):
+        next_page_url = "monthly-update-status-edit"
+        # see form_valid() for an explanation of original_object
+        url_kwargs = {
+            "id": self.original_object.id,
+            "strategic_action_id": self.original_object.strategic_action.id,
+        }
+        return reverse(next_page_url, kwargs=url_kwargs)
+
+
+class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
+    # template_name = 'supply_chains/monthly-update-revised-timing-form.html'
+    # form_class = forms.MonthlyUpdateRevisedTimingForm
+
+    def get_success_url(self):
+        next_page_url = "monthly-update-summary"
+        # see form_valid() for an explanation of original_object
+        url_kwargs = {
+            "id": self.original_object.id,
+            "strategic_action_id": self.original_object.strategic_action.id,
+        }
+        return reverse(next_page_url, kwargs=url_kwargs)
+
+
+class MonthlyUpdateSummaryView(MonthlyUpdateMixin, TemplateView):
+    template_name = "supply_chains/monthly-update-summary.html"
 
 
 class SASummaryView(
