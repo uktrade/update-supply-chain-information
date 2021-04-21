@@ -2,14 +2,19 @@ from django import forms
 from django.db.models import TextChoices
 from django.forms.utils import ErrorList
 
-from .widgets import DetailSelectMixin, DetailRadioSelect, HintedDetailRadioSelect
+from .widgets import (
+    DetailSelectMixin,
+    DetailRadioSelect,
+    HintedDetailRadioSelect,
+    DateMultiTextInputWidget,
+)
 from .models import StrategicActionUpdate, RAGRatingHints, StrategicAction
 
 
 class DetailFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for key, config in self.detail_forms:
+        for field_name, key, config in self.detail_forms:
             try:
                 form_class = config["form_class"]
                 kwargs["prefix"] = key
@@ -18,24 +23,30 @@ class DetailFormMixin:
                 pass
 
     def is_valid(self):
-        valid = True
-        for _, config in self.detail_forms:
-            valid = valid and config["form"].is_valid()
-        return valid and super().is_valid()
+        # this should only be called for the option that's selected
+        valid = super().is_valid()
+        for field_name, key, config in self.detail_forms:
+            if self.cleaned_data[field_name] == key:
+                valid = config["form"].is_valid() and valid
+        return valid
 
     def save(self, commit=True):
-        for _, config in self.detail_forms:
-            # no need to commit as the outer form will do that below, if commit=True
+        for field_name, key, config in self.detail_forms:
+            # no need to commit if the models are the same
+            # as the outer form will do that below, if commit=True
             # N.B. this assumes inner forms are using the same instance
-            config["form"].save(commit=False)
+            # But sometimes they aren't…
+            inner_commit = self.instance == config["form"].instance
+            if self.cleaned_data[field_name] == key:
+                config["form"].save(commit=inner_commit)
         return super().save(commit=commit)
 
     @property
     def detail_forms(self):
-        for _, field in self.fields.items():
+        for field_name, field in self.fields.items():
             if isinstance(field.widget, DetailSelectMixin):
                 for key, config in field.widget.details.items():
-                    yield (key, config)
+                    yield (field_name, key, config)
 
 
 class YesNoChoices(TextChoices):
