@@ -2,11 +2,11 @@
 
 {% block body %}
     <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
-    {% with strategic_action.last_submitted_update as previous_update %}
+    {% with strategic_action_update.strategic_action.last_submitted_update as previous_update %}
         {% if previous_update.content %}
             <div class="app-dit-panel">
                 <h2 class="govuk-heading-m">Last update</h2>
-                {{ previous_update.content }}
+                <p>{{ previous_update.content }}</p>
             </div>
         {% endif %}
     {% endwith %}

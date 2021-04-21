@@ -3,6 +3,7 @@
     <label class="govuk-label govuk-radios__label" for="{{ widget.attrs.id }}">
         {{ widget.label }}
     </label>
+</div>
     {% if widget.dit_hint %}
         <div id="{{ widget.attrs.id }}-hint" class="govuk-hint govuk-radios__hint">
             {{ widget.dit_hint }}
@@ -13,4 +14,3 @@
             {% include widget.dit_detail.template with form=widget.dit_detail.form %}
         </div>
     {% endif %}
-</div>
