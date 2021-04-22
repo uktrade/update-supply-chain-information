@@ -1,0 +1,56 @@
+{% load sc_extras %}
+
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        The contact for this supply chain
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ supply_chain.contact_name }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden">name</span>
+        </a>
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        The email for supply chain contact
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ supply_chain.contact_email }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> email</span>
+        </a>
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        The current vulnerability status is 'Low'. Is this accurate?
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ supply_chain.vulnerability_status|boolean_status:"low" }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> vul_status</span>
+        </a>
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        The current risk severity level is 'Medium'. Is this accurate?
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ supply_chain.risk_severity_status|boolean_status:"Medium" }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> risk_status</span>
+        </a>
+      </dd>
+    </div>
+  </dl>

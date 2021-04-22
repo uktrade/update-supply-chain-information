@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1 class="govuk-heading-l"> Update supply chain information for {{ gov_department_name }}</h1>
+    <h1 class="govuk-heading-l">Update supply chain information for {{ gov_department_name }}</h1>
 
     <p class="govuk-body">
         This service is designed to record updates to departmental action plans for
@@ -26,7 +26,7 @@
             <span class="govuk-body govuk-!-font-weight-bold">{{ deadline|date:"l jS F, Y" }}</span>.
         </li>
         <li>
-            You have given updates for 
+            You have given updates for
             <span class="govuk-body govuk-!-font-weight-bold">{{ num_updated_supply_chains }} out of {{ supply_chains.paginator.count }} supply chains.</span>
         </li>
     </ul>
@@ -43,7 +43,7 @@
             {% for supplychain in supply_chains %}
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header">
-                        <a href="#" class="govuk-link govuk-link--no-visited-state">{{ supplychain.name }}</a>
+                        <a href={% url 'tlist' sc_slug=supplychain.slug %}  class="govuk-link">{{ supplychain.name }}</a>
                     </th>
                     <td class="govuk-table__cell">{{supplychain.strategic_action_count}}</td>
                     <td class="govuk-table__cell">{{supplychain.last_submission_date|date:"SHORT_DATE_FORMAT"}}</td>
@@ -52,32 +52,7 @@
         </tbody>
     </table>
     {% if supply_chains.has_other_pages %}
-        <nav class="moj-pagination" aria-label="pagination">
-            <p class="govuk-visually-hidden">Pagination navigation</p>
-            <ul class="moj-pagination__list">
-                {% if supply_chains.has_previous %}
-                    <li class="moj-pagination__item  moj-pagination__item--prev">
-                        <a class="moj-pagination__link" href="?page={{ supply_chains.previous_page_number }}">Previous<span class="govuk-visually-hidden"> set of pages</span></a>
-                    </li>
-                {% endif %}
-                {% for i in supply_chains.paginator.page_range %}
-                    {% if supply_chains.number == i %}
-                        <li class="moj-pagination__item moj-pagination__item--active">
-                            <span>{{ i }}</span>
-                        </li>
-                    {% else %}
-                        <li class="moj-pagination__item">
-                            <a class="moj-pagination__link" href="?page={{ i }}">{{ i }}</a>
-                        </li>
-                    {% endif %}
-                {% endfor %}
-                {% if supply_chains.has_next %}
-                    <li class="moj-pagination__item  moj-pagination__item--next">
-                        <a class="moj-pagination__link" href="?page={{ supply_chains.next_page_number }}">Next<span class="govuk-visually-hidden"> set of pages</span></a>
-                    </li>
-                {% endif %}
-            </ul>
-            <p class="moj-pagination__results">Showing <b>{{ supply_chains.start_index }}</b> to <b>{{ supply_chains.end_index }}</b> of <b>{{ supply_chains.paginator.count }}</b> supply chains</p>
-        </nav> 
+        {% include 'includes/pagination.html' with objects=supply_chains objects_name="supply chains" %} 
     {% endif %}
+
 {% endblock %}

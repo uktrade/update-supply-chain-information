@@ -1,6 +1,8 @@
 from django.db import models
 from django.conf import settings
-from django.utils.timezone import now
+from django.core.exceptions import ValidationError
+from django.utils import timezone
+from django.template.defaultfilters import slugify
 import reversion
 
 from accounts.models import GovDepartment
@@ -45,6 +47,16 @@ class SupplyChain(models.Model):
         max_length=6,
     )
     risk_severity_status_disagree_reason = models.TextField(blank=True)
+    slug = models.SlugField(null=True)
+    is_archived = models.BooleanField(default=False)
+    archived_date = models.DateField(null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        if self.is_archived and self.archived_date is None:
+            self.archived_date = timezone.now().date()
+        return super().save(*args, **kwargs)
 
 
 @reversion.register()
@@ -94,7 +106,9 @@ class StrategicAction(models.Model):
     )
     is_ongoing = models.BooleanField(default=False)
     target_completion_date = models.DateField(null=True)
-    is_archived = models.BooleanField()
+    is_archived = models.BooleanField(default=False)
+    archived_date = models.DateField(null=True, blank=True)
+    archived_reason = models.TextField(blank=True)
     specific_related_products = models.TextField(
         help_text="Details of specific products within the supply chain which the action applies to, if applicable.",
         blank=True,
@@ -108,14 +122,37 @@ class StrategicAction(models.Model):
         on_delete=models.PROTECT,
         related_name="strategic_actions",
     )
+    slug = models.SlugField(null=True)
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        if self.is_archived and self.archived_reason == "":
+            raise ValidationError(
+                "An archived_reason must be given when archiving a strategic action."
+            )
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        if self.is_archived and not self.archived_date:
+            self.archived_date = timezone.now().date()
+        self.full_clean()
+        return super().save(*args, **kwargs)
+
+
+class SAUQuerySet(models.QuerySet):
+    def since(self, deadline, *args, **kwargs):
+        return self.filter(date_created__gt=deadline, *args, **kwargs)
 
 
 class StrategicActionUpdate(models.Model):
     class Status(models.TextChoices):
+        NOT_STARTED = ("not_started", "Not started")
         IN_PROGRESS = ("in_progress", "In progress")
         COMPLETED = ("completed", "Completed")
         SUBMITTED = ("submitted", "Submitted")
 
+    objects = SAUQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     status = models.CharField(
         max_length=11,
@@ -126,6 +163,7 @@ class StrategicActionUpdate(models.Model):
  The 'submitted' status refers to when a user can no longer edit an update.""",
     )
     submission_date = models.DateField(null=True)
+    date_created = models.DateField(auto_now_add=True)
     content = models.TextField(blank=True)
     implementation_rag_rating = models.CharField(
         max_length=5,
@@ -149,6 +187,13 @@ class StrategicActionUpdate(models.Model):
         on_delete=models.PROTECT,
         related_name="monthly_updates",
     )
+    slug = models.SlugField(null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self.date_created.strftime("%m-%Y")
+
+        return super().save(*args, **kwargs)
 
 
 class MaturitySelfAssessment(models.Model):
@@ -160,7 +205,7 @@ class MaturitySelfAssessment(models.Model):
         LEVEL_5 = ("level_5", "Level 5")
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date_created = models.DateField(default=now)
+    date_created = models.DateField(auto_now_add=True)
     maturity_rating_reason = models.TextField()
     maturity_rating_level = models.CharField(
         choices=RatingLevel.choices,
@@ -176,7 +221,7 @@ class MaturitySelfAssessment(models.Model):
 class VulnerabilityAssessment(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date_created = models.DateField(default=now)
+    date_created = models.DateField(auto_now_add=True)
     supply_rag_rating = models.CharField(
         max_length=5,
         choices=RAGRating.choices,
@@ -190,7 +235,7 @@ class VulnerabilityAssessment(models.Model):
         choices=RAGRating.choices,
     )
     make_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that 
+        help_text="""This field collects information about the characteristics that
         contribute to the vulnerability of the make element of the chain.""",
     )
     receive_rag_rating = models.CharField(
@@ -198,7 +243,7 @@ class VulnerabilityAssessment(models.Model):
         choices=RAGRating.choices,
     )
     receive_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that 
+        help_text="""This field collects information about the characteristics that
         contribute to the vulnerability of the receive element of the chain.""",
     )
     store_rag_rating = models.CharField(
@@ -206,7 +251,7 @@ class VulnerabilityAssessment(models.Model):
         choices=RAGRating.choices,
     )
     store_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that 
+        help_text="""This field collects information about the characteristics that
         contribute to the vulnerability of the store element of the chain.""",
     )
     deliver_rag_rating = models.CharField(
@@ -214,7 +259,7 @@ class VulnerabilityAssessment(models.Model):
         choices=RAGRating.choices,
     )
     deliver_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that 
+        help_text="""This field collects information about the characteristics that
         contribute to the vulnerability of the deliver element of the chain.""",
     )
     supply_chain = models.ForeignKey(
@@ -227,7 +272,7 @@ class VulnerabilityAssessment(models.Model):
 class ScenarioAssessment(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    date_created = models.DateField(default=now)
+    date_created = models.DateField(auto_now_add=True)
     borders_closed_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
         the borders close.""",

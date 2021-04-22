@@ -7,7 +7,10 @@ from rest_framework.test import APIClient
 from accounts.models import User
 from accounts.test.factories import UserFactory
 from supply_chains.models import StrategicActionUpdate
-from supply_chains.test.factories import StrategicActionUpdateFactory
+from supply_chains.test.factories import (
+    StrategicActionUpdateFactory,
+    SupplyChainFactory,
+)
 
 
 @pytest.fixture
@@ -53,3 +56,10 @@ def test_submitted_strategic_action_update():
     update = StrategicActionUpdateFactory(status=StrategicActionUpdate.Status.SUBMITTED)
     update.save()
     yield update
+
+
+@pytest.fixture
+def test_supply_chain():
+    sc = SupplyChainFactory()
+    sc.save()
+    yield sc

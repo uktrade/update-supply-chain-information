@@ -1,5 +1,6 @@
 import factory
 import factory.fuzzy
+from datetime import date
 
 from accounts.test.factories import GovDepartmentFactory, UserFactory
 from supply_chains.models import (
@@ -11,7 +12,7 @@ from supply_chains.models import (
 
 
 class SupplyChainFactory(factory.django.DjangoModelFactory):
-    name = "Product"
+    name = factory.Sequence(lambda n: f"Product {n}")
     last_submission_date = factory.Faker("date_object")
     gov_department = factory.SubFactory(GovDepartmentFactory)
     contact_name = factory.Faker("name")
@@ -28,13 +29,15 @@ class SupplyChainFactory(factory.django.DjangoModelFactory):
 class StrategicActionFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Strategic action {n}")
     start_date = factory.Faker("date_object")
-    description = factory.Faker("sentence")
-    impact = factory.Faker("sentence")
+    description = factory.Faker("text")
+    impact = factory.Faker("text")
     category = factory.fuzzy.FuzzyChoice(StrategicAction.Category)
     geographic_scope = factory.fuzzy.FuzzyChoice(StrategicAction.GeographicScope)
     supporting_organisations = factory.fuzzy.FuzzyChoice(StrategicAction.SupportingOrgs)
     target_completion_date = factory.Faker("date_object")
     is_archived = False
+    specific_related_products = factory.Faker("text")
+    other_dependencies = factory.Faker("text")
     supply_chain = factory.SubFactory(SupplyChainFactory)
 
     class Meta:
@@ -43,7 +46,8 @@ class StrategicActionFactory(factory.django.DjangoModelFactory):
 
 class StrategicActionUpdateFactory(factory.django.DjangoModelFactory):
     submission_date = factory.Faker("date_object")
-    content = factory.Faker("sentence")
+    date_created = date.today()
+    content = factory.Faker("text")
     implementation_rag_rating = factory.fuzzy.FuzzyChoice(
         RAGRating,
     )

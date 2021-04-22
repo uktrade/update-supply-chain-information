@@ -9,6 +9,7 @@ module.exports = {
     main: [
       './defend_data_capture/assets/js/application.js',
       './defend_data_capture/assets/stylesheets/application.scss',
+      './defend_data_capture/assets/stylesheets/supply_chain.scss',
     ],
   },
   output: {
