@@ -19,8 +19,7 @@ Cypress.Commands.add('runA11y', (context = null, options = null) => {
   cy.checkA11y(context, options, logA11yIssues)
 })
 
-// now any cookie with the name 'session_id' will
-// not be cleared before each test runs
+
 Cypress.Cookies.defaults({
-  preserve: 'session_id',
+  preserve: ['sessionid', 'csrftoken']
 })

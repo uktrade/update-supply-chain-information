@@ -68,7 +68,7 @@ describe('Validate complete view for manual access', () => {
     cy.get('tbody').find('td').should('have.length', 4)
     cy.get('td').contains('completed')
   })
-  it('displays disabled submit button', () => {
+  it('displays enabled submit button', () => {
     cy.get('form').find('button').should('be.enabled')
   })
 })

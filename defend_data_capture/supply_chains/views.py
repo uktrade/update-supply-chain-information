@@ -56,7 +56,6 @@ def index(request):
 
 class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
     template_name = "task_list.html"
-    sa_desc_limit = 50
     tasks_per_page = 5
     last_deadline = get_last_working_day_of_previous_month()
 
@@ -78,10 +77,8 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
         for sa in sa_qset.iterator():
             update = dict()
 
-            update["description"] = sa.description[: self.sa_desc_limit]
-
-            if len(update["description"]) is self.sa_desc_limit:
-                update["description"] += "..."
+            update["name"] = sa.name
+            update["description"] = sa.description
 
             sau = StrategicActionUpdate.updates.since(
                 self.last_deadline,

@@ -17,56 +17,59 @@
 
     <h1 class="govuk-heading-xl"> Update {{ view.supply_chain.name }} </h1>
 
-    {% if view.update_complete %}
-        <div>
-            <strong>
-                Update completed
-            </strong>
+    {% if not view.update_submitted %}
+        {% if view.update_complete %}
             <div>
-                {{ view.completed_updates }} of {{ view.total_sa }} mandatory actions are complete.
+                <strong>
+                    Update completed
+                </strong>
+                <div>
+                    {{ view.completed_updates }} of {{ view.total_sa }} mandatory actions are complete.
+                </div>
             </div>
-        </div>
+            <br>
+        {% else %}
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    Update incomplete
+                </strong>
+                <div class="tasklist-summary">{{ view.completed_updates }} of {{ view.total_sa }}
+                    mandatory actions are complete.</div>
+            </div>
+        {% endif %}
     {% else %}
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-                <span class="govuk-warning-text__assistive">Warning</span>
-                Update incomplete
-            </strong>
-            <div class="tasklist-summary">{{ view.completed_updates }} of {{ view.total_sa }}
-                mandatory actions are complete.</div>
+        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title"      data-module="govuk-notification-banner">
+            <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                No action required
+            </h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+            <p class="govuk-notification-banner__heading">
+                You have already submitted the monthly update for this supply chain.
+            </p>
+            </div>
         </div>
     {% endif %}
 
-    <br>
     {% if view.submit_error %}
         <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
             <h2 class="govuk-error-summary__title" id="error-summary-title">
             There is a problem
             </h2>
             <div class="govuk-error-summary__body">
-                Update strategic actions
-            </div>
-        </div>
-    {% endif %}
-    <br>
-
-    {% if view.update_submitted %}
-        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title"      data-module="govuk-notification-banner">
-            <div class="govuk-notification-banner__header">
-            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                Important
-            </h2>
-            </div>
-            <div class="govuk-notification-banner__content">
-            <p class="govuk-notification-banner__heading">
-                All strategic action updates submited.
-            </p>
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li>
+                        <a href="#updates">Updates must be given for all strategic actions</a>
+                      </li>
+                </ul>
             </div>
         </div>
     {% endif %}
 
-    <table class="govuk-table">
+    <table class="govuk-table" id="updates">
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">
@@ -79,8 +82,8 @@
             {% for update in view.sa_updates %}
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
-                    <a href={{ update.route }} class="govuk-link">Update strategic action {{ forloop.counter }} </a>
-                    <p class="tasklist-action-description"> {{ update.description }} </p>
+                    <a href={{ update.route }} class="govuk-link">Update {{ update.name }}</a>
+                    <p class="tasklist-action-description"> {{ update.description|truncatewords:10 }} </p>
                 </td>
                 <td class="govuk-table__cell">
                     {% if update.status.label == "Not started" %}
@@ -103,7 +106,7 @@
     </table>
 
     {% if view.sa_updates.has_other_pages %}
-            <nav class="moj-pagination">
+            <nav class="moj-pagination" aria-label="pagination">
                 <ul class="moj-pagination__list">
                     {% if view.sa_updates.has_previous %}
                         <li class="moj-pagination__item  moj-pagination__item--prev">
@@ -131,33 +134,32 @@
                         <li class="disabled"><span>&raquo;</span></li>
                     {% endif %}
                 </ul>
-                <p class="moj-pagination__results">Displaying Strategic Actions <b>{{ view.sa_updates.start_index }}</b> - <b>{{ view.sa_updates.end_index }}</b> of <b>{{ view.sa_updates.paginator.count }}</b></p>
+                <p class="moj-pagination__results">Displaying strategic actions <b>{{ view.sa_updates.start_index }}</b> - <b>{{ view.sa_updates.end_index }}</b> of <b>{{ view.sa_updates.paginator.count }}</b></p>
             </nav>
         {% endif %}
     <br>
 
-    <h2 class="govuk-heading-l">Before you submit</h2>
-    <p class="govuk-body">
-        Before you submit, make sure you have updated and completed all<br>relevant sections. This includes:
-    </p>
-    <ul class="govuk-list govuk-list--bullet">
-        <li>
-            <a href="#" class="govuk-link">Supply chain summary</a>
-            <span>
-                - key information, vulnerability assessment,
-                scenario assessment, maturity self assessment, risk monitoring,<br>archived strategic actions
-            </span>
-        </li>
-        <li>
-            <a href="#" class="govuk-link">Strategic action summary</a>
-            <span>
-                - description of the action, impact, strategic action framework category and depedencies
-            </span>
-        </li>
-    </ul>
-
-
     {% if not view.update_submitted %}
+        <h2 class="govuk-heading-l">Before you submit</h2>
+        <p class="govuk-body">
+            Before you submit, make sure you have updated and completed all<br>relevant sections. This includes:
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                <a href="#" class="govuk-link">Supply chain summary</a>
+                <span>
+                    - key information, vulnerability assessment,
+                    scenario assessment, maturity self assessment, risk monitoring,<br>archived strategic actions
+                </span>
+            </li>
+            <li>
+                <a href="#" class="govuk-link">Strategic action summary</a>
+                <span>
+                    - description of the action, impact, strategic action framework category and depedencies
+                </span>
+            </li>
+        </ul>
+
         <form action={% url 'tlist' sc_slug=view.supply_chain.slug %} method="post">
             {% csrf_token %}
             <button class="govuk-button" data-module="govuk-button" type="submit">
@@ -165,7 +167,7 @@
             </button>
         </form>
     {% else %}
-    <a href={% url 'index' %} class="govuk-back-link">Back</a>
+        <a href={% url 'index' %} class="govuk-button govuk-button--secondary">Back to home</a>
     {% endif %}
 
 {% endblock %}
