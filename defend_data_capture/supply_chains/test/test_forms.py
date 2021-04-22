@@ -104,7 +104,7 @@ class TestCompletionDateForm:
 
 
 @pytest.mark.django_db()
-class TestCompletionDateForm:
+class TestMonthlyUpdateInfoForm:
     def test_form_saves_the_content(self):
         supply_chain = SupplyChainFactory()
         strategic_action = StrategicActionFactory(supply_chain=supply_chain)
@@ -121,13 +121,16 @@ class TestCompletionDateForm:
 
 
 @pytest.mark.django_db()
-class TestDeliveryStatusForm:
-    def test_form_saves_the_status_when_GREEN(self):
+class TestMonthlyUpdateStatusForm:
+    def setup_method(self):
         supply_chain = SupplyChainFactory()
         strategic_action = StrategicActionFactory(supply_chain=supply_chain)
-        strategic_action_update = StrategicActionUpdate.objects.create(
+        self.strategic_action_update = StrategicActionUpdate.objects.create(
             supply_chain=supply_chain, strategic_action=strategic_action
         )
+
+    def test_form_saves_the_status_when_GREEN(self):
+        strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {"implementation_rag_rating": "GREEN"}
@@ -140,11 +143,7 @@ class TestDeliveryStatusForm:
         )
 
     def test_form_saves_the_status_when_AMBER(self):
-        supply_chain = SupplyChainFactory()
-        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
-        strategic_action_update = StrategicActionUpdate.objects.create(
-            supply_chain=supply_chain, strategic_action=strategic_action
-        )
+        strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {"implementation_rag_rating": "AMBER"}
@@ -157,11 +156,7 @@ class TestDeliveryStatusForm:
         )
 
     def test_form_saves_the_reason_for_delays_when_AMBER(self):
-        supply_chain = SupplyChainFactory()
-        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
-        strategic_action_update = StrategicActionUpdate.objects.create(
-            supply_chain=supply_chain, strategic_action=strategic_action
-        )
+        strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {
@@ -174,13 +169,9 @@ class TestDeliveryStatusForm:
         assert saved_instance.reason_for_delays == form_data["AMBER-reason_for_delays"]
 
     def test_form_saves_the_status_when_RED_and_no_completion_date(self):
-        supply_chain = SupplyChainFactory()
-        strategic_action = StrategicActionFactory(
-            supply_chain=supply_chain, target_completion_date=None
-        )
-        strategic_action_update = StrategicActionUpdate.objects.create(
-            supply_chain=supply_chain, strategic_action=strategic_action
-        )
+        strategic_action_update = self.strategic_action_update
+        strategic_action_update.strategic_action.target_completion_date = None
+        strategic_action_update.strategic_action.save()
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {"implementation_rag_rating": "RED"}
@@ -195,11 +186,7 @@ class TestDeliveryStatusForm:
     def test_form_invalid_when_RED_with_completion_date_and_no_will_completion_date_change(
         self,
     ):
-        supply_chain = SupplyChainFactory()
-        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
-        strategic_action_update = StrategicActionUpdate.objects.create(
-            supply_chain=supply_chain, strategic_action=strategic_action
-        )
+        strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {"implementation_rag_rating": "RED"}
@@ -209,11 +196,7 @@ class TestDeliveryStatusForm:
     def test_form_saves_the_status_when_RED_with_completion_date_and_completion_date_change_is_true(
         self,
     ):
-        supply_chain = SupplyChainFactory()
-        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
-        strategic_action_update = StrategicActionUpdate.objects.create(
-            supply_chain=supply_chain, strategic_action=strategic_action
-        )
+        strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {
@@ -231,11 +214,7 @@ class TestDeliveryStatusForm:
     def test_form_saves_the_status_when_RED_with_completion_date_and_completion_date_change_is_false(
         self,
     ):
-        supply_chain = SupplyChainFactory()
-        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
-        strategic_action_update = StrategicActionUpdate.objects.create(
-            supply_chain=supply_chain, strategic_action=strategic_action
-        )
+        strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {
@@ -256,11 +235,7 @@ class TestDeliveryStatusForm:
     def test_form_saves_the_reason_for_delays_when_RED_with_completion_date_and_completion_date_change_is_true(
         self,
     ):
-        supply_chain = SupplyChainFactory()
-        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
-        strategic_action_update = StrategicActionUpdate.objects.create(
-            supply_chain=supply_chain, strategic_action=strategic_action
-        )
+        strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {
@@ -276,11 +251,7 @@ class TestDeliveryStatusForm:
     def test_form_saves_the_reason_for_delays_when_RED_with_completion_date_and_completion_date_change_is_false(
         self,
     ):
-        supply_chain = SupplyChainFactory()
-        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
-        strategic_action_update = StrategicActionUpdate.objects.create(
-            supply_chain=supply_chain, strategic_action=strategic_action
-        )
+        strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {
