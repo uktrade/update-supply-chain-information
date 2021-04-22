@@ -1,3 +1,6 @@
+from datetime import date
+
+from dateutil.relativedelta import relativedelta
 from django import forms
 from django.db.models import TextChoices
 from django.forms.utils import ErrorList
@@ -133,7 +136,19 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
         labels = {"implementation_rag_rating": "Current delivery status"}
 
 
-class CompletionDateForm(forms.ModelForm):
+class MakeFieldRequiredMixin:
+    field_to_make_required = None
+
+    def make_field_required(self):
+        if self.field_to_make_required is not None:
+            self.fields[self.field_to_make_required].required = True
+
+    def make_field_not_required(self):
+        if self.field_to_make_required is not None:
+            self.fields[self.field_to_make_required].required = False
+
+
+class CompletionDateForm(MakeFieldRequiredMixin, forms.ModelForm):
     target_completion_date = forms.DateField(
         widget=DateMultiTextInputWidget(
             attrs={},
@@ -148,6 +163,7 @@ class CompletionDateForm(forms.ModelForm):
         required=False,
         input_formats=["%Y-%m-%d"],
     )
+    field_to_make_required = "target_completion_date"
 
     class Meta:
         model = StrategicAction
@@ -162,12 +178,13 @@ class ApproximateTimings(TextChoices):
     ONGOING = ("0", "Ongoing")
 
 
-class ApproximateTimingForm(forms.ModelForm):
+class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
     surrogate_is_ongoing = forms.ChoiceField(
         choices=ApproximateTimings.choices,
         label="What is the approximate time for completion?",
         required=False,
     )
+    field_to_make_required = "surrogate_is_ongoing"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -178,6 +195,23 @@ class ApproximateTimingForm(forms.ModelForm):
             },
         )
 
+    def save(self, commit=True):
+        submitted_value = self.cleaned_data["surrogate_is_ongoing"]
+        # As this form's field doesn't really exist
+        if submitted_value == ApproximateTimings["ONGOING"]:
+            # we need to either clear the completion date and set is_ongoing…
+            self.instance.target_completion_date = None
+            self.instance.is_ongoing = True
+        else:
+            # or calculate the new completion date and clear is_ongoing
+            self.instance.is_ongoing = False
+            months_hence = int(submitted_value)
+            self.instance.target_completion_date = date.today() + relativedelta(
+                months=+months_hence
+            )
+
+        return super().save(commit)
+
     class Meta:
         model = StrategicAction
         fields = []
@@ -187,7 +221,25 @@ class ApproximateTimingForm(forms.ModelForm):
 
 
 class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def is_valid(self):
+        if self.is_bound:
+            # need to make one of the detail forms required, depending on our value
+            is_completion_date_known = self.data["is_completion_date_known"]
+            required_form = self.detail_form_for_key(is_completion_date_known)
+            if required_form is not None:
+                # we need the detail form required for validation,
+                # but not on the client as then they can't change their minds…
+                required_form.make_field_required()
+                is_valid = super().is_valid()
+                required_form.make_field_not_required()
+                return is_valid
+        return self.is_valid()
+
     is_completion_date_known = forms.ChoiceField(
+        required=True,
         choices=YesNoChoices.choices,
         widget=DetailRadioSelect(
             attrs={"class": "govuk-radios__input", "data-aria-controls": "{id}-detail"},
