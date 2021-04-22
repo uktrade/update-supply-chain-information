@@ -37,11 +37,12 @@ class DetailFormMixin:
 
     def save(self, commit=True):
         for field_name, key, config in self.detail_forms:
-            # no need to commit if the models are the same
-            # as the outer form will do that below, if commit=True
+            # no need to commit if the instances are the same
+            # as the outer form will do that below (if commit=True)
             # N.B. this assumes inner forms are using the same instance
-            # But sometimes they aren't…
-            inner_commit = self.instance == config["form"].instance
+            # But sometimes maybe they aren't… best check for it
+            # If they aren't, we need to commit iff commit=True
+            inner_commit = (self.instance != config["form"].instance) and commit
             if self.cleaned_data[field_name] == key:
                 config["form"].save(commit=inner_commit)
         return super().save(commit=commit)
