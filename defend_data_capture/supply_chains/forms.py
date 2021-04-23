@@ -219,7 +219,6 @@ class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
             self.instance.target_completion_date = date.today() + relativedelta(
                 months=+months_hence
             )
-
         return super().save(commit)
 
     class Meta:
