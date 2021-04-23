@@ -11,7 +11,7 @@ from .widgets import (
     HintedDetailRadioSelect,
     DateMultiTextInputWidget,
 )
-from .models import StrategicActionUpdate, RAGRatingHints, StrategicAction
+from .models import StrategicActionUpdate, RAGRatingHints, StrategicAction, RAGRating
 
 
 class DetailFormMixin:

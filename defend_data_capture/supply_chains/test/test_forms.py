@@ -14,7 +14,7 @@ from supply_chains.forms import (
     ApproximateTimingForm,
     ApproximateTimings,
 )
-from supply_chains.models import StrategicAction, StrategicActionUpdate
+from supply_chains.models import StrategicAction, StrategicActionUpdate, RAGRating
 from supply_chains.test.factories import StrategicActionFactory, SupplyChainFactory
 
 
@@ -139,7 +139,7 @@ class TestMonthlyUpdateStatusForm:
         strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
-        form_data = {"implementation_rag_rating": "GREEN"}
+        form_data = {"implementation_rag_rating": RAGRating.GREEN}
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
         saved_instance = form.save()
@@ -152,7 +152,7 @@ class TestMonthlyUpdateStatusForm:
         strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
-        form_data = {"implementation_rag_rating": "AMBER"}
+        form_data = {"implementation_rag_rating": RAGRating.AMBER}
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
         saved_instance = form.save()
@@ -166,8 +166,8 @@ class TestMonthlyUpdateStatusForm:
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {
-            "implementation_rag_rating": "AMBER",
-            "AMBER-reason_for_delays": "A reason",
+            "implementation_rag_rating": RAGRating.AMBER,
+            f"{RAGRating.AMBER}-reason_for_delays": "A reason",
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
@@ -180,7 +180,7 @@ class TestMonthlyUpdateStatusForm:
         strategic_action_update.strategic_action.save()
         assert strategic_action_update.implementation_rag_rating is None
 
-        form_data = {"implementation_rag_rating": "RED"}
+        form_data = {"implementation_rag_rating": RAGRating.RED}
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
         saved_instance = form.save()
@@ -195,7 +195,7 @@ class TestMonthlyUpdateStatusForm:
         strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
-        form_data = {"implementation_rag_rating": "RED"}
+        form_data = {"implementation_rag_rating": RAGRating.RED}
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert not form.is_valid()
 
@@ -206,8 +206,8 @@ class TestMonthlyUpdateStatusForm:
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {
-            "implementation_rag_rating": "RED",
-            "RED-will_completion_date_change": "True",
+            "implementation_rag_rating": RAGRating.RED,
+            f"{RAGRating.RED}-will_completion_date_change": "True",
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
@@ -224,13 +224,10 @@ class TestMonthlyUpdateStatusForm:
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {
-            "implementation_rag_rating": "RED",
-            "RED-will_completion_date_change": "False",
+            "implementation_rag_rating": RAGRating.RED,
+            f"{RAGRating.RED}-will_completion_date_change": "False",
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
-        print(form.errors)
-        for field_name, key, config in form.detail_forms:
-            print(config["form"].errors)
         assert form.is_valid()
         saved_instance = form.save()
         assert (
@@ -245,14 +242,17 @@ class TestMonthlyUpdateStatusForm:
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {
-            "implementation_rag_rating": "RED",
-            "RED-will_completion_date_change": "True",
-            "RED-reason_for_delays": "Some reason",
+            "implementation_rag_rating": RAGRating.RED,
+            f"{RAGRating.RED}-will_completion_date_change": "True",
+            f"{RAGRating.RED}-reason_for_delays": "Some reason",
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
         saved_instance = form.save()
-        assert saved_instance.reason_for_delays == form_data["RED-reason_for_delays"]
+        assert (
+            saved_instance.reason_for_delays
+            == form_data[f"{RAGRating.RED}-reason_for_delays"]
+        )
 
     def test_form_saves_the_reason_for_delays_when_RED_with_completion_date_and_completion_date_change_is_false(
         self,
@@ -261,14 +261,17 @@ class TestMonthlyUpdateStatusForm:
         assert strategic_action_update.implementation_rag_rating is None
 
         form_data = {
-            "implementation_rag_rating": "RED",
-            "RED-will_completion_date_change": "False",
-            "RED-reason_for_delays": "Some reason",
+            "implementation_rag_rating": RAGRating.RED,
+            f"{RAGRating.RED}-will_completion_date_change": "False",
+            f"{RAGRating.RED}-reason_for_delays": "Some reason",
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
         saved_instance = form.save()
-        assert saved_instance.reason_for_delays == form_data["RED-reason_for_delays"]
+        assert (
+            saved_instance.reason_for_delays
+            == form_data[f"{RAGRating.RED}-reason_for_delays"]
+        )
 
 
 @pytest.mark.django_db()
