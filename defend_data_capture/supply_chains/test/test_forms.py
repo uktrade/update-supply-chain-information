@@ -257,7 +257,7 @@ class TestMonthlyUpdateStatusForm:
 
         form_data = {
             "implementation_rag_rating": RAGRating.RED,
-            f"{RAGRating.RED}-will_completion_date_change": "True",
+            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.YES,
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
@@ -275,7 +275,7 @@ class TestMonthlyUpdateStatusForm:
 
         form_data = {
             "implementation_rag_rating": RAGRating.RED,
-            f"{RAGRating.RED}-will_completion_date_change": "False",
+            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.NO,
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
@@ -293,7 +293,7 @@ class TestMonthlyUpdateStatusForm:
 
         form_data = {
             "implementation_rag_rating": RAGRating.RED,
-            f"{RAGRating.RED}-will_completion_date_change": "True",
+            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.YES,
             f"{RAGRating.RED}-reason_for_delays": "Some reason",
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
@@ -312,7 +312,7 @@ class TestMonthlyUpdateStatusForm:
 
         form_data = {
             "implementation_rag_rating": RAGRating.RED,
-            f"{RAGRating.RED}-will_completion_date_change": "False",
+            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.NO,
             f"{RAGRating.RED}-reason_for_delays": "Some reason",
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
@@ -321,6 +321,151 @@ class TestMonthlyUpdateStatusForm:
         assert (
             saved_instance.reason_for_delays
             == form_data[f"{RAGRating.RED}-reason_for_delays"]
+        )
+
+    @pytest.mark.skip("Not sure if we need or want to do this")
+    def test_form_removes_the_reason_for_delays_when_RED_and_will_completion_date_change_is_false(
+        self,
+    ):
+        strategic_action_update = self.strategic_action_update
+        assert strategic_action_update.implementation_rag_rating is None
+
+        form_data = {
+            "implementation_rag_rating": RAGRating.RED,
+            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.NO,
+            f"{RAGRating.RED}-reason_for_delays": "Some reason",
+        }
+        form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
+        assert form.is_valid()
+        saved_instance = form.save()
+        assert saved_instance.reason_for_delays == ""
+
+    def test_form_removes_reason_for_completion_date_change_when_RED_and_will_completion_date_change_is_false(
+        self,
+    ):
+        strategic_action_update = self.strategic_action_update
+        strategic_action_update.reason_for_completion_date_change = (
+            "The universe itself is change."
+        )
+        strategic_action_update.save()
+        form_data = {
+            "implementation_rag_rating": RAGRating.RED,
+            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.NO,
+            f"{RAGRating.RED}-reason_for_delays": "Some reason",
+        }
+        form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
+        assert form.is_valid()
+        saved_instance = form.save()
+        assert saved_instance.reason_for_completion_date_change == ""
+
+    def test_form_removes_changed_target_completion_date_when_RED_and_will_completion_date_change_is_false(
+        self,
+    ):
+        strategic_action_update = self.strategic_action_update
+        strategic_action_update.changed_target_completion_date = date(
+            year=2021, month=12, day=25
+        )
+        strategic_action_update.save()
+        form_data = {
+            "implementation_rag_rating": RAGRating.RED,
+            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.NO,
+            f"{RAGRating.RED}-reason_for_delays": "Some reason",
+        }
+        form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
+        assert form.is_valid()
+        saved_instance = form.save()
+        assert saved_instance.changed_target_completion_date is None
+
+    # @pytest.mark.skip("Not sure if we need or want to do this")
+    def test_form_leaves_reason_for_completion_date_change_when_AMBER_and_will_completion_date_change_is_false(
+        self,
+    ):
+        strategic_action_update = self.strategic_action_update
+        expected_reason_for_completion_date_change = "The universe itself is change."
+        strategic_action_update.reason_for_completion_date_change = (
+            expected_reason_for_completion_date_change
+        )
+        strategic_action_update.save()
+        form_data = {
+            "implementation_rag_rating": RAGRating.AMBER,
+            f"{RAGRating.AMBER}-will_completion_date_change": YesNoChoices.NO,
+            f"{RAGRating.AMBER}-reason_for_delays": "Some reason",
+        }
+        form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
+        assert form.is_valid()
+        saved_instance = form.save()
+        assert (
+            saved_instance.reason_for_completion_date_change
+            == expected_reason_for_completion_date_change
+        )
+
+    # @pytest.mark.skip("Not sure if we need or want to do this")
+    def test_form_leaves_changed_target_completion_date_when_AMBER_and_will_completion_date_change_is_false(
+        self,
+    ):
+        strategic_action_update = self.strategic_action_update
+        expected_changed_target_completion_date = date(year=2021, month=12, day=25)
+        strategic_action_update.changed_target_completion_date = (
+            expected_changed_target_completion_date
+        )
+        strategic_action_update.save()
+        form_data = {
+            "implementation_rag_rating": RAGRating.AMBER,
+            f"{RAGRating.AMBER}-will_completion_date_change": YesNoChoices.NO,
+            f"{RAGRating.AMBER}-reason_for_delays": "Some reason",
+        }
+        form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
+        assert form.is_valid()
+        saved_instance = form.save()
+        assert (
+            saved_instance.changed_target_completion_date
+            == expected_changed_target_completion_date
+        )
+
+    # @pytest.mark.skip("Not sure if we need or want to do this")
+    def test_form_leaves_reason_for_completion_date_change_when_GREEN_and_will_completion_date_change_is_false(
+        self,
+    ):
+        strategic_action_update = self.strategic_action_update
+        expected_reason_for_completion_date_change = "The universe itself is change."
+        strategic_action_update.reason_for_completion_date_change = (
+            expected_reason_for_completion_date_change
+        )
+        strategic_action_update.save()
+        form_data = {
+            "implementation_rag_rating": RAGRating.GREEN,
+            f"{RAGRating.GREEN}-will_completion_date_change": YesNoChoices.NO,
+            f"{RAGRating.GREEN}-reason_for_delays": "Some reason",
+        }
+        form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
+        assert form.is_valid()
+        saved_instance = form.save()
+        assert (
+            saved_instance.reason_for_completion_date_change
+            == expected_reason_for_completion_date_change
+        )
+
+    # @pytest.mark.skip("Not sure if we need or want to do this")
+    def test_form_leaves_changed_target_completion_date_when_GREEN_and_will_completion_date_change_is_false(
+        self,
+    ):
+        strategic_action_update = self.strategic_action_update
+        expected_changed_target_completion_date = date(year=2021, month=12, day=25)
+        strategic_action_update.changed_target_completion_date = (
+            expected_changed_target_completion_date
+        )
+        strategic_action_update.save()
+        form_data = {
+            "implementation_rag_rating": RAGRating.GREEN,
+            f"{RAGRating.GREEN}-will_completion_date_change": YesNoChoices.NO,
+            f"{RAGRating.GREEN}-reason_for_delays": "Some reason",
+        }
+        form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
+        assert form.is_valid()
+        saved_instance = form.save()
+        assert (
+            saved_instance.changed_target_completion_date
+            == expected_changed_target_completion_date
         )
 
 
