@@ -117,9 +117,23 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
         if strategic_action_update is not None:
             if strategic_action_update.strategic_action.target_completion_date is None:
                 will_completion_date_change_field = self.detail_form_for_key(
-                    "RED"
+                    RAGRating.RED
                 ).fields["will_completion_date_change"]
                 will_completion_date_change_field.required = False
+
+    def save(self, commit=True):
+        instance: StrategicActionUpdate = self.instance
+        if instance.implementation_rag_rating == RAGRating.RED:
+            if instance.strategic_action.target_completion_date is not None:
+                red_form = self.detail_form_for_key(RAGRating.RED)
+                if (
+                    red_form.cleaned_data["will_completion_date_change"]
+                    == YesNoChoices.NO
+                ):
+                    # clear the values from the instance
+                    instance.reason_for_completion_date_change = ""
+                    instance.changed_target_completion_date = None
+        return super().save(commit)
 
     class Meta:
         model = StrategicActionUpdate
@@ -132,11 +146,11 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
                 },
                 hints=RAGRatingHints,
                 details={
-                    "RED": {
+                    RAGRating.RED: {
                         "template": "supply_chains/includes/reason-for-delays.html",
                         "form_class": RedReasonForDelayForm,
                     },
-                    "AMBER": {
+                    RAGRating.AMBER: {
                         "template": "supply_chains/includes/reason-for-delays.html",
                         "form_class": AmberReasonForDelayForm,
                     },
