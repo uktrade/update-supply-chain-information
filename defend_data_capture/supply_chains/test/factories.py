@@ -29,13 +29,15 @@ class SupplyChainFactory(factory.django.DjangoModelFactory):
 class StrategicActionFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Strategic action {n}")
     start_date = factory.Faker("date_object")
-    description = factory.Faker("sentence")
-    impact = factory.Faker("sentence")
+    description = factory.Faker("text")
+    impact = factory.Faker("text")
     category = factory.fuzzy.FuzzyChoice(StrategicAction.Category)
     geographic_scope = factory.fuzzy.FuzzyChoice(StrategicAction.GeographicScope)
     supporting_organisations = factory.fuzzy.FuzzyChoice(StrategicAction.SupportingOrgs)
     target_completion_date = factory.Faker("date_object")
     is_archived = False
+    specific_related_products = factory.Faker("text")
+    other_dependencies = factory.Faker("text")
     supply_chain = factory.SubFactory(SupplyChainFactory)
 
     class Meta:
@@ -45,7 +47,7 @@ class StrategicActionFactory(factory.django.DjangoModelFactory):
 class StrategicActionUpdateFactory(factory.django.DjangoModelFactory):
     submission_date = factory.Faker("date_object")
     date_created = date.today()
-    content = factory.Faker("sentence")
+    content = factory.Faker("text")
     implementation_rag_rating = factory.fuzzy.FuzzyChoice(
         RAGRating,
     )
