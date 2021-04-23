@@ -117,7 +117,7 @@ describe('Paginate Strategic actions', () => {
     cy.get('tbody').find('tr').should('have.length', 5)
   })
   it('displays correct items in pagination list', () => {
-    cy.get('.moj-pagination__list').find('li').should('have.length', 4)
+    cy.get('.moj-pagination__list').find('li').should('have.length', 3)
     cy.get('.moj-pagination__item--active').contains('1')
     cy.get('.moj-pagination__item').contains('2')
     cy.get('.moj-pagination__item').contains('Next')
