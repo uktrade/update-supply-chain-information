@@ -235,18 +235,23 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
         super().__init__(*args, **kwargs)
 
     def is_valid(self):
-        if self.is_bound:
-            # need to make one of the detail forms required, depending on our value
-            is_completion_date_known = self.data["is_completion_date_known"]
-            required_form = self.detail_form_for_key(is_completion_date_known)
-            if required_form is not None:
-                # we need the detail form required for validation,
-                # but not on the client as then they can't change their minds…
-                required_form.make_field_required()
-                is_valid = super().is_valid()
-                required_form.make_field_not_required()
-                return is_valid
-        return self.is_valid()
+        # need to make one of the detail forms required, depending on our value
+        is_completion_date_known = self.data["is_completion_date_known"]
+        required_form = self.detail_form_for_key(is_completion_date_known)
+        if required_form is not None:
+            # we need the detail form field to be required for validation,
+            # but not on the client as then they can't change their minds…
+            required_form.make_field_required()
+            required_form_is_valid = required_form.is_valid()
+            required_form.make_field_not_required()
+            form_is_valid = super().is_valid()
+            return all(
+                (
+                    form_is_valid,
+                    required_form_is_valid,
+                )
+            )
+        return super().is_valid()
 
     is_completion_date_known = forms.ChoiceField(
         required=True,
