@@ -20,13 +20,27 @@ from supply_chains.test.factories import StrategicActionFactory, SupplyChainFact
 
 @pytest.mark.django_db()
 class TestCompletionDateForm:
+    current_completion_date = date(year=2021, month=12, day=25)
+
+    def setup_method(self):
+        supply_chain = SupplyChainFactory()
+        self.strategic_action: StrategicAction = StrategicActionFactory(
+            supply_chain=supply_chain,
+            target_completion_date=self.current_completion_date,
+        )
+        self.strategic_action_update: StrategicActionUpdate = (
+            StrategicActionUpdate.objects.create(
+                supply_chain=supply_chain, strategic_action=self.strategic_action
+            )
+        )
+
     def test_form_acccepts_YYYY_M_D_date(self):
         date_string = "2021-1-1"
         date_parts = date_string.split("-")
         form_data = {
-            "target_completion_date_year": date_parts[0],
-            "target_completion_date_month": date_parts[1],
-            "target_completion_date_day": date_parts[2],
+            "changed_target_completion_date_year": date_parts[0],
+            "changed_target_completion_date_month": date_parts[1],
+            "changed_target_completion_date_day": date_parts[2],
         }
         form = CompletionDateForm(data=form_data)
         assert form.is_valid()
@@ -35,9 +49,9 @@ class TestCompletionDateForm:
         date_string = "2021-01-01"
         date_parts = date_string.split("-")
         form_data = {
-            "target_completion_date_year": date_parts[0],
-            "target_completion_date_month": date_parts[1],
-            "target_completion_date_day": date_parts[2],
+            "changed_target_completion_date_year": date_parts[0],
+            "changed_target_completion_date_month": date_parts[1],
+            "changed_target_completion_date_day": date_parts[2],
         }
         form = CompletionDateForm(data=form_data)
         assert form.is_valid()
@@ -46,9 +60,9 @@ class TestCompletionDateForm:
         date_string = "2021-1-01"
         date_parts = date_string.split("-")
         form_data = {
-            "target_completion_date_year": date_parts[0],
-            "target_completion_date_month": date_parts[1],
-            "target_completion_date_day": date_parts[2],
+            "changed_target_completion_date_year": date_parts[0],
+            "changed_target_completion_date_month": date_parts[1],
+            "changed_target_completion_date_day": date_parts[2],
         }
         form = CompletionDateForm(data=form_data)
         assert form.is_valid()
@@ -57,9 +71,9 @@ class TestCompletionDateForm:
         date_string = "2021-01-1"
         date_parts = date_string.split("-")
         form_data = {
-            "target_completion_date_year": date_parts[0],
-            "target_completion_date_month": date_parts[1],
-            "target_completion_date_day": date_parts[2],
+            "changed_target_completion_date_year": date_parts[0],
+            "changed_target_completion_date_month": date_parts[1],
+            "changed_target_completion_date_day": date_parts[2],
         }
         form = CompletionDateForm(data=form_data)
         assert form.is_valid()
@@ -68,9 +82,9 @@ class TestCompletionDateForm:
         date_string = "2021-12-31"
         date_parts = date_string.split("-")
         form_data = {
-            "target_completion_date_year": date_parts[0],
-            "target_completion_date_month": date_parts[1],
-            "target_completion_date_day": date_parts[2],
+            "changed_target_completion_date_year": date_parts[0],
+            "changed_target_completion_date_month": date_parts[1],
+            "changed_target_completion_date_day": date_parts[2],
         }
         form = CompletionDateForm(data=form_data)
         assert form.is_valid()
@@ -79,34 +93,70 @@ class TestCompletionDateForm:
         date_string = "202-x-y"
         date_parts = date_string.split("-")
         form_data = {
-            "target_completion_date_year": date_parts[0],
-            "target_completion_date_month": date_parts[1],
-            "target_completion_date_day": date_parts[2],
+            "changed_target_completion_date_year": date_parts[0],
+            "changed_target_completion_date_month": date_parts[1],
+            "changed_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data={"target_completion_date": form_data})
+        form = CompletionDateForm(data={"changed_target_completion_date": form_data})
         assert not form.is_valid()
 
-    def test_form_saves_the_date(self):
+    def test_form_saves_the_date_on_the_strategic_action_update(self):
         date_string = "2021-12-31"
         date_parts = date_string.split("-")
         form_data = {
-            "target_completion_date_year": date_parts[0],
-            "target_completion_date_month": date_parts[1],
-            "target_completion_date_day": date_parts[2],
+            "changed_target_completion_date_year": date_parts[0],
+            "changed_target_completion_date_month": date_parts[1],
+            "changed_target_completion_date_day": date_parts[2],
         }
-        strategic_action: StrategicAction = StrategicAction(
-            start_date=date(year=2020, month=6, day=21),
-            is_archived=False,
-            supply_chain=SupplyChainFactory(),
+        strategic_action_update: StrategicActionUpdate = StrategicActionUpdate(
+            strategic_action=self.strategic_action,
+            supply_chain=self.strategic_action.supply_chain,
         )
-        assert strategic_action.target_completion_date is None
-        form = CompletionDateForm(data=form_data, instance=strategic_action)
+        assert strategic_action_update.changed_target_completion_date is None
+        form = CompletionDateForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
-        saved_instance = form.save()
+        saved_instance: StrategicActionUpdate = form.save()
         assert saved_instance.pk is not None
-        assert strategic_action.target_completion_date is not None
+        assert saved_instance.changed_target_completion_date is not None
         expected_date = date.fromisoformat(date_string)
-        assert expected_date == saved_instance.target_completion_date
+        assert expected_date == saved_instance.changed_target_completion_date
+
+    def test_completion_date_change_submitted_does_not_change_strategic_action_completion_date(
+        self,
+    ):
+        # be sure where we're starting from
+        # apparently the fancy term for this is a "Guard Assertion" :-)
+        new_completion_date = self.current_completion_date + relativedelta(months=+6)
+        assert self.strategic_action.target_completion_date != new_completion_date
+        date_string = "2022-12-31"
+        date_parts = date_string.split("-")
+        form_data = {
+            "changed_target_completion_date_year": date_parts[0],
+            "changed_target_completion_date_month": date_parts[1],
+            "changed_target_completion_date_day": date_parts[2],
+        }
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action)
+        saved_instance = form.save()
+        self.strategic_action.refresh_from_db()
+        assert self.strategic_action.target_completion_date != new_completion_date
+
+    def test_completion_date_change_submitted_sets_strategic_action_update_changed_completion_date(
+        self,
+    ):
+        new_completion_date = self.current_completion_date + relativedelta(months=+6)
+        assert self.strategic_action.target_completion_date != new_completion_date
+        assert self.strategic_action_update.changed_target_completion_date is None
+        date_string = new_completion_date.strftime("%Y-%m-%d")
+        date_parts = date_string.split("-")
+        form_data = {
+            "changed_target_completion_date_year": date_parts[0],
+            "changed_target_completion_date_month": date_parts[1],
+            "changed_target_completion_date_day": date_parts[2],
+        }
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
+        assert form.is_valid()
+        saved_instance: StrategicActionUpdate = form.save()
+        assert saved_instance.changed_target_completion_date == new_completion_date
 
 
 @pytest.mark.django_db()
@@ -381,52 +431,52 @@ class TestMonthlyUpdateTimingForm:
 
     def test_completion_date_known_makes_completion_date_field_required(self):
         """If completion date is known, save completion date."""
-        choices = YesNoChoices.choices
-        selected_choice = choices[0]  # "Yes" choice
-        form_data = {"is_completion_date_known": selected_choice[0]}  # value of choice
+        choices = YesNoChoices
+        selected_choice = choices.YES
+        form_data = {"is_completion_date_known": selected_choice}
         form = MonthlyUpdateTimingForm(
             data=form_data, instance=self.strategic_action_update
         )
         assert not form.is_valid()
-        detail_form = form.detail_form_for_key(selected_choice[0])
+        detail_form = form.detail_form_for_key(selected_choice)
         assert not isinstance(detail_form, ApproximateTimingForm)
         assert isinstance(detail_form, CompletionDateForm)
         assert not detail_form.is_valid()
-        assert "target_completion_date" in detail_form.errors.keys()
+        assert "changed_target_completion_date" in detail_form.errors.keys()
 
     def test_completion_date_not_known_makes_completion_date_form_not_used(self):
         """If completion date is not known, completion date form isn't used."""
-        choices = YesNoChoices.choices
-        selected_choice = choices[1]  # "No" choice
-        form_data = {"is_completion_date_known": selected_choice[0]}  # value of choice
+        choices = YesNoChoices
+        selected_choice = choices.NO
+        form_data = {"is_completion_date_known": selected_choice}
         form = MonthlyUpdateTimingForm(
             data=form_data, instance=self.strategic_action_update
         )
-        detail_form = form.detail_form_for_key(selected_choice[0])
+        detail_form = form.detail_form_for_key(selected_choice)
         assert not isinstance(detail_form, CompletionDateForm)
         assert isinstance(detail_form, ApproximateTimingForm)
-        assert "target_completion_date" not in detail_form.fields.keys()
+        assert "changed_target_completion_date" not in detail_form.fields.keys()
 
     def test_completion_date_not_known_uses_approximate_timing_form(self):
         """If completion date is not known, approximate timing form is used."""
-        choices = YesNoChoices.choices
-        selected_choice = choices[1]  # "No" choice
-        form_data = {"is_completion_date_known": selected_choice[0]}  # value of choice
+        choices = YesNoChoices
+        selected_choice = choices.NO
+        form_data = {"is_completion_date_known": selected_choice}
         form = MonthlyUpdateTimingForm(
             data=form_data, instance=self.strategic_action_update
         )
-        detail_form = form.detail_form_for_key(selected_choice[0])
+        detail_form = form.detail_form_for_key(selected_choice)
         assert "surrogate_is_ongoing" in detail_form.fields.keys()
 
     def test_completion_date_not_known_makes_approximate_timing_required(self):
         """If completion date is not known, approximate timing form is required."""
-        choices = YesNoChoices.choices
-        selected_choice = choices[1]  # "No" choice
-        form_data = {"is_completion_date_known": selected_choice[0]}  # value of choice
+        choices = YesNoChoices
+        selected_choice = choices.NO
+        form_data = {"is_completion_date_known": selected_choice}
         form = MonthlyUpdateTimingForm(
             data=form_data, instance=self.strategic_action_update
         )
         assert not form.is_valid()
-        detail_form = form.detail_form_for_key(selected_choice[0])
+        detail_form = form.detail_form_for_key(selected_choice)
         assert not detail_form.is_valid()
         assert "surrogate_is_ongoing" in detail_form.errors.keys()

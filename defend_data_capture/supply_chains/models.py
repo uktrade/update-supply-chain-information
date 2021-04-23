@@ -225,6 +225,8 @@ class StrategicActionUpdate(models.Model):
         null=True,
     )
     reason_for_delays = models.TextField(blank=True)
+    changed_target_completion_date = models.DateField(null=True)
+    reason_for_completion_date_change = models.TextField(blank=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,

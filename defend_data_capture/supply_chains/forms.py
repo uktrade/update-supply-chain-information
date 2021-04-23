@@ -159,7 +159,7 @@ class MakeFieldRequiredMixin:
 
 
 class CompletionDateForm(MakeFieldRequiredMixin, forms.ModelForm):
-    target_completion_date = forms.DateField(
+    changed_target_completion_date = forms.DateField(
         widget=DateMultiTextInputWidget(
             attrs={},
             hint="For example 14 11 2021",
@@ -173,11 +173,11 @@ class CompletionDateForm(MakeFieldRequiredMixin, forms.ModelForm):
         required=False,
         input_formats=["%Y-%m-%d"],
     )
-    field_to_make_required = "target_completion_date"
+    field_to_make_required = "changed_target_completion_date"
 
     class Meta:
-        model = StrategicAction
-        fields = ["target_completion_date"]
+        model = StrategicActionUpdate
+        fields = ["changed_target_completion_date"]
 
 
 class ApproximateTimings(TextChoices):
