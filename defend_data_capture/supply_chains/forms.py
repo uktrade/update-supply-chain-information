@@ -276,3 +276,7 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
         model = StrategicAction
         fields = []
         labels = {"is_completion_date_known": "Is there an expected completion date?"}
+
+
+class MonthlyUpdateModifiedTimingForm(MonthlyUpdateTimingForm):
+    reason_for_completion_date_change = forms.CharField(required=True)
