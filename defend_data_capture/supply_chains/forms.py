@@ -35,7 +35,12 @@ class DetailFormMixin:
         valid = super().is_valid()
         for field_name, key, config in self.detail_forms:
             if self.cleaned_data[field_name] == key:
-                valid = config["form"].is_valid() and valid
+                valid = all(
+                    (
+                        config["form"].is_valid(),
+                        valid,
+                    )
+                )
         return valid
 
     def save(self, commit=True):
@@ -45,7 +50,12 @@ class DetailFormMixin:
             # N.B. this assumes inner forms are using the same instance
             # But sometimes maybe they aren't… best check for it
             # If they aren't, we need to commit iff commit=True
-            inner_commit = (self.instance != config["form"].instance) and commit
+            inner_commit = all(
+                (
+                    self.instance != config["form"].instance,
+                    commit,
+                )
+            )
             if self.cleaned_data[field_name] == key:
                 config["form"].save(commit=inner_commit)
         return super().save(commit=commit)
