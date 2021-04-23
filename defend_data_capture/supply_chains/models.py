@@ -215,12 +215,14 @@ class StrategicActionUpdate(models.Model):
     submission_date = models.DateField(null=True)
     date_created = models.DateField(auto_now_add=True)
     submission_date = models.DateField(null=True, blank=True)
+    date_created = models.DateField(auto_now_add=True)
     content = models.TextField(blank=True)
     implementation_rag_rating = models.CharField(
         max_length=5,
         choices=reversed(RAGRating.choices),
         blank=False,
         default=None,
+        null=True,
     )
     reason_for_delays = models.TextField(blank=True)
     user = models.ForeignKey(
