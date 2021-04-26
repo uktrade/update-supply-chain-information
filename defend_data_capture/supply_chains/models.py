@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 import reversion
@@ -53,7 +54,8 @@ class SupplyChain(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-
+        if self.is_archived and self.archived_date is None:
+            self.archived_date = timezone.now().date()
         return super().save(*args, **kwargs)
 
 
@@ -122,10 +124,19 @@ class StrategicAction(models.Model):
     )
     slug = models.SlugField(null=True)
 
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        if self.is_archived and self.archived_reason == "":
+            raise ValidationError(
+                "An archived_reason must be given when archiving a strategic action."
+            )
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-
+        if self.is_archived and not self.archived_date:
+            self.archived_date = timezone.now().date()
+        self.full_clean()
         return super().save(*args, **kwargs)
 
 
