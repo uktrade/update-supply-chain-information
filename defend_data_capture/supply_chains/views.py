@@ -80,7 +80,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
             update["name"] = sa.name
             update["description"] = sa.description
 
-            sau = StrategicActionUpdate.updates.since(
+            sau = StrategicActionUpdate.objects.since(
                 self.last_deadline,
                 supply_chain=self.supply_chain,
                 strategic_action=sa,
@@ -108,7 +108,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
 
         self.sa_updates = self._get_sa_update_list(sa_qset)
 
-        self.completed_updates = StrategicActionUpdate.updates.since(
+        self.completed_updates = StrategicActionUpdate.objects.since(
             self.last_deadline,
             supply_chain=self.supply_chain,
             status__in=[
@@ -117,7 +117,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
             ],
         ).count()
 
-        self.submitted_only_updates = StrategicActionUpdate.updates.since(
+        self.submitted_only_updates = StrategicActionUpdate.objects.since(
             self.last_deadline,
             supply_chain=self.supply_chain,
             status=StrategicActionUpdate.Status.SUBMITTED,
@@ -143,7 +143,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
             self.supply_chain.last_submission_date = date.today()
             self.supply_chain.save()
 
-            updates = StrategicActionUpdate.updates.since(
+            updates = StrategicActionUpdate.objects.since(
                 self.last_deadline,
                 supply_chain=self.supply_chain,
                 status=StrategicActionUpdate.Status.COMPLETED,
@@ -168,7 +168,7 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
         total_sa = StrategicAction.objects.filter(
             supply_chain=self.supply_chain
         ).count()
-        submitted = StrategicActionUpdate.updates.since(
+        submitted = StrategicActionUpdate.objects.since(
             self.last_deadline,
             supply_chain=self.supply_chain,
             status=StrategicActionUpdate.Status.SUBMITTED,
