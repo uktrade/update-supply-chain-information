@@ -14,6 +14,18 @@ from .widgets import (
 from .models import StrategicActionUpdate, RAGRatingHints, StrategicAction, RAGRating
 
 
+class MakeFieldRequiredMixin:
+    field_to_make_required = None
+
+    def make_field_required(self):
+        if self.field_to_make_required is not None:
+            self.fields[self.field_to_make_required].required = True
+
+    def make_field_not_required(self):
+        if self.field_to_make_required is not None:
+            self.fields[self.field_to_make_required].required = False
+
+
 class DetailFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -28,7 +40,10 @@ class DetailFormMixin:
                 pass
 
     def detail_form_for_key(self, key):
-        return self._detail_forms_dict[key]
+        try:
+            return self._detail_forms_dict[key]
+        except KeyError:
+            return None
 
     def is_valid(self):
         # this should only be called for the option that's selected
@@ -88,7 +103,13 @@ class MonthlyUpdateInfoForm(forms.ModelForm):
         }
 
 
-class AmberReasonForDelayForm(forms.ModelForm):
+class AmberReasonForDelayForm(MakeFieldRequiredMixin, forms.ModelForm):
+    field_to_make_required = "reason_for_delays"
+
+    def clean(self):
+        cleaned = super().clean()
+        return cleaned
+
     class Meta:
         model = StrategicActionUpdate
         fields = ["reason_for_delays"]
@@ -99,7 +120,6 @@ class AmberReasonForDelayForm(forms.ModelForm):
 
 
 class RedReasonForDelayForm(AmberReasonForDelayForm):
-
     will_completion_date_change = forms.ChoiceField(
         choices=YesNoChoices.choices,
         widget=forms.RadioSelect(attrs={"class": "govuk-radios__input"}),
@@ -120,6 +140,24 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
                     RAGRating.RED
                 ).fields["will_completion_date_change"]
                 will_completion_date_change_field.required = False
+
+    def is_valid(self):
+        implementation_rag_rating = self.data["implementation_rag_rating"]
+        required_form = self.detail_form_for_key(implementation_rag_rating)
+        if required_form is not None:
+            # we need the detail form field to be required for validation,
+            # but not on the client as then they can't change their minds…
+            required_form.make_field_required()
+            required_form_is_valid = required_form.is_valid()
+            required_form.make_field_not_required()
+            form_is_valid = super().is_valid()
+            return all(
+                (
+                    form_is_valid,
+                    required_form_is_valid,
+                )
+            )
+        return super().is_valid()
 
     def save(self, commit=True):
         instance: StrategicActionUpdate = self.instance
@@ -158,18 +196,6 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
             )
         }
         labels = {"implementation_rag_rating": "Current delivery status"}
-
-
-class MakeFieldRequiredMixin:
-    field_to_make_required = None
-
-    def make_field_required(self):
-        if self.field_to_make_required is not None:
-            self.fields[self.field_to_make_required].required = True
-
-    def make_field_not_required(self):
-        if self.field_to_make_required is not None:
-            self.fields[self.field_to_make_required].required = False
 
 
 class CompletionDateForm(MakeFieldRequiredMixin, forms.ModelForm):
@@ -245,8 +271,24 @@ class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
 
 
 class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    is_completion_date_known = forms.ChoiceField(
+        required=True,
+        choices=YesNoChoices.choices,
+        widget=DetailRadioSelect(
+            attrs={"class": "govuk-radios__input", "data-aria-controls": "{id}-detail"},
+            details={
+                "True": {
+                    "template": "supply_chains/includes/completion-date.html",
+                    "form_class": CompletionDateForm,
+                },
+                "False": {
+                    "template": "supply_chains/includes/approximate-timing.html",
+                    "form_class": ApproximateTimingForm,
+                },
+            },
+            select_label="Is there an expected completion date?",
+        ),
+    )
 
     def is_valid(self):
         # need to make one of the detail forms required, depending on our value
@@ -267,25 +309,6 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
             )
         return super().is_valid()
 
-    is_completion_date_known = forms.ChoiceField(
-        required=True,
-        choices=YesNoChoices.choices,
-        widget=DetailRadioSelect(
-            attrs={"class": "govuk-radios__input", "data-aria-controls": "{id}-detail"},
-            details={
-                "True": {
-                    "template": "supply_chains/includes/completion-date.html",
-                    "form_class": CompletionDateForm,
-                },
-                "False": {
-                    "template": "supply_chains/includes/approximate-timing.html",
-                    "form_class": ApproximateTimingForm,
-                },
-            },
-            select_label="Is there an expected completion date?",
-        ),
-    )
-
     class Meta:
         model = StrategicAction
         fields = []
@@ -294,3 +317,8 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
 
 class MonthlyUpdateModifiedTimingForm(MonthlyUpdateTimingForm):
     reason_for_completion_date_change = forms.CharField(required=True)
+
+    class Meta(MonthlyUpdateTimingForm.Meta):
+        fields = MonthlyUpdateTimingForm.Meta.fields + [
+            "reason_for_completion_date_change",
+        ]

@@ -204,7 +204,10 @@ class TestMonthlyUpdateStatusForm:
         strategic_action_update = self.strategic_action_update
         assert strategic_action_update.implementation_rag_rating is None
 
-        form_data = {"implementation_rag_rating": RAGRating.AMBER}
+        form_data = {
+            "implementation_rag_rating": RAGRating.AMBER,
+            f"{RAGRating.AMBER}-reason_for_delays": "A reason",
+        }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
         saved_instance = form.save()
@@ -232,7 +235,10 @@ class TestMonthlyUpdateStatusForm:
         strategic_action_update.strategic_action.save()
         assert strategic_action_update.implementation_rag_rating is None
 
-        form_data = {"implementation_rag_rating": RAGRating.RED}
+        form_data = {
+            "implementation_rag_rating": RAGRating.RED,
+            f"{RAGRating.RED}-reason_for_delays": "A reason",
+        }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
         saved_instance = form.save()
@@ -260,6 +266,7 @@ class TestMonthlyUpdateStatusForm:
         form_data = {
             "implementation_rag_rating": RAGRating.RED,
             f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.YES,
+            f"{RAGRating.RED}-reason_for_delays": "A reason",
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
@@ -278,6 +285,7 @@ class TestMonthlyUpdateStatusForm:
         form_data = {
             "implementation_rag_rating": RAGRating.RED,
             f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.NO,
+            f"{RAGRating.RED}-reason_for_delays": "A reason",
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert form.is_valid()
@@ -483,10 +491,10 @@ class TestMonthlyUpdateStatusForm:
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert not form.is_valid()
-        assert form.errors is None
-        detail_form = form.detail_form_for_key({RAGRating.AMBER})
-        assert detail_form.errors is not None
-        assert "will_completion_date_change" in detail_form.errors.keys()
+        assert bool(form.errors) is False
+        detail_form = form.detail_form_for_key(RAGRating.AMBER)
+        assert bool(detail_form.errors) is not False
+        assert "reason_for_delays" in detail_form.errors.keys()
 
     def test_form_requires_reason_for_delays_when_RED(self):
         strategic_action_update = self.strategic_action_update
@@ -501,10 +509,10 @@ class TestMonthlyUpdateStatusForm:
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert not form.is_valid()
-        assert form.errors is None
-        detail_form = form.detail_form_for_key({RAGRating.RED})
-        assert detail_form.errors is not None
-        assert "will_completion_date_change" in detail_form.errors.keys()
+        assert bool(form.errors) is False
+        detail_form = form.detail_form_for_key(RAGRating.RED)
+        assert bool(detail_form.errors) is not False
+        assert "reason_for_delays" in detail_form.errors.keys()
 
 
 @pytest.mark.django_db()
@@ -677,7 +685,7 @@ class TestMonthlyUpdateTimingForm:
 
 
 @pytest.mark.django_db()
-class TestRevisedMonthlyUpdateTimingForm:
+class TestMonthlyUpdateModifiedTimingForm:
     """Should log the reason for changing the date in reversion."""
 
     def setup_method(self):
@@ -692,22 +700,13 @@ class TestRevisedMonthlyUpdateTimingForm:
         form_data = {
             "is_completion_date_known": YesNoChoices.NO,
             f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONE_YEAR,
-        }
-        form = MonthlyUpdateTimingForm(
-            data=form_data, instance=self.strategic_action_update
-        )
-        # make sure we're starting on the right foot
-        assert form.is_valid()
-        form.save()
-        modified_date_form_data = {
-            "is_completion_date_known": YesNoChoices.NO,
-            f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.THREE_MONTHS,
             # 'reason_for_completion_date_change': 'Sometimes there are no reasons.'
         }
-        modified_date_form = MonthlyUpdateModifiedTimingForm(
-            data=modified_date_form_data, instance=self.strategic_action_update
+        form = MonthlyUpdateModifiedTimingForm(
+            data=form_data, instance=self.strategic_action_update
         )
-        assert not modified_date_form.is_valid()
+        assert not form.is_valid()
+        assert "reason_for_completion_date_change" in form.errors.keys()
 
 
 @pytest.mark.django_db()
