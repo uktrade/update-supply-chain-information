@@ -20,4 +20,9 @@ class Migration(migrations.Migration):
             name="reason_for_completion_date_change",
             field=models.TextField(blank=True),
         ),
+        migrations.AddField(
+            model_name="strategicactionupdate",
+            name="changed_is_ongoing",
+            field=models.BooleanField(default=False),
+        ),
     ]
