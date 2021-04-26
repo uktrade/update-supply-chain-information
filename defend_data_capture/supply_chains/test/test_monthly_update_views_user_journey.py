@@ -7,6 +7,7 @@ from supply_chains.models import (
     StrategicAction,
     StrategicActionUpdate,
     SupplyChain,
+    RAGRating,
 )
 from supply_chains.test.factories import (
     StrategicActionFactory,
@@ -15,7 +16,12 @@ from supply_chains.test.factories import (
 )
 from accounts.test.factories import GovDepartmentFactory
 
-from supply_chains.forms import MonthlyUpdateInfoForm
+from supply_chains.forms import (
+    MonthlyUpdateInfoForm,
+    YesNoChoices,
+    ApproximateTimings,
+    DetailFormMixin,
+)
 
 
 def prepare_stuff(
@@ -105,7 +111,10 @@ class TestMonthlyUpdateWithoutCompletionDate:
         )
         strategic_action.target_completion_date = None
         strategic_action.save()
-        data = {"is_completion_date_known": False}
+        data = {
+            "is_completion_date_known": YesNoChoices.NO,
+            f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONE_YEAR,
+        }
         expected_response_url = reverse(
             "monthly-update-status-edit",
             kwargs={
@@ -124,7 +133,7 @@ class TestMonthlyUpdateWithoutCompletionDate:
         )
         strategic_action.target_completion_date = None
         strategic_action.save()
-        data = {"implementation_rag_rating": "GREEN"}
+        data = {"implementation_rag_rating": RAGRating.GREEN}
         expected_response_url = reverse(
             "monthly-update-summary",
             kwargs={
@@ -237,7 +246,11 @@ class TestMonthlyUpdateWithCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-revised-timing-edit"
         )
-        data = {"is_completion_date_known": False}
+        data = {
+            "is_completion_date_known": YesNoChoices.NO,
+            f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONE_YEAR,
+            "reason_for_completion_date_change": "For reasons.",
+        }
         expected_response_url = reverse(
             "monthly-update-summary",
             kwargs={
@@ -259,8 +272,12 @@ class TestMonthlyUpdateTimingPage:
         )
         strategic_action.target_completion_date = None
         strategic_action.save()
-        data = {"is_completion_date_known": True}
+        data = {"is_completion_date_known": YesNoChoices.YES}
         client = Client()
         response = client.post(info_url, data=data)
+        # form errors return 200
         assert response.status_code == 200
-        # assert response.url == info_url
+        outer_form: DetailFormMixin = response.context_data["form"]
+        inner_form = outer_form.detail_form_for_key(YesNoChoices.YES)
+        assert inner_form.errors is not None
+        assert "changed_target_completion_date" in inner_form.errors.keys()
