@@ -42,6 +42,13 @@ describe('The Supply Chain Tasklist Page', () => {
   it('displays enabled submit button', () => {
     cy.get('button').contains('Submit update')
   })
+  it('links to the strategic action summary page', () => {
+    cy.get('a').contains('Strategic action summary').click()
+    cy.url().should(
+      'eq',
+      Cypress.config('baseUrl') + `/${supplyChain.slug}/strategic-actions`
+    )
+  })
 })
 
 const completedSC = supplyChains[1].fields
