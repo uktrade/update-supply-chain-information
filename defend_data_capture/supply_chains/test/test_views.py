@@ -1,11 +1,22 @@
+from unittest import mock
+
+import pytest
 from datetime import date, timedelta
 
 import pytest
+from dateutil.relativedelta import relativedelta
 from django.test import Client
 from django.urls import reverse
 
 from accounts.models import User
 from accounts.test.factories import GovDepartmentFactory
+from supply_chains.forms import YesNoChoices, ApproximateTimings
+from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
+from supply_chains.test.factories import (
+    SupplyChainFactory,
+    StrategicActionFactory,
+    StrategicActionUpdateFactory,
+)
 from supply_chains.models import SupplyChain
 from supply_chains.test.factories import StrategicActionFactory, SupplyChainFactory
 
@@ -125,3 +136,49 @@ def test_strat_action_summary_page_pagination(logged_in_client, test_user):
     )
     assert response.status_code == 200
     assert len(response.context["strategic_actions"]) == 4
+
+
+@pytest.mark.django_db()
+class TestMonthlyUpdateTimingPage:
+    def test_posting_form_saves_changed_target_completion_date_to_strategic_action_update(
+        self,
+    ):
+        supply_chain: SupplyChain = SupplyChainFactory()
+        strategic_action: StrategicAction = StrategicActionFactory(
+            supply_chain=supply_chain
+        )
+        strategic_action.target_completion_date = None
+        strategic_action.is_ongoing = True
+        strategic_action.save()
+        strategic_action_update: StrategicActionUpdate = StrategicActionUpdateFactory(
+            strategic_action=strategic_action,
+            status=StrategicActionUpdate.Status.IN_PROGRESS,
+            supply_chain=strategic_action.supply_chain,
+            reason_for_completion_date_change="All things must pass.",
+        )
+
+        mock_today = date(year=2021, month=4, day=23)
+        with mock.patch(
+            "supply_chains.forms.date",
+            mock.Mock(today=mock.Mock(return_value=mock_today)),
+        ):
+            expected_target_completion_date = mock_today + relativedelta(years=+1)
+            form_data = {
+                "is_completion_date_known": YesNoChoices.NO,
+                f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONE_YEAR,
+            }
+            url_kwargs = {
+                "strategic_action_id": strategic_action.pk,
+                "id": strategic_action_update.pk,
+            }
+            url = reverse("monthly-update-timing-edit", kwargs=url_kwargs)
+            client = Client()
+            response = client.post(url, form_data)
+            assert response.status_code == 302
+            strategic_action.refresh_from_db()
+            assert strategic_action.target_completion_date is None
+            strategic_action_update.refresh_from_db()
+            assert (
+                strategic_action_update.changed_target_completion_date
+                == expected_target_completion_date
+            )

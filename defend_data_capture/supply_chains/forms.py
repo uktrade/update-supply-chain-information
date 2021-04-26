@@ -221,22 +221,23 @@ class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
 
     def save(self, commit=True):
         submitted_value = self.cleaned_data["surrogate_is_ongoing"]
-        # As this form's field doesn't really exist
+        # As this form's field doesn't really exist…
         if submitted_value == ApproximateTimings["ONGOING"]:
-            # we need to either clear the completion date and set is_ongoing…
-            self.instance.target_completion_date = None
-            self.instance.is_ongoing = True
+            # we need to either set changed_is_ongoing and clear the completion date…
+            self.instance.changed_is_ongoing = True
+            self.instance.changed_target_completion_date = None
+            self.instance.reason_for_completion_date_change = ""
         else:
-            # or calculate the new completion date and clear is_ongoing
-            self.instance.is_ongoing = False
+            # or clear changed_is_ongoing and calculate the new completion date.
+            self.instance.changed_is_ongoing = False
             months_hence = int(submitted_value)
-            self.instance.target_completion_date = date.today() + relativedelta(
+            self.instance.changed_target_completion_date = date.today() + relativedelta(
                 months=+months_hence
             )
         return super().save(commit)
 
     class Meta:
-        model = StrategicAction
+        model = StrategicActionUpdate
         fields = []
         labels = {
             "surrogate_is_ongoing": "What is the approximate time for completion?",
