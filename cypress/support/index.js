@@ -18,3 +18,8 @@ const logA11yIssues = violations => {
 Cypress.Commands.add('runA11y', (context = null, options = null) => {
   cy.checkA11y(context, options, logA11yIssues)
 })
+
+
+Cypress.Cookies.defaults({
+  preserve: ['sessionid', 'csrftoken']
+})

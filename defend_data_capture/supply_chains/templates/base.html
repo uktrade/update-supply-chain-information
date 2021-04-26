@@ -63,6 +63,8 @@
         </div>
     </header>
     <div class="govuk-width-container">
+        {% block breadcrumbs %}
+        {% endblock %}
         <main id="main-content" class="govuk-main-wrapper">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
@@ -72,7 +74,7 @@
             </div>
         </main>
     </div>
-    
+
     <footer class="govuk-footer " role="contentinfo">
         <div class="govuk-width-container ">
             <div class="govuk-footer__meta">

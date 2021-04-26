@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block body %}
+
     <h1 class="govuk-heading-l"> Update supply chain information for {{ gov_department_name }}</h1>
 
     <p class="govuk-body">
@@ -26,7 +27,7 @@
             <span class="govuk-body govuk-!-font-weight-bold">{{ deadline|date:"l jS F, Y" }}</span>.
         </li>
         <li>
-            You have given updates for 
+            You have given updates for
             <span class="govuk-body govuk-!-font-weight-bold">{{ num_updated_supply_chains }} out of {{ supply_chains.paginator.count }} supply chains.</span>
         </li>
     </ul>
@@ -43,7 +44,7 @@
             {% for supplychain in supply_chains %}
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header">
-                        <a href="#" class="govuk-link govuk-link--no-visited-state">{{ supplychain.name }}</a>
+                        <a href={% url 'tlist' sc_slug=supplychain.slug %}  class="govuk-link">{{ supplychain.name }}</a>
                     </th>
                     <td class="govuk-table__cell">{{supplychain.strategic_action_count}}</td>
                     <td class="govuk-table__cell">{{supplychain.last_submission_date|date:"SHORT_DATE_FORMAT"}}</td>
@@ -78,6 +79,7 @@
                 {% endif %}
             </ul>
             <p class="moj-pagination__results">Showing <b>{{ supply_chains.start_index }}</b> to <b>{{ supply_chains.end_index }}</b> of <b>{{ supply_chains.paginator.count }}</b> supply chains</p>
-        </nav> 
+        </nav>
     {% endif %}
+
 {% endblock %}

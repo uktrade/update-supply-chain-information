@@ -1,92 +1,98 @@
 [
-  {
-    "model": "supply_chains.supplychain",
-    "pk": "107f8ea4-aec0-4bea-b68d-a65720c97022",
-    "fields": {
-      "name": "Supply Chain helloooo",
-      "last_submission_date": "1976-12-26",
-      "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
-      "contact_name": "Supply Chain Contact 1",
-      "contact_email": "supplychaincontact1@contact.gov.uk",
-      "vulnerability_status": "low",
-      "vulnerability_status_disagree_reason": "",
-      "risk_severity_status": "low",
-      "risk_severity_status_disagree_reason": ""
-    }
-  },
-  {
-    "model": "supply_chains.supplychain",
-    "pk": "14201f69-2d95-4b4c-9523-b44c6c732a80",
-    "fields": {
-      "name": "Supply Chain 2",
-      "last_submission_date": "1970-03-24",
-      "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
-      "contact_name": "Supply Chain Contact 2",
-      "contact_email": "supplychaincontact2@contact.gov.uk",
-      "vulnerability_status": "low",
-      "vulnerability_status_disagree_reason": "",
-      "risk_severity_status": "low",
-      "risk_severity_status_disagree_reason": ""
-    }
-  },
-  {
-    "model": "supply_chains.supplychain",
-    "pk": "4c8fcc98-aa4e-402b-9ff4-b06ae3c3dcd1",
-    "fields": {
-      "name": "Supply Chain 3",
-      "last_submission_date": "1994-03-29",
-      "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
-      "contact_name": "Supply Chain Contact 3",
-      "contact_email": "supplychaincontact3@contact.gov.uk",
-      "vulnerability_status": "low",
-      "vulnerability_status_disagree_reason": "",
-      "risk_severity_status": "low",
-      "risk_severity_status_disagree_reason": ""
-    }
-  },
-  {
-    "model": "supply_chains.supplychain",
-    "pk": "a69d5624-1316-49a6-8a1a-4ac935ad13e3",
-    "fields": {
-      "name": "Supply Chain 4",
-      "last_submission_date": "2016-06-18",
-      "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
-      "contact_name": "Supply Chain Contact 4",
-      "contact_email": "supplychaincontact4@contact.gov.uk",
-      "vulnerability_status": "low",
-      "vulnerability_status_disagree_reason": "",
-      "risk_severity_status": "low",
-      "risk_severity_status_disagree_reason": ""
-    }
-  },
-  {
-    "model": "supply_chains.supplychain",
-    "pk": "e7e81077-399f-4004-a907-e0a2862a84de",
-    "fields": {
-      "name": "Supply Chain 5",
-      "last_submission_date": "1987-11-10",
-      "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
-      "contact_name": "Supply Chain Contact 5",
-      "contact_email": "supplychaincontact5@contact.gov.uk",
-      "vulnerability_status": "low",
-      "vulnerability_status_disagree_reason": "",
-      "risk_severity_status": "low",
-      "risk_severity_status_disagree_reason": ""
-    }
-  },
-  {
-    "model": "supply_chains.supplychain",
-    "pk": "f6787b31-a016-4c9a-92a9-03be1b656cb4",
-    "fields": {
-      "name": "Supply Chain 6",
-      "last_submission_date": "2019-04-08",
-      "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
-      "contact_name": "Supply Chain Contact 6",
-      "contact_email": "supplychaincontact6@contact.gov.uk",
-      "vulnerability_status": "low",
-      "vulnerability_status_disagree_reason": "",
-      "risk_severity_status": "low",
-      "risk_severity_status_disagree_reason": ""
-    }
+{
+  "model": "supply_chains.supplychain",
+  "pk": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+  "fields": {
+    "name": "Supply Chain 1",
+    "last_submission_date": "1976-12-26",
+    "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
+    "contact_name": "Supply Chain Contact 1",
+    "contact_email": "supplychaincontact1@contact.gov.uk",
+    "vulnerability_status": "low",
+    "vulnerability_status_disagree_reason": "",
+    "risk_severity_status": "low",
+    "risk_severity_status_disagree_reason": "",
+    "slug": "supply-chain-1"
   }
+},
+{
+  "model": "supply_chains.supplychain",
+  "pk": "14201f69-2d95-4b4c-9523-b44c6c732a80",
+  "fields": {
+    "name": "Supply Chain 2",
+    "last_submission_date": "1970-03-24",
+    "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
+    "contact_name": "Supply Chain Contact 2",
+    "contact_email": "supplychaincontact2@contact.gov.uk",
+    "vulnerability_status": "low",
+    "vulnerability_status_disagree_reason": "",
+    "risk_severity_status": "low",
+    "risk_severity_status_disagree_reason": "",
+    "slug": "supply-chain-2"
+  }
+},
+{
+  "model": "supply_chains.supplychain",
+  "pk": "4c8fcc98-aa4e-402b-9ff4-b06ae3c3dcd1",
+  "fields": {
+    "name": "Supply Chain 3",
+    "last_submission_date": "1994-03-29",
+    "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
+    "contact_name": "Supply Chain Contact 3",
+    "contact_email": "supplychaincontact3@contact.gov.uk",
+    "vulnerability_status": "low",
+    "vulnerability_status_disagree_reason": "",
+    "risk_severity_status": "low",
+    "risk_severity_status_disagree_reason": "",
+    "slug": "supply-chain-3"
+  }
+},
+{
+  "model": "supply_chains.supplychain",
+  "pk": "a69d5624-1316-49a6-8a1a-4ac935ad13e3",
+  "fields": {
+    "name": "Supply Chain 4",
+    "last_submission_date": "2016-06-18",
+    "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
+    "contact_name": "Supply Chain Contact 4",
+    "contact_email": "supplychaincontact4@contact.gov.uk",
+    "vulnerability_status": "low",
+    "vulnerability_status_disagree_reason": "",
+    "risk_severity_status": "low",
+    "risk_severity_status_disagree_reason": "",
+    "slug": "supply-chain-4"
+  }
+},
+{
+  "model": "supply_chains.supplychain",
+  "pk": "e7e81077-399f-4004-a907-e0a2862a84de",
+  "fields": {
+    "name": "Supply Chain 5",
+    "last_submission_date": "2021-04-13",
+    "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
+    "contact_name": "Supply Chain Contact 5",
+    "contact_email": "supplychaincontact5@contact.gov.uk",
+    "vulnerability_status": "low",
+    "vulnerability_status_disagree_reason": "",
+    "risk_severity_status": "low",
+    "risk_severity_status_disagree_reason": "",
+    "slug": "supply-chain-5"
+  }
+},
+{
+  "model": "supply_chains.supplychain",
+  "pk": "f6787b31-a016-4c9a-92a9-03be1b656cb4",
+  "fields": {
+    "name": "Supply Chain 6",
+    "last_submission_date": "2019-04-08",
+    "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
+    "contact_name": "Supply Chain Contact 6",
+    "contact_email": "supplychaincontact6@contact.gov.uk",
+    "vulnerability_status": "low",
+    "vulnerability_status_disagree_reason": "",
+    "risk_severity_status": "low",
+    "risk_severity_status_disagree_reason": "",
+    "slug": "supply-chain-6"
+  }
+}
 ]

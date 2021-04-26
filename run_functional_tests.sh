@@ -13,6 +13,7 @@ python defend_data_capture/manage.py testserver \
     --settings=test_settings \
     cypress/fixtures/govDepartment.json cypress/fixtures/user.json \
     cypress/fixtures/supplyChains.json cypress/fixtures/strategicActions.json \
+    cypress/fixtures/strategicActionUpdates.json \
     & echo $! > backend.pid \
     & (sleep 5 && npx cypress run --headless --browser chrome)
 
