@@ -3,6 +3,8 @@ from datetime import date, timedelta
 import pytest
 from django.core.exceptions import ValidationError
 
+from supply_chains.models import SupplyChain, StrategicActionUpdate, RAGRating
+from supply_chains.test.factories import SupplyChainFactory, StrategicActionFactory
 from supply_chains.models import SupplyChain, StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,
@@ -88,3 +90,30 @@ class TestSAUModel:
         # Act
         # Assert
         assert date.today().strftime("%m-%Y") == sau.slug
+
+
+@pytest.mark.django_db()
+class TestStrategicActionUpdate:
+    def test_implementation_rag_rating_field_choices_are_green_amber_red(self):
+        """
+        These fields are RED, AMBER, GREEN in their definition but are used in the opposite order,
+        so let's test that they are in fact reversed.
+        """
+        assert (
+            StrategicActionUpdate._meta.get_field("implementation_rag_rating").choices[
+                0
+            ][0]
+            == "GREEN"
+        )
+        assert (
+            StrategicActionUpdate._meta.get_field("implementation_rag_rating").choices[
+                1
+            ][0]
+            == "AMBER"
+        )
+        assert (
+            StrategicActionUpdate._meta.get_field("implementation_rag_rating").choices[
+                2
+            ][0]
+            == "RED"
+        )
