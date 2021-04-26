@@ -12,7 +12,7 @@ from supply_chains.models import (
 
 
 class SupplyChainFactory(factory.django.DjangoModelFactory):
-    name = "Product"
+    name = factory.Sequence(lambda n: f"Product {n}")
     last_submission_date = factory.Faker("date_object")
     gov_department = factory.SubFactory(GovDepartmentFactory)
     contact_name = factory.Faker("name")
