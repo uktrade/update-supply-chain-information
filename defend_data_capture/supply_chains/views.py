@@ -73,7 +73,6 @@ def index(request):
     return HttpResponse(template.render(context, request))
 
 
-
 class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
     template_name = "task_list.html"
     tasks_per_page = 5
@@ -142,8 +141,6 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
             supply_chain=self.supply_chain,
             status=StrategicActionUpdate.Status.SUBMITTED,
         ).count()
-
-        self.total_sa == self.completed_updates and self.completed_updates != 0
 
         self.update_complete = (
             self.total_sa == self.completed_updates and self.total_sa != 0
@@ -215,6 +212,7 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
 
         kwargs.setdefault("view", self)
         return render(request, self.template_name, context=kwargs)
+
 
 # @login_required
 # class MonthlyUpdate
