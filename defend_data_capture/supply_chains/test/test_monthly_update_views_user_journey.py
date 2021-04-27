@@ -153,7 +153,9 @@ class TestMonthlyUpdateWithCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-info-edit"
         )
-        data = {"content": "This is the content we are sending."}
+        data = {
+            "content": "This is the content we are sending.",
+        }
         expected_response_url = reverse(
             "monthly-update-status-edit",
             kwargs={
@@ -170,7 +172,9 @@ class TestMonthlyUpdateWithCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
-        data = {"implementation_rag_rating": "GREEN"}
+        data = {
+            "implementation_rag_rating": RAGRating.GREEN,
+        }
         expected_response_url = reverse(
             "monthly-update-summary",
             kwargs={
@@ -187,7 +191,10 @@ class TestMonthlyUpdateWithCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
-        data = {"implementation_rag_rating": "AMBER"}
+        data = {
+            "implementation_rag_rating": RAGRating.AMBER,
+            f"{RAGRating.AMBER}-reason_for_delays": "A reason",
+        }
         expected_response_url = reverse(
             "monthly-update-summary",
             kwargs={
@@ -207,8 +214,9 @@ class TestMonthlyUpdateWithCompletionDate:
             "monthly-update-status-edit"
         )
         data = {
-            "implementation_rag_rating": "RED",
+            "implementation_rag_rating": RAGRating.RED,
             "RED-will_completion_date_change": True,
+            f"{RAGRating.RED}-reason_for_delays": "A reason",
         }
         expected_response_url = reverse(
             "monthly-update-revised-timing-edit",
@@ -227,8 +235,9 @@ class TestMonthlyUpdateWithCompletionDate:
             "monthly-update-status-edit"
         )
         data = {
-            "implementation_rag_rating": "RED",
-            "RED-will_completion_date_change": False,
+            "implementation_rag_rating": RAGRating.RED,
+            f"{RAGRating.RED}-will_completion_date_change": False,
+            f"{RAGRating.RED}-reason_for_delays": "A reason",
         }
         expected_response_url = reverse(
             "monthly-update-summary",
