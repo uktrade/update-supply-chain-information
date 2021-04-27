@@ -26,9 +26,11 @@ def test_homepage_user_redirected():
 def test_homepage_pagination(
     num_supply_chains, logged_in_client, test_user, url, num_supply_chains_returned
 ):
-    """
-    Test correct number of supply chains are passed to homepage via context
-    depending on total number linked to the user's department.
+    """Test pagination of supply chains on homepage.
+
+    Check the correct number of supply chains are passed to homepage
+    via context depending on total number linked to the user's department,
+    and that the supply chains are annotated with 'strategic_action_count'.
     """
     SupplyChainFactory.create_batch(
         num_supply_chains, gov_department=test_user.gov_department
@@ -37,12 +39,15 @@ def test_homepage_pagination(
     assert response.status_code == 200
     assert response.context["gov_department_name"] == test_user.gov_department.name
     assert len(response.context["supply_chains"]) == num_supply_chains_returned
+    assert hasattr(response.context["supply_chains"][0], "strategic_action_count")
 
 
 def test_homepage_update_complete(logged_in_client, test_user):
-    """
-    Test update_complete is True in context passed to homepage when all supply chains
-    linked to the user's gov department have a last_submission date after last deadline.
+    """Test update_complete is True.
+
+    'update_complete' should be True in context passed to homepage when all supply
+    chains linked to the user's gov department have a last_submission date after
+    last deadline.
     """
     SupplyChainFactory.create_batch(
         6, gov_department=test_user.gov_department, last_submission_date=date.today()
@@ -54,10 +59,11 @@ def test_homepage_update_complete(logged_in_client, test_user):
 
 
 def test_homepage_update_incomplete(logged_in_client, test_user):
-    """
-    Test update_complete is False in context passed to homepage when not all supply
-    chains linked to the user's gov department have a last_submission date after
-    last deadline.
+    """Test update_complete is False.
+
+    'update_complete' should be False in context passed to homepage when not all
+    supply chains linked to the user's gov department have a last_submission date
+    after last deadline.
     """
     SupplyChainFactory.create_batch(
         3, gov_department=test_user.gov_department, last_submission_date=date.today()
