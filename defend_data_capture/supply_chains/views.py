@@ -1,27 +1,22 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 from typing import List, Dict
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from django.shortcuts import redirect
 from django.template import loader
-from django.db.models import Count, QuerySet
+from django.db.models import Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import TemplateView
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views import View
 from django.views.generic import (
     ListView,
     UpdateView,
     CreateView,
-    FormView,
     TemplateView,
 )
 
-from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
-from accounts.models import User, GovDepartment
 from supply_chains.models import (
     SupplyChain,
     StrategicAction,
@@ -237,6 +232,9 @@ class MonthlyUpdateMixin:
             f"get_success_url() not implemented by {self.__class__}"
         )
 
+    def get_navigation_links(self):
+        return []
+
 
 class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
     template_name = "supply_chains/monthly-update-info-form.html"
@@ -373,24 +371,23 @@ class MonthlyUpdateTimingEditView(MonthlyUpdateMixin, UpdateView):
 
     def get_success_url(self):
         next_page_url = "monthly-update-status-edit"
-        # see form_valid() for an explanation of original_object
         url_kwargs = {
-            "id": self.original_object.id,
-            "strategic_action_id": self.original_object.strategic_action.id,
+            "id": self.object.id,
+            "strategic_action_id": self.object.strategic_action.id,
         }
         return reverse(next_page_url, kwargs=url_kwargs)
 
 
 class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
-    # template_name = 'supply_chains/monthly-update-revised-timing-form.html'
-    # form_class = forms.MonthlyUpdateRevisedTimingForm
+    template_name = "supply_chains/monthly-update-revised-timing-form.html"
+    form_class = forms.MonthlyUpdateModifiedTimingForm
 
     def get_success_url(self):
         next_page_url = "monthly-update-summary"
         # see form_valid() for an explanation of original_object
         url_kwargs = {
-            "id": self.original_object.id,
-            "strategic_action_id": self.original_object.strategic_action.id,
+            "id": self.object.id,
+            "strategic_action_id": self.object.strategic_action.id,
         }
         return reverse(next_page_url, kwargs=url_kwargs)
 
