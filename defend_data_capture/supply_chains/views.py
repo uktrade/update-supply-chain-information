@@ -29,9 +29,8 @@ from supply_chains.utils import (
     get_last_day_of_this_month,
     get_last_working_day_of_a_month,
     get_last_working_day_of_previous_month,
-    PaginationMixin,
-    GovDepPermissionMixin,
 )
+from supply_chains.mixins import PaginationMixin, GovDepPermissionMixin
 
 
 class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
