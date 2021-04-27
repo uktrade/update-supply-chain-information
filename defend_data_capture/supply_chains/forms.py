@@ -309,7 +309,7 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
         return super().is_valid()
 
     class Meta:
-        model = StrategicAction
+        model = StrategicActionUpdate
         fields = []
         labels = {"is_completion_date_known": "Is there an expected completion date?"}
 
