@@ -7,4 +7,3 @@ admin.site.register(GovDepartment)
 admin.site.register(SupplyChain)
 admin.site.register(StrategicAction)
 admin.site.register(StrategicActionUpdate)
-
