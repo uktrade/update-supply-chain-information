@@ -174,8 +174,9 @@ class TestMonthlyUpdateTimingPage:
                 f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONE_YEAR,
             }
             url_kwargs = {
-                "strategic_action_id": strategic_action.pk,
-                "id": strategic_action_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": strategic_action_update.slug,
             }
             url = reverse("monthly-update-timing-edit", kwargs=url_kwargs)
             client = Client()
