@@ -346,28 +346,8 @@ class MonthlyUpdateTimingEditView(MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly-update-timing-form.html"
     form_class = forms.MonthlyUpdateTimingForm
 
-    def get_object(self, queryset=None):
-        return super().get_object(queryset)
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        instance = kwargs.get("instance", None)
-        if instance is not None:
-            kwargs["instance"] = instance.strategic_action
-        return kwargs
-
-    def form_valid(self, form):
-        # The superclass form_valid will overwrite our object as it's saving to a StrategicAction
-        # and in a superclass higher up, it calls get_success_url
-        # so save it
-        self.original_object = self.object
-        response = super().form_valid(form)
-        # then restore it
-        self.object = self.original_object
-        return response
-
-    def form_invalid(self, form):
-        return super().form_invalid(form)
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     def get_success_url(self):
         next_page_url = "monthly-update-status-edit"
