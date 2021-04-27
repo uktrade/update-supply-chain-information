@@ -3,7 +3,6 @@ from datetime import date
 from dateutil.relativedelta import relativedelta
 from django import forms
 from django.db.models import TextChoices
-from django.forms.utils import ErrorList
 
 from .widgets import (
     DetailSelectMixin,
