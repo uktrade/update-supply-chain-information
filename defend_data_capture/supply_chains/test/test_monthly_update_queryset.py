@@ -22,21 +22,26 @@ def test_last_monthly_update():
     march_strategic_action_update: StrategicActionUpdate = StrategicActionUpdateFactory(
         strategic_action=strategic_action,
         supply_chain=strategic_action.supply_chain,
-        submission_date = date(year=2021, month=3, day=31),
-        status=StrategicActionUpdate.Status.SUBMITTED
+        submission_date=date(year=2021, month=3, day=31),
+        status=StrategicActionUpdate.Status.SUBMITTED,
     )
-    february_strategic_action_update: StrategicActionUpdate = StrategicActionUpdateFactory(
-        strategic_action=strategic_action,
-        supply_chain=strategic_action.supply_chain,
-        submission_date = date(year=2021, month=2, day=17),
-        status=StrategicActionUpdate.Status.SUBMITTED
+    february_strategic_action_update: StrategicActionUpdate = (
+        StrategicActionUpdateFactory(
+            strategic_action=strategic_action,
+            supply_chain=strategic_action.supply_chain,
+            submission_date=date(year=2021, month=2, day=17),
+            status=StrategicActionUpdate.Status.SUBMITTED,
+        )
     )
-    january_strategic_action_update: StrategicActionUpdate = StrategicActionUpdateFactory(
-        strategic_action=strategic_action,
-        supply_chain=strategic_action.supply_chain,
-        submission_date = date(year=2021, month=1, day=1),
-        status=StrategicActionUpdate.Status.SUBMITTED
+    january_strategic_action_update: StrategicActionUpdate = (
+        StrategicActionUpdateFactory(
+            strategic_action=strategic_action,
+            supply_chain=strategic_action.supply_chain,
+            submission_date=date(year=2021, month=1, day=1),
+            status=StrategicActionUpdate.Status.SUBMITTED,
+        )
     )
-    today = date(year=2021, month=4, day=1)
-    last_submitted: StrategicActionUpdate = StrategicActionUpdate.objects.last_submitted_update(today)
-    assert last_submitted.submission_date == march_strategic_action_update.submission_date
+    last_submitted: StrategicActionUpdate = strategic_action.last_submitted_update()
+    assert (
+        last_submitted.submission_date == march_strategic_action_update.submission_date
+    )
