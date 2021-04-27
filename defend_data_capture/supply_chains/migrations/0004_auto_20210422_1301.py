@@ -11,14 +11,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AddField(
-            model_name="strategicactionupdate",
-            name="date_created",
-            field=models.DateField(
-                auto_now_add=True, default=datetime.date(2021, 4, 22)
-            ),
-            preserve_default=False,
-        ),
         migrations.AlterField(
             model_name="strategicactionupdate",
             name="implementation_rag_rating",
