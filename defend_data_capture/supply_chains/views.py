@@ -150,8 +150,6 @@ class SCTaskListView(
             status=StrategicActionUpdate.Status.SUBMITTED,
         ).count()
 
-        self.total_sa == self.completed_updates and self.completed_updates != 0
-
         self.update_complete = (
             self.total_sa == self.completed_updates and self.total_sa != 0
         )
@@ -224,6 +222,7 @@ class SCCompleteView(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
 
         kwargs.setdefault("view", self)
         return render(request, self.template_name, context=kwargs)
+
 
 # @login_required
 # class MonthlyUpdate
