@@ -4,8 +4,9 @@
   "pk": "1d845102-56e2-4b3e-bfde-e1f2581e5514",
   "fields": {
     "status": "submitted",
-    "submission_date": "2021-03-31",
-    "content": "This is an imaginary strategic action update submitted last month. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "submission_date": "2021-02-28",
+    "date_created": "2021-03-31",
+    "content": "This is an imaginary strategic action update submitted last month.",
     "implementation_rag_rating": "GREEN",
     "reason_for_delays": "",
     "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
@@ -18,7 +19,8 @@
   "pk": "20b45066-298f-4d01-8910-b166079d22d8",
   "fields": {
     "status": "in_progress",
-    "submission_date": null,
+    "submission_date": "2021-01-31",
+    "date_created": "2021-02-28",
     "content": "This is the content, now edited in the form.\r\n\r\nAnd another edit :-)",
     "implementation_rag_rating": "RED",
     "reason_for_delays": "This is the reason for delay field.",
@@ -33,7 +35,8 @@
   "fields": {
     "status": "in_progress",
     "submission_date": null,
-    "content": "A new monthly update…",
+    "date_created": "2021-01-31",
+    "content": "This is an imaginary strategic action update submitted last month. It is in progress.",
     "implementation_rag_rating": "",
     "reason_for_delays": "",
     "user": null,
