@@ -7,7 +7,7 @@ from django.urls import reverse
 from accounts.models import User
 from accounts.test.factories import GovDepartmentFactory
 from supply_chains.models import SupplyChain
-from supply_chains.test.factories import SupplyChainFactory
+from supply_chains.test.factories import StrategicActionFactory, SupplyChainFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -71,3 +71,57 @@ def test_homepage_update_incomplete(logged_in_client, test_user):
     assert response.status_code == 200
     assert not response.context["update_complete"]
     assert response.context["num_updated_supply_chains"] == 3
+
+
+def test_strat_action_summary_page_unauthenticated(test_supply_chain):
+    """Test unauthenticated request is redirected."""
+    client = Client()
+    response = client.get(reverse("strat_action_summary", args=[test_supply_chain.id]))
+    assert response.status_code == 302
+
+
+def test_strat_action_summary_page_unauthorised(
+    logged_in_client, test_user, test_supply_chain
+):
+    """Test unauthorised request.
+
+    A user not linked to the same gov department as a
+    supply chain cannot access the strategic action summary
+    page for that supply chain.
+    """
+    dep = GovDepartmentFactory()
+    sc = SupplyChainFactory(gov_department=dep)
+    response = logged_in_client.get(
+        reverse("strat_action_summary", args=[test_supply_chain.slug])
+    )
+    assert response.status_code == 403
+
+
+def test_strat_action_summary_page_success(logged_in_client, test_user):
+    """Test authenticated request.
+
+    When an authorised request is made to the strategic_action_summary URL,
+    from a user linked to the same gov department as the strategic actions,
+    the correct supply chain and only un_archived strategic actions are
+    returned in context.
+    """
+    sc = SupplyChainFactory(gov_department=test_user.gov_department)
+    StrategicActionFactory.create_batch(5, supply_chain=sc)
+    StrategicActionFactory.create_batch(
+        2, supply_chain=sc, is_archived=True, archived_reason="A reason"
+    )
+    response = logged_in_client.get(reverse("strat_action_summary", args=[sc.slug]))
+    assert response.status_code == 200
+    assert response.context["supply_chain"] == sc
+    assert len(response.context["strategic_actions"]) == 5
+
+
+def test_strat_action_summary_page_pagination(logged_in_client, test_user):
+    """Test pagination of strategic actions returned in context."""
+    sc = SupplyChainFactory(gov_department=test_user.gov_department)
+    StrategicActionFactory.create_batch(14, supply_chain=sc)
+    response = logged_in_client.get(
+        "%s?page=3" % reverse("strat_action_summary", args=[sc.slug])
+    )
+    assert response.status_code == 200
+    assert len(response.context["strategic_actions"]) == 4

@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block breadcrumbs %}
+<nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
+  <ol class="govuk-breadcrumbs__list">
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
+    </li>
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="{% url 'strat_action_summary' supply_chain.slug %}">Strategic actions for {{ supply_chain.name }}</a>
+    </li>
+  </ol>
+</nav>
+{% endblock %}
+{% block body %}
+<h1 class="govuk-heading-xl">Strategic actions for
+  <br>
+  {{ supply_chain.name }}</h1>
+<p class="govuk-body">Select a strategic action to view and edit its details.</p>
+<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-with-summary-sections">
+  {% for action in strategic_actions %}
+  <div class="govuk-accordion__section">
+    <div class="govuk-accordion__section-header">
+      <h2 class="govuk-accordion__section-heading">
+        <span class="govuk-accordion__section-button" id="accordion-section-heading-{{ action.name|slugify }}">
+          {{ action.name }}
+        </span>
+      </h2>
+      <div class="govuk-accordion__section-summary govuk-body" id="accordion-section-summary-{{ action.name|slugify }}">
+        {{ action.description|truncatechars:150 }}
+      </div>
+    </div>
+    <div id="accordion-section-content-{{ action.name|slugify }}" class="govuk-accordion__section-content" aria-labelledby="accordion-section-heading-{{ action.name|slugify }}">
+      <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              What does the strategic action involve?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ action.description|default:"No information" }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">
+                Change<span class="govuk-visually-hidden"> description</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              What is the intended impact of the strategic action?
+              <br>
+              How will the action be measured?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ action.impact|default:"No information" }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">
+                Change<span class="govuk-visually-hidden"> impact</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Which category applies to this strategic action?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ action.get_category_display|default:"No information" }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">
+                Change<span class="govuk-visually-hidden"> category</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Does the strategic action apply UK-wide or in England only?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ action.get_geographic_scope_display|default:"No information" }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">
+                Change<span class="govuk-visually-hidden"> geographic scope</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Which other government departments are supporting this strategic action?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ action.get_supporting_organisations_display|default:"No information" }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">
+                Change<span class="govuk-visually-hidden"> supporting departments</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              What is the estimated date of completion?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% if action.is_ongoing %}
+              Ongoing
+              {% else %}
+              {{ action.target_completion_date|date:"SHORT_DATE_FORMAT"|default:"No information" }}
+              {% endif %}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">
+                Change<span class="govuk-visually-hidden"> date of intended completion</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Are there any other dependencies or requirements for applying this strategic action?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ action.other_dependencies|default:"No information" }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">
+                Change<span class="govuk-visually-hidden"> other dependencies</span>
+              </a>
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row govuk-summary-list--no-border">
+            <dt class="govuk-summary-list__key">
+              Does this action affect the whole supply chain or a section of supply chains?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ action.specific_related_products|default:"No information" }}
+            </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="#">
+                Change<span class="govuk-visually-hidden"> specific products the action relates to</span>
+              </a>
+            </dd>
+          </div>
+      </dl>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% if strategic_actions.has_other_pages %}
+    {% include 'includes/pagination.html' with objects=strategic_actions objects_name="strategic actions" %}
+{% endif %}
+<a class="govuk-button govuk-button--secondary" data-module="govuk-button" href="{% url 'tlist' supply_chain.slug %}">Back to task list</a>
+{% endblock %}

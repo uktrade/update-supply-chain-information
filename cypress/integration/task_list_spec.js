@@ -42,6 +42,13 @@ describe('The Supply Chain Tasklist Page', () => {
   it('displays enabled submit button', () => {
     cy.get('button').contains('Submit update')
   })
+  it('links to the strategic action summary page', () => {
+    cy.get('a').contains('Strategic action summary').click()
+    cy.url().should(
+      'eq',
+      Cypress.config('baseUrl') + `/${supplyChain.slug}/strategic-actions`
+    )
+  })
 })
 
 const completedSC = supplyChains[1].fields
@@ -117,7 +124,7 @@ describe('Paginate Strategic actions', () => {
     cy.get('tbody').find('tr').should('have.length', 5)
   })
   it('displays correct items in pagination list', () => {
-    cy.get('.moj-pagination__list').find('li').should('have.length', 4)
+    cy.get('.moj-pagination__list').find('li').should('have.length', 3)
     cy.get('.moj-pagination__item--active').contains('1')
     cy.get('.moj-pagination__item').contains('2')
     cy.get('.moj-pagination__item').contains('Next')

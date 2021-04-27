@@ -1,0 +1,27 @@
+<nav class="moj-pagination govuk-!-margin-bottom-6" aria-label="pagination">
+    <p class="govuk-visually-hidden">Pagination navigation</p>
+    <ul class="moj-pagination__list">
+        {% if objects.has_previous %}
+            <li class="moj-pagination__item  moj-pagination__item--prev">
+                <a class="moj-pagination__link" href="?page={{ objects.previous_page_number }}">Previous<span class="govuk-visually-hidden"> set of pages</span></a>
+            </li>
+        {% endif %}
+        {% for i in objects.paginator.page_range %}
+            {% if objects.number == i %}
+                <li class="moj-pagination__item moj-pagination__item--active">
+                    <span>{{ i }}</span>
+                </li>
+            {% else %}
+                <li class="moj-pagination__item">
+                    <a class="moj-pagination__link" href="?page={{ i }}">{{ i }}</a>
+                </li>
+            {% endif %}
+        {% endfor %}
+        {% if objects.has_next %}
+            <li class="moj-pagination__item  moj-pagination__item--next">
+                <a class="moj-pagination__link" href="?page={{ objects.next_page_number }}">Next<span class="govuk-visually-hidden"> set of pages</span></a>
+            </li>
+        {% endif %}
+    </ul>
+    <p class="moj-pagination__results">Showing <b>{{ objects.start_index }}</b> to <b>{{ objects.end_index }}</b> of <b>{{ objects.paginator.count }}</b> {{ objects_name }}</p>
+</nav>

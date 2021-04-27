@@ -17,6 +17,7 @@ from supply_chains.utils import (
     get_last_working_day_of_a_month,
     get_last_working_day_of_previous_month,
     PaginationMixin,
+    GovDepPermissionMixin,
 )
 
 
@@ -195,3 +196,20 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
 
         kwargs.setdefault("view", self)
         return render(request, self.template_name, context=kwargs)
+
+
+class SASummaryView(
+    LoginRequiredMixin, GovDepPermissionMixin, PaginationMixin, TemplateView
+):
+    template_name = "strategic_action_summary.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        supply_chain = SupplyChain.objects.get(slug=kwargs.get("sc_slug"))
+
+        context["strategic_actions"] = self.paginate(
+            supply_chain.strategic_actions.filter(is_archived=False).order_by("name"),
+            5,
+        )
+        context["supply_chain"] = supply_chain
+        return context

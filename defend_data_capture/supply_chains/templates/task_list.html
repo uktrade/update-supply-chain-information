@@ -106,38 +106,8 @@
     </table>
 
     {% if view.sa_updates.has_other_pages %}
-            <nav class="moj-pagination" aria-label="pagination">
-                <ul class="moj-pagination__list">
-                    {% if view.sa_updates.has_previous %}
-                        <li class="moj-pagination__item  moj-pagination__item--prev">
-                            <a class="moj-pagination__link" href="?page={{ view.sa_updates.previous_page_number }}">Previous<span class="govuk-visually-hidden"> set of pages</span></a>
-                        </li>
-                    {% else %}
-                        <li class="disabled"><span>&laquo;</span></li>
-                    {% endif %}
-                    {% for i in view.sa_updates.paginator.page_range %}
-                        {% if view.sa_updates.number == i %}
-                            <li class="moj-pagination__item moj-pagination__item--active">
-                                <span>{{ i }}</span>
-                            </li>
-                        {% else %}
-                            <li class="moj-pagination__item">
-                                <a class="moj-pagination__link" href="?page={{ i }}">{{ i }}</a>
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                    {% if view.sa_updates.has_next %}
-                        <li class="moj-pagination__item  moj-pagination__item--next">
-                            <a class="moj-pagination__link" href="?page={{ view.sa_updates.next_page_number }}">Next<span class="govuk-visually-hidden"> set of pages</span></a>
-                        </li>
-                    {% else %}
-                        <li class="disabled"><span>&raquo;</span></li>
-                    {% endif %}
-                </ul>
-                <p class="moj-pagination__results">Displaying strategic actions <b>{{ view.sa_updates.start_index }}</b> - <b>{{ view.sa_updates.end_index }}</b> of <b>{{ view.sa_updates.paginator.count }}</b></p>
-            </nav>
-        {% endif %}
-    <br>
+        {% include 'includes/pagination.html' with objects=view.sa_updates objects_name="strategic actions" %} 
+    {% endif %}
 
     {% if not view.update_submitted %}
         <h2 class="govuk-heading-l">Before you submit</h2>
@@ -153,7 +123,7 @@
                 </span>
             </li>
             <li>
-                <a href="#" class="govuk-link">Strategic action summary</a>
+                <a href="{% url 'strat_action_summary' view.supply_chain.slug %}" class="govuk-link">Strategic action summary</a>
                 <span>
                     - description of the action, impact, strategic action framework category and depedencies
                 </span>
