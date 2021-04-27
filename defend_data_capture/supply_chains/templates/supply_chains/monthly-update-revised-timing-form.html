@@ -1,0 +1,32 @@
+{% extends 'supply_chains/monthly-update-form-base.html' %}
+
+{% block body %}
+    <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
+    {% if strategic_action_update.strategic_action.target_completion_date %}
+        <div class="govuk-inset-text">
+            <h2 class="govuk-heading-s">Current estimated date of completion</h2>
+            <p>{{ strategic_action_update.strategic_action.target_completion_date|date:"j F Y" }}</p>
+        </div>
+    {% else %}
+        <div class="govuk-warning-text">
+            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+            <strong class="govuk-warning-text__text">
+                <span class="govuk-warning-text__assistive">Warning</span>
+                There's no expected completion date for this action.
+            </strong>
+        </div>
+    {% endif %}
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ form.is_completion_date_known }}
+        <div class="govuk-button-group">
+            <button class="govuk-button" data-module="govuk-button" type="submit">
+                Save and continue
+            </button>
+
+            <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
+                Cancel
+            </button>
+        </div>
+    </form>
+{% endblock body %}
