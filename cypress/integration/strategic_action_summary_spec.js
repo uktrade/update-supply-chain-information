@@ -36,7 +36,9 @@ describe('The strategic action summary page', () => {
   })
   it('displays the header and paragraph text', () => {
     cy.get('h1').contains(`Strategic actions for ${supplyChain.fields.name}`)
-    cy.get('p').contains('Select a strategic action to edit details.')
+    cy.get('p').contains(
+      'Select a strategic action to view and edit its details.'
+    )
   })
   it('displays 5 accordian sections with a heading and summary', () => {
     const checkAccordionHeadingsandSummaries = (object, index) => {
@@ -131,7 +133,7 @@ describe('The strategic action summary page', () => {
     )
     checkTableContent(
       7,
-      'Does this action affect the whole supply chain or a subset or supply chains?',
+      'Does this action affect the whole supply chain or a section of supply chains?',
       actions[0].specific_related_products
     )
   })
