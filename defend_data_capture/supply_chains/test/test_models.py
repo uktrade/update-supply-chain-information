@@ -91,6 +91,18 @@ class TestSAUModel:
         # Assert
         assert date.today().strftime("%m-%Y") == sau.slug
 
+    def test_slug_init_without_factory(self):
+        # Arrange
+        strategic_action = StrategicActionFactory()
+        # Act
+        sau = StrategicActionUpdate.objects.create(
+            status=StrategicActionUpdate.Status.IN_PROGRESS,
+            supply_chain=strategic_action.supply_chain,
+            strategic_action=strategic_action,
+        )
+        # Assert
+        assert date.today().strftime("%m-%Y") == sau.slug
+
 
 @pytest.mark.django_db()
 class TestStrategicActionUpdate:
