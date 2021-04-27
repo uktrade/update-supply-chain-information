@@ -1,5 +1,103 @@
 {% extends 'base.html' %}
 
-{% block body %}
-<h1>Summary</h1>
-{% endblock body %}
+{% block main %}
+    <div class="govuk-width-container">
+        <main class="govuk-main-wrapper " id="main-content" role="main">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds-from-desktop">
+
+                    <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
+
+                    <h2 class="govuk-heading-m">Check your answers</h2>
+                    <p class="govuk-body">Check all the information you've provided is correct before submitting the form.</p>
+
+                    <dl class="govuk-summary-list govuk-!-margin-bottom-3">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Latest monthly update
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ strategic_action_update.content }}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href="{% url 'monthly-update-info-edit' id=strategic_action_update.pk strategic_action_id=strategic_action_update.strategic_action.pk %}">
+                                    Change<span class="govuk-visually-hidden"> latest monthly update</span>
+                                </a>
+                            </dd>
+                        </div>
+                    </dl>
+
+                    {% if has_date_of_completion and not has_revised_date_of_completion %}
+                        <dl class="govuk-summary-list govuk-!-margin-bottom-3">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Estimated date of completion
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ strategic_action_update.changed_target_completion_date|date:"j F Y" }}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="govuk-link" href="{% url 'monthly-update-timing-edit' id=strategic_action_update.pk strategic_action_id=strategic_action_update.strategic_action.pk %}">
+                                        Change<span class="govuk-visually-hidden"> estimated date of completion</span>
+                                    </a>
+                                </dd>
+                            </div>
+                        </dl>
+                    {% endif %}
+
+                    <dl class="govuk-summary-list govuk-!-margin-bottom-3">
+                        <div class="govuk-summary-list__row{% if not has_revised_date_of_completion %} govuk-summary-list__row--no-border class.{% endif %}">
+                            <dt class="govuk-summary-list__key">
+                                Current delivery status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ strategic_action_update.get_implementation_rag_rating_display }}
+                                {% if strategic_action_update.implementation_rag_rating != 'GREEN' %}
+                                    <br>
+                                    {{ strategic_action_update.reason_for_delays }}
+                                {% endif %}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href="{% url 'monthly-update-timing-edit' id=strategic_action_update.pk strategic_action_id=strategic_action_update.strategic_action.pk %}">
+                                    Change<span class="govuk-visually-hidden"> current delivery status</span>
+                                </a>
+                            </dd>
+                        </div>
+                    </dl>
+
+                    {% if has_revised_date_of_completion %}
+                        <dl class="govuk-summary-list govuk-!-margin-bottom-3">
+                            <div class="govuk-summary-list__row govuk-summary-list__row--no-border class.">
+                                <dt class="govuk-summary-list__key">
+                                    Revised estimated date of completion
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ strategic_action_update.changed_target_completion_date|date:"j F Y" }}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="govuk-link" href="{% url 'monthly-update-revised-timing-edit' id=strategic_action_update.pk strategic_action_id=strategic_action_update.strategic_action.pk %}">
+                                        Change<span class="govuk-visually-hidden"> revised estimated date of completion</span>
+                                    </a>
+                                </dd>
+                            </div>
+                        </dl>
+                    {% endif %}
+
+                    <form action="" method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="govuk-button-group">
+                            <button class="govuk-button" data-module="govuk-button" type="submit">
+                                Submit
+                            </button>
+
+                            <a href="{% url 'strategic-actions' %}" class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </main>
+    </div>
+{% endblock main %}

@@ -406,8 +406,39 @@ class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
         return reverse(next_page_url, kwargs=url_kwargs)
 
 
-class MonthlyUpdateSummaryView(MonthlyUpdateMixin, TemplateView):
+class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly-update-summary.html"
+    fields = []
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["has_revised_date_of_completion"] = bool(
+            all(
+                [
+                    self.object.strategic_action.target_completion_date,
+                    not (self.object.strategic_action.is_ongoing),
+                    self.object.changed_target_completion_date,
+                ]
+            )
+        )
+        context["has_date_of_completion"] = bool(
+            all(
+                [
+                    self.object.strategic_action.target_completion_date,
+                    not (self.object.strategic_action.is_ongoing),
+                ]
+            )
+        )
+        return context
+
+    def post(self, request, *args, **kwargs):
+        """
+        To finalise the update we must:
+        1. Copy a revised target completion date to the strategic action, or copy is ongoing and clear the SA's date;
+        2. If there is a revised target completion date, record the change in reversion;
+        3. Change the update's status to "Completed"
+        """
+        return super().post(request, *args, **kwargs)
 
 
 class SASummaryView(
