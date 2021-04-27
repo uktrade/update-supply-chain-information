@@ -700,7 +700,6 @@ class TestMonthlyUpdateModifiedTimingForm:
         form_data = {
             "is_completion_date_known": YesNoChoices.NO,
             f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONE_YEAR,
-            # 'reason_for_completion_date_change': 'Sometimes there are no reasons.'
         }
         form = MonthlyUpdateModifiedTimingForm(
             data=form_data, instance=self.strategic_action_update
