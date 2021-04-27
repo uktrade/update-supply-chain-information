@@ -88,7 +88,7 @@ def test_get_all_strategic_actions_that_are_archived(
     """
     supply_chain = SupplyChainFactory()
     strategic_action = StrategicActionFactory(
-        supply_chain=supply_chain, is_archived=True
+        supply_chain=supply_chain, is_archived=True, archived_reason="A reason"
     )
     # Create additional strategic action not linked to this supply chain
     StrategicActionFactory()
@@ -112,8 +112,8 @@ def test_get_all_strategic_actions_that_are_not_archived(
     strategic_action = StrategicActionFactory(
         supply_chain=supply_chain, is_archived=False
     )
-    # Create additional strategic action not linked to this supply chain
-    StrategicActionFactory(is_archived=True)
+    # Create archived strategic action
+    StrategicActionFactory(is_archived=True, archived_reason="A reason")
     client = test_client_with_token
     response = client.get("/api/strategic-actions/", {"is_archived": False})
     assert response.status_code == 200

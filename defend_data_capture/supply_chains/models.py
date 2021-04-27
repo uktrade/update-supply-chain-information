@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
-from django.utils.timezone import now
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 from django.template.defaultfilters import slugify
 import reversion
 
@@ -47,11 +48,14 @@ class SupplyChain(models.Model):
     )
     risk_severity_status_disagree_reason = models.TextField(blank=True)
     slug = models.SlugField(null=True)
+    is_archived = models.BooleanField(default=False)
+    archived_date = models.DateField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-
+        if self.is_archived and self.archived_date is None:
+            self.archived_date = timezone.now().date()
         return super().save(*args, **kwargs)
 
 
@@ -102,7 +106,9 @@ class StrategicAction(models.Model):
     )
     is_ongoing = models.BooleanField(default=False)
     target_completion_date = models.DateField(null=True)
-    is_archived = models.BooleanField()
+    is_archived = models.BooleanField(default=False)
+    archived_date = models.DateField(null=True, blank=True)
+    archived_reason = models.TextField(blank=True)
     specific_related_products = models.TextField(
         help_text="Details of specific products within the supply chain which the action applies to, if applicable.",
         blank=True,
@@ -118,10 +124,19 @@ class StrategicAction(models.Model):
     )
     slug = models.SlugField(null=True)
 
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        if self.is_archived and self.archived_reason == "":
+            raise ValidationError(
+                "An archived_reason must be given when archiving a strategic action."
+            )
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
-
+        if self.is_archived and not self.archived_date:
+            self.archived_date = timezone.now().date()
+        self.full_clean()
         return super().save(*args, **kwargs)
 
 
