@@ -290,3 +290,22 @@ class TestMonthlyUpdateTimingPage:
         inner_form = outer_form.detail_form_for_key(YesNoChoices.YES)
         assert inner_form.errors is not None
         assert "changed_target_completion_date" in inner_form.errors.keys()
+
+
+@pytest.mark.django_db()
+class TestMonthlyUpdateSummaryPage:
+    def test_submit_monthly_update(self):
+        strategic_action, monthly_update, info_url = prepare_stuff(
+            "monthly-update-summary"
+        )
+        strategic_action.target_completion_date = None
+        strategic_action.save()
+        data = {}
+        expected_response_url = reverse(
+            "strategic-actions",
+            kwargs={},
+        )
+        client = Client()
+        response = client.post(info_url, data=data)
+        assert response.status_code == 302
+        assert response.url == expected_response_url
