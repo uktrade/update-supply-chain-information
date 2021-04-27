@@ -246,10 +246,14 @@ class StrategicActionUpdate(models.Model):
     slug = models.SlugField(null=True)
 
     def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
         if not self.slug:
             self.slug = self.date_created.strftime("%m-%Y")
-
-        return super().save(*args, **kwargs)
+            try:
+                kwargs.pop("force_insert")
+            except KeyError:
+                pass
+            self.save(*args, **kwargs)
 
     def previous_submitted_update(self):
         return self.strategic_action.monthly_updates.last_month()
