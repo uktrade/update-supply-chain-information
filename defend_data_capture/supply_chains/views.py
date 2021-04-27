@@ -220,10 +220,10 @@ class StrategicActionListView(ListView):
 class MonthlyUpdateMixin:
     model = StrategicActionUpdate
     context_object_name = "strategic_action_update"
-    pk_url_kwarg = "id"
+    slug_url_kwarg = "update_slug"
 
-    def get_strategic_action(self, strategic_action_id):
-        return StrategicAction.objects.get(id=strategic_action_id)
+    def get_strategic_action(self, strategic_action_slug):
+        return StrategicAction.objects.get(slug=strategic_action_slug)
 
     def get_success_url(self):
         # This method needs to be implemented by the pages
@@ -243,7 +243,7 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
     def get(self, request, *args, **kwargs):
         last_deadline = get_last_working_day_of_previous_month()
         strategic_action: StrategicAction = self.get_strategic_action(
-            kwargs["strategic_action_id"]
+            kwargs["strategic_action_slug"]
         )
         current_month_updates = strategic_action.monthly_updates.since(last_deadline)
         if current_month_updates.exists():
@@ -260,8 +260,9 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
         update_url = reverse(
             "monthly-update-info-edit",
             kwargs={
-                "strategic_action_id": current_month_update.strategic_action.pk,
-                "id": current_month_update.id,
+                "supply_chain_slug": current_month_update.strategic_action.supply_chain.slug,
+                "strategic_action_slug": current_month_update.strategic_action.slug,
+                "update_slug": current_month_update.slug,
             },
         )
         return redirect(update_url)
@@ -269,12 +270,14 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["strategic_action"] = self.get_strategic_action(
-            self.kwargs["strategic_action_id"]
+            self.kwargs["strategic_action_slug"]
         )
         return context
 
     def form_valid(self, form):
-        strategic_action = self.get_strategic_action(self.kwargs["strategic_action_id"])
+        strategic_action = self.get_strategic_action(
+            self.kwargs["strategic_action_slug"]
+        )
         form.instance.strategic_action = strategic_action
         form.instance.supply_chain = strategic_action.supply_chain
         return super().form_valid(form)
@@ -294,8 +297,9 @@ class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
         else:
             next_page_url = "monthly-update-status-edit"
         url_kwargs = {
-            "id": self.object.id,
-            "strategic_action_id": self.object.strategic_action.id,
+            "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
+            "update_slug": self.object.slug,
+            "strategic_action_slug": self.object.strategic_action.slug,
         }
         return reverse(next_page_url, kwargs=url_kwargs)
 
@@ -336,8 +340,9 @@ class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
                 ):
                     next_page_url = "monthly-update-revised-timing-edit"
         url_kwargs = {
-            "id": self.object.id,
-            "strategic_action_id": self.object.strategic_action.id,
+            "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
+            "update_slug": self.object.slug,
+            "strategic_action_slug": self.object.strategic_action.slug,
         }
         return reverse(next_page_url, kwargs=url_kwargs)
 
@@ -352,8 +357,9 @@ class MonthlyUpdateTimingEditView(MonthlyUpdateMixin, UpdateView):
     def get_success_url(self):
         next_page_url = "monthly-update-status-edit"
         url_kwargs = {
-            "id": self.object.id,
-            "strategic_action_id": self.object.strategic_action.id,
+            "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
+            "update_slug": self.object.slug,
+            "strategic_action_slug": self.object.strategic_action.slug,
         }
         return reverse(next_page_url, kwargs=url_kwargs)
 
@@ -366,8 +372,9 @@ class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
         next_page_url = "monthly-update-summary"
         # see form_valid() for an explanation of original_object
         url_kwargs = {
-            "id": self.object.id,
-            "strategic_action_id": self.object.strategic_action.id,
+            "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
+            "update_slug": self.object.slug,
+            "strategic_action_slug": self.object.strategic_action.slug,
         }
         return reverse(next_page_url, kwargs=url_kwargs)
 

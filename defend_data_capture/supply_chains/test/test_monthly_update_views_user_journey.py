@@ -29,7 +29,8 @@ def prepare_stuff(
 ):
     strategic_action: StrategicAction = StrategicActionFactory()
     url_kwargs = {
-        "strategic_action_id": strategic_action.pk,
+        "supply_chain_slug": strategic_action.supply_chain.slug,
+        "strategic_action_slug": strategic_action.slug,
     }
     if with_monthly_update:
         monthly_update: StrategicActionUpdate = strategic_action.monthly_updates.create(
@@ -37,7 +38,7 @@ def prepare_stuff(
             supply_chain=strategic_action.supply_chain,
         )
         if with_monthly_update_url_kwarg:
-            url_kwargs["id"] = monthly_update.pk
+            url_kwargs["update_slug"] = monthly_update.slug
     else:
         monthly_update = None
     url = reverse(url_name, kwargs=url_kwargs)
@@ -53,8 +54,9 @@ class TestMonthlyUpdateCreationView:
         expected_redirect_url = reverse(
             "monthly-update-info-edit",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         client = Client()
@@ -76,8 +78,9 @@ class TestMonthlyUpdateCreationView:
         expected_redirect_url = reverse(
             "monthly-update-info-edit",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         assert response.status_code == 302
@@ -96,8 +99,9 @@ class TestMonthlyUpdateWithoutCompletionDate:
         expected_response_url = reverse(
             "monthly-update-timing-edit",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         client = Client()
@@ -118,8 +122,9 @@ class TestMonthlyUpdateWithoutCompletionDate:
         expected_response_url = reverse(
             "monthly-update-status-edit",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         client = Client()
@@ -137,8 +142,9 @@ class TestMonthlyUpdateWithoutCompletionDate:
         expected_response_url = reverse(
             "monthly-update-summary",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         client = Client()
@@ -159,8 +165,9 @@ class TestMonthlyUpdateWithCompletionDate:
         expected_response_url = reverse(
             "monthly-update-status-edit",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         client = Client()
@@ -178,8 +185,9 @@ class TestMonthlyUpdateWithCompletionDate:
         expected_response_url = reverse(
             "monthly-update-summary",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         client = Client()
@@ -198,8 +206,9 @@ class TestMonthlyUpdateWithCompletionDate:
         expected_response_url = reverse(
             "monthly-update-summary",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         client = Client()
@@ -221,8 +230,9 @@ class TestMonthlyUpdateWithCompletionDate:
         expected_response_url = reverse(
             "monthly-update-revised-timing-edit",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         client = Client()
@@ -242,8 +252,9 @@ class TestMonthlyUpdateWithCompletionDate:
         expected_response_url = reverse(
             "monthly-update-summary",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         client = Client()
@@ -263,8 +274,9 @@ class TestMonthlyUpdateWithCompletionDate:
         expected_response_url = reverse(
             "monthly-update-summary",
             kwargs={
-                "strategic_action_id": strategic_action.pk,
-                "id": monthly_update.pk,
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "strategic_action_slug": strategic_action.slug,
+                "update_slug": monthly_update.slug,
             },
         )
         client = Client()

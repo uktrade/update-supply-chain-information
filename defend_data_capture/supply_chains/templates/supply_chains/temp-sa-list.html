@@ -11,22 +11,7 @@
         <li>
             {{ strategic_action.name }}
             {{ strategic_action.id }}
-            {% with in_progress_update=strategic_action.monthly_updates.in_progress submitted_update=strategic_action.monthly_updates.submitted completed_update=strategic_action.monthly_updates.completed %}
-                {% if in_progress_update %}
-                    {% url 'monthly-update-info-edit' strategic_action_id=strategic_action.id id=in_progress_update.id as form_url %}
-                    In Progress
-                {% elif completed_update %}
-                    {% url 'monthly-update-info-edit' strategic_action_id=strategic_action.id id=completed_update.id as form_url %}
-                    Completed
-                {% elif submitted_update %}
-                    {% url 'monthly-update-info-edit' strategic_action_id=strategic_action.id id=submitted_update.id as form_url %}
-                    Completed
-                {% else %}
-                    {% url 'monthly-update-create' strategic_action_id=strategic_action.id as form_url %}
-                    Not started
-                {% endif %}
-                <a href="{{ form_url }}">Monthly Update</a>
-            {% endwith %}
+            <a href="{% url 'monthly-update-create' supply_chain_slug=strategic_action.supply_chain.slug strategic_action_slug=strategic_action.slug %}">Monthly Update</a>
         </li>
     {% empty %}
         <li>(No Strategic Actions)</li>
