@@ -9,14 +9,13 @@ import reversion
 
 from accounts.models import GovDepartment
 import uuid
-from .utils import get_last_day_of_this_month, get_last_working_day_of_a_month
+from .utils import get_last_working_day_of_previous_month
 
 
 class RAGRating(models.TextChoices):
     RED = ("RED", "Red")
     AMBER = ("AMBER", "Amber")
     GREEN = ("GREEN", "Green")
-    # __empty__ = (None, '')
 
 
 RAGRatingHintsText = [
@@ -162,37 +161,19 @@ class StrategicAction(models.Model):
         return self.monthly_updates.last_month()
 
 
-class StrategicActionUpdateQuerySet(models.QuerySet):
-    def for_month_of(self, date_in_month=None):
-        if date_in_month is None:
-            date_in_month = datetime.now().date()
-        timedelta()
+class SAUQuerySet(models.QuerySet):
+    def since(self, deadline, *args, **kwargs):
+        return self.filter(date_created__gt=deadline, *args, **kwargs)
 
     def last_month(self, before_date=None):
         if before_date is None:
             before_date = datetime.now().date()
-        last_day_of_previous_month = before_date.replace(day=1) - timedelta(1)
-        last_month_deadline = get_last_working_day_of_a_month(
-            last_day_of_previous_month
-        )
+        last_month_deadline = get_last_working_day_of_previous_month()
         return (
             self.filter(submission_date__lte=last_month_deadline)
             .order_by("-submission_date")
             .first()
         )
-        return self.filter(submission_date__lte=last_month_deadline).order_by('-submission_date').first()
-class SAUQuerySet(models.QuerySet):
-    def since(self, deadline, *args, **kwargs):
-        return self.filter(date_created__gt=deadline, *args, **kwargs)
-
-    def in_progress(self):
-        return self.filter(status=StrategicActionUpdate.Status.IN_PROGRESS).first()
-
-    def completed(self):
-        return self.filter(status=StrategicActionUpdate.Status.COMPLETED).first()
-
-    def submitted(self):
-        return self.filter(status=StrategicActionUpdate.Status.SUBMITTED).first()
 
 
 class StrategicActionUpdate(models.Model):
@@ -212,8 +193,6 @@ class StrategicActionUpdate(models.Model):
  users know whether they have completed all required fields for an update.
  The 'submitted' status refers to when a user can no longer edit an update.""",
     )
-    submission_date = models.DateField(null=True)
-    date_created = models.DateField(auto_now_add=True)
     submission_date = models.DateField(null=True, blank=True)
     date_created = models.DateField(auto_now_add=True)
     content = models.TextField(blank=True)
@@ -227,6 +206,7 @@ class StrategicActionUpdate(models.Model):
     reason_for_delays = models.TextField(blank=True)
     changed_target_completion_date = models.DateField(null=True)
     reason_for_completion_date_change = models.TextField(blank=True)
+    changed_is_ongoing = models.BooleanField(null=True, default=False)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -254,9 +234,6 @@ class StrategicActionUpdate(models.Model):
             except KeyError:
                 pass
             self.save(*args, **kwargs)
-
-    def previous_submitted_update(self):
-        return self.strategic_action.monthly_updates.last_month()
 
 
 class MaturitySelfAssessment(models.Model):
