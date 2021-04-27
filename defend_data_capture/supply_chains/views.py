@@ -222,3 +222,14 @@ class SASummaryView(
         )
         context["supply_chain"] = supply_chain
         return context
+
+
+class SCSummary(LoginRequiredMixin, TemplateView):
+    template_name = "sc_summary.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        sc_slug = kwargs.get("sc_slug", "DEFAULT")
+
+        context["supply_chain"] = SupplyChain.objects.filter(slug=sc_slug)[0]
+        return context
