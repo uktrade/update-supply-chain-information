@@ -1,32 +1,19 @@
 {% extends 'base.html' %}
 
-{% block main %}
-    <main class="govuk-main-wrapper govuk-!-padding-top-0">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                {% block formnavigation %}
-                    <nav class="moj-sub-navigation" aria-label="Sub navigation">
+{% block breadcrumbs %}
+    <nav class="moj-sub-navigation" aria-label="Sub navigation">
+        <ol class="moj-sub-navigation__list">
+            {% for _, link_data in navigation_links.items %}
+                <li class="moj-sub-navigation__item">
+                    <a class="moj-sub-navigation__link"{% if link_data.is_current_page %} aria-current="page"{% endif %} href="{{ link_data.url }}">
+                        {{ forloop.counter }}.
+                        {{ link_data.label }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ol>
 
-                        <ol class="moj-sub-navigation__list">
-                            <li class="moj-sub-navigation__item">
-                                <a class="moj-sub-navigation__link" aria-current="page" href="#1">Update info</a>
-                            </li>
-
-                            <li class="moj-sub-navigation__item">
-                                <a class="moj-sub-navigation__link" href="#2">Action status</a>
-                            </li>
-
-                            <li class="moj-sub-navigation__item">
-                                <a class="moj-sub-navigation__link" href="#3">Confirm</a>
-                            </li>
-                        </ol>
-
-                    </nav>
-                {% endblock formnavigation %}
-                {% block body %}{% endblock body %}
-            </div>
-        </div>
-    </main>
-{% endblock main %}
+    </nav>
+{% endblock breadcrumbs %}
 
 
