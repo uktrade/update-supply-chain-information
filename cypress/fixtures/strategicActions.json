@@ -183,7 +183,7 @@
     "model": "supply_chains.strategicaction",
     "pk": "fd317f3e-9ce0-4ed0-9a6a-baf7c6e65989",
     "fields": {
-      "name": "Strategic action 0",
+      "name": "Has an update from previous month and no completion date",
       "start_date": "1978-03-23",
       "description": "Garden together job.",
       "impact": "",
@@ -203,7 +203,7 @@
     "model": "supply_chains.strategicaction",
     "pk": "e4ff7167-9298-45ed-bcca-7c8a923be491",
     "fields": {
-      "name": "Strategic action 1",
+      "name": "Has an update from previous month and a completion date",
       "start_date": "2019-11-14",
       "description": "President run way so make standard. Player morning sure no director involve may. Visit contain unit. Throw lawyer idea protect amount lose computer.",
       "impact": "Reveal protect assume challenge able buy. Want cell next finally himself security rather peace. Serve star eight wall decade man class main.",
@@ -223,9 +223,9 @@
     "model": "supply_chains.strategicaction",
     "pk": "607990ca-91e2-4f2f-8dce-4eb0ac17bfd1",
     "fields": {
-      "name": "Strategic action 2",
+      "name": "Has no update from previous month and no completion date",
       "start_date": "1982-03-07",
-      "description": "Cover than item risk difficult.",
+      "description": "Has no update from previous month and no completion date",
       "impact": "",
       "category": "",
       "geographic_scope": "",
@@ -243,7 +243,7 @@
     "model": "supply_chains.strategicaction",
     "pk": "fe10c583-6a7b-4606-8d90-e7e870e1a63e",
     "fields": {
-      "name": "Strategic action 3",
+      "name": "Has no update from previous month and a completion date",
       "start_date": "1982-03-07",
       "description": "Cover than item risk difficult.",
       "impact": "",
@@ -251,7 +251,7 @@
       "geographic_scope": "",
       "supporting_organisations": "",
       "is_ongoing": false,
-      "target_completion_date": null,
+      "target_completion_date": "2023-02-08",
       "is_archived": false,
       "specific_related_products": "",
       "other_dependencies": "",

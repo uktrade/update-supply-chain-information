@@ -14,7 +14,7 @@ python defend_data_capture/manage.py testserver \
     cypress/fixtures/supplyChains.json cypress/fixtures/strategicActions.json \
     cypress/fixtures/strategicActionUpdate.json \
     & echo $! > backend.pid \
-    & (sleep 5 && npx cypress run --browser chrome --headless --config-file false -c video=false --config baseUrl=http://localhost:8001 --spec "cypress/integration/monthly_update_new_no_completion_date_spec.js")
+    & (sleep 5 && npx cypress run --browser chrome --config-file false -c video=false --config baseUrl=http://localhost:8001 --spec "cypress/integration/monthly_update_new_no_completion_date_spec.js")
 
 #npx cypress run --browser chrome --config-file false -c video=false --config baseUrl=http://localhost:8001 --spec "cypress/integration/monthly_update_new_no_completion_date_spec.js"
 
