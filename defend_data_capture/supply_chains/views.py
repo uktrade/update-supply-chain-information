@@ -232,6 +232,12 @@ class MonthlyUpdateMixin:
     context_object_name = "strategic_action_update"
     slug_url_kwarg = "update_slug"
 
+    def get_queryset(self):
+        strategic_action_slug = self.kwargs.get("strategic_action_slug")
+        return (
+            super().get_queryset().filter(strategic_action__slug=strategic_action_slug)
+        )
+
     def get_strategic_action(self, strategic_action_slug):
         return StrategicAction.objects.get(slug=strategic_action_slug)
 
@@ -352,12 +358,6 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
 class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly-update-info-form.html"
     form_class = forms.MonthlyUpdateInfoForm
-
-    def get_queryset(self):
-        strategic_action_slug = self.kwargs.get("strategic_action_slug")
-        return (
-            super().get_queryset().filter(strategic_action__slug=strategic_action_slug)
-        )
 
     def get_success_url(self):
         if self.object.strategic_action.target_completion_date is None:
