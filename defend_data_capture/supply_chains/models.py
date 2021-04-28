@@ -123,7 +123,7 @@ class StrategicAction(models.Model):
         max_length=24, choices=SupportingOrgs.choices, blank=True
     )
     is_ongoing = models.BooleanField(default=False)
-    target_completion_date = models.DateField(null=True)
+    target_completion_date = models.DateField(null=True, blank=True)
     is_archived = models.BooleanField(default=False)
     archived_date = models.DateField(null=True, blank=True)
     archived_reason = models.TextField(blank=True)
