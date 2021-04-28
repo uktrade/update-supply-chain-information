@@ -83,8 +83,8 @@ class DetailFormMixin:
 
 
 class YesNoChoices(TextChoices):
-    YES = (True, "Yes")
-    NO = (False, "No")
+    YES = ("True", "Yes")
+    NO = ("False", "No")
 
 
 class MonthlyUpdateInfoForm(forms.ModelForm):
@@ -276,11 +276,11 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
         widget=DetailRadioSelect(
             attrs={"class": "govuk-radios__input", "data-aria-controls": "{id}-detail"},
             details={
-                "True": {
+                YesNoChoices.YES: {
                     "template": "supply_chains/includes/completion-date.html",
                     "form_class": CompletionDateForm,
                 },
-                "False": {
+                YesNoChoices.NO: {
                     "template": "supply_chains/includes/approximate-timing.html",
                     "form_class": ApproximateTimingForm,
                 },
@@ -288,6 +288,13 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
             select_label="Is there an expected completion date?",
         ),
     )
+
+    def get_initial_for_field(self, field, field_name):
+        if field_name == "is_completion_date_known":
+            detail_form = self.detail_form_for_key(YesNoChoices.NO)
+            if detail_form.instance.changed_is_ongoing:
+                return YesNoChoices.NO
+        return super().get_initial_for_field(field, field_name)
 
     def is_valid(self):
         # need to make one of the detail forms required, depending on our value
