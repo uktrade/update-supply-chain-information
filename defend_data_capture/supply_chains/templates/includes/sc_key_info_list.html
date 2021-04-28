@@ -1,4 +1,3 @@
-{% load sc_extras %}
 
 <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
@@ -29,10 +28,15 @@
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
-        The current vulnerability status is 'Low'. Is this accurate?
+        The current vulnerability status is '{{ supply_chain.vulnerability_status|title }}'. Is this accurate?
       </dt>
       <dd class="govuk-summary-list__value">
-        {{ supply_chain.vulnerability_status|boolean_status:"low" }}
+        {% if supply_chain.vulnerability_status_disagree_reason %}
+          No<br>
+          {{ supply_chain.vulnerability_status_disagree_reason }}
+        {% else %}
+          Yes
+        {% endif %}
       </dd>
       <dd class="govuk-summary-list__actions">
         <a class="govuk-link" href="#">
@@ -42,10 +46,15 @@
     </div>
     <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
       <dt class="govuk-summary-list__key">
-        The current risk severity level is 'Medium'. Is this accurate?
+        The current risk severity level is '{{ supply_chain.risk_severity_status|title }}'. Is this accurate?
       </dt>
       <dd class="govuk-summary-list__value">
-        {{ supply_chain.risk_severity_status|boolean_status:"Medium" }}
+        {% if supply_chain.risk_severity_status_disagree_reason %}
+          No<br>
+          {{ supply_chain.risk_severity_status_disagree_reason }}
+        {% else %}
+          Yes
+        {% endif %}
       </dd>
       <dd class="govuk-summary-list__actions">
         <a class="govuk-link" href="#">

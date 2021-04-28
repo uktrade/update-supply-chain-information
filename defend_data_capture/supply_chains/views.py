@@ -111,7 +111,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
 
     def _extract_view_data(self, *args, **kwargs):
         sc_slug = kwargs.get("sc_slug", "DEFAULT")
-        self.supply_chain = SupplyChain.objects.get(slug=sc_slug)
+        self.supply_chain = SupplyChain.objects.get(slug=sc_slug, is_archived=False)
 
         sa_qset = StrategicAction.objects.filter(supply_chain=self.supply_chain)
         self.total_sa = sa_qset.count()
@@ -189,7 +189,9 @@ class SCCompleteView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         sc_slug = kwargs.get("sc_slug", "DEFAULT")
         self.last_deadline = get_last_working_day_of_previous_month()
-        self.supply_chain = SupplyChain.objects.filter(slug=sc_slug)[0]
+        self.supply_chain = SupplyChain.objects.filter(slug=sc_slug, is_archived=False)[
+            0
+        ]
 
         # This is to gaurd manual access if not actually complete, help them to complete
         if not self._validate():
@@ -224,12 +226,14 @@ class SASummaryView(
         return context
 
 
-class SCSummary(LoginRequiredMixin, TemplateView):
+class SCSummary(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
     template_name = "sc_summary.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         sc_slug = kwargs.get("sc_slug", "DEFAULT")
 
-        context["supply_chain"] = SupplyChain.objects.filter(slug=sc_slug)[0]
+        context["supply_chain"] = SupplyChain.objects.filter(
+            slug=sc_slug, is_archived=False
+        )[0]
         return context

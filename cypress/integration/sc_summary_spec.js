@@ -87,16 +87,17 @@ describe('Supply chain summary page', () => {
       tableElement,
       2,
       String.raw`The current vulnerability status is 'Low'. Is this accurate?`,
-      'Yes',
+      'No' + ' ' + supplyChain.fields.vulnerability_status_disagree_reason,
       editLabel
     )
+
 
     cy.forms.checkSummaryTableContent(
       table,
       tableElement,
       3,
       String.raw`The current risk severity level is 'Medium'. Is this accurate?`,
-      'No',
+      'Yes',
       editLabel
     )
   })
