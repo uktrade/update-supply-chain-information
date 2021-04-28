@@ -64,6 +64,8 @@ class SCSummary(LoginRequiredMixin, TemplateView):
 
         context["supply_chain"] = SupplyChain.objects.filter(slug=sc_slug)[0]
         return context
+
+
 class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
     template_name = "task_list.html"
     tasks_per_page = 5
