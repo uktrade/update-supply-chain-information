@@ -353,6 +353,12 @@ class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly-update-info-form.html"
     form_class = forms.MonthlyUpdateInfoForm
 
+    def get_queryset(self):
+        strategic_action_slug = self.kwargs.get("strategic_action_slug")
+        return (
+            super().get_queryset().filter(strategic_action__slug=strategic_action_slug)
+        )
+
     def get_success_url(self):
         if self.object.strategic_action.target_completion_date is None:
             next_page_url = "monthly-update-timing-edit"
