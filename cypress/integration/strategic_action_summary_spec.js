@@ -36,7 +36,9 @@ describe('The strategic action summary page', () => {
   })
   it('displays the header and paragraph text', () => {
     cy.get('h1').contains(`Strategic actions for ${supplyChain.fields.name}`)
-    cy.get('p').contains('Select a strategic action to edit details.')
+    cy.get('p').contains(
+      'Select a strategic action to view and edit its details.'
+    )
   })
   it('displays 5 accordian sections with a heading and summary', () => {
     const checkAccordionHeadingsandSummaries = (object, index) => {
@@ -82,57 +84,80 @@ describe('The strategic action summary page', () => {
       .first()
       .children()
 
-    const checkTableContent = (index, heading, value) => {
-      firstTable
-        .get('.govuk-summary-list__row')
-        .eq(index)
-        .within(() => {
-          cy.contains(heading)
-          cy.contains(value)
-          cy.get('a').contains('Change')
-        })
-    }
-
     firstTable.should('have.length', 8)
-    checkTableContent(
+    const tableElement = '.govuk-summary-list__row'
+    const editLabel = 'Change'
+
+    cy.forms.checkSummaryTableContent(
+      firstTable,
+      tableElement,
       0,
       'What does the strategic action involve?',
-      actions[0].description
+      actions[0].description,
+      editLabel
     )
-    checkTableContent(
+
+    cy.forms.checkSummaryTableContent(
+      firstTable,
+      tableElement,
       1,
       'What is the intended impact of the strategic action? How will the action be measured?',
-      actions[0].impact
+      actions[0].impact,
+      editLabel
     )
-    checkTableContent(
+
+    cy.forms.checkSummaryTableContent(
+      firstTable,
+      tableElement,
       2,
       'Which category applies to this strategic action?',
-      'Diversify'
+      'Diversify',
+      editLabel
     )
-    checkTableContent(
+
+    cy.forms.checkSummaryTableContent(
+      firstTable,
+      tableElement,
       3,
       'Does the strategic action apply UK-wide or in England only?',
-      'England only'
+      'England only',
+      editLabel
     )
-    checkTableContent(
+
+    cy.forms.checkSummaryTableContent(
+      firstTable,
+      tableElement,
       4,
       'Which other government departments are supporting this strategic action?',
-      'MoD'
+      'MoD',
+      editLabel
     )
-    checkTableContent(
+
+    cy.forms.checkSummaryTableContent(
+      firstTable,
+      tableElement,
       5,
       'What is the estimated date of completion?',
-      '02/08/2023'
+      '02/08/2023',
+      editLabel
     )
-    checkTableContent(
+
+    cy.forms.checkSummaryTableContent(
+      firstTable,
+      tableElement,
       6,
       'Are there any other dependencies or requirements for applying this strategic action?',
-      actions[0].other_dependencies
+      actions[0].other_dependencies,
+      editLabel
     )
-    checkTableContent(
+
+    cy.forms.checkSummaryTableContent(
+      firstTable,
+      tableElement,
       7,
-      'Does this action affect the whole supply chain or a subset or supply chains?',
-      actions[0].specific_related_products
+      'Does this action affect the whole supply chain or a section of supply chains?',
+      actions[0].specific_related_products,
+      editLabel
     )
   })
   it('closes a section with the - symbol is clicked', () => {

@@ -17,9 +17,13 @@ python defend_data_capture/manage.py testserver \
     & echo $! > backend.pid \
     & (sleep 5 && npx cypress run --headless --browser chrome)
 
+cypress_failed=$?
+
 if [ "$running_locally" == true ]; then
     # Kill the application using the pid previously saved
     kill $(cat backend.pid)
     # Drop the test database
     docker-compose exec db psql -h localhost -U postgres -c "DROP DATABASE IF EXISTS test_defend"
 fi
+
+exit $cypress_failed
