@@ -10,34 +10,32 @@
             </div>
         {% endif %}
     {% endwith %}
-    {% block form %}
-        <form method="post" action="">
-            {% csrf_token %}
-            <div class="govuk-form-group">
-                <h2 class="govuk-label-wrapper govuk-heading-l">
-                    <label class="govuk-label govuk-label--l" for="{{ form.content.id_for_label }}">
-                    Latest monthly update
-                    </label>
-                </h2>
-                <div class="govuk-hint">
-                    <p>Include details of:</p>
-                    <ul class="govuk-list govuk-list--bullet">
-                        <li>activities undertaken</li>
-                        <li>milestones reached</li>
-                        <li>any other strategic action developments.</li>
-                    </ul>
-                </div>
-                {{ form.content }}
+    <form method="post" action="">
+        {% csrf_token %}
+        <div class="govuk-form-group">
+            <h2 class="govuk-label-wrapper govuk-heading-l">
+                <label class="govuk-label govuk-label--l" for="{{ form.content.id_for_label }}">
+                Latest monthly update
+                </label>
+            </h2>
+            <div class="govuk-hint">
+                <p>Include details of:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>activities undertaken</li>
+                    <li>milestones reached</li>
+                    <li>any other strategic action developments.</li>
+                </ul>
             </div>
-            <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button" type="submit">
-                    Save and continue
-                </button>
+            {{ form.content }}
+        </div>
+        <div class="govuk-button-group">
+            <button class="govuk-button" data-module="govuk-button" type="submit">
+                Save and continue
+            </button>
 
-                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
-                    Cancel
-                </button>
-            </div>
-        </form>
-    {% endblock form %}
+            <button class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
+                Cancel
+            </button>
+        </div>
+    </form>
 {% endblock body %}
