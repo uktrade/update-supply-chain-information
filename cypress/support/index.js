@@ -1,4 +1,5 @@
 import 'cypress-axe'
+import './utils'
 
 const logA11yIssues = violations => {
   const violationData = violations.map(({ impact, help, nodes }) => ({

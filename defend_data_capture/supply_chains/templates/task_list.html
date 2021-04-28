@@ -116,7 +116,7 @@
         </p>
         <ul class="govuk-list govuk-list--bullet">
             <li>
-                <a href="#" class="govuk-link">Supply chain summary</a>
+                <a href={% url 'sc_summary' sc_slug=view.supply_chain.slug %} class="govuk-link">Supply chain summary</a>
                 <span>
                     - key information, vulnerability assessment,
                     scenario assessment, maturity self assessment, risk monitoring,<br>archived strategic actions

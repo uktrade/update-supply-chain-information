@@ -13,6 +13,7 @@ from supply_chains.views import (
     SCTaskListView,
     SCCompleteView,
     SASummaryView,
+    SCSummary,
 )
 
 router = routers.DefaultRouter()
@@ -32,6 +33,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("", views.index, name="index"),
+    path("<slug:sc_slug>/summary", SCSummary.as_view(), name="sc_summary"),
     path("<slug:sc_slug>", SCTaskListView.as_view(), name="tlist"),
     path("<slug:sc_slug>/complete", SCCompleteView.as_view(), name="update_complete"),
     path(
