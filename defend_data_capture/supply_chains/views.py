@@ -470,6 +470,15 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
                 ]
             )
         )
+        context["has_new_date_of_completion"] = bool(
+            all(
+                [
+                    not self.object.strategic_action.target_completion_date,
+                    self.object.changed_target_completion_date,
+                    not self.object.changed_is_ongoing,
+                ]
+            )
+        )
         return context
 
     def post(self, request, *args, **kwargs):
@@ -487,6 +496,7 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
             strategic_action.target_completion_date = (
                 strategic_action_update.changed_target_completion_date
             )
+            strategic_action.is_ongoing = False
             strategic_action_changed = True
         if strategic_action_update.changed_is_ongoing:
             strategic_action.is_ongoing = strategic_action_update.changed_is_ongoing
