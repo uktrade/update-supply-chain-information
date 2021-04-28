@@ -2,6 +2,7 @@
 
 {% block body %}
     <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
+    {% include 'supply_chains/mu-existing-completion-date.html' %}
     {% with strategic_action.last_submitted_update as previous_update %}
         {% if previous_update.content %}
             <div class="app-dit-panel">
