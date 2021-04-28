@@ -9,13 +9,14 @@ from django.db.models import Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.generic import TemplateView
 from django.shortcuts import redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import (
     ListView,
     UpdateView,
     CreateView,
     TemplateView,
 )
+
 
 from supply_chains.models import (
     SupplyChain,
@@ -232,7 +233,59 @@ class MonthlyUpdateMixin:
         )
 
     def get_navigation_links(self):
-        return []
+        url_kwargs = {
+            "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
+            "strategic_action_slug": self.object.strategic_action.slug,
+            "update_slug": self.object.slug,
+        }
+
+        navigation_links = {
+            "Info": {
+                "label": "Update information",
+                "url": reverse_lazy("monthly-update-info-edit", kwargs=url_kwargs),
+                "view": MonthlyUpdateInfoEditView,
+            },
+            "Timing": {
+                "label": "Timing",
+                "url": reverse_lazy("monthly-update-timing-edit", kwargs=url_kwargs),
+                "view": MonthlyUpdateTimingEditView,
+            },
+            "Status": {
+                "label": "Action status",
+                "url": reverse_lazy("monthly-update-status-edit", kwargs=url_kwargs),
+                "view": MonthlyUpdateStatusEditView,
+            },
+            "RevisedTiming": {
+                "label": "Revised timing",
+                "url": reverse_lazy(
+                    "monthly-update-revised-timing-edit", kwargs=url_kwargs
+                ),
+                "view": MonthlyUpdateRevisedTimingEditView,
+            },
+            "Summary": {
+                "label": "Confirm",
+                "url": reverse_lazy("monthly-update-summary", kwargs=url_kwargs),
+                "view": MonthlyUpdateSummaryView,
+            },
+        }
+        if self.object.strategic_action.target_completion_date is not None:
+            navigation_links.pop("Timing")
+            if (
+                self.object.changed_target_completion_date is None
+                and not isinstance(self, MonthlyUpdateRevisedTimingEditView)
+                and not self.object.changed_is_ongoing
+            ):
+                navigation_links.pop("RevisedTiming")
+        else:
+            navigation_links.pop("RevisedTiming")
+        for title, info in navigation_links.items():
+            info["is_current_page"] = isinstance(self, info["view"])
+        return navigation_links
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["navigation_links"] = self.get_navigation_links()
+        return context
 
 
 class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
