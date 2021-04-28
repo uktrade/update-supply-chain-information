@@ -10,6 +10,7 @@ from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,
     StrategicActionUpdateFactory,
+    GovDepartmentFactory,
 )
 
 
@@ -50,6 +51,20 @@ class TestTaskCompleteView:
 
         # Assert
         assert resp.status_code == 302
+
+    def test_auth_no_perm(self, logged_in_client):
+        # Arrange
+        sc_name = "ceramics"
+        dep = GovDepartmentFactory()
+        sc = SupplyChainFactory(gov_department=dep, name=sc_name)
+
+        # Act
+        resp = logged_in_client.get(
+            reverse("update_complete", kwargs={"sc_slug": slugify(sc_name)})
+        )
+
+        # Assert
+        assert resp.status_code == 403
 
     def test_auth_logged_in(self, taskcomp_stub, logged_in_client):
         # Arrange

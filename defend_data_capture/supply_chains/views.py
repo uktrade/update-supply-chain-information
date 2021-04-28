@@ -50,18 +50,9 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
         return context
 
 
-class SCSummary(LoginRequiredMixin, TemplateView):
-    template_name = "sc_summary.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        sc_slug = kwargs.get("sc_slug", "DEFAULT")
-
-        context["supply_chain"] = SupplyChain.objects.filter(slug=sc_slug)[0]
-        return context
-
-
-class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
+class SCTaskListView(
+    LoginRequiredMixin, GovDepPermissionMixin, PaginationMixin, TemplateView
+):
     template_name = "task_list.html"
     tasks_per_page = 5
     last_deadline = get_last_working_day_of_previous_month()
@@ -168,7 +159,7 @@ class SCTaskListView(LoginRequiredMixin, TemplateView, PaginationMixin):
             return render(self.request, self.template_name, context=kwargs)
 
 
-class SCCompleteView(LoginRequiredMixin, TemplateView):
+class SCCompleteView(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
     template_name = "task_complete.html"
 
     def _validate(self) -> bool:
