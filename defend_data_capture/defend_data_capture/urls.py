@@ -13,6 +13,7 @@ from supply_chains.views import (
     SCTaskListView,
     SCCompleteView,
     SASummaryView,
+    SCSummary,
 )
 
 router = routers.DefaultRouter()
