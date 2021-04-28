@@ -463,7 +463,29 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
         2. If there is a revised target completion date, record the change in reversion;
         3. Change the update's status to "Completed"
         """
+        strategic_action_update = self.get_object()
+        self.object = strategic_action_update
+        strategic_action: StrategicAction = strategic_action_update.strategic_action
+        strategic_action_changed = False
+        if strategic_action_update.changed_target_completion_date is not None:
+            strategic_action.target_completion_date = (
+                strategic_action_update.changed_target_completion_date
+            )
+            strategic_action_changed = True
+        if strategic_action_update.changed_is_ongoing:
+            strategic_action.is_ongoing = strategic_action_update.changed_is_ongoing
+            strategic_action.target_completion_date = None
+            strategic_action_changed = True
+        # TODO: reversion!
+        strategic_action_update.status = StrategicActionUpdate.Status.COMPLETED
+        if strategic_action_changed:
+            pass
+            # strategic_action.save()
+        strategic_action_update.save()
         return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse("tlist", kwargs={"sc_slug": self.object.supply_chain.slug})
 
 
 class SASummaryView(
