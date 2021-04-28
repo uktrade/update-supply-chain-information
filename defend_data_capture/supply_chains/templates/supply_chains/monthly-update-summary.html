@@ -50,7 +50,7 @@
                     {{ strategic_action_update.changed_target_completion_date|date:"j F Y" }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
-                    <a class="govuk-link" href="{% url 'monthly-update-revised-timing-edit' supply_chain_slug=strategic_action_update.strategic_action.supply_chain.slug strategic_action_slug=strategic_action_update.strategic_action.slug update_slug=strategic_action_update.slug %}">
+                    <a class="govuk-link" href="{% url 'monthly-update-timing-edit' supply_chain_slug=strategic_action_update.strategic_action.supply_chain.slug strategic_action_slug=strategic_action_update.strategic_action.slug update_slug=strategic_action_update.slug %}">
                         Change<span class="govuk-visually-hidden"> revised estimated date of completion</span>
                     </a>
                 </dd>
@@ -71,7 +71,7 @@
                 {% endif %}
             </dd>
             <dd class="govuk-summary-list__actions">
-                <a class="govuk-link" href="{% url 'monthly-update-timing-edit' supply_chain_slug=strategic_action_update.strategic_action.supply_chain.slug strategic_action_slug=strategic_action_update.strategic_action.slug update_slug=strategic_action_update.slug %}">
+                <a class="govuk-link" href="{% url 'monthly-update-status-edit' supply_chain_slug=strategic_action_update.strategic_action.supply_chain.slug strategic_action_slug=strategic_action_update.strategic_action.slug update_slug=strategic_action_update.slug %}">
                     Change<span class="govuk-visually-hidden"> current delivery status</span>
                 </a>
             </dd>
