@@ -1,11 +1,6 @@
 {% extends 'base.html' %}
 
-{% block main %}
-    <div class="govuk-width-container">
-        <main class="govuk-main-wrapper " id="main-content" role="main">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds-from-desktop">
-
+{% block body %}
                     <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
 
                     <h2 class="govuk-heading-m">Check your answers</h2>
@@ -20,7 +15,7 @@
                                 {{ strategic_action_update.content }}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" href="{% url 'monthly-update-info-edit' id=strategic_action_update.pk strategic_action_id=strategic_action_update.strategic_action.pk %}">
+                                <a class="govuk-link" href="{% url 'monthly-update-info-edit'  supply_chain_slug=strategic_action_update.strategic_action.supply_chain.slug strategic_action_slug=strategic_action_update.strategic_action.slug update_slug=strategic_action_update.slug %}">
                                     Change<span class="govuk-visually-hidden"> latest monthly update</span>
                                 </a>
                             </dd>
@@ -37,7 +32,7 @@
                                     {{ strategic_action_update.changed_target_completion_date|date:"j F Y" }}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="govuk-link" href="{% url 'monthly-update-timing-edit' id=strategic_action_update.pk strategic_action_id=strategic_action_update.strategic_action.pk %}">
+                                    <a class="govuk-link" href="{% url 'monthly-update-timing-edit' supply_chain_slug=strategic_action_update.strategic_action.supply_chain.slug strategic_action_slug=strategic_action_update.strategic_action.slug update_slug=strategic_action_update.slug %}">
                                         Change<span class="govuk-visually-hidden"> estimated date of completion</span>
                                     </a>
                                 </dd>
@@ -58,7 +53,7 @@
                                 {% endif %}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" href="{% url 'monthly-update-timing-edit' id=strategic_action_update.pk strategic_action_id=strategic_action_update.strategic_action.pk %}">
+                                <a class="govuk-link" href="{% url 'monthly-update-timing-edit' supply_chain_slug=strategic_action_update.strategic_action.supply_chain.slug strategic_action_slug=strategic_action_update.strategic_action.slug update_slug=strategic_action_update.slug %}">
                                     Change<span class="govuk-visually-hidden"> current delivery status</span>
                                 </a>
                             </dd>
@@ -75,7 +70,7 @@
                                     {{ strategic_action_update.changed_target_completion_date|date:"j F Y" }}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a class="govuk-link" href="{% url 'monthly-update-revised-timing-edit' id=strategic_action_update.pk strategic_action_id=strategic_action_update.strategic_action.pk %}">
+                                    <a class="govuk-link" href="{% url 'monthly-update-revised-timing-edit' supply_chain_slug=strategic_action_update.strategic_action.supply_chain.slug strategic_action_slug=strategic_action_update.strategic_action.slug update_slug=strategic_action_update.slug %}">
                                         Change<span class="govuk-visually-hidden"> revised estimated date of completion</span>
                                     </a>
                                 </dd>
@@ -96,8 +91,4 @@
                         </div>
                     </form>
 
-                </div>
-            </div>
-        </main>
-    </div>
-{% endblock main %}
+{% endblock body %}
