@@ -5,13 +5,13 @@
 <nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
     <ol class="govuk-breadcrumbs__list">
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href={% url 'index' %}>Home</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
       </li>
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href={% url 'tlist' sc_slug=supply_chain.slug %}>{{ supply_chain.name }}</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'tlist' sc_slug=supply_chain.slug %}">{{ supply_chain.name }}</a>
       </li>
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="#">Full details of {{ supply_chain.name }}</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'sc_summary' sc_slug=supply_chain.slug %}" aria-current="page">Full details of {{ supply_chain.name }}</a>
       </li>
     </ol>
   </nav>

@@ -8,10 +8,7 @@ const user = users[0].fields
 
 describe('Supply chain summary page', () => {
   it('successfully loads', () => {
-    cy.visit(
-      Cypress.config('baseUrl') +
-      `/${supplyChain.fields.slug}/summary`
-    )
+    cy.visit(Cypress.config('baseUrl') + `/${supplyChain.fields.slug}/summary`)
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -32,7 +29,7 @@ describe('Supply chain summary page', () => {
     cy.get('li')
       .contains(`Full details of ${supplyChain.fields.name}`)
       .should('have.attr', 'href')
-      .and('eq', `#`)
+      .and('eq', `/${supplyChain.fields.slug}/summary`)
   })
   it('displays the header', () => {
     cy.get('h1').contains(`Summary of ${supplyChain.fields.name}`)
@@ -43,7 +40,7 @@ describe('Supply chain summary page', () => {
       'Vulnerability assessment',
       'Scenario assessment',
       'Maturity self assessment',
-      'Risk monitoring'
+      'Risk monitoring',
     ]
 
     cy.get('#accordion-default').should('have.length', 1)
@@ -91,7 +88,6 @@ describe('Supply chain summary page', () => {
       editLabel
     )
 
-
     cy.forms.checkSummaryTableContent(
       table,
       tableElement,
@@ -112,13 +108,11 @@ describe('Supply chain summary page', () => {
     cy.get('div > .govuk-accordion__section-content').should('not.be.visible')
   })
   it('opens a section when the + symbol is clicked', () => {
-    cy.get('#accordion-default-heading-1')
-      .click()
+    cy.get('#accordion-default-heading-1').click()
     cy.get('#accordion-default-content-1').should('be.visible')
   })
   it('closes a section when the - symbol is clicked', () => {
-    cy.get('#accordion-default-heading-1')
-      .click()
+    cy.get('#accordion-default-heading-1').click()
     cy.get('#accordion-default-content-1').should('be.not.visible')
   })
   it('takes user to task list when button is clicked', () => {
