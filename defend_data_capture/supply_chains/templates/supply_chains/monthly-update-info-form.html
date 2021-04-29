@@ -12,7 +12,10 @@
     {% endwith %}
     <form method="post" action="">
         {% csrf_token %}
-        <div class="govuk-form-group">
+        <div class="govuk-form-group{% if form.non_field_errors or form.content.errors %} govuk-form-group--error{% endif %}">
+            {% if form.non_field_errors %}
+                {{ form.non_field_errors }}
+            {% endif %}
             <h2 class="govuk-label-wrapper govuk-heading-l">
                 <label class="govuk-label govuk-label--l" for="{{ form.content.id_for_label }}">
                 Latest monthly update
@@ -20,12 +23,19 @@
             </h2>
             <div class="govuk-hint">
                 <p>Include details of:</p>
-                <ul class="govuk-list govuk-list--bullet">
+                <ul class="govuk-list govuk-list--bullet govuk-hint">
                     <li>activities undertaken</li>
                     <li>milestones reached</li>
                     <li>any other strategic action developments.</li>
                 </ul>
             </div>
+            {% if form.content.errors %}
+                {% for error in form.content.errors %}
+                    <span class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+                    </span>
+                {% endfor %}
+            {% endif %}
             {{ form.content }}
         </div>
         <div class="govuk-button-group">
