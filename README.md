@@ -45,7 +45,7 @@ Where it is not possible to use a govuk style, the [moj-frontend](https://github
 The project uses the [cypress-axe](https://github.com/component-driven/cypress-axe) package which allows for the automation of accessibility testing within tests written with cypress.
 
 To add accessibility testing to a cypress spec:
-- Add the command `cy.injectA11y()` after wherever `cy.visit(url)` is called. This injects the axe-core runtime into the page being tested.
+- Add the command `cy.injectAxe()` after wherever `cy.visit(url)` is called. This injects the axe-core runtime into the page being tested.
 - Add a test to check for accessibility issues on a page using the command `cy.runA11y()`. This will output details of any accessibility violations into a table in the terminal where cypress is running.
 
 ## Adding Black pre-commit hook

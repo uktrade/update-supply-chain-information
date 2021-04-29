@@ -8,8 +8,8 @@ from supply_chains.api_views import (
     StrategicActionUpdateViewset,
     SupplyChainViewset,
 )
-from supply_chains import views
 from supply_chains.views import (
+    HomePageView,
     SCTaskListView,
     SCCompleteView,
     SASummaryView,
@@ -32,7 +32,7 @@ urlpatterns = [
     path("auth/", include("authbroker_client.urls")),
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
-    path("", views.index, name="index"),
+    path("", HomePageView.as_view(), name="index"),
     path("<slug:sc_slug>/summary", SCSummary.as_view(), name="sc_summary"),
     path("<slug:sc_slug>", SCTaskListView.as_view(), name="tlist"),
     path("<slug:sc_slug>/complete", SCCompleteView.as_view(), name="update_complete"),
