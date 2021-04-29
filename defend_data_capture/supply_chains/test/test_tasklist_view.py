@@ -10,6 +10,7 @@ from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,
     StrategicActionUpdateFactory,
+    GovDepartmentFactory,
 )
 
 pytestmark = pytest.mark.django_db
@@ -18,11 +19,11 @@ Status = StrategicActionUpdate.Status
 # TODO: Move this to test class constructor. Somehow django_db marking is not being
 # applied to initialisation(non test* functions) code
 @pytest.fixture
-def tasklist_stub():
+def tasklist_stub(test_user):
     sc_name = "Supply Chain 1"
     sa_description = "1234567890qweertyuiodfsfgfgggsf"
     sa_name = "SA 00"
-    sc = SupplyChainFactory(name=sc_name)
+    sc = SupplyChainFactory(name=sc_name, gov_department=test_user.gov_department)
     sa = StrategicActionFactory.create_batch(
         4, name=sa_name, description=sa_description, supply_chain=sc
     )
@@ -98,6 +99,20 @@ class TestTaskListView:
 
         # Assert
         assert resp.status_code == 302
+
+    def test_auth_no_perm(self, logged_in_client):
+        # Arrange
+        sc_name = "ceramics"
+        dep = GovDepartmentFactory()
+        sc = SupplyChainFactory(gov_department=dep, name=sc_name)
+
+        # Act
+        resp = logged_in_client.get(
+            reverse("tlist", kwargs={"sc_slug": slugify(sc_name)})
+        )
+
+        # Assert
+        assert resp.status_code == 403
 
     def test_auth_logged_in(self, tasklist_stub, logged_in_client):
         # Arrange
@@ -202,10 +217,10 @@ class TestTaskListView:
         ),
     )
     def test_pagination(
-        self, logged_in_client, sc_name, num_sas, url, actions_returned
+        self, logged_in_client, test_user, sc_name, num_sas, url, actions_returned
     ):
         # Arrange
-        sc = SupplyChainFactory(name=sc_name)
+        sc = SupplyChainFactory(name=sc_name, gov_department=test_user.gov_department)
         StrategicActionFactory.create_batch(
             num_sas, name=f"{sc_name} 00", supply_chain=sc
         )
