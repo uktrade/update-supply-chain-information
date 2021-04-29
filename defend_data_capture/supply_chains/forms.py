@@ -88,18 +88,27 @@ class YesNoChoices(TextChoices):
 
 
 class MonthlyUpdateInfoForm(forms.ModelForm):
+    use_required_attribute = False
+    content = forms.CharField(
+        required=True,
+        error_messages={"required": "Enter details of the latest monthly update."},
+        widget=forms.Textarea(
+            attrs={
+                "class": "govuk-textarea",
+                "novalidate": True,
+            }
+        ),
+    )
+
+    def is_valid(self):
+        is_valid = super().is_valid()
+        return is_valid
+
     class Meta:
         model = StrategicActionUpdate
         fields = [
             "content",
         ]
-        widgets = {
-            "content": forms.Textarea(
-                attrs={
-                    "class": "govuk-textarea",
-                }
-            )
-        }
 
 
 class AmberReasonForDelayForm(MakeFieldRequiredMixin, forms.ModelForm):
@@ -114,14 +123,24 @@ class AmberReasonForDelayForm(MakeFieldRequiredMixin, forms.ModelForm):
         fields = ["reason_for_delays"]
         labels = {"reason_for_delays": "Explain potential risk"}
         widgets = {
-            "reason_for_delays": forms.Textarea(attrs={"class": "govuk-textarea"})
+            "reason_for_delays": forms.Textarea(
+                attrs={
+                    "class": "govuk-textarea",
+                    "novalidate": True,
+                }
+            )
         }
 
 
 class RedReasonForDelayForm(AmberReasonForDelayForm):
     will_completion_date_change = forms.ChoiceField(
         choices=YesNoChoices.choices,
-        widget=forms.RadioSelect(attrs={"class": "govuk-radios__input"}),
+        widget=forms.RadioSelect(
+            attrs={
+                "class": "govuk-radios__input",
+                "novalidate": True,
+            }
+        ),
         label="Will the estimated completion date change?",
     )
 
@@ -180,6 +199,7 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
                 attrs={
                     "class": "govuk-radios__input",
                     "data-aria-controls": "{id}-detail",
+                    "novalidate": True,
                 },
                 hints=RAGRatingHints,
                 details={
@@ -200,7 +220,9 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
 class CompletionDateForm(MakeFieldRequiredMixin, forms.ModelForm):
     changed_target_completion_date = forms.DateField(
         widget=DateMultiTextInputWidget(
-            attrs={},
+            attrs={
+                "novalidate": True,
+            },
             hint="For example 14 11 2021",
             labels={
                 "day": "Day",
@@ -241,6 +263,7 @@ class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
             choices=self.fields["surrogate_is_ongoing"].choices,
             attrs={
                 "class": "govuk-radios__input",
+                "novalidate": True,
             },
         )
 
@@ -274,7 +297,11 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
         required=True,
         choices=YesNoChoices.choices,
         widget=DetailRadioSelect(
-            attrs={"class": "govuk-radios__input", "data-aria-controls": "{id}-detail"},
+            attrs={
+                "class": "govuk-radios__input",
+                "data-aria-controls": "{id}-detail",
+                "novalidate": True,
+            },
             details={
                 YesNoChoices.YES: {
                     "template": "supply_chains/includes/completion-date.html",
