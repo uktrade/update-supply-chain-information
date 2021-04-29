@@ -2,7 +2,6 @@ import users from '../fixtures/user.json'
 import govDepartments from '../fixtures/govDepartment.json'
 import supplyChains from '../fixtures/supplyChains.json'
 
-
 const user = users[0].fields
 const govDepartment = govDepartments[0].fields
 const supplyChain = supplyChains[0].fields
@@ -21,9 +20,12 @@ describe('The Supply Chain Tasklist Page', () => {
       `${user.first_name} ${user.last_name} - ${govDepartment.name}`
     )
   })
-  it('displays bread crumbs', () => {
-    cy.get('li').contains('Home')
-    cy.get('li').contains(`Update ${supplyChain.name}`)
+  it('displays breadcrumbs', () => {
+    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', `/`)
+    cy.get('li')
+      .contains(`${supplyChain.name}`)
+      .should('have.attr', 'href')
+      .and('eq', `/${supplyChain.slug}`)
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${supplyChain.name}`)
@@ -70,12 +72,15 @@ describe('Allowed to submit completed Supply Chains', () => {
   it('displays enabled submit button', () => {
     cy.get('button').contains('Submit update')
   })
-  if (Cypress.env("RUNNING_LOCALLY") === '0') {
+  if (Cypress.env('RUNNING_LOCALLY') === '0') {
     // This test will only be run on CI or non-local environments as its un-safe operation
     // which alters state of objects(with the given fixtures)
     it('can submit updates for supply chain', () => {
       cy.get('form').find('button').click()
-      cy.url().should('eq', Cypress.config('baseUrl') + `/${completedSC.slug}/complete`)
+      cy.url().should(
+        'eq',
+        Cypress.config('baseUrl') + `/${completedSC.slug}/complete`
+      )
       cy.get('li').contains('Home')
       cy.get('li').contains('Update complete')
     })
@@ -92,7 +97,9 @@ describe('Allowed to view submitted Supply chain', () => {
     cy.get('h1').contains(`Update ${submittedSC.name}`)
     cy.get('div').contains(`Update complete`).should('not.exist')
     cy.get('h2').contains('No action required')
-    cy.get('p').contains('You have already submitted the monthly update for this supply chain.')
+    cy.get('p').contains(
+      'You have already submitted the monthly update for this supply chain.'
+    )
     cy.get('h2').contains('Before you submit').should('not.exist')
   })
   it('displays correct table headers', () => {
@@ -105,11 +112,20 @@ describe('Allowed to view submitted Supply chain', () => {
     cy.get('td').contains('submitted')
   })
   it('displays strategic action name with hyperlink', () => {
-    cy.get('td').find('a').invoke('text').should('match', /Update .*$/)
-    cy.get('td').find('a').should('have.attr', 'href').and('match', /supply-chain-5.*/)
+    cy.get('td')
+      .find('a')
+      .invoke('text')
+      .should('match', /Update .*$/)
+    cy.get('td')
+      .find('a')
+      .should('have.attr', 'href')
+      .and('match', /supply-chain-5.*/)
   })
   it('displays button to go back', () => {
-    cy.get('a').contains('Back to home').should('have.attr', 'href').and('equal', '/')
+    cy.get('a')
+      .contains('Back to home')
+      .should('have.attr', 'href')
+      .and('equal', '/')
     cy.get('form').should('not.exist')
   })
 })
@@ -159,9 +175,10 @@ describe('Error handling while submitting in-complete updates', () => {
     cy.get('form').find('button').click()
     cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}`)
     cy.get('#error-summary-title').contains('There is a problem')
-    cy.get('li').find('a')
-    .contains('Updates must be given for all strategic actions')
-    .should('have.attr', 'href')
-    .and('equal', '#updates')
+    cy.get('li')
+      .find('a')
+      .contains('Updates must be given for all strategic actions')
+      .should('have.attr', 'href')
+      .and('equal', '#updates')
   })
 })

@@ -2,7 +2,6 @@ import users from '../fixtures/user.json'
 import govDepartments from '../fixtures/govDepartment.json'
 import supplyChains from '../fixtures/supplyChains.json'
 
-
 const user = users[0].fields
 const govDepartment = govDepartments[0].fields
 const supplyChain = supplyChains[4].fields
@@ -21,26 +20,32 @@ describe('The Supply Chain TaskComplete Page', () => {
       `${user.first_name} ${user.last_name} - ${govDepartment.name}`
     )
   })
-  it('displays bread crumbs', () => {
-    cy.get('li').contains('Home')
-    cy.get('li').contains('Update complete')
+  it('displays breadcrumbs', () => {
+    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
+    cy.get('li')
+      .contains(supplyChain.name)
+      .should('have.attr', 'href')
+      .and('eq', `/${supplyChain.slug}`)
+    cy.get('li')
+      .contains('Update complete')
+      .should('have.attr', 'href')
+      .and('eq', `/${supplyChain.slug}/complete`)
   })
   it('displays the correct text', () => {
     cy.get('h1').contains('Update complete')
-    cy.get('div')
-      .contains(`Thank you for submitting your monthly update for the ${supplyChain.name} supply chain.`)
+    cy.get('div').contains(
+      `Thank you for submitting your monthly update for the ${supplyChain.name} supply chain.`
+    )
   })
   it('displays the correct inset text', () => {
-    cy.get('div')
-      .contains(`You have given updates for 1 of 6 supply chains.`)
+    cy.get('div').contains(`You have given updates for 1 of 6 supply chains.`)
   })
   it('displays the correct link back to home', () => {
-    cy.get('p')
-      .contains('You can go back and give an update for another supply chain.')
+    cy.get('p').contains(
+      'You can go back and give an update for another supply chain.'
+    )
 
-    cy.get('#home')
-      .should('have.attr', 'href')
-      .and('equal', '/')
+    cy.get('#home').should('have.attr', 'href').and('equal', '/')
   })
 })
 
@@ -50,9 +55,12 @@ describe('Validate complete view for manual access', () => {
   it('successfully loads completed un-submitted Supply chain, by redirecting to tasklist page', () => {
     cy.visit(Cypress.config('baseUrl') + `/${completedSC.slug}/complete`)
   })
-  it('displays bread crumbs', () => {
-    cy.get('li').contains('Home')
-    cy.get('li').contains(`Update ${completedSC.name}`)
+  it('displays breadcrumbs', () => {
+    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', `/`)
+    cy.get('li')
+      .contains(completedSC.name)
+      .should('have.attr', 'href')
+      .and('eq', `/${completedSC.slug}`)
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
