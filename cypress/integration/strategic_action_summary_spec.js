@@ -30,7 +30,11 @@ describe('The strategic action summary page', () => {
   it('displays breadcrumbs', () => {
     cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
     cy.get('li')
-      .contains('Strategic actions for Supply Chain 6')
+      .contains(`${supplyChain.fields.name}`)
+      .should('have.attr', 'href')
+      .and('eq', `/${supplyChain.fields.slug}`)
+    cy.get('li')
+      .contains(`Strategic actions for ${supplyChain.fields.name}`)
       .should('have.attr', 'href')
       .and('eq', `/${supplyChain.fields.slug}/strategic-actions`)
   })
