@@ -42,7 +42,7 @@
     "implementation_rag_rating": "RED",
     "reason_for_delays": "This is the reason for delay field.",
     "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
-    "strategic_action": "fd317f3e-9ce0-4ed0-9a6a-baf7c6e65989",
+    "strategic_action": "55b22a7f-65fa-48c5-82f2-7918214936c5",
     "supply_chain": "4c8fcc98-aa4e-402b-9ff4-b06ae3c3dcd1",
     "slug": "na"
   }
@@ -58,7 +58,7 @@
     "implementation_rag_rating": "",
     "reason_for_delays": "",
     "user": null,
-    "strategic_action": "fd317f3e-9ce0-4ed0-9a6a-baf7c6e65989",
+    "strategic_action": "982bda67-4808-4231-b16b-c1f84c4ea110",
     "supply_chain": "4c8fcc98-aa4e-402b-9ff4-b06ae3c3dcd1",
     "slug": "na2"
   }
