@@ -3,25 +3,17 @@
 {% block body %}
     <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
     {% include 'supply_chains/mu-existing-completion-date.html' %}
-    {% with strategic_action.last_submitted_update as previous_update %}
-        {% if previous_update.content %}
-            <div class="app-dit-panel">
-                <h2 class="govuk-heading-m">Last update</h2>
-                {{ previous_update.content }}
-            </div>
-        {% endif %}
-    {% endwith %}
-        <form method="post" action="">
-            {% csrf_token %}
-            {{ form.implementation_rag_rating }}
-            <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button" type="submit">
-                    Save and continue
-                </button>
+    <form method="post" action="">
+        {% csrf_token %}
+        {{ form.implementation_rag_rating }}
+        <div class="govuk-button-group">
+            <button class="govuk-button" data-module="govuk-button" type="submit">
+                Save and continue
+            </button>
 
-                <a href="{% url 'tlist' sc_slug=strategic_action_update.supply_chain.slug %}" class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
-                    Cancel
-                </a>
-            </div>
-        </form>
+            <a href="{% url 'tlist' sc_slug=strategic_action_update.supply_chain.slug %}" class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
+                Cancel
+            </a>
+        </div>
+    </form>
 {% endblock body %}
