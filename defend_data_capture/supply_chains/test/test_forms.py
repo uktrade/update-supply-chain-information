@@ -138,6 +138,7 @@ class TestCompletionDateForm:
             "changed_target_completion_date_day": date_parts[2],
         }
         form = CompletionDateForm(data=form_data, instance=self.strategic_action)
+        form.is_valid()
         saved_instance = form.save()
         self.strategic_action.refresh_from_db()
         assert self.strategic_action.target_completion_date != new_completion_date
