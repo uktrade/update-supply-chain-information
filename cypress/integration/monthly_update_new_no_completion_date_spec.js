@@ -619,6 +619,15 @@ describe('Testing monthly update forms', () => {
                 })
               })
             })
+            context('the error messages', function() {
+              before(() => {
+                // ensure we start with a clean slate
+                cy.reload(true, {log: true})
+              })
+              it('should display error summary when submitted without selecting a status radio', () => {
+                cy.contains('Save and continue').click()
+              })
+            })
 
           })
         })
