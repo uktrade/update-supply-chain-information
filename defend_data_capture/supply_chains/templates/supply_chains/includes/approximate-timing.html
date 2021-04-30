@@ -1,9 +1,9 @@
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-            <h3 class="govuk-fieldset__heading">
+            <p class="govuk-body">
                 {{ form.surrogate_is_ongoing.label }}
-            </h3>
+            </p>
         </legend>
         {% include 'supply_chains/includes/generic-radios.html' with field=form.surrogate_is_ongoing %}
     </fieldset>

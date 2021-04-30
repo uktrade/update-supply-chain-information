@@ -88,7 +88,7 @@ class DetailRadioSelect(DetailSelectMixin, RadioSelect):
 class DateMultiTextInputWidget(MultiWidget):
     template_name = "supply_chains/forms/widgets/gds-date-multiwidget.html"
 
-    def __init__(self, attrs=None, hint=None, labels=None):
+    def __init__(self, attrs=None, hint=None, labels=None, legend=None):
         widgets = {
             "day": TextInput(
                 attrs={
@@ -109,6 +109,7 @@ class DateMultiTextInputWidget(MultiWidget):
         super().__init__(widgets, attrs)
         self.labels = labels
         self.govuk_hint = hint
+        self.legend = legend
 
     def get_context(self, name, value, attrs):
         context = super().get_context(name, value, attrs)
@@ -125,6 +126,8 @@ class DateMultiTextInputWidget(MultiWidget):
             context["labelled_widgets"] = labelled_widgets
         if self.govuk_hint is not None:
             context["hint"] = self.govuk_hint
+        if self.legend is not None:
+            context["legend"] = self.legend
         return context
 
     def decompress(self, value):
