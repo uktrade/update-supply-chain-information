@@ -197,8 +197,8 @@ describe('Testing monthly update forms', () => {
               )
             })
             it('shows the previous update', function() {
-              cy.get('h2:first').contains('Last update')
-              cy.get('h2:first + p').contains(`${this.updateContent}`)
+              cy.get('.app-dit-panel h2:first').contains('Last update')
+              cy.get('.app-dit-panel h2:first + p').contains(`${this.updateContent}`)
             })
           })
           context('The Update Info form', () => {
