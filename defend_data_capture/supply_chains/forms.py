@@ -112,6 +112,7 @@ class MonthlyUpdateInfoForm(forms.ModelForm):
 
 
 class AmberReasonForDelayForm(MakeFieldRequiredMixin, forms.ModelForm):
+    use_required_attribute = False
     field_to_make_required = "reason_for_delays"
 
     def clean(self):
@@ -133,6 +134,7 @@ class AmberReasonForDelayForm(MakeFieldRequiredMixin, forms.ModelForm):
 
 
 class RedReasonForDelayForm(AmberReasonForDelayForm):
+    use_required_attribute = False
     will_completion_date_change = forms.ChoiceField(
         choices=YesNoChoices.choices,
         widget=forms.RadioSelect(
@@ -149,6 +151,8 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
 
 
 class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
+    use_required_attribute = False
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         strategic_action_update: StrategicActionUpdate = kwargs.get("instance", None)
@@ -218,6 +222,7 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
 
 
 class CompletionDateForm(MakeFieldRequiredMixin, forms.ModelForm):
+    use_required_attribute = False
     changed_target_completion_date = forms.DateField(
         widget=DateMultiTextInputWidget(
             attrs={
@@ -262,6 +267,7 @@ class ApproximateTimings(TextChoices):
 
 
 class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
+    use_required_attribute = False
     surrogate_is_ongoing = forms.ChoiceField(
         choices=ApproximateTimings.choices,
         label="What is the approximate time for completion?",
@@ -311,6 +317,7 @@ class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
 
 
 class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
+    use_required_attribute = False
     is_completion_date_known = forms.ChoiceField(
         required=True,
         choices=YesNoChoices.choices,
@@ -369,6 +376,7 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
 
 
 class MonthlyUpdateModifiedTimingForm(MonthlyUpdateTimingForm):
+    use_required_attribute = False
     reason_for_completion_date_change = forms.CharField(required=True)
 
     class Meta(MonthlyUpdateTimingForm.Meta):
