@@ -585,6 +585,16 @@ describe('Testing monthly update forms', () => {
             cy.injectAxe()
           })
         })
+        context('The Update Info page', function() {
+          it('has no accessibility issues', () => {
+            cy.runA11y()
+          })
+          context('The Update Info page content', function() {
+            it('does not include a previous update', function() {
+              cy.get('.app-dit-panel').should('not.exist')
+            })
+          })
+        })
       })
     })
     context('that does have a target completion date', function() {
