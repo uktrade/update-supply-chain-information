@@ -1,33 +1,23 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1 class="govuk-heading-l">Update supply chain information for {{ gov_department_name }}</h1>
+    <h1 class="govuk-heading-xl">Update supply chain information</h1>
 
     <p class="govuk-body">
-        This service is designed to record updates to departmental action plans for
-        the UK's critical supply chains.
-    </p>
-    <p class="govuk-body">
-        Regular updates are important to Cross-Whitehall work to improve the UK's supply
-        chain resilience.
+        It's important to keep your departmental action plan records up to date. This is so we can work towards constantly improving the UK's supply chain resilience.
     </p>
     <div class="govuk-inset-text">
-        Analysis for the data you provide can be explored in the <a class="govuk-link" href="#">Resilience tool</a>.
+        Find more information on the data you provide in the <a class="govuk-link" href="#">UK supply chian resilience tool</a>.
     </div>
-    <p class="govuk-body">
-        Below you will see the supply chains for which your department is the government lead.
-        Click on a supply chain to provide your regular monthly updare or to update wider details.
-    </p>
 
-    <h2 class="govuk-heading-m"> Monthly update {% if update_complete %}Complete{% else %}Incomplete {% endif %}</h2>
+    <h2 class="govuk-heading-l"> Complete your monthly update</h2>
     <ul class="govuk-list govuk-list--bullet">
         <li>
-            The deadline for this monthly update is
-            <span class="govuk-body govuk-!-font-weight-bold">{{ deadline|date:"l jS F, Y" }}</span>.
+            You need to complete your monthly update for <strong>{{ num_in_prog_supply_chains }} supply chains</strong> by
+            <span class="govuk-body govuk-!-font-weight-bold">{{ deadline|date:"l jS F Y" }}</span>
         </li>
         <li>
-            You have given updates for
-            <span class="govuk-body govuk-!-font-weight-bold">{{ num_updated_supply_chains }} out of {{ supply_chains.paginator.count }} supply chains.</span>
+            Select a supply chain to provide your regular monthly update or to update wider details.
         </li>
     </ul>
 
@@ -35,7 +25,7 @@
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Supply chain</th>
-                <th scope="col" class="govuk-table__header">No. strategic actions</th>
+                <th scope="col" class="govuk-table__header">No. strategic<br> actions</th>
                 <th scope="col" class="govuk-table__header">Last updated</th>
             </tr>
         </thead>
@@ -46,13 +36,13 @@
                         <a href={% url 'tlist' sc_slug=supplychain.slug %}  class="govuk-link">{{ supplychain.name }}</a>
                     </th>
                     <td class="govuk-table__cell">{{supplychain.strategic_action_count}}</td>
-                    <td class="govuk-table__cell">{{supplychain.last_submission_date|date:"SHORT_DATE_FORMAT"}}</td>
+                    <td class="govuk-table__cell">{{supplychain.last_submission_date|date:"d/m/Y"}}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
     {% if supply_chains.has_other_pages %}
-        {% include 'includes/pagination.html' with objects=supply_chains objects_name="supply chains" %} 
+        {% include 'includes/pagination.html' with objects=supply_chains objects_name="supply chains" %}
     {% endif %}
 
 {% endblock %}
