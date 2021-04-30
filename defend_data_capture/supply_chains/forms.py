@@ -229,6 +229,7 @@ class CompletionDateForm(MakeFieldRequiredMixin, forms.ModelForm):
                 "month": "Month",
                 "year": "Year",
             },
+            legend="Date for intended completion",
         ),
         label="Date for intended completion",
         required=False,

@@ -1,19 +1,21 @@
 <div class="govuk-form-group">
     {% with widget.attrs.id as id %}
         <fieldset class="govuk-fieldset" role="group" aria-describedby="{{ id }}-hint">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                <h2 class="govuk-fieldset__heading">
-                    {{ widget.label }}
-                </h2>
-            </legend>
+            {% if legend %}
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <p class="govuk-body">
+                        {{ legend }}
+                    </p>
+                </legend>
+            {% endif %}
             <div id="{{ id }}-hint" class="govuk-hint">
-                For example, 12 11 2007
+                For example, 14 9 2021
             </div>
             <div class="govuk-date-input" id="{{ id }}-container">
                 {% for subwidget in labelled_widgets %}
                     <div class="govuk-date-input__item">
                         <div class="govuk-form-group">
-                            <label class="govuk-label govuk-date-input__label" for="subwidget.widget.attrs.id">
+                            <label class="govuk-label govuk-date-input__label" for="{{ subwidget.widget.attrs.id }}">
                                 {{ subwidget.label }}
                             </label>
                             {% with widget=subwidget.widget %}
