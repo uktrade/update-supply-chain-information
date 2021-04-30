@@ -495,12 +495,6 @@ describe('Testing monthly update forms', () => {
             beforeEach(() => {
               cy.get('nav.moj-sub-navigation').as('theBreadcrumbs')
             })
-            it('should be present', () => {
-              cy.get('@theBreadcrumbs').should('exist')
-            })
-            it ('should contain an ordered list', () => {
-              cy.get('@theBreadcrumbs').get('ol.moj-sub-navigation__list').should('exist')
-            })
             context('The individual breadcrumbs in the ordered list should be', function() {
               beforeEach(() => {
                 cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
@@ -566,6 +560,66 @@ describe('Testing monthly update forms', () => {
                 })
               })
             })
+            context('the radio buttons asking for the current delivery status', function() {
+              beforeEach(() => {
+                cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-radios__item > input[type="radio"]').as('theRadioButtons')
+                cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-hint').as('theRadioHints')
+              })
+              it('should be three in number', () => {
+                cy.get('@theRadioButtons').should('have.length', 3)
+                cy.get('@theRadioHints').should('have.length', 3)
+              })
+              it('the first should have the label "Green" and the correct hint text', () => {
+                cy.get('@theRadioButtons').eq(0).siblings('label').eq(0).contains('Green')
+                cy.get('@theRadioHints').eq(0).contains('Delivery is on track with no issues')
+              })
+              it('the second should have the label "Amber" and the correct hint text', () => {
+                cy.get('@theRadioButtons').eq(1).siblings('label').eq(0).contains('Amber')
+                cy.get('@theRadioHints').eq(1).contains("There's a potential risk to delivery that needs monitoring.")
+              })
+              it('the third should have the label "Red" and the correct hint text', () => {
+                cy.get('@theRadioButtons').eq(2).siblings('label').eq(0).contains('Red')
+                cy.get('@theRadioHints').eq(2).contains("There is an issue with delivery of an action. This will require escalation and further support. There is a potential risk to the expected completion date.")
+              })
+              context('The "Amber" option', function() {
+                beforeEach(() => {
+                  cy.get('@theRadioButtons').eq(1).as('amberOption')
+                })
+                it('displays the potential risks textbox when selected', function() {
+                  cy.get('@amberOption').click()
+                  cy.get('@amberOption').invoke('attr', 'aria-controls').then((subjectID) => {
+                      cy.get(`#${subjectID}`).should('be.visible')
+                      cy.get(`#${subjectID}`).children(0).children('label').should('contain', 'Explain potential risk')
+                      cy.get(`#${subjectID}`).children(0).children('textarea').should('be.visible')
+                    })
+                })
+              })
+              context('The "Red" option', function() {
+                beforeEach(() => {
+                  cy.get('@theRadioButtons').eq(2).as('redOption')
+                })
+                it('displays the Explain issue label and textbox when selected', function() {
+                  cy.get('@redOption').click()
+                  cy.get('@redOption').invoke('attr', 'aria-controls').then((subjectID) => {
+                      cy.get(`#${subjectID}`).should('be.visible')
+                      cy.get(`#${subjectID}`).children(0).children('label').should('contain', 'Explain issue')
+                      cy.get(`#${subjectID}`).children(0).children('textarea').should('be.visible')
+                    })
+                })
+                it('displays the date change label and radios', function() {
+                  cy.get('@redOption').click()
+                  cy.get('@redOption').invoke('attr', 'aria-controls').then((subjectID) => {
+                      cy.get(`#${subjectID} > .govuk-form-group > fieldset > .govuk-radios > .govuk-radios__item`).as('dateChangeRadios')
+                      cy.get(`#${subjectID}`).should('be.visible')
+                      cy.get(`#${subjectID} > .govuk-form-group > fieldset > legend > h3`).should('contain', 'Will the estimated completion date change?')
+                      cy.get('@dateChangeRadios').should('have.length', 2)
+                      cy.get('@dateChangeRadios').eq(0).should('contain', 'Yes')
+                      cy.get('@dateChangeRadios').eq(1).should('contain', 'No')
+                    })
+                })
+              })
+            })
+
           })
         })
       })
