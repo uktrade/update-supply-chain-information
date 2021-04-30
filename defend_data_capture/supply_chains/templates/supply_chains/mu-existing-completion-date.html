@@ -1,7 +1,7 @@
-{% if strategic_action_update.strategic_action.target_completion_date %}
+{% if strategic_action_update.some_completion_date %}
     <div class="govuk-inset-text">
         <h2 class="govuk-heading-s">Current estimated date of completion</h2>
-        <p>{{ strategic_action_update.strategic_action.target_completion_date|date:"j F Y" }}</p>
+        <p>{{ strategic_action_update.some_completion_date|date:"j F Y" }}</p>
     </div>
 {% else %}
     <div class="govuk-warning-text">

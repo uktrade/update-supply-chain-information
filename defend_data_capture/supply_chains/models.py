@@ -235,6 +235,13 @@ class StrategicActionUpdate(models.Model):
                 pass
             self.save(*args, **kwargs)
 
+    def some_completion_date(self):
+        if self.strategic_action.target_completion_date is not None:
+            return self.strategic_action.target_completion_date
+        if self.changed_target_completion_date is not None:
+            return self.changed_target_completion_date
+        return None
+
 
 class MaturitySelfAssessment(models.Model):
     class RatingLevel(models.TextChoices):
