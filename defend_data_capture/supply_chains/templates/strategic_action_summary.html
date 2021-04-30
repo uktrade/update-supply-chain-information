@@ -6,7 +6,10 @@
       <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
     </li>
     <li class="govuk-breadcrumbs__list-item">
-      <a class="govuk-breadcrumbs__link" href="{% url 'strat_action_summary' supply_chain.slug %}">Strategic actions for {{ supply_chain.name }}</a>
+      <a class="govuk-breadcrumbs__link" href="{% url 'tlist' supply_chain.slug %}">{{ supply_chain.name }}</a>
+    </li>
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="{% url 'strat_action_summary' supply_chain.slug %}" aria-current="page">Strategic actions for {{ supply_chain.name }}</a>
     </li>
   </ol>
 </nav>

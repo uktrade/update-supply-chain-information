@@ -4,10 +4,13 @@
 <nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
     <ol class="govuk-breadcrumbs__list">
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href={% url 'index' %}>Home</a>
+            <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="#">Update complete</a>
+            <a class="govuk-breadcrumbs__link" href="{% url 'tlist' view.supply_chain.slug %}">{{ view.supply_chain.name }}</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="{% url 'update_complete' view.supply_chain.slug %}" aria-current="page">Update complete</a>
         </li>
     </ol>
 </nav>
