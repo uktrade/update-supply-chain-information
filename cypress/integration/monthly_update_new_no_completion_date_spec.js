@@ -125,8 +125,8 @@ Cypress.Cookies.debug(true);
 
 describe('Testing monthly update forms', () => {
   context('for a strategic action', function() {
-    context('with an update from the previous month', function() {
-      context('that has no target completion date', function() {
+    context('that has no target completion date', function() {
+      context('with an update from the previous month', function() {
         beforeEach(() => {
           Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
           cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.supplyChainSlug).as('scSlug')
@@ -223,8 +223,7 @@ describe('Testing monthly update forms', () => {
             })
             it('should have a submit button saying "Save and continue"', () => {
               cy.get('@theForm').within((theForm) => {
-                cy.get('button[type="submit"]').should('exist')
-                cy.get('button[type="submit"]').contains('Save and continue')
+                cy.get('button[type="submit"]').should('exist').contains('Save and continue')
               })
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', () => {
@@ -259,6 +258,7 @@ describe('Testing monthly update forms', () => {
         context('The Timing page', () => {
           beforeEach(() => {
             Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
+            cy.get('main form').as('theForm')
           })
           it.skip('has no accessibility issues - NEEDS CHECKING FOR POSSIBLE FALSE POSITIVE', () => {
             cy.runA11y()
@@ -312,9 +312,6 @@ describe('Testing monthly update forms', () => {
             })
           })
           context('The Timing form', () => {
-            beforeEach(() => {
-              cy.get('main form').as('theForm')
-            })
             it('is there', () => {
               cy.get("@theForm").should('exist')
             })
@@ -371,7 +368,6 @@ describe('Testing monthly update forms', () => {
                 })
                 it('its subject should initially be hidden', () => {
                   cy.get('@theYesOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                    cy.get(`#${subjectID}`).should('exist')
                     cy.get(`#${subjectID}`).should('be.hidden')
                   })
                 })
@@ -567,11 +563,16 @@ describe('Testing monthly update forms', () => {
           })
         })
       })
-      context('that does have a target completion date', function() {})
+      context('without an update from the previous month', function() {
+        context('that has no target completion date', function() {})
+        context('that does have a target completion date', function() {})
+      })
     })
-    context('without an update from the previous month', function() {
-      context('that has no target completion date', function() {})
-      context('that does have a target completion date', function() {})
+    context('that does have a target completion date', function() {
+      context('with an update from the previous month', function() {
+      })
+      context('without an update from the previous month', function() {
+      })
     })
   })
 })
