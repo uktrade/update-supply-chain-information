@@ -114,7 +114,13 @@ const valuesToEnter = {
     },
     no: {
       options: {
-        durations: [0, 3, 6, 12, 24]
+        durations: [
+          [3, '3 months'],
+          [6, '6 months'],
+          [12, '1 year'],
+          [24, '2 years'],
+          [0, 'Ongoing'],
+        ]
       }
     },
     reason: 'This is the reason the completion date changed'
