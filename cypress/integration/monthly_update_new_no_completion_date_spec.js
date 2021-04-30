@@ -564,14 +564,57 @@ describe('Testing monthly update forms', () => {
         })
       })
       context('without an update from the previous month', function() {
-        context('that has no target completion date', function() {})
-        context('that does have a target completion date', function() {})
+        beforeEach(() => {
+          Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('scSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('saSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('uSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateContent).as('updateContent')
+          cy.wrap(todaySlug).as('todaySlug')
+        });
+        context('starting a new monthly update', function() {
+          it('successfully creates a new update and redirects to its Update Info page', function() {
+            cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/start/`)
+            cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/info/`)
+            cy.injectAxe()
+          })
+        })
       })
     })
     context('that does have a target completion date', function() {
       context('with an update from the previous month', function() {
+        beforeEach(() => {
+          Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('scSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('saSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('uSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateContent).as('updateContent')
+          cy.wrap(todaySlug).as('todaySlug')
+        });
+        context('starting a new monthly update', function() {
+          it('successfully creates a new update and redirects to its Update Info page', function() {
+            cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/start/`)
+            cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/info/`)
+            cy.injectAxe()
+          })
+        })
       })
       context('without an update from the previous month', function() {
+        beforeEach(() => {
+          Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('scSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('saSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('uSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateContent).as('updateContent')
+          cy.wrap(todaySlug).as('todaySlug')
+        });
+        context('starting a new monthly update', function() {
+          it('successfully creates a new update and redirects to its Update Info page', function() {
+            cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/start/`)
+            cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/info/`)
+            cy.injectAxe()
+          })
+        })
       })
     })
   })
