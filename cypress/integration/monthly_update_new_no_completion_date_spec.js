@@ -77,6 +77,7 @@ const valuesToEnter = {
         day: 22,
         month: 11,
         year: 2023,
+        monthString: 'November'
       },
     },
     No: {
@@ -191,6 +192,7 @@ describe('Testing monthly update forms', () => {
           context('The Update Info form', () => {
             beforeEach(() => {
               cy.get('main form').as('theForm')
+              cy.wrap(valuesToEnter.info).as('valuesToEnter')
             })
             it('is there', () => {
               cy.get("@theForm").should('exist')
@@ -203,7 +205,9 @@ describe('Testing monthly update forms', () => {
             })
             it('should have a label for the "content" field', () => {
               cy.get("@theForm").within((theForm) => {
-                cy.get('label.govuk-label[for="id_content"]').should('exist')
+                cy.get('label.govuk-label[for="id_content"]').within(() => {
+                  cy.root().should('exist').contains('Latest monthly update')
+                })
               })
             })
             it('should have a textarea for the "content" field', () => {
@@ -229,9 +233,12 @@ describe('Testing monthly update forms', () => {
                 // ensure we start with a clean slate
                 cy.reload(true, {log: true})
               })
+              beforeEach(() => {
+                cy.get('@valuesToEnter').as('valuesToEnter')
+              })
               it('should go to the "Timing" page when saved', function() {
                 cy.get('@theForm').within(function(theForm) {
-                  cy.get('textarea[name="content"]').type('Now is the winter of our discontent')
+                  cy.get('textarea[name="content"]').type(`${this.valuesToEnter.content}`)
                   cy.location('pathname').invoke('split', '/').its(5).as('strategicActionUpdateID')
                   cy.get('@strategicActionUpdateID').then(function(strategicActionUpdateID) {
                     cy.get('button[type="submit"]').click()
@@ -288,11 +295,15 @@ describe('Testing monthly update forms', () => {
               })
             })
           })
-          it('displays the correct page header', () => {
-            cy.get('h1').contains('Strategic action monthly update')
-          })
-          it ('warns that there is no expected completion date', () => {
-            cy.get('h1 ~ .govuk-warning-text').should('exist').contains("There's no expected completion date for this action.")
+          context('The Timing page content', function() {
+            it('has the correct page header', () => {
+              cy.get('h1').contains(
+                  'Strategic action monthly update'
+              )
+            })
+            it ('warns that there is no expected completion date', () => {
+              cy.get('h1 ~ .govuk-warning-text').should('exist').contains("There's no expected completion date for this action.")
+            })
           })
           context('The Timing form', () => {
             beforeEach(() => {
@@ -306,6 +317,19 @@ describe('Testing monthly update forms', () => {
             })
             it('the CSRF token must not be empty', () => {
               cy.get("@theForm").get('input[type="hidden"][name="csrfmiddlewaretoken"]').invoke('val').should('not.be.empty')
+            })
+            it('should have a submit button saying "Save and continue"', () => {
+              cy.get('@theForm').within((theForm) => {
+                cy.get('button[type="submit"]').should('exist')
+                cy.get('button[type="submit"]').contains('Save and continue')
+              })
+            })
+            it('should have a cancel link saying "Cancel" going back to the supply chain page', () => {
+              cy.get('@theForm').within(function(theForm) {
+                cy.get('a.govuk-button.govuk-button--secondary').should('exist').contains('Cancel').within((theCancelLink) => {
+                  cy.root().should('have.attr', 'href', `/${this.scSlug}`)
+                })
+              })
             })
             it ('should have a fieldset with legend asking if there is a completion date', () => {
               cy.get('@theForm').get('fieldset legend h2').contains('Is there an expected completion date?')
@@ -358,7 +382,29 @@ describe('Testing monthly update forms', () => {
                     })
                   })
                   context('The revealed date entry fields', function() {
-
+                    beforeEach(() => {
+                      cy.get('@theYesOption').invoke('attr', 'aria-controls').then((subjectID) => {
+                        cy.get(`#${subjectID}`).as('theDateSection')
+                      })
+                      cy.get('@theDateSection').get('label').as('theDateInputsLabel')
+                      cy.get('@theDateSection').get('input').as('theDateInputs')
+                    })
+                    it ('should have all its date fields and labels for day, month, and year', () => {
+                      cy.get('@theDateSection').within(() => {
+                        cy.get('input').eq(0).should('have.attr', 'name', 'True-changed_target_completion_date_day')
+                        cy.get('input').eq(0).invoke('attr', 'id').then((fieldID) => {
+                          cy.get(`label[for="${fieldID}"]`).should('exist').contains('Day')
+                        })
+                        cy.get('input').eq(1).should('have.attr', 'name', 'True-changed_target_completion_date_month')
+                        cy.get('input').eq(1).invoke('attr', 'id').then((fieldID) => {
+                          cy.get(`label[for="${fieldID}"]`).should('exist').contains('Month')
+                        })
+                        cy.get('input').eq(2).should('have.attr', 'name', 'True-changed_target_completion_date_year')
+                        cy.get('input').eq(2).invoke('attr', 'id').then((fieldID) => {
+                          cy.get(`label[for="${fieldID}"]`).should('exist').contains('Year')
+                        })
+                      })
+                    })
                   })
                 })
               })
@@ -394,12 +440,222 @@ describe('Testing monthly update forms', () => {
                     })
                   })
                   context('The revealed approximate timing or ongoing fields', function() {
-
+                    it('should be as expected', () => {
+                      cy.log('TODO: check the radio buttons and labels')
+                    })
+                  })
+                })
+                context('Selecting a duration and submitting the form', function() {
+                  it('should go to the "Delivery status" page when saved', function() {
+                    cy.get('@theNoOption').click()
+                    cy.get('@theNoOption').invoke('attr', 'aria-controls').then((subjectID) => {
+                      cy.get(`#${subjectID}`).get('input[type="radio"]').eq(2).click()
+                      cy.location('pathname').invoke('split', '/').its(5).as('strategicActionUpdateID')
+                      cy.get('@strategicActionUpdateID').then(function(strategicActionUpdateID) {
+                        cy.get('button[type="submit"]').click()
+                        cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/delivery-status/`)
+                        cy.injectAxe()
+                      })
+                    })
                   })
                 })
               })
             })
           })
+        })
+        context('The Delivery Status page', () => {
+          beforeEach(() => {
+            Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
+          })
+          it.skip('has no accessibility issues - NEEDS CHECKING FOR POSSIBLE FALSE POSITIVE', () => {
+            cy.runA11y()
+          })
+          context('The Delivery Status breadcrumbs', function() {
+            beforeEach(() => {
+              cy.get('nav.moj-sub-navigation').as('theBreadcrumbs')
+            })
+            it('should be present', () => {
+              cy.get('@theBreadcrumbs').should('exist')
+            })
+            it ('should contain an ordered list', () => {
+              cy.get('@theBreadcrumbs').get('ol.moj-sub-navigation__list').should('exist')
+            })
+            context('The individual breadcrumbs in the ordered list should be', function() {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Update information" link', () => {
+                cy.get('@theBreadcrumbItems').eq(0).contains('1. Update information')
+              })
+              it('the "Timing" link', () => {
+                cy.get('@theBreadcrumbItems').eq(1).contains('2. Timing')
+              })
+              it('the "Action status" link', () => {
+                cy.get('@theBreadcrumbItems').eq(2).contains('3. Action status')
+              })
+              it('the "Confirm" link', () => {
+                cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm')
+              })
+            })
+            context('The link marked as the current page should be', () => {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Delivery status" link', () => {
+                cy.get('@theBreadcrumbItems').eq(2).within(() => {
+                  cy.root().get('a').should('have.attr', 'aria-current', 'page')
+                })
+              })
+            })
+          })
+          context('The Delivery Status page content', function() {
+            it('has the correct page header', () => {
+              cy.get('h1').contains(
+                  'Strategic action monthly update'
+              )
+            })
+            // it('shows the delivery status for the previous month', function() {
+            //   cy.get('h2:first').contains('Last update')
+            //   cy.get('h2:first + p').contains(`${this.updateContent}`)
+            // })
+          })
+          // context('The Delivery Status form', () => {
+          //   beforeEach(() => {
+          //     cy.get('main form').as('theForm')
+          //   })
+          //   it('is there', () => {
+          //     cy.get("@theForm").should('exist')
+          //   })
+          //   it('should have a CSRF token', () => {
+          //     cy.get("@theForm").get('input[type="hidden"][name="csrfmiddlewaretoken"]').should('exist').invoke('val')
+          //   })
+          //   it('the CSRF token must not be empty', () => {
+          //     cy.get("@theForm").get('input[type="hidden"][name="csrfmiddlewaretoken"]').invoke('val').should('not.be.empty')
+          //   })
+          //   it('should have a submit button saying "Save and continue"', () => {
+          //     cy.get('@theForm').within((theForm) => {
+          //       cy.get('button[type="submit"]').should('exist')
+          //       cy.get('button[type="submit"]').contains('Save and continue')
+          //     })
+          //   })
+          //   it('should have a cancel link saying "Cancel" going back to the supply chain page', () => {
+          //     cy.get('@theForm').within(function(theForm) {
+          //       cy.get('a.govuk-button.govuk-button--secondary').should('exist').contains('Cancel').within((theCancelLink) => {
+          //         cy.root().should('have.attr', 'href', `/${this.scSlug}`)
+          //       })
+          //     })
+          //   })
+          //   it ('should have a fieldset with legend asking if there is a completion date', () => {
+          //     cy.get('@theForm').get('fieldset legend h2').contains('Is there an expected completion date?')
+          //   })
+          //   context('The radio buttons asking if there is an expected completion date', function() {
+          //     beforeEach(() => {
+          //       cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-radios__item > input[type="radio"]').as('theRadioButtons')
+          //     })
+          //     it('should be present', () => {
+          //       cy.get('@theRadioButtons').should('exist')
+          //     })
+          //     it('should be two in number', () => {
+          //       cy.get('@theRadioButtons').should('have.length', 2)
+          //     })
+          //     it('the first should have the label "Yes"', () => {
+          //       cy.get('@theRadioButtons').eq(0).siblings('label').eq(0).contains('Yes')
+          //     })
+          //     it('the second should have the label "No"', () => {
+          //       cy.get('@theRadioButtons').eq(1).siblings('label').eq(0).contains('No')
+          //     })
+          //     context('The "Yes" option', function() {
+          //       before(() => {
+          //         // ensure we start with a clean slate
+          //         cy.reload(true, {log: true})
+          //       })
+          //       beforeEach(() => {
+          //         cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-radios__item > input[type="radio"]').as('theRadioButtons')
+          //         cy.get('@theRadioButtons').eq(0).as('theYesOption')
+          //         cy.get('@theRadioButtons').eq(1).as('theNoOption')
+          //       })
+          //       it('should initially be unchecked', () => {
+          //         cy.get('@theYesOption').should('not.be.checked')
+          //       })
+          //       it('its subject should initially be hidden', () => {
+          //         cy.get('@theYesOption').invoke('attr', 'aria-controls').then((subjectID) => {
+          //           cy.get(`#${subjectID}`).should('exist')
+          //           cy.get(`#${subjectID}`).should('be.hidden')
+          //         })
+          //       })
+          //       context('When it is selected, it', function() {
+          //         it('should make the date entry fields visible', () => {
+          //           cy.get('@theYesOption').click()
+          //           cy.get('@theYesOption').invoke('attr', 'aria-controls').then((subjectID) => {
+          //             cy.get(`#${subjectID}`).should('be.visible')
+          //           })
+          //         })
+          //         it('the approximate timing or ongoing fields should remain hidden', () => {
+          //           cy.get('@theNoOption').invoke('attr', 'aria-controls').then((subjectID) => {
+          //             cy.get(`#${subjectID}`).should('be.hidden')
+          //           })
+          //         })
+          //         context('The revealed date entry fields', function() {
+          //           it ('should have all its date fields the way they should be', () => {
+          //             cy.log('TODO: check all the date fields and labels')
+          //           })
+          //         })
+          //       })
+          //     })
+          //     context('The "No" option', function() {
+          //       before(() => {
+          //         // ensure we start with a clean slate
+          //         cy.reload(true, {log: true})
+          //       })
+          //       beforeEach(() => {
+          //         cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-radios__item > input[type="radio"]').as('theRadioButtons')
+          //         cy.get('@theRadioButtons').eq(0).as('theYesOption')
+          //         cy.get('@theRadioButtons').eq(1).as('theNoOption')
+          //       })
+          //       it('should initially be unchecked', () => {
+          //         cy.get('@theNoOption').should('not.be.checked')
+          //       })
+          //       it('its subject should initially be hidden', () => {
+          //         cy.get('@theNoOption').invoke('attr', 'aria-controls').then((subjectID) => {
+          //           cy.get(`#${subjectID}`).should('exist')
+          //           cy.get(`#${subjectID}`).should('be.hidden')
+          //         })
+          //       })
+          //       context('When it is selected, it', function() {
+          //         it('should make the approximate timing or ongoing fields visible', () => {
+          //           cy.get('@theNoOption').click()
+          //           cy.get('@theNoOption').invoke('attr', 'aria-controls').then((subjectID) => {
+          //             cy.get(`#${subjectID}`).should('be.visible')
+          //           })
+          //         })
+          //         it('the date entry fields should remain hidden', () => {
+          //           cy.get('@theYesOption').invoke('attr', 'aria-controls').then((subjectID) => {
+          //             cy.get(`#${subjectID}`).should('be.hidden')
+          //           })
+          //         })
+          //         context('The revealed approximate timing or ongoing fields', function() {
+          //           it('should be as expected', () => {
+          //             cy.log('TODO: check the radio buttons and labels')
+          //           })
+          //         })
+          //       })
+          //       context('Selecting a duration and submitting the form', function() {
+          //         it('should go to the "Delivery status" page when saved', function() {
+          //           cy.get('@theNoOption').click()
+          //           cy.get('@theNoOption').invoke('attr', 'aria-controls').then((subjectID) => {
+          //             cy.get(`#${subjectID}`).get('input[type="radio"]').eq(2).click()
+          //             cy.location('pathname').invoke('split', '/').its(5).as('strategicActionUpdateID')
+          //             cy.get('@strategicActionUpdateID').then(function(strategicActionUpdateID) {
+          //               cy.get('button[type="submit"]').click()
+          //               cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/delivery-status/`)
+          //               cy.injectAxe()
+          //             })
+          //           })
+          //         })
+          //       })
+          //     })
+          //   })
+          // })
         })
       })
       context('that does have a target completion date', function() {})
