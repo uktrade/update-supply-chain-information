@@ -236,6 +236,17 @@ class CompletionDateForm(MakeFieldRequiredMixin, forms.ModelForm):
         input_formats=["%Y-%m-%d"],
     )
     field_to_make_required = "changed_target_completion_date"
+    error_messages = (
+        {
+            "required": "Enter a date for intended completion",
+            "invalid": "Enter a date for intended completion in the correct format",
+        },
+    )
+
+    def save(self, commit=True):
+        if "changed_target_completion_date" in self.cleaned_data.keys():
+            self.instance.changed_is_ongoing = False
+        return super().save(commit)
 
     class Meta:
         model = StrategicActionUpdate
@@ -267,6 +278,12 @@ class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
                 "novalidate": True,
             },
         )
+
+    def get_initial_for_field(self, field, field_name):
+        if field_name == "surrogate_is_ongoing":
+            if self.instance.changed_is_ongoing:
+                return ApproximateTimings.ONGOING
+        return super().get_initial_for_field(field, field_name)
 
     def save(self, commit=True):
         submitted_value = self.cleaned_data["surrogate_is_ongoing"]
@@ -322,6 +339,8 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
             detail_form = self.detail_form_for_key(YesNoChoices.NO)
             if detail_form.instance.changed_is_ongoing:
                 return YesNoChoices.NO
+            if detail_form.instance.changed_target_completion_date is not None:
+                return YesNoChoices.YES
         return super().get_initial_for_field(field, field_name)
 
     def is_valid(self):
