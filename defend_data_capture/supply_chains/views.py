@@ -63,17 +63,6 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
         return context
 
 
-    context = {
-        "supply_chains": supply_chains,
-        "gov_department_name": request.user.gov_department.name,
-        "deadline": deadline,
-        "num_updated_supply_chains": num_updated_supply_chains,
-        "update_complete": num_updated_supply_chains == all_supply_chains.count(),
-    }
-    return HttpResponse(template.render(context, request))
-
-
-
 class SCTaskListView(
     LoginRequiredMixin, GovDepPermissionMixin, PaginationMixin, TemplateView
 ):
@@ -449,7 +438,14 @@ class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
 
 class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly-update-summary.html"
-    fields = []
+    fields = [
+        "content",
+        "implementation_rag_rating",
+        "reason_for_delays",
+        "changed_target_completion_date",
+        "changed_is_ongoing",
+        "reason_for_completion_date_change",
+    ]
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
