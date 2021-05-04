@@ -3,11 +3,12 @@ from typing import List, Dict
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.db.models import Count
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.generic import ListView, TemplateView
+from django.views import View
+from django.views.generic import ListView, TemplateView, FormView
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -16,7 +17,7 @@ from django.views.generic import (
     CreateView,
     TemplateView,
 )
-
+from django.views.generic.detail import SingleObjectMixin
 
 from supply_chains.models import (
     SupplyChain,
@@ -436,7 +437,7 @@ class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
         return reverse(next_page_url, kwargs=url_kwargs)
 
 
-class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
+class MonthlyUpdateSummaryView(MonthlyUpdateMixin, SingleObjectMixin, View):
     template_name = "supply_chains/monthly-update-summary.html"
     fields = [
         "content",
@@ -503,7 +504,7 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
         if strategic_action_changed:
             strategic_action.save()
         strategic_action_update.save()
-        return super().post(request, *args, **kwargs)
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse("tlist", kwargs={"sc_slug": self.object.supply_chain.slug})
