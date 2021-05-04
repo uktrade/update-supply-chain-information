@@ -4,6 +4,7 @@ from unittest import mock
 
 from dateutil.relativedelta import relativedelta
 import pytest
+from django.forms import ModelForm
 
 from supply_chains.forms import (
     CompletionDateForm,
@@ -14,7 +15,8 @@ from supply_chains.forms import (
     ApproximateTimingForm,
     ApproximateTimings,
     MonthlyUpdateModifiedTimingForm,
-    DetailFormMixin,
+    RedReasonForDelayForm,
+    MonthlyUpdateSubmissionForm,
 )
 from supply_chains.models import StrategicAction, StrategicActionUpdate, RAGRating
 from supply_chains.test.factories import StrategicActionFactory, SupplyChainFactory
@@ -233,6 +235,7 @@ class TestMonthlyUpdateStatusForm:
     def test_form_saves_the_status_when_RED_and_no_completion_date(self):
         strategic_action_update = self.strategic_action_update
         strategic_action_update.strategic_action.target_completion_date = None
+        strategic_action_update.strategic_action.is_ongoing = False
         strategic_action_update.strategic_action.save()
         assert strategic_action_update.implementation_rag_rating is None
 
@@ -492,7 +495,7 @@ class TestMonthlyUpdateStatusForm:
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert not form.is_valid()
-        assert bool(form.errors) is False
+        assert bool(form.errors) is not False
         detail_form = form.detail_form_for_key(RAGRating.AMBER)
         assert bool(detail_form.errors) is not False
         assert "reason_for_delays" in detail_form.errors.keys()
@@ -510,7 +513,7 @@ class TestMonthlyUpdateStatusForm:
         }
         form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
         assert not form.is_valid()
-        assert bool(form.errors) is False
+        assert bool(form.errors) is not False
         detail_form = form.detail_form_for_key(RAGRating.RED)
         assert bool(detail_form.errors) is not False
         assert "reason_for_delays" in detail_form.errors.keys()
@@ -525,9 +528,67 @@ class TestAmberReasonForDelayForm:
 
 @pytest.mark.django_db()
 class TestRedReasonForDelayForm:
-    """Nothing to test unless the reason_for_delays field is required."""
+    """Check that will_completion_date_change only requested when date known."""
 
-    pass
+    current_completion_date = date(year=2021, month=12, day=25)
+
+    def setup_method(self):
+        supply_chain = SupplyChainFactory()
+        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
+        self.strategic_action_update = StrategicActionUpdate.objects.create(
+            supply_chain=supply_chain, strategic_action=strategic_action
+        )
+
+    def test_red_reason_for_delay_form_requires_will_completion_date_change_when_completion_date_known(
+        self,
+    ):
+        new_completion_date = self.current_completion_date + relativedelta(months=+6)
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            new_completion_date
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+
+        form_data = {"reason_for_delays": "Reason"}
+
+        form = RedReasonForDelayForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        assert "will_completion_date_change" in form.fields.keys()
+
+    def test_red_reason_for_delay_form_does_not_require_will_completion_date_change_when_completion_date_unknown_and_not_ongoing(
+        self,
+    ):
+        new_completion_date = None
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            new_completion_date
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+
+        form_data = {"reason_for_delays": "Reason"}
+
+        form = RedReasonForDelayForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        assert "will_completion_date_change" not in form.fields.keys()
+
+    def test_red_reason_for_delay_form_does_not_require_will_completion_date_change_when_is_ongoing(
+        self,
+    ):
+        new_completion_date = None
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            new_completion_date
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = True
+        self.strategic_action_update.strategic_action.save()
+
+        form_data = {"reason_for_delays": "Reason"}
+
+        form = RedReasonForDelayForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        assert "will_completion_date_change" not in form.fields.keys()
 
 
 @pytest.mark.django_db()
@@ -620,6 +681,28 @@ class TestApproximateTimingForm:
             )
             assert saved_instance.changed_is_ongoing is False
 
+    def test_make_field_required_makes_surrogate_is_ongoing_field_required(self):
+        form_data = {"surrogate_is_ongoing": int(ApproximateTimings["TWO_YEARS"])}
+        self.strategic_action_update.changed_target_completion_date = None
+        self.strategic_action_update.changed_is_ongoing = None
+        self.strategic_action_update.save()
+
+        form = ApproximateTimingForm(instance=self.strategic_action_update)
+        assert not form.fields["surrogate_is_ongoing"].required
+        form.make_field_required()
+        assert form.fields["surrogate_is_ongoing"].required
+
+    def test_no_value_for_required_surrogate_is_ongoing_causes_error(self):
+        form_data = {"surrogate_is_ongoing": int(ApproximateTimings["TWO_YEARS"])}
+        self.strategic_action_update.changed_target_completion_date = None
+        self.strategic_action_update.changed_is_ongoing = None
+        self.strategic_action_update.save()
+
+        form = ApproximateTimingForm(data={}, instance=self.strategic_action_update)
+        form.make_field_required()
+        assert not form.is_valid()
+        assert "surrogate_is_ongoing" in form.errors.keys()
+
 
 @pytest.mark.django_db()
 class TestMonthlyUpdateTimingForm:
@@ -679,10 +762,25 @@ class TestMonthlyUpdateTimingForm:
         form = MonthlyUpdateTimingForm(
             data=form_data, instance=self.strategic_action_update
         )
+        form.detail_form_for_key(YesNoChoices.NO).make_field_required()
         assert not form.is_valid()
         detail_form = form.detail_form_for_key(selected_choice)
         assert not detail_form.is_valid()
         assert "surrogate_is_ongoing" in detail_form.errors.keys()
+
+    def test_completion_date_not_known_excludes_errors_from_completion_date_known_form(
+        self,
+    ):
+        choices = YesNoChoices
+        selected_choice = choices.NO
+        form_data = {"is_completion_date_known": selected_choice}
+        form = MonthlyUpdateTimingForm(
+            data=form_data, instance=self.strategic_action_update
+        )
+        form.detail_form_for_key(selected_choice).make_field_required()
+        form.is_valid()
+        assert f"{choices.NO}-surrogate_is_ongoing" in form.errors.keys()
+        assert f"{choices.YES}-changed_target_completion_date" not in form.errors.keys()
 
 
 @pytest.mark.django_db()
@@ -710,18 +808,283 @@ class TestMonthlyUpdateModifiedTimingForm:
 
 
 @pytest.mark.django_db()
-@pytest.mark.skip("Not yet implemented")
-class TestMonthlyUpdateSubmissionForm:
-    """Should take all necessary steps to efffect the transition from in progress to submitted."""
+class TestMonthlyUpdateSubmissionFormGeneration:
+    """Should take all necessary steps to effect the transition from in progress to submitted."""
 
-    def test_monthly_update_status_becomes_submitted(self):
-        assert False
+    def setup_method(self):
+        supply_chain = SupplyChainFactory()
+        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
+        self.strategic_action_update = StrategicActionUpdate.objects.create(
+            supply_chain=supply_chain, strategic_action=strategic_action
+        )
 
-    def test_strategic_action_target_completion_date_becomes_strategic_action_update_changed_completion_date(
+    def test_monthly_update_submission_form_classes_for_known_unchanging_completion_date(
         self,
     ):
-        assert False
+        expected_classes = (
+            MonthlyUpdateInfoForm,
+            MonthlyUpdateStatusForm,
+        )
+        unexpected_classes = (
+            MonthlyUpdateModifiedTimingForm,
+            MonthlyUpdateTimingForm,
+        )
 
-    def test_reason_for_target_completion_date_change_logged_in_reversion(self):
-        """Should log the reason for changing the date in reversion."""
-        assert False
+        submission_form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update
+        )
+        actual_classes = submission_form.forms.keys()
+        for expected_class in expected_classes:
+            assert expected_class.__name__ in actual_classes
+        for unexpected_class in unexpected_classes:
+            assert unexpected_class.__name__ not in actual_classes
+
+    def test_monthly_update_submission_form_classes_for_known_changing_completion_date(
+        self,
+    ):
+        self.strategic_action_update.changed_target_completion_date = (
+            self.strategic_action_update.strategic_action.target_completion_date
+            + relativedelta(month=6)
+        )
+        self.strategic_action_update.save()
+        expected_classes = (
+            MonthlyUpdateInfoForm,
+            MonthlyUpdateStatusForm,
+            MonthlyUpdateModifiedTimingForm,
+        )
+        unexpected_classes = (MonthlyUpdateTimingForm,)
+
+        submission_form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update
+        )
+        actual_classes = submission_form.forms.keys()
+        for expected_class in expected_classes:
+            assert expected_class.__name__ in actual_classes
+        for unexpected_class in unexpected_classes:
+            assert unexpected_class.__name__ not in actual_classes
+
+    def test_monthly_update_submisssion_form_classes_for_unknown_completion_date(self):
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+
+        expected_classes = (
+            MonthlyUpdateInfoForm,
+            MonthlyUpdateStatusForm,
+            MonthlyUpdateTimingForm,
+        )
+        unexpected_classes = (MonthlyUpdateModifiedTimingForm,)
+
+        submission_form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update
+        )
+        actual_classes = submission_form.forms.keys()
+        for expected_class in expected_classes:
+            assert expected_class.__name__ in actual_classes
+        for unexpected_class in unexpected_classes:
+            assert unexpected_class.__name__ not in actual_classes
+
+    def test_monthly_update_submisssion_form_classes_for_known_completion_date_becoming_ongoing(
+        self,
+    ):
+        self.strategic_action_update.changed_is_ongoing = True
+        self.strategic_action_update.save()
+
+        expected_classes = (
+            MonthlyUpdateInfoForm,
+            MonthlyUpdateStatusForm,
+            MonthlyUpdateModifiedTimingForm,
+        )
+        unexpected_classes = (MonthlyUpdateTimingForm,)
+
+        submission_form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update
+        )
+        actual_classes = submission_form.forms.keys()
+        for expected_class in expected_classes:
+            assert expected_class.__name__ in actual_classes
+        for unexpected_class in unexpected_classes:
+            assert unexpected_class.__name__ not in actual_classes
+
+    def test_monthly_update_submission_form_classes_for_known_completion_date_becoming_ongoing_with_new_data(
+        self,
+    ):
+        expected_classes = (
+            MonthlyUpdateInfoForm,
+            MonthlyUpdateStatusForm,
+            MonthlyUpdateModifiedTimingForm,
+        )
+        unexpected_classes = (MonthlyUpdateTimingForm,)
+
+        form_data = {
+            "surrogate_is_ongoing": ApproximateTimings.ONGOING,
+            "reason_for_completion_date_change": "Reason",
+        }
+        submission_form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        actual_classes = submission_form.forms.keys()
+        for expected_class in expected_classes:
+            assert expected_class.__name__ in actual_classes
+        for unexpected_class in unexpected_classes:
+            assert unexpected_class.__name__ not in actual_classes
+
+    def test_monthly_update_submission_form_classes_for_known_completion_date_being_changed_with_new_data(
+        self,
+    ):
+        expected_classes = (
+            MonthlyUpdateInfoForm,
+            MonthlyUpdateStatusForm,
+            MonthlyUpdateModifiedTimingForm,
+        )
+        unexpected_classes = (MonthlyUpdateTimingForm,)
+
+        form_data = {
+            "changed_target_completion_date": self.strategic_action_update.strategic_action.target_completion_date
+            + relativedelta(month=6),
+            "reason_for_completion_date_change": "Reason",
+        }
+        submission_form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        actual_classes = submission_form.forms.keys()
+        for expected_class in expected_classes:
+            assert expected_class.__name__ in actual_classes
+        for unexpected_class in unexpected_classes:
+            assert unexpected_class.__name__ not in actual_classes
+
+    def test_monthly_update_submisssion_form_classes_for_unknown_completion_date_set_in_new_data(
+        self,
+    ):
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+
+        expected_classes = (
+            MonthlyUpdateInfoForm,
+            MonthlyUpdateStatusForm,
+            MonthlyUpdateTimingForm,
+        )
+        unexpected_classes = (MonthlyUpdateModifiedTimingForm,)
+
+        form_data = {
+            "changed_target_completion_date": date(year=2022, month=12, day=25),
+            "reason_for_completion_date_change": "Reason",
+        }
+        submission_form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        actual_classes = submission_form.forms.keys()
+        for expected_class in expected_classes:
+            assert expected_class.__name__ in actual_classes
+        for unexpected_class in unexpected_classes:
+            assert unexpected_class.__name__ not in actual_classes
+
+    def test_monthly_update_submisssion_form_classes_for_unknown_completion_date_becoming_ongoing(
+        self,
+    ):
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+
+        expected_classes = (
+            MonthlyUpdateInfoForm,
+            MonthlyUpdateStatusForm,
+            MonthlyUpdateTimingForm,
+        )
+        unexpected_classes = (MonthlyUpdateModifiedTimingForm,)
+
+        form_data = {
+            "surrogate_is_ongoing": ApproximateTimings.ONGOING,
+            "reason_for_completion_date_change": "Reason",
+        }
+        submission_form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        actual_classes = submission_form.forms.keys()
+        for expected_class in expected_classes:
+            assert expected_class.__name__ in actual_classes
+        for unexpected_class in unexpected_classes:
+            assert unexpected_class.__name__ not in actual_classes
+
+
+@pytest.mark.django_db()
+class TestMonthlyUpdateSubmissionForm:
+    """Should take all necessary steps to effect the transition from in progress to submitted."""
+
+    def setup_method(self):
+        supply_chain = SupplyChainFactory()
+        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
+        self.strategic_action_update = StrategicActionUpdate.objects.create(
+            supply_chain=supply_chain, strategic_action=strategic_action
+        )
+
+    def test_all_fields_valid_when_completion_date_unknown_becomes_known_and_rag_rating_green(
+        self,
+    ):
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        form_data = {
+            "content": "Some content",
+            "implementation_rag_rating": RAGRating.GREEN,
+            "is_completion_date_known": YesNoChoices.YES,
+            f"{YesNoChoices.YES}-changed_target_completion_date": "2021-12-25",
+        }
+        form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        form.is_valid()
+        assert not form.errors
+
+    def test_all_fields_valid_when_completion_date_known_is_changed_and_rag_rating_green(
+        self,
+    ):
+        form_data = {
+            "content": "Some content",
+            "implementation_rag_rating": RAGRating.GREEN,
+            "is_completion_date_known": YesNoChoices.YES,
+            f"{YesNoChoices.YES}-changed_target_completion_date": "2021-12-25",
+            "reason_for_completion_date_change": "Reason",
+        }
+        form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        form.is_valid()
+        assert not form.errors
+
+    def test_all_fields_valid_when_completion_date_known_becomes_ongoing_and_rag_rating_green(
+        self,
+    ):
+        form_data = {
+            "content": "Some content",
+            "implementation_rag_rating": RAGRating.GREEN,
+            "is_completion_date_known": YesNoChoices.NO,
+            f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONGOING,
+            "reason_for_completion_date_change": "Reason",
+        }
+        form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        form.is_valid()
+        assert not form.errors
+
+    def test_all_fields_saved_when_completion_date_unknown_becomes_ongoing_and_rag_rating_green(
+        self,
+    ):
+        strategic_action: StrategicAction = (
+            self.strategic_action_update.strategic_action
+        )
+        strategic_action.is_ongoing = False
+        strategic_action.save()
+        form_data = {
+            "content": "Some content",
+            "implementation_rag_rating": RAGRating.GREEN,
+            "is_completion_date_known": YesNoChoices.NO,
+            f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONGOING,
+        }
+        form = MonthlyUpdateSubmissionForm(
+            instance=self.strategic_action_update, data=form_data
+        )
+        form.is_valid()
+        assert not form.errors
