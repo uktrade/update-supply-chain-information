@@ -501,8 +501,7 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
         # TODO: reversion!
         strategic_action_update.status = StrategicActionUpdate.Status.COMPLETED
         if strategic_action_changed:
-            pass
-            # strategic_action.save()
+            strategic_action.save()
         strategic_action_update.save()
         return super().post(request, *args, **kwargs)
 
