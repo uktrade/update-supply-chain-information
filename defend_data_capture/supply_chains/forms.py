@@ -177,7 +177,7 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
     use_required_attribute = False
     implementation_rag_rating = forms.ChoiceField(
         required=True,
-        choices=RAGRating.choices,
+        choices=reversed(RAGRating.choices),
         label="Current delivery status",
         widget=HintedDetailRadioSelect(
             attrs={
@@ -425,7 +425,7 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
         labels = {"is_completion_date_known": "Is there an expected completion date?"}
 
 
-class MonthlyUpdateModifiedTimingForm(AllErrorsMixin, MonthlyUpdateTimingForm):
+class MonthlyUpdateModifiedTimingForm(MonthlyUpdateTimingForm):
     use_required_attribute = False
     reason_for_completion_date_change = forms.CharField(required=True)
 
