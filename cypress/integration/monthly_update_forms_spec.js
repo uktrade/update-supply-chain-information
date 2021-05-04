@@ -25,10 +25,17 @@ const strategicActionsForTest = strategicActions.reduce((accumulator, action) =>
       };
     } else if (/^Has no update/.test(action.fields.name)) {
       const supplyChain = supplyChainsByPK[action.fields.supply_chain];
-      accumulator.hasCompletionDate.noUpdate = {
-        'supplyChainSlug': supplyChain.fields.slug,
-        'strategicActionSlug': action.fields.slug,
-      };
+      if (/will be submitted with errors/.test(action.fields.name)) {
+        accumulator.hasCompletionDate.forErrors = {
+          'supplyChainSlug': supplyChain.fields.slug,
+          'strategicActionSlug': action.fields.slug,
+        };
+      } else {
+        accumulator.hasCompletionDate.noUpdate = {
+          'supplyChainSlug': supplyChain.fields.slug,
+          'strategicActionSlug': action.fields.slug,
+        };
+      }
     }
   } else if (/no completion date/.test(action.fields.name)) {
     if (/^Has an update/.test(action.fields.name)) {
@@ -42,10 +49,17 @@ const strategicActionsForTest = strategicActions.reduce((accumulator, action) =>
       };
     } else if (/^Has no update/.test(action.fields.name)) {
       const supplyChain = supplyChainsByPK[action.fields.supply_chain];
-      accumulator.noCompletionDate.noUpdate = {
-        'supplyChainSlug': supplyChain.fields.slug,
-        'strategicActionSlug': action.fields.slug,
-      };
+      if (/will be submitted with errors/.test(action.fields.name)) {
+        accumulator.noCompletionDate.forErrors = {
+          'supplyChainSlug': supplyChain.fields.slug,
+          'strategicActionSlug': action.fields.slug,
+        };
+      } else {
+        accumulator.noCompletionDate.noUpdate = {
+          'supplyChainSlug': supplyChain.fields.slug,
+          'strategicActionSlug': action.fields.slug,
+        };
+      }
     }
   }
   return accumulator;
@@ -140,6 +154,7 @@ describe('Testing monthly update forms', () => {
           cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.updateSlug).as('uSlug')
           cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.updateContent).as('updateContent')
           cy.wrap(todaySlug).as('todaySlug')
+          cy.url().as('pageURL')
         });
         context('starting a new monthly update', function() {
           it('successfully creates a new update and redirects to its Update Info page', function() {
@@ -148,7 +163,7 @@ describe('Testing monthly update forms', () => {
             cy.injectAxe()
           })
         })
-        context('The Update Info page', function() {
+        context(`The Update Info page ${this.pageURL}`, function() {
           it('has no accessibility issues', () => {
             cy.runA11y()
           })
@@ -210,34 +225,23 @@ describe('Testing monthly update forms', () => {
               cy.get("@theForm").should('exist')
             })
             it('should have a CSRF token', () => {
-              cy.get("@theForm").get('input[type="hidden"][name="csrfmiddlewaretoken"]').should('exist').invoke('val')
+              cy.get("@theForm").hasDjangoCSRFToken()
             })
-            it('the CSRF token must not be empty', () => {
-              cy.get("@theForm").get('input[type="hidden"][name="csrfmiddlewaretoken"]').invoke('val').should('not.be.empty')
-            })
-            it('should have a label for the "content" field', () => {
+            it('should have a textarea for the "content" field labelled "Latest monthly update"', () => {
               cy.get("@theForm").within((theForm) => {
-                cy.get('label.govuk-label[for="id_content"]').within(() => {
-                  cy.root().should('exist').contains('Latest monthly update')
-                })
-              })
-            })
-            it('should have a textarea for the "content" field', () => {
-              cy.get("@theForm").within((theForm) => {
-                cy.get('textarea[name="content"]').should('exist')
+                cy.get('textarea[name="content"]').label().should('contain.text', 'Latest monthly update')
               })
             })
             it('should have a submit button saying "Save and continue"', () => {
-              cy.get('@theForm').within((theForm) => {
-                cy.get('button[type="submit"]').should('exist').contains('Save and continue')
-              })
+              cy.get('@theForm').hasSubmitButton()
             })
-            it('should have a cancel link saying "Cancel" going back to the supply chain page', () => {
-              cy.get('@theForm').within(function(theForm) {
-                cy.get('a.govuk-button.govuk-button--secondary').should('exist').contains('Cancel').within((theCancelLink) => {
-                  cy.root().should('have.attr', 'href', `/${this.scSlug}`)
-                })
-              })
+            it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
+              cy.get('@theForm').hasCancelLink(`${this.scSlug}`)
+              // cy.get('@theForm').within(function(theForm) {
+              //   cy.get('a.govuk-button.govuk-button--secondary').contains('Cancel').within((theCancelLink) => {
+              //     cy.root().should('have.attr', 'href', `/${this.scSlug}`)
+              //   })
+              // })
             })
             context('When submitted with the content field filled out', function() {
               before(() => {
@@ -272,9 +276,6 @@ describe('Testing monthly update forms', () => {
           context('The Timing breadcrumbs', function() {
             beforeEach(() => {
               cy.get('nav.moj-sub-navigation').as('theBreadcrumbs')
-            })
-            it('should be present', () => {
-              cy.get('@theBreadcrumbs').should('exist')
             })
             it ('should contain an ordered list', () => {
               cy.get('@theBreadcrumbs').get('ol.moj-sub-navigation__list').should('exist')
@@ -322,23 +323,13 @@ describe('Testing monthly update forms', () => {
               cy.get("@theForm").should('exist')
             })
             it('should have a CSRF token', () => {
-              cy.get("@theForm").get('input[type="hidden"][name="csrfmiddlewaretoken"]').should('exist').invoke('val')
-            })
-            it('the CSRF token must not be empty', () => {
-              cy.get("@theForm").get('input[type="hidden"][name="csrfmiddlewaretoken"]').invoke('val').should('not.be.empty')
+              cy.get("@theForm").hasDjangoCSRFToken()
             })
             it('should have a submit button saying "Save and continue"', () => {
-              cy.get('@theForm').within((theForm) => {
-                cy.get('button[type="submit"]').should('exist')
-                cy.get('button[type="submit"]').contains('Save and continue')
-              })
+              cy.get('@theForm').hasSubmitButton()
             })
-            it('should have a cancel link saying "Cancel" going back to the supply chain page', () => {
-              cy.get('@theForm').within(function(theForm) {
-                cy.get('a.govuk-button.govuk-button--secondary').should('exist').contains('Cancel').within((theCancelLink) => {
-                  cy.root().should('have.attr', 'href', `/${this.scSlug}`)
-                })
-              })
+            it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
+              cy.get('@theForm').hasCancelLink(`${this.scSlug}`)
             })
             it ('should have a fieldset with legend asking if there is a completion date', () => {
               cy.get('@theForm').get('fieldset legend h2').contains('Is there an expected completion date?')
@@ -542,23 +533,13 @@ describe('Testing monthly update forms', () => {
               cy.get("@theForm").should('exist')
             })
             it('should have a CSRF token', () => {
-              cy.get("@theForm").get('input[type="hidden"][name="csrfmiddlewaretoken"]').should('exist').invoke('val')
-            })
-            it('the CSRF token must not be empty', () => {
-              cy.get("@theForm").get('input[type="hidden"][name="csrfmiddlewaretoken"]').invoke('val').should('not.be.empty')
+              cy.get("@theForm").hasDjangoCSRFToken()
             })
             it('should have a submit button saying "Save and continue"', () => {
-              cy.get('@theForm').within((theForm) => {
-                cy.get('button[type="submit"]').should('exist')
-                cy.get('button[type="submit"]').contains('Save and continue')
-              })
+              cy.get('@theForm').hasSubmitButton()
             })
-            it('should have a cancel link saying "Cancel" going back to the supply chain page', () => {
-              cy.get('@theForm').within(function(theForm) {
-                cy.get('a.govuk-button.govuk-button--secondary').should('exist').contains('Cancel').within((theCancelLink) => {
-                  cy.root().should('have.attr', 'href', `/${this.scSlug}`)
-                })
-              })
+            it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
+              cy.get('@theForm').hasCancelLink(`${this.scSlug}`)
             })
             context('the radio buttons asking for the current delivery status', function() {
               beforeEach(() => {
@@ -619,16 +600,16 @@ describe('Testing monthly update forms', () => {
                 })
               })
             })
-            context('the error messages', function() {
-              before(() => {
-                // ensure we start with a clean slate
-                cy.reload(true, {log: true})
-              })
-              it('should display error summary when submitted without selecting a status radio', () => {
-                cy.contains('Save and continue').click()
-              })
-            })
-
+            // context('the error messages', function() {
+            //   before(() => {
+            //     // ensure we start with a clean slate
+            //     cy.reload(true, {log: true})
+            //   })
+            //   it('should display error summary when submitted without selecting a status radio', () => {
+            //     cy.contains('Save and continue').click()
+            //   })
+            // })
+            //
           })
         })
       })
@@ -700,55 +681,114 @@ describe('Testing monthly update forms', () => {
 })
 
 
-// describe('Testing validation errors in the monthly update forms', () => {
-//   context('for a strategic action', function() {
-//     context('with an update from the previous month', function() {
-//       context('that has no target completion date', function() {
-//         beforeEach(() => {
-//           Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-//           cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.supplyChainSlug).as('scSlug')
-//           cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.strategicActionSlug).as('saSlug')
-//           cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.updateSlug).as('uSlug')
-//           cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.updateContent).as('updateContent')
-//           cy.wrap(todaySlug).as('todaySlug')
-//         });
-//         it ('starts a new update', function() {
-//           cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/start/`)
-//         })
-//         context('The Update Info form', () => {
-//           beforeEach(() => {
-//             cy.get('main form').as('theForm')
-//           })
-//           context('When submitted without entering any text in the content field', function() {
-//             before(() => {
-//               // ensure we start with a clean slate
-//               cy.reload(true, {log: true})
-//             })
-//             it('should redisplay the page with an error message', function() {
-//               cy.url().then((url) => {
-//                 /**
-//                  * This can't happen 'within' the form
-//                  * as once the submit button is clicked,
-//                  * the page with the form is replaced
-//                  * but that page has a new form instance as far as the DOM is concerned
-//                  * so we need to be able to select the (new) form
-//                  */
-//                 cy.get('@theForm').get('button[type="submit"]').click()
-//                 cy.url().should('eq', url)
-//                 cy.get('main form').within(() => {
-//                   cy.get('.govuk-form-group--error').should('exist')
-//                   cy.get('.govuk-error-message').should('exist')
-//                 })
-//               })
-//             })
-//           })
-//         })
-//       })
-//       context('that does have a target completion date', function() {})
-//     })
-//     context('without an update from the previous month', function() {
-//       context('that has no target completion date', function() {})
-//       context('that does have a target completion date', function() {})
-//     })
-//   })
-// })
+describe('Testing validation errors in the monthly update forms', () => {
+  context('for a strategic action', function() {
+      context('that has no target completion date', function() {
+        beforeEach(() => {
+          Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
+          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.supplyChainSlug).as('scSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.strategicActionSlug).as('saSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateSlug).as('uSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateContent).as('updateContent')
+          cy.wrap(todaySlug).as('todaySlug')
+        });
+        it ('starts a new update', function() {
+          cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/start/`)
+        })
+        context('The Update Info form', () => {
+          beforeEach(() => {
+            cy.get('main form').as('theForm')
+          })
+          context('When submitted without entering any text in the content field', function() {
+            before(() => {
+              // ensure we start with a clean slate
+              cy.reload(true, {log: true})
+            })
+            context('should redisplay the page', () => {
+              it('with an error summary at the top', function() {
+                cy.url().then((url) => {
+                  /**
+                   * This can't happen 'within' the form
+                   * as once the submit button is clicked,
+                   * the page with the form is replaced
+                   * but that page has a new form instance as far as the DOM is concerned
+                   * so we need to be able to select the (new) form
+                   */
+                  cy.get('@theForm').get('button[type="submit"]').click()
+                  cy.url().should('eq', url)
+                  // cy.get('main').hasGDSErrorSummary().hasGDSErrorList()
+                  // cy.get('main').within(() => {
+                  //   cy.get('div.govuk-error-summary:first-of-type').should('exist').within(() => {
+                  //     cy.get('.govuk-error-summary__list li a').should('exist')
+                  //   })
+                  // })
+                })
+              })
+              it('with an error message on the field', function() {
+                cy.url().then((url) => {
+                  /**
+                   * This can't happen 'within' the form
+                   * as once the submit button is clicked,
+                   * the page with the form is replaced
+                   * but that page has a new form instance as far as the DOM is concerned
+                   * so we need to be able to select the (new) form
+                   */
+                  cy.get('@theForm').get('button[type="submit"]').click()
+                  cy.url().should('eq', url)
+                  cy.get('main form').within(() => {
+                    cy.get('.govuk-form-group--error').should('exist')
+                    cy.get('.govuk-error-message').should('exist')
+                  })
+                })
+              })
+            })
+          })
+        })
+        context('The Timing form', () => {
+          beforeEach(() => {
+            Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
+            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.supplyChainSlug).as('scSlug')
+            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.strategicActionSlug).as('saSlug')
+            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateSlug).as('uSlug')
+            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateContent).as('updateContent')
+            cy.wrap(todaySlug).as('todaySlug')
+          })
+          context('when the expected completion date is known', function() {
+            before(() => {
+              // ensure we start with a clean slate
+              cy.reload(true, {log: true})
+              cy.get('@theForm')
+            })
+
+          })
+          context('When submitted without selecting "Yes" or "No"', function() {
+            before(function() {
+              // ensure we start with a clean slate
+              cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/timing/`)
+              cy.get('main form').as('theForm')
+            })
+            context('should redisplay the page', function() {
+              it('with an error summary at the top and an error message on the field', function() {
+                cy.url().then(function(url) {
+                  /**
+                   * This can't happen 'within' the form
+                   * as once the submit button is clicked,
+                   * the page with the form is replaced
+                   * but that page has a new form instance as far as the DOM is concerned
+                   * so we need to be able to select the (new) form
+                   */
+                  cy.get('main form').get('button[type="submit"]').click()
+                  cy.url().should('eq', url)
+                  cy.get('main').gdsErrorSummary().gdsErrorList()
+                  cy.get('main form').within(() => {
+                    cy.get('.govuk-error-message').should('exist')
+                  })
+                })
+              })
+            })
+          })
+        })
+      })
+      context('that does have a target completion date', function() {})
+  })
+})
