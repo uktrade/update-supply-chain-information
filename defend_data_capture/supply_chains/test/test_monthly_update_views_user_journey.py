@@ -314,8 +314,8 @@ class TestMonthlyUpdateSummaryPage:
         strategic_action.save()
         data = {}
         expected_response_url = reverse(
-            "strategic-actions",
-            kwargs={},
+            "tlist",
+            kwargs={"sc_slug": strategic_action.supply_chain.slug},
         )
         client = Client()
         response = client.post(info_url, data=data)
