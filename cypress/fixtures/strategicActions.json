@@ -263,7 +263,7 @@
     "model": "supply_chains.strategicaction",
     "pk": "55b22a7f-65fa-48c5-82f2-7918214936c5",
     "fields": {
-      "name": "Strategic action 4",
+      "name": "Has no update from previous month and a completion date and will be submitted with errors",
       "start_date": "1982-03-07",
       "description": "Cover than item risk difficult.",
       "impact": "",
@@ -283,7 +283,7 @@
     "model": "supply_chains.strategicaction",
     "pk": "982bda67-4808-4231-b16b-c1f84c4ea110",
     "fields": {
-      "name": "Strategic action 5",
+      "name": "Has no update from previous month and no completion date and will be submitted with errors",
       "start_date": "1982-03-07",
       "description": "Cover than item risk difficult.",
       "impact": "",
