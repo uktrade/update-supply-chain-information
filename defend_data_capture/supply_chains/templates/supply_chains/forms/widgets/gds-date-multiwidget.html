@@ -1,31 +1,16 @@
 <div class="govuk-form-group">
     {% with widget.attrs.id as id %}
-        <fieldset class="govuk-fieldset" role="group" aria-describedby="{{ id }}-hint">
-            {% if legend %}
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                    <p class="govuk-body">
-                        {{ legend }}
-                    </p>
-                </legend>
-            {% endif %}
-            <div id="{{ id }}-hint" class="govuk-hint">
-                For example, 14 9 2021
-            </div>
-            <div class="govuk-date-input" id="{{ id }}-container">
-                {% for subwidget in labelled_widgets %}
-                    <div class="govuk-date-input__item">
-                        <div class="govuk-form-group">
-                            <label class="govuk-label govuk-date-input__label" for="{{ subwidget.widget.attrs.id }}">
-                                {{ subwidget.label }}
-                            </label>
-                            {% with widget=subwidget.widget %}
-                                {% include widget.template_name %}
-                            {% endwith %}
+        {% for subwidget in labelled_widgets %}
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" for="{{ subwidget.widget.attrs.id }}">
+                        {{ subwidget.label }}
+                    </label>
+                    {% with widget=subwidget.widget %}
+                        {% include widget.template_name %}
+                    {% endwith %}
 {#                            <input class="govuk-input govuk-date-input__input govuk-input--width-2" id="{{ id }}-day" name="day" type="text" pattern="[0-9]*" inputmode="numeric">#}
-                        </div>
-                    </div>
-                {% endfor %}
+                </div>
             </div>
-        </fieldset>
+        {% endfor %}
     {% endwith %}
-</div>

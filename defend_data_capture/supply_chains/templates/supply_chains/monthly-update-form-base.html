@@ -16,4 +16,8 @@
     </nav>
 {% endblock breadcrumbs %}
 
-
+{% block body %}
+    {% include "supply_chains/includes/gds-error-summary.html" %}
+    <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
+    {% block form %}{% endblock form %}
+{% endblock body %}

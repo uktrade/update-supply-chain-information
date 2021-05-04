@@ -1,7 +1,6 @@
 {% extends 'supply_chains/monthly-update-form-base.html' %}
 
-{% block body %}
-    <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
+{% block form %}
     {% with strategic_action_update.strategic_action.last_submitted_update as previous_update %}
         {% if previous_update.content %}
             <div class="app-dit-panel">
@@ -12,10 +11,7 @@
     {% endwith %}
     <form method="post" action="">
         {% csrf_token %}
-        <div class="govuk-form-group{% if form.non_field_errors or form.content.errors %} govuk-form-group--error{% endif %}">
-            {% if form.non_field_errors %}
-                {{ form.non_field_errors }}
-            {% endif %}
+        <div class="govuk-form-group{% if form.errors %} govuk-form-group--error{% endif %}">
             <h2 class="govuk-label-wrapper govuk-heading-l">
                 <label class="govuk-label govuk-label--l" for="{{ form.content.id_for_label }}">
                 Latest monthly update
@@ -48,4 +44,4 @@
             </a>
         </div>
     </form>
-{% endblock body %}
+{% endblock form %}

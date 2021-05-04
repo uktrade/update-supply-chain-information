@@ -4,11 +4,11 @@
         {{ widget.label }}
     </label>
 </div>
-    {% if widget.dit_hint %}
-        <div id="{{ widget.attrs.id }}-hint" class="govuk-hint govuk-radios__hint">
-            {{ widget.dit_hint }}
-        </div>
-    {% endif %}
+{#    {% if widget.dit_hint %}#}
+{#        <div id="{{ widget.attrs.id }}-hint" class="govuk-hint govuk-radios__hint">#}
+{#            {{ widget.dit_hint }}#}
+{#        </div>#}
+{#    {% endif %}#}
     {% if widget.dit_detail %}
         <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="{{ widget.attrs.id }}-detail">
             {% include widget.dit_detail.template with form=widget.dit_detail.form %}
