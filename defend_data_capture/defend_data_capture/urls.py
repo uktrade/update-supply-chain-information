@@ -14,6 +14,7 @@ from supply_chains.views import (
     SCCompleteView,
     SASummaryView,
     SCSummary,
+    SAUReview,
 )
 
 router = routers.DefaultRouter()
@@ -40,5 +41,10 @@ urlpatterns = [
         "<slug:sc_slug>/strategic-actions",
         SASummaryView.as_view(),
         name="strat_action_summary",
+    ),
+    path(
+        "<slug:sc_slug>/<slug:sa_slug>/<slug:sau_slug>/review",
+        SAUReview.as_view(),
+        name="update_review",
     ),
 ]
