@@ -36,7 +36,7 @@ describe('Strategic action update review page', () => {
       .and('eq', `/${supplyChain.slug}/${strategicAction.slug}/${update.slug}/review`)
   })
   it('displays the correct text', () => {
-    cy.get('h1').contains(`Current monthly update for strategic action ${strategicAction.name}`)
+    cy.get('h1').contains(`Current monthly update for ${strategicAction.name}`)
     cy.get('div').contains(
       `Update submitted on `
     )
