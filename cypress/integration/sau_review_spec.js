@@ -38,7 +38,7 @@ describe('Strategic action update review page', () => {
   it('displays the correct text', () => {
     cy.get('h1').contains(`Current monthly update for strategic action ${strategicAction.name}`)
     cy.get('div').contains(
-      `Update submitted on 01.05.2021`
+      `Update submitted on `
     )
   })
   it('displays correct table values', () => {
@@ -63,7 +63,7 @@ describe('Strategic action update review page', () => {
       tableElement,
       1,
       'Estimated date of completion',
-      '01 February 2022'
+      '01 February 2024'
     )
 
     cy.forms.checkSummaryTableContent(
