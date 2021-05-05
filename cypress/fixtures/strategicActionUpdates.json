@@ -52,15 +52,15 @@
   "pk": "e3fcd971-1d5a-4eab-a891-ba634d9703f3",
   "fields": {
     "status": "submitted",
-    "submission_date": "2021-04-13",
-    "date_created": "2021-04-08",
+    "submission_date": "2021-05-01",
+    "date_created": "2021-05-01",
     "content": "Updated ..",
-    "implementation_rag_rating": "GREEN",
-    "reason_for_delays": "None",
+    "implementation_rag_rating": "Green",
+    "reason_for_delays": "",
     "user": null,
     "strategic_action": "fd317f3e-9ce0-4ed0-9a6a-baf7c6e65989",
     "supply_chain": "e7e81077-399f-4004-a907-e0a2862a84de",
-    "slug": "04-2021"
+    "slug": "05-2021"
   }
 },
 {
