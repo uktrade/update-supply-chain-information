@@ -7,7 +7,10 @@ cy.forms = {
           .within(() => {
             cy.contains(heading)
             cy.contains(value)
-            cy.get('a').contains(editLabel)
+
+            if(editLabel) {
+              cy.get('a').contains(editLabel)
+            }
           })
       }
 }
