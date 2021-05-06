@@ -1,0 +1,88 @@
+
+{% extends "base.html" %}
+
+{% block breadcrumbs %}
+<nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
+    <ol class="govuk-breadcrumbs__list">
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
+      </li>
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="{% url 'tlist' sc_slug=supply_chain.slug %}">{{ supply_chain.name }}</a>
+      </li>
+      <li class="govuk-breadcrumbs__list-item">
+        <a class="govuk-breadcrumbs__link" href="{% url 'sc_summary' sc_slug=supply_chain.slug %}" aria-current="page">Full details of {{ supply_chain.name }}</a>
+      </li>
+    </ol>
+  </nav>
+{% endblock %}
+
+{% block body %}
+    <h1 class="govuk-heading-xl"> Summary of {{ supply_chain.name }}</h1>
+
+    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+        <div class="govuk-accordion__section ">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="accordion-default-heading-1">
+                Key information
+              </span>
+            </h2>
+          </div>
+          <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-1">
+            {% include "includes/sc_key_info_list.html" %}
+          </div>
+        </div>
+        <div class="govuk-accordion__section ">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="accordion-default-heading-2">
+                Vulnerability assessment
+              </span>
+            </h2>
+          </div>
+          <div id="accordion-default-content-2" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-2">
+            <p class='govuk-body'>This is the content for Vulnerability assessment.</p>
+          </div>
+        </div>
+        <div class="govuk-accordion__section ">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="accordion-default-heading-3">
+                Scenario assessment
+              </span>
+            </h2>
+          </div>
+          <div id="accordion-default-content-3" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-3">
+            <p class='govuk-body'>This is the content for Scenario assessment.</p>
+          </div>
+        </div>
+        <div class="govuk-accordion__section ">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="accordion-default-heading-4">
+                Maturity self assessment
+              </span>
+            </h2>
+          </div>
+          <div id="accordion-default-content-4" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-4">
+            <p class='govuk-body'>This is the content for Maturity self assessment.</p>
+          </div>
+        </div>
+        <div class="govuk-accordion__section ">
+            <div class="govuk-accordion__section-header">
+              <h2 class="govuk-accordion__section-heading">
+                <span class="govuk-accordion__section-button" id="accordion-default-heading-5">
+                  Risk monitoring
+                </span>
+              </h2>
+            </div>
+            <div id="accordion-default-content-5" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-5">
+              <p class='govuk-body'>This is the content for Risk monitoring.</p>
+            </div>
+          </div>
+      </div>
+
+    <a href={% url 'tlist' sc_slug=supply_chain.slug %} class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back to task list</a>
+
+{% endblock %}

@@ -7,6 +7,11 @@
       <dd class="govuk-summary-list__value">
         {{ supply_chain.contact_name }}
       </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden">name</span>
+        </a>
+      </dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
@@ -14,6 +19,11 @@
       </dt>
       <dd class="govuk-summary-list__value">
         {{ supply_chain.contact_email }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> email</span>
+        </a>
       </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -28,6 +38,11 @@
           Yes
         {% endif %}
       </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> vul_status</span>
+        </a>
+      </dd>
     </div>
     <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
       <dt class="govuk-summary-list__key">
@@ -40,6 +55,11 @@
         {% else %}
           Yes
         {% endif %}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> risk_status</span>
+        </a>
       </dd>
     </div>
   </dl>

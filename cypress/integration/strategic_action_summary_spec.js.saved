@@ -90,13 +90,15 @@ describe('The strategic action summary page', () => {
 
     firstTable.should('have.length', 8)
     const tableElement = '.govuk-summary-list__row'
+    const editLabel = 'Change'
 
     cy.forms.checkSummaryTableContent(
       firstTable,
       tableElement,
       0,
       'What does the strategic action involve?',
-      actions[0].description
+      actions[0].description,
+      editLabel
     )
 
     cy.forms.checkSummaryTableContent(
@@ -104,7 +106,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       1,
       'What is the intended impact of the strategic action? How will the action be measured?',
-      actions[0].impact
+      actions[0].impact,
+      editLabel
     )
 
     cy.forms.checkSummaryTableContent(
@@ -112,7 +115,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       2,
       'Which category applies to this strategic action?',
-      'Diversify'
+      'Diversify',
+      editLabel
     )
 
     cy.forms.checkSummaryTableContent(
@@ -120,7 +124,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       3,
       'Does the strategic action apply UK-wide or in England only?',
-      'England only'
+      'England only',
+      editLabel
     )
 
     cy.forms.checkSummaryTableContent(
@@ -128,7 +133,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       4,
       'Which other government departments are supporting this strategic action?',
-      'MoD'
+      'MoD',
+      editLabel
     )
 
     cy.forms.checkSummaryTableContent(
@@ -136,7 +142,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       5,
       'What is the estimated date of completion?',
-      '02/08/2023'
+      '02/08/2023',
+      editLabel
     )
 
     cy.forms.checkSummaryTableContent(
@@ -144,7 +151,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       6,
       'Are there any other dependencies or requirements for applying this strategic action?',
-      actions[0].other_dependencies
+      actions[0].other_dependencies,
+      editLabel
     )
 
     cy.forms.checkSummaryTableContent(
@@ -152,7 +160,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       7,
       'Does this action affect the whole supply chain or a section of supply chains?',
-      actions[0].specific_related_products
+      actions[0].specific_related_products,
+      editLabel
     )
   })
   it('closes a section with the - symbol is clicked', () => {
