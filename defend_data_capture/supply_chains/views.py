@@ -1,14 +1,14 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 from typing import List, Dict
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
-from django.db.models import Count
+from django.template.defaultfilters import date as date_filter
+from django.db.models import Count, QuerySet
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views import View
-from django.views.generic import ListView, TemplateView, FormView
+from django.views.generic import ListView, TemplateView
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -20,6 +20,13 @@ from django.views.generic import (
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import ModelFormMixin
 
+from supply_chains.models import (
+    SupplyChain,
+    StrategicAction,
+    StrategicActionUpdate,
+    RAGRating,
+)
+from accounts.models import User, GovDepartment
 from supply_chains.forms import (
     MonthlyUpdateSubmissionForm,
     YesNoChoices,
@@ -63,8 +70,14 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
             last_deadline
         ).count()
         context["gov_department_name"] = self.request.user.gov_department.name
+
+        # TODO: Remove attribute update_complete if its not going to be used by RT-170
         context["update_complete"] = (
             context["num_updated_supply_chains"] == self.object_list.count()
+        )
+
+        context["num_in_prog_supply_chains"] = (
+            self.object_list.count() - context["num_updated_supply_chains"]
         )
 
         return context
@@ -76,6 +89,10 @@ class SCTaskListView(
     template_name = "task_list.html"
     tasks_per_page = 5
     last_deadline = get_last_working_day_of_previous_month()
+
+    def _update_review_routes(self) -> None:
+        for update in self.sa_updates:
+            update["route"] += "/review"
 
     def _sort_updates(self, updates: List) -> List:
         SORT_ORDER = {
@@ -147,6 +164,9 @@ class SCTaskListView(
         self.update_submitted = (
             self.total_sa == self.submitted_only_updates and self.total_sa != 0
         )
+
+        if self.update_submitted:
+            self._update_review_routes()
 
     def dispatch(self, *args, **kwargs):
         self._extract_view_data(*args, **kwargs)
@@ -607,4 +627,38 @@ class SCSummary(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
         context["supply_chain"] = SupplyChain.objects.filter(
             slug=sc_slug, is_archived=False
         )[0]
+        return context
+
+
+class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
+    template_name = "sau_review.html"
+    last_deadline = get_last_working_day_of_previous_month()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        sc_slug, sa_slug, sau_slug = (
+            kwargs.get("sc_slug"),
+            kwargs.get("sa_slug"),
+            kwargs.get("sau_slug"),
+        )
+
+        sau = StrategicActionUpdate.objects.since(
+            deadline=self.last_deadline,
+            status=StrategicActionUpdate.Status.SUBMITTED,
+            slug=sau_slug,
+            supply_chain__slug=sc_slug,
+            strategic_action__slug=sa_slug,
+        )[0]
+
+        context["supply_chain"] = sau.supply_chain
+        context["strategic_action"] = sau.strategic_action
+        context["update"] = sau
+
+        if sau.strategic_action.is_ongoing:
+            context["completion_estimation"] = "Ongoing"
+        else:
+            context["completion_estimation"] = date_filter(
+                sau.strategic_action.target_completion_date, "d F Y"
+            )
+
         return context

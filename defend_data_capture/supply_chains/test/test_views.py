@@ -89,6 +89,7 @@ def test_homepage_update_incomplete(logged_in_client, test_user):
     assert response.status_code == 200
     assert not response.context["update_complete"]
     assert response.context["num_updated_supply_chains"] == 3
+    assert response.context["num_in_prog_supply_chains"] == 3
 
 
 def test_strat_action_summary_page_unauthenticated(test_supply_chain):

@@ -20,12 +20,12 @@ describe('The Home Page', () => {
   })
   it('displays the correct text', () => {
     cy.get('h1').contains(
-      `Update supply chain information for ${govDepartment.name}`
+      `Update supply chain information`
     )
-    cy.get('h2').contains('Monthly update Incomplete')
-    cy.get('li').contains('The deadline for this monthly update is')
+    cy.get('h2').contains('Complete your monthly update')
+    cy.get('li').contains('You need to complete your monthly update for 5 supply chains')
     cy.get('li').contains(
-      'You have given updates for 1 out of 6 supply chains.'
+      'Select a supply chain to provide your regular monthly update or to update wider details.'
     )
   })
   it('displays correct table headers', () => {

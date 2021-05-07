@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import date
 
 import pytest
 from django.test import Client
@@ -24,7 +24,7 @@ def taskcomp_stub(test_user):
     sc = SupplyChainFactory.create(
         name=sc_name,
         gov_department=test_user.gov_department,
-        last_submission_date=date.today() - timedelta(days=10),
+        last_submission_date=date.today(),
     )
     scs = SupplyChainFactory.create_batch(
         2, name=sc_name + "00", gov_department=test_user.gov_department
