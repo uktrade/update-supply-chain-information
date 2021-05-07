@@ -242,6 +242,67 @@ class StrategicActionUpdate(models.Model):
             return self.changed_target_completion_date
         return None
 
+    @property
+    def has_existing_target_completion_date(self):
+        return self.strategic_action.target_completion_date is not None
+
+    @property
+    def has_changed_target_completion_date(self):
+        return self.changed_target_completion_date is not None
+
+    @property
+    def has_updated_target_completion_date(self):
+        return (
+            self.changed_target_completion_date is not None
+            and self.has_existing_target_completion_date
+        )
+
+    @property
+    def has_new_target_completion_date(self):
+        return (
+            self.changed_target_completion_date is not None
+            and not self.has_existing_target_completion_date
+        )
+
+    @property
+    def has_no_target_completion_date(self):
+        return (
+            not self.has_changed_target_completion_date
+            and not self.has_existing_target_completion_date
+        )
+
+    @property
+    def is_currently_ongoing(self):
+        return self.strategic_action.is_ongoing
+
+    @property
+    def is_becoming_ongoing(self):
+        return self.changed_is_ongoing
+
+    @property
+    def has_no_is_ongoing(self):
+        return not self.is_currently_ongoing and not self.is_becoming_ongoing
+
+    @property
+    def is_changing_is_ongoing(self):
+        return self.is_becoming_ongoing and (
+            self.is_currently_ongoing or self.has_existing_target_completion_date
+        )
+
+    @property
+    def has_new_is_ongoing(self):
+        return self.is_becoming_ongoing and not (
+            self.is_currently_ongoing or self.has_existing_target_completion_date
+        )
+
+    @property
+    def is_changing_target_completion_date(self):
+        return self.has_updated_target_completion_date or self.is_changing_is_ongoing
+
+    @property
+    def has_no_timing_information(self):
+        return self.has_no_target_completion_date and self.has_no_is_ongoing
+
 
 class MaturitySelfAssessment(models.Model):
     class RatingLevel(models.TextChoices):
