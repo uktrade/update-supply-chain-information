@@ -18,7 +18,13 @@ from django.views.generic import (
     TemplateView,
 )
 from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import ModelFormMixin
 
+from supply_chains.forms import (
+    MonthlyUpdateSubmissionForm,
+    YesNoChoices,
+    ApproximateTimings,
+)
 from supply_chains.models import (
     SupplyChain,
     StrategicAction,
@@ -274,12 +280,12 @@ class MonthlyUpdateMixin:
                 "view": MonthlyUpdateSummaryView,
             },
         }
-        if self.object.strategic_action.target_completion_date is not None:
+        if self.object.has_existing_target_completion_date:
             navigation_links.pop("Timing")
             if (
-                self.object.changed_target_completion_date is None
+                not self.object.has_changed_target_completion_date
                 and not isinstance(self, MonthlyUpdateRevisedTimingEditView)
-                and not self.object.changed_is_ongoing
+                and not self.object.is_becoming_ongoing
             ):
                 navigation_links.pop("RevisedTiming")
         else:
@@ -437,48 +443,112 @@ class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
         return reverse(next_page_url, kwargs=url_kwargs)
 
 
-class MonthlyUpdateSummaryView(MonthlyUpdateMixin, SingleObjectMixin, View):
+class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly-update-summary.html"
-    fields = [
-        "content",
-        "implementation_rag_rating",
-        "reason_for_delays",
-        "changed_target_completion_date",
-        "changed_is_ongoing",
-        "reason_for_completion_date_change",
-    ]
+    form_class = MonthlyUpdateSubmissionForm
+
+    def get_object(self, queryset=None):
+        return super().get_object(queryset)
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["data"] = self.build_form_data()
+        return form_kwargs
+
+    def build_form_data(self):
+        """
+        As this page won't really display the form but needs to show error messages for missing or invalid values,
+        we have to build a representation of the form data that would have caused the current state of our instance
+        had a form been submitted to us.
+        When this is passed into the "form" constructor via form_kwargs, it takes care of instantiating
+        the forms we actually need with this data. Then the form is validated (in get_context_data)
+        which gives us the valid or invalid forms we use to build the page.
+        """
+        # we always have the content field and the delivery status
+        form_data = {
+            "content": self.object.content,
+            "implementation_rag_rating": self.object.implementation_rag_rating,
+        }
+        # we always have the action status form, but we need to determine how to configure it
+        if self.object.implementation_rag_rating != RAGRating.GREEN:
+            # Red or Amber, so must include the reason for delays
+            if self.object.implementation_rag_rating == RAGRating.AMBER:
+                form_data[
+                    f"{RAGRating.AMBER}-reason_for_delays"
+                ] = self.object.reason_for_delays
+            elif self.object.implementation_rag_rating == RAGRating.RED:
+                form_data[
+                    f"{RAGRating.RED}-reason_for_delays"
+                ] = self.object.reason_for_delays
+                # if the status is RED and the timing is changing, include the revised timing fields
+                if (
+                    self.object.implementation_rag_rating == RAGRating.RED
+                    and self.object.is_changing_target_completion_date
+                ):
+                    form_data[
+                        f"reason_for_completion_date_change"
+                    ] = self.model.reason_for_completion_date_change
+                    if self.object.has_changed_target_completion_date:
+                        additional_form_data = {
+                            "is_completion_date_known": YesNoChoices.YES,
+                            f"{YesNoChoices.YES}-changed_target_completion_date_day": self.object.changed_target_completion_date.day,
+                            f"{YesNoChoices.YES}-changed_target_completion_date_month": self.object.changed_target_completion_date.month,
+                            f"{YesNoChoices.YES}-changed_target_completion_date_year": self.object.changed_target_completion_date.year,
+                        }
+                        form_data.update(additional_form_data)
+                    elif self.model.changed_is_ongoing:
+                        additional_form_data = {
+                            "is_completion_date_known": YesNoChoices.YES,
+                            f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONGOING,
+                        }
+                        form_data.update(additional_form_data)
+        # we only have the timing form if the instance either didn't already know its target completion date
+        # or didn't already know it was ongoing
+        # or still doesn't know either of those things from pending changes
+        if (
+            self.object.has_new_target_completion_date
+            or self.object.has_new_is_ongoing
+            or self.object.has_no_timing_information
+        ):
+            if self.object.has_new_target_completion_date:
+                additional_form_data = {
+                    "is_completion_date_known": YesNoChoices.YES,
+                    f"{YesNoChoices.YES}-changed_target_completion_date_day": self.object.changed_target_completion_date.day,
+                    f"{YesNoChoices.YES}-changed_target_completion_date_month": self.object.changed_target_completion_date.month,
+                    f"{YesNoChoices.YES}-changed_target_completion_date_year": self.object.changed_target_completion_date.year,
+                }
+                form_data.update(additional_form_data)
+            elif self.object.has_new_is_ongoing:
+                additional_form_data = {
+                    "is_completion_date_known": YesNoChoices.NO,
+                    f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONGOING,
+                }
+                form_data.update(additional_form_data)
+        return form_data
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["has_revised_date_of_completion"] = bool(
-            all(
-                [
-                    self.object.strategic_action.target_completion_date,
-                    not (self.object.strategic_action.is_ongoing),
-                    self.object.changed_target_completion_date,
-                ]
-            )
+        kwargs[
+            "has_revised_date_of_completion"
+        ] = self.object.is_changing_target_completion_date
+        kwargs[
+            "has_date_of_completion"
+        ] = self.object.has_updated_target_completion_date
+        kwargs[
+            "has_new_date_of_completion"
+        ] = self.object.has_new_target_completion_date
+        kwargs["needs_target_completion_date"] = (
+            self.object.has_no_target_completion_date and self.object.has_no_is_ongoing
         )
-        context["has_date_of_completion"] = bool(
-            all(
-                [
-                    self.object.strategic_action.target_completion_date,
-                    not (self.object.strategic_action.is_ongoing),
-                ]
-            )
-        )
-        context["has_new_date_of_completion"] = bool(
-            all(
-                [
-                    not self.object.strategic_action.target_completion_date,
-                    self.object.changed_target_completion_date,
-                    not self.object.changed_is_ongoing,
-                ]
-            )
-        )
-        return context
+        kwargs = super().get_context_data(**kwargs)
+        if "form" in kwargs.keys():
+            kwargs["form"].is_valid()
+        return kwargs
 
     def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if not form.is_valid():
+            return self.get(request, *args, **kwargs)
         """
         To finalise the update we must:
         1. Copy a revised target completion date to the strategic action, or copy is ongoing and clear the SA's date;

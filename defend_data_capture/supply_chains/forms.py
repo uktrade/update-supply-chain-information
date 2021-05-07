@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 from django import forms
 from django.db.models import TextChoices
 from django.forms.utils import ErrorDict
+from django.urls import reverse_lazy
 
 from .widgets import (
     DetailSelectMixin,
@@ -27,6 +28,8 @@ class MakeFieldRequiredMixin:
 
 
 class DetailFormMixin:
+    detail_selection_field = None
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._detail_forms_dict = {}
@@ -38,6 +41,14 @@ class DetailFormMixin:
                 self._detail_forms_dict[key] = config["form"]
             except KeyError:
                 pass
+
+    def detail_form_for_current_selection(self):
+        if hasattr(self, "cleaned_data"):
+            if self.detail_selection_field:
+                if self.detail_selection_field in self.cleaned_data.keys():
+                    selected_value = self.cleaned_data[self.detail_selection_field]
+                    return self.detail_form_for_key(selected_value)
+        return None
 
     def detail_form_for_key(self, key):
         try:
@@ -53,12 +64,10 @@ class DetailFormMixin:
                 field_name in self.cleaned_data.keys()
                 and self.cleaned_data[field_name] == key
             ):
-                valid = all(
-                    (
-                        config["form"].is_valid(),
-                        valid,
-                    )
-                )
+                # only validate the subform if the main form is valid
+                # otherwise, we get validation errors for fields that were never even shown
+                if valid:
+                    valid = config["form"].is_valid()
         return valid
 
     def save(self, commit=True):
@@ -83,14 +92,7 @@ class DetailFormMixin:
         for field_name, field in self.fields.items():
             if isinstance(field.widget, DetailSelectMixin):
                 for key, config in field.widget.details.items():
-                    yield (field_name, key, config)
-
-    class DetailFormErrors:
-        def __get__(self, instance, owner):
-            if instance is not None:
-                return instance._errors
-            else:
-                return self._errors
+                    yield field_name, key, config
 
 
 class YesNoChoices(TextChoices):
@@ -100,9 +102,14 @@ class YesNoChoices(TextChoices):
 
 class MonthlyUpdateInfoForm(forms.ModelForm):
     use_required_attribute = False
+    url_pattern_for_page = "monthly-update-info-edit"
     content = forms.CharField(
         required=True,
-        error_messages={"required": "Enter details of the latest monthly update."},
+        error_messages={
+            "required": "Enter details of the latest monthly update",
+            "max_length": "The latest monthly update should be no more than %(limit_value)d characters long (you have entered %(show_value)d)",
+            "min_length": "The latest monthly update should be at least %(limit_value)d characters long (you have entered %(show_value)d)",
+        },
         widget=forms.Textarea(
             attrs={
                 "class": "govuk-textarea",
@@ -125,27 +132,35 @@ class MonthlyUpdateInfoForm(forms.ModelForm):
 class AmberReasonForDelayForm(MakeFieldRequiredMixin, forms.ModelForm):
     use_required_attribute = False
     field_to_make_required = "reason_for_delays"
+    reason_for_delays = forms.CharField(
+        required=True,
+        label="Explain potential risk",
+        error_messages={
+            "required": "Enter an explanation of the potential risk",
+            "max_length": "The explanation of the potential risk should be no more than %(limit_value)d characters long (you have entered %(show_value)d)",
+            "min_length": "The explanation of the potential risk should be at least %(limit_value)d characters long (you have entered %(show_value)d)",
+        },
+        widget=forms.Textarea(
+            attrs={
+                "class": "govuk-textarea",
+                "novalidate": True,
+            }
+        ),
+    )
 
     def clean(self):
         cleaned = super().clean()
         return cleaned
 
+    def is_valid(self):
+        return super().is_valid()
+
     class Meta:
         model = StrategicActionUpdate
         fields = ["reason_for_delays"]
-        labels = {"reason_for_delays": "Explain potential risk"}
-        widgets = {
-            "reason_for_delays": forms.Textarea(
-                attrs={
-                    "class": "govuk-textarea",
-                    "novalidate": True,
-                }
-            )
-        }
 
 
 class RedReasonForDelayForm(AmberReasonForDelayForm):
-    use_required_attribute = False
     will_completion_date_change = forms.ChoiceField(
         choices=YesNoChoices.choices,
         widget=forms.RadioSelect(
@@ -155,6 +170,21 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
             }
         ),
         label="Will the estimated completion date change?",
+    )
+    reason_for_delays = forms.CharField(
+        required=True,
+        label="Explain issue",
+        error_messages={
+            "required": "Enter an explanation of the issue",
+            "max_length": "The explanation of the issue should be no more than %(limit_value)d characters long (you have entered %(show_value)d)",
+            "min_length": "The explanation of the issue should be at least %(limit_value)d characters long (you have entered %(show_value)d)",
+        },
+        widget=forms.Textarea(
+            attrs={
+                "class": "govuk-textarea",
+                "novalidate": True,
+            }
+        ),
     )
 
     def __init__(self, *args, **kwargs):
@@ -175,6 +205,8 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
 
 class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
     use_required_attribute = False
+    url_pattern_for_page = "monthly-update-status-edit"
+    detail_selection_field = "implementation_rag_rating"
     implementation_rag_rating = forms.ChoiceField(
         required=True,
         choices=reversed(RAGRating.choices),
@@ -197,7 +229,10 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
                 },
             },
         ),
-        error_messages={"required": "Select an option for the current delivery status"},
+        error_messages={
+            "required": "Select an option for the current delivery status",
+            "invalid_choice": "Select a valid option for the current delivery status",
+        },
     )
 
     def __init__(self, *args, **kwargs):
@@ -238,7 +273,7 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
                     self._errors = ErrorDict()
                 if required_form.errors is not None:
                     for field, error in required_form.errors.items():
-                        self._errors[f"{required_form.prefix}-{field}"] = error
+                        self._errors[f"{field}"] = error
                 return all(
                     (
                         form_is_valid,
@@ -314,6 +349,10 @@ class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
     surrogate_is_ongoing = forms.ChoiceField(
         choices=ApproximateTimings.choices,
         label="What is the approximate time for completion?",
+        error_messages={
+            "required": "Select an approximate time for completion",
+            "invalid_choice": "Select an approximate time for completion",
+        },
         required=False,
     )
     field_to_make_required = "surrogate_is_ongoing"
@@ -361,9 +400,14 @@ class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
 
 class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
     use_required_attribute = False
+    url_pattern_for_page = "monthly-update-timing-edit"
+    detail_selection_field = "is_completion_date_known"
     is_completion_date_known = forms.ChoiceField(
         required=True,
         choices=YesNoChoices.choices,
+        error_messages={
+            "required": "Specify whether the date for intended completion is known"
+        },
         label="Is there an expected completion date?",
         widget=DetailRadioSelect(
             attrs={
@@ -426,8 +470,22 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
 
 
 class MonthlyUpdateModifiedTimingForm(MonthlyUpdateTimingForm):
-    use_required_attribute = False
-    reason_for_completion_date_change = forms.CharField(required=True)
+    url_pattern_for_page = "monthly-update-revised-timing-edit"
+    reason_for_completion_date_change = forms.CharField(
+        required=True,
+        label="Reason for date change",
+        error_messages={
+            "required": "Enter a reason for the date change",
+            "max_length": "The reason for the date change should be no more than %(limit_value)d characters long (you have entered %(show_value)d)",
+            "min_length": "The reason for the date change should be at least %(limit_value)d characters long (you have entered %(show_value)d)",
+        },
+        widget=forms.Textarea(
+            attrs={
+                "class": "govuk-textarea",
+                "novalidate": True,
+            }
+        ),
+    )
 
     class Meta(MonthlyUpdateTimingForm.Meta):
         fields = MonthlyUpdateTimingForm.Meta.fields + [
@@ -445,33 +503,46 @@ class MonthlyUpdateSubmissionForm:
         if strategic_action_update is None:
             raise ValueError("No StrategicActionUpdate passed")
         self.instance = strategic_action_update
-        self.forms = {}
-        self.form_classes = (
-            MonthlyUpdateInfoForm,
-            MonthlyUpdateStatusForm,
-        )
         strategic_action: StrategicAction = strategic_action_update.strategic_action
-        timing_form_class = ()
-        if strategic_action.target_completion_date is not None:
-            if (
-                strategic_action_update.changed_target_completion_date is not None
-                or strategic_action_update.changed_is_ongoing
-            ):
-                timing_form_class += (MonthlyUpdateModifiedTimingForm,)
-        else:
-            timing_form_class += (MonthlyUpdateTimingForm,)
+        self.forms = {}
+        self.form_classes = (MonthlyUpdateInfoForm,)
+        # if we have form data, we need to decide what forms to use based on that
         if form_data is not None:
             # data will override the decisions we just made…
             timing_form_class = ()
             if (
-                "changed_target_completion_date" in form_data.keys()
-                or "surrogate_is_ongoing" in form_data.keys()
+                f"{YesNoChoices.YES}-changed_target_completion_date_year"
+                in form_data.keys()
+                or f"{YesNoChoices.NO}-surrogate_is_ongoing" in form_data.keys()
+                or strategic_action_update.has_no_timing_information
             ):
                 if strategic_action.target_completion_date is not None:
                     # this is a change to an existing date
-                    timing_form_class += (MonthlyUpdateModifiedTimingForm,)
+                    timing_form_class += (
+                        MonthlyUpdateStatusForm,
+                        MonthlyUpdateModifiedTimingForm,
+                    )
                 else:
-                    timing_form_class += (MonthlyUpdateTimingForm,)
+                    timing_form_class += (
+                        MonthlyUpdateTimingForm,
+                        MonthlyUpdateStatusForm,
+                    )
+        else:
+            # no form data, we decide what forms to use based on the actual model
+            timing_form_class = ()
+            if strategic_action_update.has_existing_target_completion_date and (
+                strategic_action_update.has_changed_target_completion_date
+                or strategic_action_update.is_becoming_ongoing
+            ):
+                timing_form_class += (
+                    MonthlyUpdateStatusForm,
+                    MonthlyUpdateModifiedTimingForm,
+                )
+            else:
+                timing_form_class += (
+                    MonthlyUpdateTimingForm,
+                    MonthlyUpdateStatusForm,
+                )
         self.form_classes += timing_form_class
         for form_class in self.form_classes:
             form = form_class(*args, **kwargs)
@@ -480,7 +551,20 @@ class MonthlyUpdateSubmissionForm:
     def is_valid(self):
         is_valid = []
         for form_class, form in self.forms.items():
-            is_valid.append(form.is_valid())
+            form_is_valid = form.is_valid()
+            is_valid.append(form_is_valid)
+            if not form_is_valid:
+                # need to modify id_for_label to get correct links on summary page
+                pattern = form.url_pattern_for_page
+                url = reverse_lazy(
+                    pattern,
+                    kwargs={
+                        "supply_chain_slug": self.instance.supply_chain.slug,
+                        "strategic_action_slug": self.instance.strategic_action.slug,
+                        "update_slug": self.instance.slug,
+                    },
+                )
+                form.url_for_errors = url
         return all(is_valid)
 
     def save(self, *args, **kwargs):
@@ -497,9 +581,3 @@ class MonthlyUpdateSubmissionForm:
         for form_class, form in self.forms.items():
             errors.update(form.errors)
         return errors
-
-
-# class MonthlyUpdateSubmissionForm2(forms.ModelForm):
-#     class Meta:
-#         model = StrategicActionUpdate
-#         error_messages = {}
