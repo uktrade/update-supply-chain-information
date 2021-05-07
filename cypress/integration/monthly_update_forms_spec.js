@@ -13,8 +13,8 @@ const supplyChainsByPK = supplyChains.reduce((accumulator, supplyChain) => {
 }, {});
 
 const strategicActionsForTest = strategicActions.reduce((accumulator, action) => {
-  if (/a completion date/.test(action.fields.name)) {
-    if (/^Has an update/.test(action.fields.name)) {
+  if (/a completion date/.test(action.fields.description)) {
+    if (/^Has an update/.test(action.fields.description)) {
       const update = updatesByStrategicActionPK[action.pk],
         supplyChain = supplyChainsByPK[action.fields.supply_chain];
       accumulator.hasCompletionDate.hasUpdate = {
@@ -23,9 +23,9 @@ const strategicActionsForTest = strategicActions.reduce((accumulator, action) =>
         'updateSlug': update.fields.slug,
         'updateContent': update.fields.content,
       };
-    } else if (/^Has no update/.test(action.fields.name)) {
+    } else if (/^Has no update/.test(action.fields.description)) {
       const supplyChain = supplyChainsByPK[action.fields.supply_chain];
-      if (/will be submitted with errors/.test(action.fields.name)) {
+      if (/will be submitted with errors/.test(action.fields.description)) {
         accumulator.hasCompletionDate.forErrors = {
           'supplyChainSlug': supplyChain.fields.slug,
           'strategicActionSlug': action.fields.slug,
@@ -37,8 +37,8 @@ const strategicActionsForTest = strategicActions.reduce((accumulator, action) =>
         };
       }
     }
-  } else if (/no completion date/.test(action.fields.name)) {
-    if (/^Has an update/.test(action.fields.name)) {
+  } else if (/no completion date/.test(action.fields.description)) {
+    if (/^Has an update/.test(action.fields.description)) {
       const update = updatesByStrategicActionPK[action.pk],
           supplyChain = supplyChainsByPK[action.fields.supply_chain];
       accumulator.noCompletionDate.hasUpdate = {
@@ -47,9 +47,9 @@ const strategicActionsForTest = strategicActions.reduce((accumulator, action) =>
         'updateSlug': update.fields.slug,
         'updateContent': update.fields.content,
       };
-    } else if (/^Has no update/.test(action.fields.name)) {
+    } else if (/^Has no update/.test(action.fields.description)) {
       const supplyChain = supplyChainsByPK[action.fields.supply_chain];
-      if (/will be submitted with errors/.test(action.fields.name)) {
+      if (/will be submitted with errors/.test(action.fields.description)) {
         accumulator.noCompletionDate.forErrors = {
           'supplyChainSlug': supplyChain.fields.slug,
           'strategicActionSlug': action.fields.slug,
