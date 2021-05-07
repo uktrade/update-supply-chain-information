@@ -921,7 +921,7 @@ class TestMonthlyUpdateSubmissionFormGeneration:
         unexpected_classes = (MonthlyUpdateTimingForm,)
 
         form_data = {
-            "surrogate_is_ongoing": ApproximateTimings.ONGOING,
+            f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONGOING,
             "reason_for_completion_date_change": "Reason",
         }
         submission_form = MonthlyUpdateSubmissionForm(
@@ -943,9 +943,14 @@ class TestMonthlyUpdateSubmissionFormGeneration:
         )
         unexpected_classes = (MonthlyUpdateTimingForm,)
 
+        changed_target_completion_date = (
+            self.strategic_action_update.strategic_action.target_completion_date
+            + relativedelta(month=6)
+        )
         form_data = {
-            "changed_target_completion_date": self.strategic_action_update.strategic_action.target_completion_date
-            + relativedelta(month=6),
+            f"{YesNoChoices.YES}-changed_target_completion_date_day": changed_target_completion_date.day,
+            f"{YesNoChoices.YES}-changed_target_completion_date_month": changed_target_completion_date.month,
+            f"{YesNoChoices.YES}-changed_target_completion_date_year": changed_target_completion_date.year,
             "reason_for_completion_date_change": "Reason",
         }
         submission_form = MonthlyUpdateSubmissionForm(
@@ -971,8 +976,11 @@ class TestMonthlyUpdateSubmissionFormGeneration:
         )
         unexpected_classes = (MonthlyUpdateModifiedTimingForm,)
 
+        changed_target_completion_date = date(year=2022, month=12, day=25)
         form_data = {
-            "changed_target_completion_date": date(year=2022, month=12, day=25),
+            f"{YesNoChoices.YES}-changed_target_completion_date_day": changed_target_completion_date.day,
+            f"{YesNoChoices.YES}-changed_target_completion_date_month": changed_target_completion_date.month,
+            f"{YesNoChoices.YES}-changed_target_completion_date_year": changed_target_completion_date.year,
             "reason_for_completion_date_change": "Reason",
         }
         submission_form = MonthlyUpdateSubmissionForm(
@@ -1029,11 +1037,15 @@ class TestMonthlyUpdateSubmissionForm:
         self.strategic_action_update.strategic_action.target_completion_date = None
         self.strategic_action_update.strategic_action.is_ongoing = False
         self.strategic_action_update.strategic_action.save()
+
+        changed_target_completion_date = date(year=2021, month=12, day=25)
         form_data = {
             "content": "Some content",
             "implementation_rag_rating": RAGRating.GREEN,
             "is_completion_date_known": YesNoChoices.YES,
-            f"{YesNoChoices.YES}-changed_target_completion_date": "2021-12-25",
+            f"{YesNoChoices.YES}-changed_target_completion_date_day": changed_target_completion_date.day,
+            f"{YesNoChoices.YES}-changed_target_completion_date_month": changed_target_completion_date.month,
+            f"{YesNoChoices.YES}-changed_target_completion_date_year": changed_target_completion_date.year,
         }
         form = MonthlyUpdateSubmissionForm(
             instance=self.strategic_action_update, data=form_data
@@ -1086,6 +1098,7 @@ class TestMonthlyUpdateSubmissionForm:
             "implementation_rag_rating": RAGRating.GREEN,
             "is_completion_date_known": YesNoChoices.NO,
             f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONGOING,
+            "reason_for_completion_date_change": "Reason",
         }
         form = MonthlyUpdateSubmissionForm(
             instance=self.strategic_action_update, data=form_data
