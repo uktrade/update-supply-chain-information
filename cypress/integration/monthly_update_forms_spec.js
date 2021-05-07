@@ -149,17 +149,17 @@ describe('Testing monthly update forms', () => {
       context('with an update from the previous month', function() {
         beforeEach(() => {
           Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.supplyChainSlug).as('scSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.strategicActionSlug).as('saSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.updateSlug).as('uSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.supplyChainSlug).as('supplyChainSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.strategicActionSlug).as('strategicActionSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.updateSlug).as('monthlyUpdateSlug')
           cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.updateContent).as('updateContent')
           cy.wrap(todaySlug).as('todaySlug')
           cy.url().as('pageURL')
         });
         context('starting a new monthly update', function() {
           it('successfully creates a new update and redirects to its Update Info page', function() {
-            cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/start/`)
-            cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/info/`)
+            cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/start/`)
+            cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/info/`)
             cy.injectAxe()
           })
         })
@@ -236,10 +236,10 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.scSlug}`)
+              cy.get('@theForm').hasCancelLink(`${this.supplyChainSlug}`)
               // cy.get('@theForm').within(function(theForm) {
               //   cy.get('a.govuk-button.govuk-button--secondary').contains('Cancel').within((theCancelLink) => {
-              //     cy.root().should('have.attr', 'href', `/${this.scSlug}`)
+              //     cy.root().should('have.attr', 'href', `/${this.supplyChainSlug}`)
               //   })
               // })
             })
@@ -257,7 +257,7 @@ describe('Testing monthly update forms', () => {
                   cy.location('pathname').invoke('split', '/').its(5).as('strategicActionUpdateID')
                   cy.get('@strategicActionUpdateID').then(function(strategicActionUpdateID) {
                     cy.get('button[type="submit"]').click()
-                    cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/timing/`)
+                    cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/timing/`)
                     cy.injectAxe()
                   })
                 })
@@ -329,7 +329,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.scSlug}`)
+              cy.get('@theForm').hasCancelLink(`${this.supplyChainSlug}`)
             })
             it ('should have a fieldset with legend asking if there is a completion date', () => {
               cy.get('@theForm').get('fieldset legend h2').contains('Is there an expected completion date?')
@@ -465,7 +465,7 @@ describe('Testing monthly update forms', () => {
                       cy.location('pathname').invoke('split', '/').its(5).as('strategicActionUpdateID')
                       cy.get('@strategicActionUpdateID').then(function(strategicActionUpdateID) {
                         cy.get('button[type="submit"]').click()
-                        cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/delivery-status/`)
+                        cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/delivery-status/`)
                         cy.injectAxe()
                       })
                     })
@@ -539,12 +539,13 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.scSlug}`)
+              cy.get('@theForm').hasCancelLink(`${this.supplyChainSlug}`)
             })
             context('the radio buttons asking for the current delivery status', function() {
               beforeEach(() => {
-                cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-radios__item > input[type="radio"]').as('theRadioButtons')
-                cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-hint').as('theRadioHints')
+                cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-radios__item').as('theRadioItems')
+                cy.get('@theRadioItems').get('input[type="radio"]').as('theRadioButtons')
+                cy.get('@theRadioButtons').get('.govuk-hint').as('theRadioHints')
               })
               it('should be three in number', () => {
                 cy.get('@theRadioButtons').should('have.length', 3)
@@ -587,7 +588,7 @@ describe('Testing monthly update forms', () => {
                       cy.get(`#${subjectID}`).children(0).children('textarea').should('be.visible')
                     })
                 })
-                it('displays the date change label and radios', function() {
+                it.skip('displays the date change label and radios', function() {
                   cy.get('@redOption').click()
                   cy.get('@redOption').invoke('attr', 'aria-controls').then((subjectID) => {
                       cy.get(`#${subjectID} > .govuk-form-group > fieldset > .govuk-radios > .govuk-radios__item`).as('dateChangeRadios')
@@ -616,16 +617,16 @@ describe('Testing monthly update forms', () => {
       context('without an update from the previous month', function() {
         beforeEach(() => {
           Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('scSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('saSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('uSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('supplyChainSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('strategicActionSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('monthlyUpdateSlug')
           cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateContent).as('updateContent')
           cy.wrap(todaySlug).as('todaySlug')
         });
         context('starting a new monthly update', function() {
           it('successfully creates a new update and redirects to its Update Info page', function() {
-            cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/start/`)
-            cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/info/`)
+            cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/start/`)
+            cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/info/`)
             cy.injectAxe()
           })
         })
@@ -645,16 +646,16 @@ describe('Testing monthly update forms', () => {
       context('with an update from the previous month', function() {
         beforeEach(() => {
           Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('scSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('saSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('uSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('supplyChainSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('strategicActionSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('monthlyUpdateSlug')
           cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateContent).as('updateContent')
           cy.wrap(todaySlug).as('todaySlug')
         });
         context('starting a new monthly update', function() {
           it('successfully creates a new update and redirects to its Update Info page', function() {
-            cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/start/`)
-            cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/info/`)
+            cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/start/`)
+            cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/info/`)
             cy.injectAxe()
           })
         })
@@ -662,16 +663,16 @@ describe('Testing monthly update forms', () => {
       context('without an update from the previous month', function() {
         beforeEach(() => {
           Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('scSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('saSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('uSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('supplyChainSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('strategicActionSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('monthlyUpdateSlug')
           cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateContent).as('updateContent')
           cy.wrap(todaySlug).as('todaySlug')
         });
         context('starting a new monthly update', function() {
           it('successfully creates a new update and redirects to its Update Info page', function() {
-            cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/start/`)
-            cy.url().should('eq', `http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/info/`)
+            cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/start/`)
+            cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/info/`)
             cy.injectAxe()
           })
         })
@@ -686,14 +687,14 @@ describe('Testing validation errors in the monthly update forms', () => {
       context('that has no target completion date', function() {
         beforeEach(() => {
           Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.supplyChainSlug).as('scSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.strategicActionSlug).as('saSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateSlug).as('uSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.supplyChainSlug).as('supplyChainSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.strategicActionSlug).as('strategicActionSlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateSlug).as('monthlyUpdateSlug')
           cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateContent).as('updateContent')
           cy.wrap(todaySlug).as('todaySlug')
         });
         it ('starts a new update', function() {
-          cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/start/`)
+          cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/start/`)
         })
         context('The Update Info form', () => {
           beforeEach(() => {
@@ -747,9 +748,9 @@ describe('Testing validation errors in the monthly update forms', () => {
         context('The Timing form', () => {
           beforeEach(() => {
             Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.supplyChainSlug).as('scSlug')
-            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.strategicActionSlug).as('saSlug')
-            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateSlug).as('uSlug')
+            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.supplyChainSlug).as('supplyChainSlug')
+            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.strategicActionSlug).as('strategicActionSlug')
+            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateSlug).as('monthlyUpdateSlug')
             cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateContent).as('updateContent')
             cy.wrap(todaySlug).as('todaySlug')
           })
@@ -764,7 +765,7 @@ describe('Testing validation errors in the monthly update forms', () => {
           context('When submitted without selecting "Yes" or "No"', function() {
             before(function() {
               // ensure we start with a clean slate
-              cy.visit(`http://localhost:8001/${this.scSlug}/strategic-actions/${this.saSlug}/update/${this.todaySlug}/timing/`)
+              cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/timing/`)
               cy.get('main form').as('theForm')
             })
             context('should redisplay the page', function() {
