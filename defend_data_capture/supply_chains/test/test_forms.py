@@ -818,6 +818,7 @@ class TestMonthlyUpdateSubmissionFormGeneration:
             supply_chain=supply_chain, strategic_action=strategic_action
         )
 
+    @pytest.mark.skip("We should always be passing data to this form")
     def test_monthly_update_submission_form_classes_for_known_unchanging_completion_date(
         self,
     ):
@@ -839,6 +840,7 @@ class TestMonthlyUpdateSubmissionFormGeneration:
         for unexpected_class in unexpected_classes:
             assert unexpected_class.__name__ not in actual_classes
 
+    @pytest.mark.skip("We should always be passing data to this form")
     def test_monthly_update_submission_form_classes_for_known_changing_completion_date(
         self,
     ):
@@ -863,6 +865,7 @@ class TestMonthlyUpdateSubmissionFormGeneration:
         for unexpected_class in unexpected_classes:
             assert unexpected_class.__name__ not in actual_classes
 
+    @pytest.mark.skip("We should always be passing data to this form")
     def test_monthly_update_submisssion_form_classes_for_unknown_completion_date(self):
         self.strategic_action_update.strategic_action.target_completion_date = None
         self.strategic_action_update.strategic_action.is_ongoing = False
@@ -884,6 +887,7 @@ class TestMonthlyUpdateSubmissionFormGeneration:
         for unexpected_class in unexpected_classes:
             assert unexpected_class.__name__ not in actual_classes
 
+    @pytest.mark.skip("We should always be passing data to this form")
     def test_monthly_update_submisssion_form_classes_for_known_completion_date_becoming_ongoing(
         self,
     ):
