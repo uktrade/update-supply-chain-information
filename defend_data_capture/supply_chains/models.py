@@ -65,7 +65,7 @@ class SupplyChain(models.Model):
         max_length=6,
     )
     risk_severity_status_disagree_reason = models.TextField(blank=True)
-    slug = models.SlugField(null=True)
+    slug = models.SlugField(null=True, blank=True)
     is_archived = models.BooleanField(default=False)
     archived_date = models.DateField(null=True, blank=True)
 
@@ -75,6 +75,9 @@ class SupplyChain(models.Model):
         if self.is_archived and self.archived_date is None:
             self.archived_date = timezone.now().date()
         return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"SC: {self.name}, {self.gov_department.name}"
 
 
 @reversion.register()
@@ -140,7 +143,7 @@ class StrategicAction(models.Model):
         on_delete=models.PROTECT,
         related_name="strategic_actions",
     )
-    slug = models.SlugField(null=True)
+    slug = models.SlugField(null=True, blank=True)
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
@@ -159,6 +162,9 @@ class StrategicAction(models.Model):
 
     def last_submitted_update(self):
         return self.monthly_updates.last_month()
+
+    def __str__(self):
+        return f"SA: {self.name}, {self.supply_chain.gov_department.name}, {self.get_geographic_scope_display()}, SC: {self.supply_chain.name}"
 
 
 class SAUQuerySet(models.QuerySet):
@@ -199,12 +205,12 @@ class StrategicActionUpdate(models.Model):
     implementation_rag_rating = models.CharField(
         max_length=5,
         choices=reversed(RAGRating.choices),
-        blank=False,
+        blank=True,
         default=None,
         null=True,
     )
     reason_for_delays = models.TextField(blank=True)
-    changed_target_completion_date = models.DateField(null=True)
+    changed_target_completion_date = models.DateField(null=True, blank=True)
     reason_for_completion_date_change = models.TextField(blank=True)
     changed_is_ongoing = models.BooleanField(null=True, default=False)
     user = models.ForeignKey(
@@ -223,7 +229,7 @@ class StrategicActionUpdate(models.Model):
         on_delete=models.PROTECT,
         related_name="monthly_updates",
     )
-    slug = models.SlugField(null=True)
+    slug = models.SlugField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -234,6 +240,9 @@ class StrategicActionUpdate(models.Model):
             except KeyError:
                 pass
             self.save(*args, **kwargs)
+
+    def __str__(self):
+        return f"SAU: {self.strategic_action.name}, {self.slug}, {self.get_status_display()}"
 
     def some_completion_date(self):
         if self.strategic_action.target_completion_date is not None:
