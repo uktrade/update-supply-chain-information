@@ -1,19 +1,12 @@
-{#                {% for code, error in form.non_field_errors.items %}#}
-{#                    <li>#}
-{#                        <a href="#passport-issued-error">{{ error }}</a>#}
-{#                    </li>#}
-{#                {% endfor %}#}
-{% for field in form %}
-    {% if field.errors %}
-        {% for error in field.errors %}
-            <li>
-                <a href="#{{ field.id_for_label }}">{{ error }}</a>
-            </li>
-        {% endfor %}
-    {% endif %}
-{% endfor %}
-{% if form.detail_forms %}
-    {% for field_name, key, config in form.detail_forms %}
-        {% include "supply_chains/includes/gds-error-summary-list.html" with form=config.form %}
+{% with form.url_for_errors as url_for_errors %}
+    {% for field_name, errors in form.errors.items %}
+        {% if field_name not in form.fields %}
+            {# this field must be in a detail form… #}
+            {% with form.detail_form_for_current_selection as form %}
+                {% include 'supply_chains/includes/gds-error-summary-item.html' %}
+            {% endwith %}
+        {% else %}
+            {% include 'supply_chains/includes/gds-error-summary-item.html' %}
+        {% endif %}
     {% endfor %}
-{% endif %}
+{% endwith %}
