@@ -125,10 +125,24 @@ class SCTaskListView(
             # method, when its available
             if sau:
                 update["status"] = StrategicActionUpdate.Status(sau[0].status)
-                update["route"] = f"{self.supply_chain.slug}/{sa.slug}/{sau[0].slug}"
+                update["route"] = reverse(
+                    "monthly-update-info-edit",
+                    kwargs={
+                        "supply_chain_slug": self.supply_chain.slug,
+                        "strategic_action_slug": sa.slug,
+                        "update_slug": sau[0].slug,
+                    },
+                )  # f"{self.supply_chain.slug}/{sa.slug}/{sau[0].slug}"
             else:
                 update["status"] = StrategicActionUpdate.Status.NOT_STARTED
-                update["route"] = f"{self.supply_chain.slug}/{sa.slug}/new"
+                update["route"] = reverse(
+                    "monthly-update-create",
+                    kwargs={
+                        "supply_chain_slug": self.supply_chain.slug,
+                        "strategic_action_slug": sa.slug,
+                    },
+                )
+                # f"{self.supply_chain.slug}/{sa.slug}/new"
 
             sa_updates.append(update)
 
