@@ -1,3 +1,5 @@
+from datetime import date
+
 import pytest
 
 from django.test import Client
@@ -312,12 +314,19 @@ class TestMonthlyUpdateSummaryPage:
         )
         strategic_action.target_completion_date = None
         strategic_action.save()
-        data = {}
+        monthly_update.content = "Some content"
+        changed_target_completion_date = date(year=2022, month=12, day=25)
+        monthly_update.changed_target_completion_date = changed_target_completion_date
+        monthly_update.implementation_rag_rating = RAGRating.GREEN
+        monthly_update.save()
+        form_data = {
+            # form_data is irrelevant as this view constructs its own from the true state of the model
+        }
         expected_response_url = reverse(
             "tlist",
             kwargs={"sc_slug": strategic_action.supply_chain.slug},
         )
         client = Client()
-        response = client.post(info_url, data=data)
+        response = client.post(info_url, data=form_data)
         assert response.status_code == 302
         assert response.url == expected_response_url
