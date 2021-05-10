@@ -50,6 +50,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "reversion.middleware.RevisionMiddleware",
 ]
 
@@ -151,6 +152,7 @@ STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", "static"))
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "assets/webpack_bundles"),
 ]
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 CHARFIELD_MAX_LENGTH = 250
 
