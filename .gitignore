@@ -1,6 +1,8 @@
 __pycache__/
 *.py[cod]
-defend_data_capture/env/
+# virtual env
+env 
+# environment variables
 .env
 
 node_modules

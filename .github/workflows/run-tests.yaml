@@ -14,7 +14,7 @@ jobs:
         with:
           python-version: '3.8.8'
       - name: Install python packages
-        run: pip install -r defend_data_capture/requirements.txt
+        run: pip install -r requirements.txt
       - name: Run unit tests
         run: which pip && python --version && pytest defend_data_capture --collect-only
       - name: Setup node
