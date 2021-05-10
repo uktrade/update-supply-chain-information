@@ -21,7 +21,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default="secret-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
 
 
 # Application definition
@@ -149,10 +149,10 @@ WEBPACK_LOADER = {
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", "static"))
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "assets/webpack_bundles"),
 ]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 CHARFIELD_MAX_LENGTH = 250
 
