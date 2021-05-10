@@ -16,3 +16,6 @@ backend.pid
 # Folders and file auto-generated when cypress is run
 cypress/videos/
 cypress/screenshots/
+
+# VS code
+settings.json
