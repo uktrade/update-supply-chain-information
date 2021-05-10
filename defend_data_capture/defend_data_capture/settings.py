@@ -147,12 +147,12 @@ WEBPACK_LOADER = {
 }
 
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", "static"))
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "assets/webpack_bundles"),
+]
 
 CHARFIELD_MAX_LENGTH = 250
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "assets"),
-]
 
 # To address models.W042 - type of the primary key
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
