@@ -1,6 +1,7 @@
 from pathlib import Path
 import environ
 import os
+
 from django.urls import reverse_lazy
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -153,5 +154,8 @@ CHARFIELD_MAX_LENGTH = 250
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "assets"),
 ]
+
+# To address models.W042 - type of the primary key
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
