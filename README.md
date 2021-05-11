@@ -28,7 +28,7 @@ Where it is not possible to use a govuk style, the [moj-frontend](https://github
 
 ### To run the app:
 - Create a virtual environment using `python3 -m venv env`, and activate it using `source env/bin/activate`
-- Run `pip install -r defend_data_capture/requirements.txt` to install the dependencies into your environment
+- Run `pip install -r requirements.txt` to install the dependencies into your environment
 - If you haven't yet created a local database, run `make create-db`. This will create the database, run migrations, create  initial reversions and load fixture data.
 - If you have already created a local db, run `make setup` to bring up the database container, or `make setup-db` to bring up the container, apply database migrations and load fixture data.
 - cd into the `/defend_data_capture` folder and run `python manage.py runserver`

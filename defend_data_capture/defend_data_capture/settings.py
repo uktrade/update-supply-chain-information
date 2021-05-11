@@ -21,7 +21,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default="secret-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
 
 
 # Application definition
@@ -50,6 +50,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "reversion.middleware.RevisionMiddleware",
 ]
 
@@ -147,12 +148,13 @@ WEBPACK_LOADER = {
 }
 
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", "static"))
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "assets/webpack_bundles"),
+]
 
 CHARFIELD_MAX_LENGTH = 250
-
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "assets"),
-]
 
 # To address models.W042 - type of the primary key
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
