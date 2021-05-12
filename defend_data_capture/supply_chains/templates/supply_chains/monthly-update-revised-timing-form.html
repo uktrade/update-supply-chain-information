@@ -25,6 +25,21 @@
                 </div>
             </fieldset>
         </div>
+        <div class="govuk-form-group{% if form.errors %} govuk-form-group--error{% endif %}">
+            <h2 class="govuk-label-wrapper govuk-heading-m">
+                <label class="govuk-label govuk-label--m" for="{{ form.content.id_for_label }}">
+                    {{ form.reason_for_completion_date_change.label }}
+                </label>
+            </h2>
+            {% if form.reason_for_completion_date_change.errors %}
+                {% for error in form.reason_for_completion_date_change.errors %}
+                    <span class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+                    </span>
+                {% endfor %}
+            {% endif %}
+            {{ form.reason_for_completion_date_change }}
+        </div>
         <div class="govuk-button-group">
             <button class="govuk-button" data-module="govuk-button" type="submit">
                 Save and continue

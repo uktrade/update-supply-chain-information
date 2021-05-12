@@ -158,6 +158,7 @@ class StrategicAction(models.Model):
         if self.is_archived and not self.archived_date:
             self.archived_date = timezone.now().date()
         self.full_clean()
+        # TODO: reversion!
         return super().save(*args, **kwargs)
 
     def last_submitted_update(self):

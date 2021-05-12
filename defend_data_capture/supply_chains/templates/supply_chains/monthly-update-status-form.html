@@ -19,7 +19,7 @@
                         <li>quality.</li>
                     </ul>
                     {% with strategic_action_update.strategic_action.last_submitted_update as previous_update %}
-                        {% if previous_update.content %}
+                        {% if previous_update.implementation_rag_rating %}
                             <p>Your last status update was {{ previous_update.implementation_rag_rating|lower }}</p>
                         {% endif %}
                     {% endwith %}

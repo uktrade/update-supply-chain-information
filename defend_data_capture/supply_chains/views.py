@@ -267,8 +267,10 @@ class MonthlyUpdateMixin:
             super().get_queryset().filter(strategic_action__slug=strategic_action_slug)
         )
 
-    def get_strategic_action(self, strategic_action_slug):
-        return StrategicAction.objects.get(slug=strategic_action_slug)
+    def get_strategic_action(self, supply_chain_slug, strategic_action_slug):
+        return StrategicAction.objects.filter(supply_chain__slug=supply_chain_slug).get(
+            slug=strategic_action_slug
+        )
 
     def get_success_url(self):
         # This method needs to be implemented by the pages
@@ -340,7 +342,7 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
     def get(self, request, *args, **kwargs):
         last_deadline = get_last_working_day_of_previous_month()
         strategic_action: StrategicAction = self.get_strategic_action(
-            kwargs["strategic_action_slug"]
+            kwargs["supply_chain_slug"], kwargs["strategic_action_slug"]
         )
         current_month_updates = strategic_action.monthly_updates.since(last_deadline)
         if current_month_updates.exists():
@@ -367,13 +369,13 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["strategic_action"] = self.get_strategic_action(
-            self.kwargs["strategic_action_slug"]
+            self.kwargs["supply_chain_slug"], self.kwargs["strategic_action_slug"]
         )
         return context
 
     def form_valid(self, form):
         strategic_action = self.get_strategic_action(
-            self.kwargs["strategic_action_slug"]
+            self.kwargs["supply_chain_slug"], self.kwargs["strategic_action_slug"]
         )
         form.instance.strategic_action = strategic_action
         form.instance.supply_chain = strategic_action.supply_chain
@@ -387,6 +389,9 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
 class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly-update-info-form.html"
     form_class = forms.MonthlyUpdateInfoForm
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
     def get_success_url(self):
         if self.object.strategic_action.target_completion_date is None:
@@ -413,9 +418,10 @@ class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
         if "RED-will_completion_date_change" in self.request.POST:
-            self.completion_date_change_form = form.fields[
-                "implementation_rag_rating"
-            ].widget.details["RED"]["form"]
+            self.completion_date_change_form = form.detail_form_for_key(RAGRating.RED)
+            # self.completion_date_change_form = form.fields[
+            #     "implementation_rag_rating"
+            # ].widget.details["RED"]["form"]
         return form
 
     def get_form_kwargs(self):
@@ -433,7 +439,7 @@ class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
                     self.completion_date_change_form.cleaned_data[
                         "will_completion_date_change"
                     ]
-                    == "True"
+                    == YesNoChoices.YES
                 ):
                     next_page_url = "monthly-update-revised-timing-edit"
         url_kwargs = {
@@ -465,6 +471,9 @@ class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
     template_name = "supply_chains/monthly-update-revised-timing-form.html"
     form_class = forms.MonthlyUpdateModifiedTimingForm
 
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
     def get_success_url(self):
         next_page_url = "monthly-update-summary"
         # see form_valid() for an explanation of original_object
@@ -486,6 +495,11 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
     def get_form_kwargs(self):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["data"] = self.build_form_data()
+        if (
+            self.object.changed_is_ongoing
+            or self.object.changed_target_completion_date is not None
+        ):
+            form_kwargs["initial"]["will_completion_date_change"] = YesNoChoices.YES
         return form_kwargs
 
     def build_form_data(self):
@@ -503,7 +517,10 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
             "implementation_rag_rating": self.object.implementation_rag_rating,
         }
         # we always have the action status form, but we need to determine how to configure it
-        if self.object.implementation_rag_rating != RAGRating.GREEN:
+        if (
+            self.object.implementation_rag_rating is not None
+            and self.object.implementation_rag_rating != RAGRating.GREEN
+        ):
             # Red or Amber, so must include the reason for delays
             if self.object.implementation_rag_rating == RAGRating.AMBER:
                 form_data[
@@ -520,18 +537,18 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
                 ):
                     form_data[
                         f"reason_for_completion_date_change"
-                    ] = self.model.reason_for_completion_date_change
+                    ] = self.object.reason_for_completion_date_change
                     if self.object.has_changed_target_completion_date:
                         additional_form_data = {
-                            "is_completion_date_known": YesNoChoices.YES,
+                            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.YES,
                             f"{YesNoChoices.YES}-changed_target_completion_date_day": self.object.changed_target_completion_date.day,
                             f"{YesNoChoices.YES}-changed_target_completion_date_month": self.object.changed_target_completion_date.month,
                             f"{YesNoChoices.YES}-changed_target_completion_date_year": self.object.changed_target_completion_date.year,
                         }
                         form_data.update(additional_form_data)
-                    elif self.model.changed_is_ongoing:
+                    elif self.object.changed_is_ongoing:
                         additional_form_data = {
-                            "is_completion_date_known": YesNoChoices.YES,
+                            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.NO,
                             f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONGOING,
                         }
                         form_data.update(additional_form_data)
@@ -541,6 +558,7 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
         if (
             self.object.has_new_target_completion_date
             or self.object.has_new_is_ongoing
+            or self.object.is_becoming_ongoing
             or self.object.has_no_timing_information
         ):
             if self.object.has_new_target_completion_date:
@@ -551,7 +569,7 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
                     f"{YesNoChoices.YES}-changed_target_completion_date_year": self.object.changed_target_completion_date.year,
                 }
                 form_data.update(additional_form_data)
-            elif self.object.has_new_is_ongoing:
+            elif self.object.is_becoming_ongoing or self.object.has_new_is_ongoing:
                 additional_form_data = {
                     "is_completion_date_known": YesNoChoices.NO,
                     f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONGOING,
@@ -560,18 +578,18 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
         return form_data
 
     def get_context_data(self, **kwargs):
-        kwargs[
-            "has_revised_date_of_completion"
-        ] = self.object.is_changing_target_completion_date
-        kwargs[
-            "has_date_of_completion"
-        ] = self.object.has_updated_target_completion_date
-        kwargs[
-            "has_new_date_of_completion"
-        ] = self.object.has_new_target_completion_date
-        kwargs["needs_target_completion_date"] = (
-            self.object.has_no_target_completion_date and self.object.has_no_is_ongoing
-        )
+        # kwargs[
+        #     "has_revised_date_of_completion"
+        # ] = self.object.is_changing_target_completion_date
+        # kwargs[
+        #     "has_date_of_completion"
+        # ] = self.object.has_updated_target_completion_date
+        # kwargs[
+        #     "has_new_date_of_completion"
+        # ] = self.object.has_new_target_completion_date
+        # kwargs["needs_target_completion_date"] = (
+        #     self.object.has_no_target_completion_date and self.object.has_no_is_ongoing
+        # )
         kwargs = super().get_context_data(**kwargs)
         if "form" in kwargs.keys():
             kwargs["form"].is_valid()
@@ -602,7 +620,6 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
             strategic_action.is_ongoing = strategic_action_update.changed_is_ongoing
             strategic_action.target_completion_date = None
             strategic_action_changed = True
-        # TODO: reversion!
         strategic_action_update.status = StrategicActionUpdate.Status.COMPLETED
         if strategic_action_changed:
             strategic_action.save()

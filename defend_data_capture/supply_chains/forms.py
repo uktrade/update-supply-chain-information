@@ -15,16 +15,28 @@ from .widgets import (
 from .models import StrategicActionUpdate, RAGRatingHints, StrategicAction, RAGRating
 
 
-class MakeFieldRequiredMixin:
+class MakeFieldsRequiredMixin:
     field_to_make_required = None
 
     def make_field_required(self):
         if self.field_to_make_required is not None:
-            self.fields[self.field_to_make_required].required = True
+            if isinstance(self.field_to_make_required, str):
+                fields = [self.field_to_make_required]
+            else:
+                fields = self.field_to_make_required
+            for field_name in fields:
+                if field_name in self.fields:
+                    self.fields[field_name].required = True
 
     def make_field_not_required(self):
         if self.field_to_make_required is not None:
-            self.fields[self.field_to_make_required].required = False
+            if isinstance(self.field_to_make_required, str):
+                fields = [self.field_to_make_required]
+            else:
+                fields = self.field_to_make_required
+            for field_name in fields:
+                if field_name in self.fields:
+                    self.fields[field_name].required = False
 
 
 class DetailFormMixin:
@@ -71,6 +83,7 @@ class DetailFormMixin:
         return valid
 
     def save(self, commit=True):
+        instance = super().save(commit=commit)
         for field_name, key, config in self.detail_forms:
             # no need to commit if the instances are the same
             # as the outer form will do that below (if commit=True)
@@ -118,10 +131,6 @@ class MonthlyUpdateInfoForm(forms.ModelForm):
         ),
     )
 
-    def is_valid(self):
-        is_valid = super().is_valid()
-        return is_valid
-
     class Meta:
         model = StrategicActionUpdate
         fields = [
@@ -129,7 +138,7 @@ class MonthlyUpdateInfoForm(forms.ModelForm):
         ]
 
 
-class AmberReasonForDelayForm(MakeFieldRequiredMixin, forms.ModelForm):
+class AmberReasonForDelayForm(MakeFieldsRequiredMixin, forms.ModelForm):
     use_required_attribute = False
     field_to_make_required = "reason_for_delays"
     reason_for_delays = forms.CharField(
@@ -148,20 +157,15 @@ class AmberReasonForDelayForm(MakeFieldRequiredMixin, forms.ModelForm):
         ),
     )
 
-    def clean(self):
-        cleaned = super().clean()
-        return cleaned
-
-    def is_valid(self):
-        return super().is_valid()
-
     class Meta:
         model = StrategicActionUpdate
         fields = ["reason_for_delays"]
 
 
 class RedReasonForDelayForm(AmberReasonForDelayForm):
+    field_to_make_required = ["reason_for_delays", "will_completion_date_change"]
     will_completion_date_change = forms.ChoiceField(
+        required=False,
         choices=YesNoChoices.choices,
         widget=forms.RadioSelect(
             attrs={
@@ -169,6 +173,10 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
                 "novalidate": True,
             }
         ),
+        error_messages={
+            "required": "Specify whether the estimated completion date will change",
+            "invalid_choice": "Specify whether the estimated completion date will change",
+        },
         label="Will the estimated completion date change?",
     )
     reason_for_delays = forms.CharField(
@@ -188,6 +196,14 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
     )
 
     def __init__(self, *args, **kwargs):
+        # instance = kwargs.get("instance", None)
+        # if instance is not None:
+        #     initial = kwargs["initial"]
+        #     data = kwargs.get("data", None)
+        #     if data is not None:
+        #         if "will_completion_date_change" not in data.keys() and "will_completion_date_change" not in initial.keys():
+        #             if instance.changed_is_ongoing or instance.changed_target_completion_date is not None:
+        #                 initial["will_completion_date_change"] = YesNoChoices.YES
         super().__init__(*args, **kwargs)
         strategic_action_update: StrategicActionUpdate = kwargs.get("instance", None)
         if strategic_action_update is not None:
@@ -198,6 +214,23 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
                     or strategic_action.is_ongoing
                 ):
                     del self.fields["will_completion_date_change"]
+                # else:
+                #     data = kwargs.get("data", None)
+                #     if data is not None:
+                #         data[self.add_prefix("will_completion_date_change")] = self.get_initial_for_field(self.fields["will_completion_date_change"], "will_completion_date_change")
+                #     # self.fields["will_completion_date_change"].initial = self.get_initial_for_field(self.fields["will_completion_date_change"], "will_completion_date_change")
+
+    def get_initial_for_field(self, field, field_name):
+        if field_name == "will_completion_date_change":
+            if (
+                self.instance.changed_is_ongoing
+                or self.instance.changed_target_completion_date is not None
+            ):
+                return YesNoChoices.YES
+        return super().get_initial_for_field(field, field_name)
+
+    def is_valid(self):
+        return super().is_valid()
 
     class Meta(AmberReasonForDelayForm.Meta):
         labels = {"reason_for_delays": "Explain issue"}
@@ -301,7 +334,7 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
         fields = ["implementation_rag_rating"]
 
 
-class CompletionDateForm(MakeFieldRequiredMixin, forms.ModelForm):
+class CompletionDateForm(MakeFieldsRequiredMixin, forms.ModelForm):
     use_required_attribute = False
     field_to_make_required = "changed_target_completion_date"
     changed_target_completion_date = forms.DateField(
@@ -344,7 +377,7 @@ class ApproximateTimings(TextChoices):
     ONGOING = ("0", "Ongoing")
 
 
-class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
+class ApproximateTimingForm(MakeFieldsRequiredMixin, forms.ModelForm):
     use_required_attribute = False
     surrogate_is_ongoing = forms.ChoiceField(
         choices=ApproximateTimings.choices,
@@ -380,7 +413,7 @@ class ApproximateTimingForm(MakeFieldRequiredMixin, forms.ModelForm):
             # we need to either set changed_is_ongoing and clear the completion date…
             self.instance.changed_is_ongoing = True
             self.instance.changed_target_completion_date = None
-            self.instance.reason_for_completion_date_change = ""
+            # self.instance.reason_for_completion_date_change = ""
         else:
             # or clear changed_is_ongoing and calculate the new completion date.
             self.instance.changed_is_ongoing = False
@@ -483,9 +516,16 @@ class MonthlyUpdateModifiedTimingForm(MonthlyUpdateTimingForm):
             attrs={
                 "class": "govuk-textarea",
                 "novalidate": True,
+                "rows": 4,
             }
         ),
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[
+            "is_completion_date_known"
+        ].label = "Do you know the revised expected completion date?"
 
     class Meta(MonthlyUpdateTimingForm.Meta):
         fields = MonthlyUpdateTimingForm.Meta.fields + [
@@ -509,7 +549,7 @@ class MonthlyUpdateSubmissionForm:
         # if we have form data, we need to decide what forms to use based on that
         if form_data is not None:
             # data will override the decisions we just made…
-            timing_form_class = ()
+            additional_form_classes = ()
             if (
                 f"{YesNoChoices.YES}-changed_target_completion_date_year"
                 in form_data.keys()
@@ -518,32 +558,31 @@ class MonthlyUpdateSubmissionForm:
             ):
                 if strategic_action.target_completion_date is not None:
                     # this is a change to an existing date
-                    timing_form_class += (
+                    additional_form_classes += (
                         MonthlyUpdateStatusForm,
                         MonthlyUpdateModifiedTimingForm,
                     )
                 else:
-                    timing_form_class += (
+                    additional_form_classes += (
                         MonthlyUpdateTimingForm,
                         MonthlyUpdateStatusForm,
                     )
+            else:
+                additional_form_classes += (MonthlyUpdateStatusForm,)
         else:
             # no form data, we decide what forms to use based on the actual model
-            timing_form_class = ()
+            additional_form_classes = ()
             if strategic_action_update.has_existing_target_completion_date and (
                 strategic_action_update.has_changed_target_completion_date
                 or strategic_action_update.is_becoming_ongoing
             ):
-                timing_form_class += (
+                additional_form_classes += (
                     MonthlyUpdateStatusForm,
                     MonthlyUpdateModifiedTimingForm,
                 )
             else:
-                timing_form_class += (
-                    MonthlyUpdateTimingForm,
-                    MonthlyUpdateStatusForm,
-                )
-        self.form_classes += timing_form_class
+                additional_form_classes += (MonthlyUpdateStatusForm,)
+        self.form_classes += additional_form_classes
         for form_class in self.form_classes:
             form = form_class(*args, **kwargs)
             self.forms[form_class.__name__] = form

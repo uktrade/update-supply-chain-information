@@ -1,5 +1,5 @@
 {% for field in form %}
-    {% if field.errors %}
+    {% if field.errors and field.name == field_name %}
         {% for error in field.errors %}
             <li>
                 <a href="{{ url_for_errors }}#{{ field.id_for_label }}">{{ error }}</a>

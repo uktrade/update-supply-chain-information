@@ -106,7 +106,7 @@
       "submission_date": "2021-04-28",
       "date_created": "2021-04-07",
       "content": "MU Form Test 0",
-      "implementation_rag_rating": null,
+      "implementation_rag_rating": "GREEN",
       "reason_for_delays": "",
       "changed_target_completion_date": null,
       "reason_for_completion_date_change": "",

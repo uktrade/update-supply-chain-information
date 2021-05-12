@@ -59,35 +59,10 @@
             </dl>
         {% endif %}
     {% endwith %}
-    {# another chance to include the timing form… not sure what this is doing here #}
-{#    {% if has_new_date_of_completion %}#}
-{#        {% with form.forms.MonthlyUpdateTimingForm as form %}#}
-{#        <dl class="govuk-summary-list govuk-!-margin-bottom-3">#}
-{#            <div class="govuk-summary-list__row">#}
-{#                <dt class="govuk-summary-list__key">#}
-{#                    Estimated date of completion#}
-{#                </dt>#}
-{#                <dd class="govuk-summary-list__value">#}
-{#                    {% if form.errors %}#}
-{#                        {% include "supply_chains/includes/summary_errors.html" %}#}
-{#                    {% else %}#}
-{#                        Timing stuff here#}
-{#                    {% endif %}#}
-{#                    {{ strategic_action_update.changed_target_completion_date|date:"j F Y" }}#}
-{#                </dd>#}
-{#                <dd class="govuk-summary-list__actions">#}
-{#                    <a class="govuk-link" href="{% url 'monthly-update-timing-edit' supply_chain_slug=strategic_action_update.strategic_action.supply_chain.slug strategic_action_slug=strategic_action_update.strategic_action.slug update_slug=strategic_action_update.slug %}">#}
-{#                        Change<span class="govuk-visually-hidden"> revised estimated date of completion</span>#}
-{#                    </a>#}
-{#                </dd>#}
-{#            </div>#}
-{#        </dl>#}
-{#        {% endwith %}#}
-{#    {% endif %}#}
-    {# Always include the delivery status #}
+        {# Always include the delivery status #}
     {% with form.forms.MonthlyUpdateStatusForm as form %}
     <dl class="govuk-summary-list govuk-!-margin-bottom-3">
-        <div class="govuk-summary-list__row{% if not has_revised_date_of_completion %} govuk-summary-list__row--no-border{% endif %}">
+        <div class="govuk-summary-list__row{% if form.forms.MonthlyUpdateModifiedTimingForm %} govuk-summary-list__row--no-border{% endif %}">
             <dt class="govuk-summary-list__key">
                 Current delivery status
             </dt>
@@ -111,7 +86,7 @@
     </dl>
     {% endwith %}
     {# Only include the revised timing form if it exists #}
-    {% with form.forms.MonthlyUpdateRevisedTimingForm as form %}
+    {% with form.forms.MonthlyUpdateModifiedTimingForm as form %}
         {% if form %}
             <dl class="govuk-summary-list govuk-!-margin-bottom-3">
                 <div class="govuk-summary-list__row govuk-summary-list__row--no-border class.">
@@ -122,10 +97,14 @@
                         {% if form.errors %}
                             {% include "supply_chains/includes/summary_errors.html" %}
                         {% else %}
-                            {% if  strategic_action_update.has_new_is_ongoing%}
+                            {% if strategic_action_update.changed_is_ongoing %}
                                 Ongoing
                             {% else %}
                                 {{ strategic_action_update.changed_target_completion_date|date:"j F Y" }}
+                            {% endif %}
+                            {% if strategic_action_update.reason_for_completion_date_change %}
+                                <br>
+                                {{ strategic_action_update.reason_for_completion_date_change }}
                             {% endif %}
                         {% endif %}
                     </dd>
