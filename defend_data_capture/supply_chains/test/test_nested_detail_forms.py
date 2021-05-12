@@ -1,30 +1,16 @@
-from datetime import date
-
 import pytest
 
 from django import forms
 from django.core.exceptions import ValidationError
-from django.db import models
 
 from supply_chains.models import (
-    StrategicAction,
     StrategicActionUpdate,
-    SupplyChain,
 )
 from supply_chains.test.factories import (
-    StrategicActionFactory,
     StrategicActionUpdateFactory,
-    SupplyChainFactory,
 )
-from accounts.test.factories import GovDepartmentFactory
 
 from supply_chains import forms as our_forms
-
-
-# class TestModel(models.Model):
-#     inner_form_content = models.TextField(default='', blank=True)
-#     outer_form_content = models.TextField(default='', blank=True)
-#
 from supply_chains.widgets import DetailRadioSelect
 
 

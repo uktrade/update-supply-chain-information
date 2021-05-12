@@ -17,7 +17,6 @@ class TestDateMultiTextInputWidget:
         assert expected_date == values[0]
         assert expected_month == values[1]
         assert expected_year == values[2]
-        # widget_context = widget.get_context(name='test', value=date(2020, 1, 31), attrs={})
 
     def test_widget_returns_correctly_formatted_date_string_from_form_data(self):
         form_data = {"test_day": "31", "test_month": "01", "test_year": "2020"}

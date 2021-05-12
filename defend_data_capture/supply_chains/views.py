@@ -248,14 +248,6 @@ class SCCompleteView(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
         return render(request, self.template_name, context=kwargs)
 
 
-# @login_required
-# class MonthlyUpdate
-class StrategicActionListView(ListView):
-    model = StrategicAction
-    template_name = "supply_chains/temp-sa-list.html"
-    context_object_name = "strategic_actions"
-
-
 class MonthlyUpdateMixin:
     model = StrategicActionUpdate
     context_object_name = "strategic_action_update"
@@ -381,10 +373,6 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
         form.instance.supply_chain = strategic_action.supply_chain
         return super().form_valid(form)
 
-    # def get_success_url(self):
-    #     return super().get_success_url()
-    #
-
 
 class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly-update-info-form.html"
@@ -419,9 +407,6 @@ class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
         form = super().get_form(form_class)
         if "RED-will_completion_date_change" in self.request.POST:
             self.completion_date_change_form = form.detail_form_for_key(RAGRating.RED)
-            # self.completion_date_change_form = form.fields[
-            #     "implementation_rag_rating"
-            # ].widget.details["RED"]["form"]
         return form
 
     def get_form_kwargs(self):
@@ -476,7 +461,6 @@ class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
 
     def get_success_url(self):
         next_page_url = "monthly-update-summary"
-        # see form_valid() for an explanation of original_object
         url_kwargs = {
             "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
             "update_slug": self.object.slug,

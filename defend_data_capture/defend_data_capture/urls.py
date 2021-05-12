@@ -15,7 +15,6 @@ from supply_chains.views import (
     SASummaryView,
     SCSummary,
     SAUReview,
-    StrategicActionListView,
     MonthlyUpdateInfoCreateView,
     MonthlyUpdateInfoEditView,
     MonthlyUpdateTimingEditView,

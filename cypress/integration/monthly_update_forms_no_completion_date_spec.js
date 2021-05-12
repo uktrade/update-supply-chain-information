@@ -1,6 +1,6 @@
 import supplyChains from '../fixtures/supplyChains.json'
 import strategicActions from '../fixtures/strategicActions.json'
-import strategicActionUpdates from '../fixtures/strategicActionUpdate.json'
+import strategicActionUpdates from '../fixtures/strategicActionUpdates.json'
 
 const updatesByStrategicActionPK = strategicActionUpdates.reduce((accumulator, update) => {
   accumulator[update.fields.strategic_action] = update;
@@ -81,6 +81,13 @@ const todayMonth = todayMatches[2];
 const todayYear = todayMatches[1];
 const todaySlug = `${todayMonth}-${todayYear}`
 
+const targetCompletionDate = new Date();
+targetCompletionDate.setFullYear(today.getFullYear() + 1);
+const targetCompletionDay = targetCompletionDate.toLocaleString('en-GB', {day: 'numeric'});
+const targetCompletionMonth = targetCompletionDate.toLocaleString('en-GB', {month: 'long'});
+const targetCompletionYear = targetCompletionDate.toLocaleString('en-GB', {year: 'numeric'});
+const targetCompletionDateRepresentation = `${targetCompletionDay} ${targetCompletionMonth} ${targetCompletionYear}`
+
 const valuesToEnter = {
   info: {
     content: 'This is the text entered for the content field.'
@@ -115,7 +122,9 @@ const valuesToEnter = {
       Amber: {
         reason: 'This is the reason the status is AMBER',
       },
-      Green: null,
+      Green: {
+        lastUpdateValue: 'green',
+      },
     }
   },
   revisedtiming: {
@@ -141,29 +150,53 @@ const valuesToEnter = {
   },
 }
 
-Cypress.Cookies.debug(true);
+const urls = {
+  'start': function(strategicAction) {
+    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/start/`
+  },
+  'info': function(strategicAction) {
+    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/info/`
+  },
+  'timing': function(strategicAction) {
+    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/timing/`
+  },
+  'status': function(strategicAction) {
+    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/delivery-status/`
+  },
+  'revisedtiming': function(strategicAction) {
+    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/revised-timing/`
+  },
+  'confirm': function(strategicAction) {
+    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/confirm/`
+  },
+}
 
 describe('Testing monthly update forms', () => {
   context('for a strategic action', function() {
     context('that has no target completion date', function() {
       context('with an update from the previous month', function() {
-        beforeEach(() => {
+        beforeEach(function() {
           Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.supplyChainSlug).as('supplyChainSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.strategicActionSlug).as('strategicActionSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.updateSlug).as('monthlyUpdateSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate.updateContent).as('updateContent')
-          cy.wrap(todaySlug).as('todaySlug')
-          cy.url().as('pageURL')
+          cy.wrap(strategicActionsForTest.noCompletionDate.hasUpdate).as('strategicAction')
+          cy.wrap(urls.start(strategicActionsForTest.noCompletionDate.hasUpdate)).as('startURL')
+          cy.wrap(urls.info(strategicActionsForTest.noCompletionDate.hasUpdate)).as('infoURL')
+          cy.wrap(urls.timing(strategicActionsForTest.noCompletionDate.hasUpdate)).as('timingURL')
+          cy.wrap(urls.status(strategicActionsForTest.noCompletionDate.hasUpdate)).as('statusURL')
+          cy.wrap(urls.confirm(strategicActionsForTest.noCompletionDate.hasUpdate)).as('confirmURL')
         });
         context('starting a new monthly update', function() {
           it('successfully creates a new update and redirects to its Update Info page', function() {
-            cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/start/`)
-            cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/info/`)
+            cy.visit(this.startURL)
+            cy.url().should('eq', this.infoURL)
             cy.injectAxe()
           })
         })
-        context(`The Update Info page ${this.pageURL}`, function() {
+        context(`The Update Info page`, function() {
+          it('is there', function() {
+            cy.visit(this.infoURL)
+            cy.visit(this.infoURL)
+            cy.injectAxe()
+          })
           it('has no accessibility issues', () => {
             cy.runA11y()
           })
@@ -207,13 +240,11 @@ describe('Testing monthly update forms', () => {
           })
           context('The Update Info page content', function() {
             it('has the correct page header', () => {
-              cy.get('h1').contains(
-                  'Strategic action monthly update'
-              )
+              cy.monthlyUpdatePageHeader().should('exist')
             })
             it('shows the previous update', function() {
               cy.get('.app-dit-panel h2:first').contains('Last update')
-              cy.get('.app-dit-panel h2:first + p').contains(`${this.updateContent}`)
+              cy.get('.app-dit-panel h2:first + p').contains(this.strategicAction.updateContent)
             })
           })
           context('The Update Info form', () => {
@@ -236,12 +267,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.supplyChainSlug}`)
-              // cy.get('@theForm').within(function(theForm) {
-              //   cy.get('a.govuk-button.govuk-button--secondary').contains('Cancel').within((theCancelLink) => {
-              //     cy.root().should('have.attr', 'href', `/${this.supplyChainSlug}`)
-              //   })
-              // })
+              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
             })
             context('When submitted with the content field filled out', function() {
               before(() => {
@@ -257,7 +283,7 @@ describe('Testing monthly update forms', () => {
                   cy.location('pathname').invoke('split', '/').its(5).as('strategicActionUpdateID')
                   cy.get('@strategicActionUpdateID').then(function(strategicActionUpdateID) {
                     cy.get('button[type="submit"]').click()
-                    cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/timing/`)
+                    cy.url().should('eq', this.timingURL)
                     cy.injectAxe()
                   })
                 })
@@ -268,10 +294,18 @@ describe('Testing monthly update forms', () => {
         context('The Timing page', () => {
           beforeEach(() => {
             Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-            cy.get('main form').as('theForm')
+            cy.mainForm().as('theForm')
           })
-          it.skip('has no accessibility issues - NEEDS CHECKING FOR POSSIBLE FALSE POSITIVE', () => {
-            cy.runA11y()
+          it('is there', function() {
+            cy.visit(this.timingURL)
+            cy.injectAxe()
+          })
+          it('has no accessibility issues', () => {
+            cy.runA11y('html', {
+                rules: {
+                  "aria-allowed-attr": { enabled: false }
+                }
+              })
           })
           context('The Timing breadcrumbs', function() {
             beforeEach(() => {
@@ -310,9 +344,7 @@ describe('Testing monthly update forms', () => {
           })
           context('The Timing page content', function() {
             it('has the correct page header', () => {
-              cy.get('h1').contains(
-                  'Strategic action monthly update'
-              )
+              cy.monthlyUpdatePageHeader().should('exist')
             })
             it ('warns that there is no expected completion date', () => {
               cy.get('h1 ~ .govuk-warning-text').should('exist').contains("There's no expected completion date for this action.")
@@ -329,7 +361,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.supplyChainSlug}`)
+              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
             })
             it ('should have a fieldset with legend asking if there is a completion date', () => {
               cy.get('@theForm').get('fieldset legend h2').contains('Is there an expected completion date?')
@@ -460,14 +492,14 @@ describe('Testing monthly update forms', () => {
                 context('Selecting a duration and submitting the form', function() {
                   it('should go to the "Delivery status" page when saved', function() {
                     cy.get('@theNoOption').click()
-                    cy.get('@theNoOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                      cy.get(`#${subjectID}`).get('input[type="radio"]').eq(2).click()
-                      cy.location('pathname').invoke('split', '/').its(5).as('strategicActionUpdateID')
-                      cy.get('@strategicActionUpdateID').then(function(strategicActionUpdateID) {
-                        cy.get('button[type="submit"]').click()
-                        cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/delivery-status/`)
-                        cy.injectAxe()
-                      })
+                    cy.get('@theNoOption').invoke('attr', 'aria-controls').then(function(subjectID) {
+                      /**
+                       * The third radio button is "1 year", internally represented by the value 12
+                       */
+                      cy.get(`#${subjectID} input[type="radio"]`).eq(2).click()
+                      cy.get('button[type="submit"]').click()
+                      cy.url().should('eq', this.statusURL)
+                      cy.injectAxe()
                     })
                   })
                 })
@@ -479,8 +511,16 @@ describe('Testing monthly update forms', () => {
           beforeEach(() => {
             Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
           })
-          it.skip('has no accessibility issues - NEEDS CHECKING FOR POSSIBLE FALSE POSITIVE', () => {
-            cy.runA11y()
+          it('is there', function() {
+            cy.visit(this.statusURL)
+            cy.injectAxe()
+          })
+          it('has no accessibility issues', () => {
+            cy.runA11y('html', {
+              rules: {
+                "aria-allowed-attr": { enabled: false }
+              }
+            })
           })
           context('The Delivery Status breadcrumbs', function() {
             beforeEach(() => {
@@ -516,18 +556,25 @@ describe('Testing monthly update forms', () => {
           })
           context('The Delivery Status page content', function() {
             it('has the correct page header', () => {
-              cy.get('h1').contains(
-                  'Strategic action monthly update'
-              )
+              cy.monthlyUpdatePageHeader().should('exist')
             })
-            // it('shows the delivery status for the previous month', function() {
-            //   cy.get('h2:first').contains('Last update')
-            //   cy.get('h2:first + p').contains(`${this.updateContent}`)
-            // })
+            it ('warns that there is no expected completion date', () => {
+              cy.get('body').debug().get('h1 ~ .govuk-warning-text').should('exist').contains("There's no expected completion date for this action.")
+            })
+            it ('shows instructions', () => {
+              cy.mainForm().find('legend + .govuk-body > p:first-of-type').contains('When considering if delivery of the strategic action is on track, consider:');
+              ['costs', 'timings', 'quality'].forEach((itemText, i) => {
+                cy.mainForm().find('legend + .govuk-body > ul > li').eq(i).contains(itemText)
+              })
+            })
+            it('shows the delivery status for the previous month', function() {
+              cy.mainForm().find('legend + .govuk-body > p:last-of-type').contains(`Your last status update was ${valuesToEnter.status.options.Green.lastUpdateValue}`)
+            })
           })
           context('The Delivery Status form', () => {
-            beforeEach(() => {
-              cy.get('main form').as('theForm')
+            beforeEach(function() {
+              cy.visit(this.statusURL)
+              cy.mainForm().as('theForm')
             })
             it('is there', () => {
               cy.get("@theForm").should('exist')
@@ -539,7 +586,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.supplyChainSlug}`)
+              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
             })
             context('the radio buttons asking for the current delivery status', function() {
               beforeEach(() => {
@@ -570,10 +617,32 @@ describe('Testing monthly update forms', () => {
                 it('displays the potential risks textbox when selected', function() {
                   cy.get('@amberOption').click()
                   cy.get('@amberOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                      cy.get(`#${subjectID}`).should('be.visible')
-                      cy.get(`#${subjectID}`).children(0).children('label').should('contain', 'Explain potential risk')
-                      cy.get(`#${subjectID}`).children(0).children('textarea').should('be.visible')
+                    cy.get(`#${subjectID}`).should('be.visible')
+                    cy.get(`#${subjectID}`).children(0).children('label').should('contain', 'Explain potential risk')
+                    cy.get(`#${subjectID}`).children(0).children('textarea').should('be.visible')
+                  })
+                })
+                context('and when completed', () => {
+                  beforeEach(() => {
+                    cy.get('@theRadioButtons').eq(1).as('amberOption')
+                    cy.get('@amberOption').click()
+                    cy.get('@amberOption').invoke('attr', 'aria-controls').then((subjectID) => {
+                      cy.get(`#${subjectID}`).children(0).children('textarea').type(valuesToEnter.status.options.Amber.reason)
                     })
+                  })
+                  it('saves the Amber value and potential risks content when submitted', function() {
+                    cy.mainForm().submitButton().click()
+                    cy.url().should('eq', this.confirmURL)
+                  })
+                  context('and the Check Answers page', () => {
+                    beforeEach(function() {
+                      cy.visit(this.confirmURL)
+                    })
+                    it('shows the saved values', function() {
+                      cy.govukMain().summaryLists().summaryListValue().contains('Amber')
+                      cy.govukMain().summaryLists().summaryListValue().contains(valuesToEnter.status.options.Amber.reason)
+                    })
+                  })
                 })
               })
               context('The "Red" option', function() {
@@ -588,6 +657,28 @@ describe('Testing monthly update forms', () => {
                       cy.get(`#${subjectID}`).children(0).children('textarea').should('be.visible')
                     })
                 })
+                context('and when completed', () => {
+                  beforeEach(() => {
+                    cy.get('@theRadioButtons').eq(2).as('redOption')
+                    cy.get('@redOption').click()
+                    cy.get('@redOption').invoke('attr', 'aria-controls').then((subjectID) => {
+                      cy.get(`#${subjectID}`).children(0).children('textarea').type(valuesToEnter.status.options.Red.reason)
+                    })
+                  })
+                  it('saves the Red value and potential risks content when submitted', function() {
+                    cy.mainForm().submitButton().click()
+                    cy.url().should('eq', this.confirmURL)
+                  })
+                  context('and the Check Answers page', () => {
+                    beforeEach(function() {
+                      cy.visit(this.confirmURL)
+                    })
+                    it('shows the saved values', function() {
+                      cy.govukMain().summaryLists().summaryListValue().contains('Red')
+                      cy.govukMain().summaryLists().summaryListValue().contains(valuesToEnter.status.options.Red.reason)
+                    })
+                  })
+                })
                 it.skip('displays the date change label and radios', function() {
                   cy.get('@redOption').click()
                   cy.get('@redOption').invoke('attr', 'aria-controls').then((subjectID) => {
@@ -600,33 +691,199 @@ describe('Testing monthly update forms', () => {
                     })
                 })
               })
+              it('Selecting the "Green" option and submitting the form should go to the "Check Your Answers" page', function() {
+                cy.get('@theRadioButtons').eq(0).click()
+                cy.get('@theForm').submitButton().click()
+                cy.url().should('eq', this.confirmURL)
+              })
             })
-            // context('the error messages', function() {
-            //   before(() => {
-            //     // ensure we start with a clean slate
-            //     cy.reload(true, {log: true})
-            //   })
-            //   it('should display error summary when submitted without selecting a status radio', () => {
-            //     cy.contains('Save and continue').click()
-            //   })
-            // })
-            //
+          })
+        })
+        context('The Check Your Answers page', () => {
+          beforeEach(() => {
+            Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
+          })
+          it('is there', function() {
+            cy.visit(this.confirmURL)
+            cy.injectAxe()
+          })
+          it('has no accessibility issues', () => {
+            cy.runA11y()
+          })
+          context('The Check Your Answers breadcrumbs', function() {
+            beforeEach(() => {
+              cy.get('nav.moj-sub-navigation').as('theBreadcrumbs')
+            })
+            context('The individual breadcrumbs in the ordered list should be', function() {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Update information" link', () => {
+                cy.get('@theBreadcrumbItems').eq(0).contains('1. Update information')
+              })
+              it('the "Timing" link', () => {
+                cy.get('@theBreadcrumbItems').eq(1).contains('2. Timing')
+              })
+              it('the "Action status" link', () => {
+                cy.get('@theBreadcrumbItems').eq(2).contains('3. Action status')
+              })
+              it('the "Confirm" link', () => {
+                cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm')
+              })
+            })
+            context('The link marked as the current page should be', () => {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Update information" link', () => {
+                cy.get('@theBreadcrumbItems').eq(3).within(() => {
+                  cy.root().get('a').should('have.attr', 'aria-current', 'page')
+                })
+              })
+            })
+          })
+          context('The Check Your Answers page content should include', function() {
+            it('the correct page header', () => {
+              cy.monthlyUpdatePageHeader()
+            })
+            it('a medium-sized heading saying "Check your answers', () => {
+              cy.govukMain().get('h2').should('have.class', 'govuk-heading-m').contains('Check your answers')
+            })
+            it('a prompt to check the information', () => {
+              cy.govukMain().get('h2 + p.govuk-body').contains("Check all the information you've provided is correct before submitting the form.")
+            })
+            it('shouldn\'t have an error summary', function() {
+              cy.noGdsErrorSummary()
+            })
+            it('should have summary lists', () => {
+              cy.govukMain().summaryLists().should('exist')
+            })
+            context('The summary lists should include', function() {
+              describe('the Info row', () => {
+                beforeEach(() => {
+                  cy.govukMain().summaryLists().eq(0).as('summary')
+                })
+                it('labelled "Latest monthly update"', () => {
+                  cy.get('@summary').summaryListKey().contains('Latest monthly update')
+                })
+                it('with the value entered on the "Info" page', () => {
+                  cy.get('@summary').summaryListValue().contains(valuesToEnter.info.content)
+                })
+                context('and an actions column including', () => {
+                  beforeEach(() => {
+                    cy.get('@summary').summaryListActions().as('actions')
+                  })
+                  it('a "Change" link to the "Info" page', () => {
+                    cy.get('@actions').summaryListChangeLink(this.infoURL)
+                  })
+                  it('with accessible text reading "Change latest monthly update"', () => {
+                    cy.get('@actions').govukLink().withFullText('Change latest monthly update')
+                  })
+                })
+              })
+              context('the Timing row', () => {
+                beforeEach(() => {
+                  cy.govukMain().summaryLists().eq(1).as('summary')
+                })
+                it('labelled "Estimated date of completion"', () => {
+                  cy.get('@summary').summaryListKey().contains('Estimated date of completion')
+                })
+                it('with the value entered on the "Timing" page', () => {
+                  cy.get('@summary').summaryListValue().contains(targetCompletionDateRepresentation)
+                })
+                context('and an actions column including', () => {
+                  beforeEach(() => {
+                    cy.get('@summary').summaryListActions().as('actions')
+                  })
+                  it('a "Change" link to the "Timing" page', () => {
+                    cy.get('@actions').summaryListChangeLink(this.timingURL)
+                  })
+                  it('with accessible text reading "Change estimated date of completion"', () => {
+                    cy.get('@actions').govukLink().withFullText('Change estimated date of completion')
+                  })
+                })
+              })
+              describe('the Delivery Status row', () => {
+                beforeEach(() => {
+                  cy.govukMain().summaryLists().eq(2).as('summary')
+                })
+                it('labelled "Current delivery status"', () => {
+                  cy.get('@summary').summaryListKey().contains('Current delivery status')
+                })
+                it('with the value entered on the "Delivery Status" page', () => {
+                  // cy.get('@summary').summaryListValue().contains(valuesToEnter.info.content)
+                })
+                context('and an actions column including', () => {
+                  beforeEach(() => {
+                    cy.get('@summary').summaryListActions().as('actions')
+                  })
+                  it('a "Change" link to the "Info" page', () => {
+                    cy.get('@actions').summaryListChangeLink(this.statusURL)
+                  })
+                  it('with accessible text reading "Change current delivery status"', () => {
+                    cy.get('@actions').govukLink().withFullText('Change current delivery status')
+                  })
+                })
+              })
+            })
+          })
+          context('The Check Your Answers form', () => {
+            beforeEach(() => {
+              cy.get('main form').as('theForm')
+            })
+            it('is there', () => {
+              cy.get("@theForm").should('exist')
+            })
+            it('should have a CSRF token', () => {
+              cy.get("@theForm").hasDjangoCSRFToken()
+            })
+            it('should have a submit button saying "Submit"', () => {
+              cy.get('@theForm').hasSubmitButton('Submit')
+            })
+            it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
+              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
+            })
+          })
+          context('Following the Timing row "Change" link and changing the selection to "Ongoing"', () => {
+            before(() => {
+              cy.govukMain().summaryLists().eq(1).summaryListActions().govukLink().click()
+              cy.mainForm().get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-radios__item > input[type="radio"]').as('theRadioButtons')
+              cy.get('@theRadioButtons').eq(1).as('theNoOption')
+              cy.get('@theNoOption').click()
+              cy.get('@theNoOption').invoke('attr', 'aria-controls').then(function(subjectID) {
+                /**
+                 * The fifth radio button is "Ongoing", internally represented by the value 0
+                 */
+                cy.get(`#${subjectID} input[type="radio"]`).eq(4).click()
+                cy.mainForm().submitButton().click()
+              })
+            })
+            beforeEach(() => {
+              cy.get('@confirmURL').then((url) => {
+                cy.visit(url)
+              })
+              cy.govukMain().summaryLists().eq(1).as('timingRow')
+            })
+            it('should show that the "Timing" section value is now "Ongoing"', () => {
+              cy.get('@timingRow').summaryListValue().contains("Ongoing")
+            })
           })
         })
       })
       context('without an update from the previous month', function() {
         beforeEach(() => {
           Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('supplyChainSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('strategicActionSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('monthlyUpdateSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateContent).as('updateContent')
+          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate).as('strategicAction')
+          cy.wrap(urls.start(strategicActionsForTest.noCompletionDate.noUpdate)).as('startURL')
+          cy.wrap(urls.info(strategicActionsForTest.noCompletionDate.noUpdate)).as('infoURL')
+          cy.wrap(urls.timing(strategicActionsForTest.noCompletionDate.noUpdate)).as('timingURL')
+          cy.wrap(urls.confirm(strategicActionsForTest.noCompletionDate.noUpdate)).as('confirmURL')
           cy.wrap(todaySlug).as('todaySlug')
         });
         context('starting a new monthly update', function() {
           it('successfully creates a new update and redirects to its Update Info page', function() {
-            cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/start/`)
-            cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/info/`)
+            cy.visit(this.startURL)
+            cy.url().should('eq', this.infoURL)
             cy.injectAxe()
           })
         })
@@ -642,154 +899,80 @@ describe('Testing monthly update forms', () => {
         })
       })
     })
-    context('that does have a target completion date', function() {
-      context('with an update from the previous month', function() {
-        beforeEach(() => {
-          Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('supplyChainSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('strategicActionSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('monthlyUpdateSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateContent).as('updateContent')
-          cy.wrap(todaySlug).as('todaySlug')
-        });
-        context('starting a new monthly update', function() {
-          it('successfully creates a new update and redirects to its Update Info page', function() {
-            cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/start/`)
-            cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/info/`)
-            cy.injectAxe()
-          })
-        })
-      })
-      context('without an update from the previous month', function() {
-        beforeEach(() => {
-          Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.supplyChainSlug).as('supplyChainSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.strategicActionSlug).as('strategicActionSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateSlug).as('monthlyUpdateSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.noUpdate.updateContent).as('updateContent')
-          cy.wrap(todaySlug).as('todaySlug')
-        });
-        context('starting a new monthly update', function() {
-          it('successfully creates a new update and redirects to its Update Info page', function() {
-            cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/start/`)
-            cy.url().should('eq', `http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/info/`)
-            cy.injectAxe()
-          })
-        })
-      })
-    })
   })
 })
 
 
+
+const expectedErrors = {
+  info: {
+    content: {
+      required: 'Enter details of the latest monthly update'
+    },
+  },
+  timing: {
+    required: 'Specify whether the date for intended completion is known',
+    Yes: {
+      required: 'Enter a date for intended completion',
+      invalid: 'Enter a date for intended completion in the correct format',
+    },
+    No: {
+      required: 'Select an approximate time for completion',
+      invalid_choice: 'Select an approximate time for completion',
+    },
+  },
+  status: {
+    required: 'Select an option for the current delivery status',
+    invalid_choice: 'Select a valid option for the current delivery status',
+    Red: {
+      will_completion_date_change: {
+        required: 'Specify whether the estimated completion date will change',
+        invalid_choice: 'Specify whether the estimated completion date will change',
+      },
+      reason_for_delays: {
+        required: "Enter an explanation of the issue",
+      }
+    },
+    Amber: {
+      reason_for_delays: {
+        required: "Enter an explanation of the potential risk",
+      }
+    },
+  },
+}
+
 describe('Testing validation errors in the monthly update forms', () => {
   context('for a strategic action', function() {
-      context('that has no target completion date', function() {
+    context('that has no target completion date', function() {
         beforeEach(() => {
           Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.supplyChainSlug).as('supplyChainSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.strategicActionSlug).as('strategicActionSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateSlug).as('monthlyUpdateSlug')
-          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateContent).as('updateContent')
-          cy.wrap(todaySlug).as('todaySlug')
+          cy.wrap(strategicActionsForTest.noCompletionDate.forErrors).as('strategicAction')
+          cy.wrap(urls.start(strategicActionsForTest.noCompletionDate.forErrors)).as('startURL')
+          cy.wrap(urls.info(strategicActionsForTest.noCompletionDate.forErrors)).as('infoURL')
+          cy.wrap(urls.timing(strategicActionsForTest.noCompletionDate.forErrors)).as('timingURL')
+          cy.wrap(urls.confirm(strategicActionsForTest.noCompletionDate.forErrors)).as('confirmURL')
         });
         it ('starts a new update', function() {
-          cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/start/`)
+          cy.visit(this.startURL)
         })
-        context('The Update Info form', () => {
-          beforeEach(() => {
-            cy.get('main form').as('theForm')
+        context('The Check Your Answers page', () => {
+          before(function() {
+            cy.visit(this.confirmURL)
           })
-          context('When submitted without entering any text in the content field', function() {
-            before(() => {
-              // ensure we start with a clean slate
-              cy.reload(true, {log: true})
-            })
-            context('should redisplay the page', () => {
-              it('with an error summary at the top', function() {
-                cy.url().then((url) => {
-                  /**
-                   * This can't happen 'within' the form
-                   * as once the submit button is clicked,
-                   * the page with the form is replaced
-                   * but that page has a new form instance as far as the DOM is concerned
-                   * so we need to be able to select the (new) form
-                   */
-                  cy.get('@theForm').get('button[type="submit"]').click()
-                  cy.url().should('eq', url)
-                  // cy.get('main').hasGDSErrorSummary().hasGDSErrorList()
-                  // cy.get('main').within(() => {
-                  //   cy.get('div.govuk-error-summary:first-of-type').should('exist').within(() => {
-                  //     cy.get('.govuk-error-summary__list li a').should('exist')
-                  //   })
-                  // })
-                })
-              })
-              it('with an error message on the field', function() {
-                cy.url().then((url) => {
-                  /**
-                   * This can't happen 'within' the form
-                   * as once the submit button is clicked,
-                   * the page with the form is replaced
-                   * but that page has a new form instance as far as the DOM is concerned
-                   * so we need to be able to select the (new) form
-                   */
-                  cy.get('@theForm').get('button[type="submit"]').click()
-                  cy.url().should('eq', url)
-                  cy.get('main form').within(() => {
-                    cy.get('.govuk-form-group--error').should('exist')
-                    cy.get('.govuk-error-message').should('exist')
-                  })
-                })
-              })
-            })
-          })
-        })
-        context('The Timing form', () => {
           beforeEach(() => {
             Cypress.Cookies.preserveOnce('csrftoken', 'sessionid')
-            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.supplyChainSlug).as('supplyChainSlug')
-            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.strategicActionSlug).as('strategicActionSlug')
-            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateSlug).as('monthlyUpdateSlug')
-            cy.wrap(strategicActionsForTest.noCompletionDate.forErrors.updateContent).as('updateContent')
-            cy.wrap(todaySlug).as('todaySlug')
+            cy.gdsErrorSummary().as('errors')
           })
-          context('when the expected completion date is known', function() {
-            before(() => {
-              // ensure we start with a clean slate
-              cy.reload(true, {log: true})
-              cy.get('@theForm')
-            })
-
+          it('shows an error for the Info page', () => {
+            cy.get('@errors').contains(expectedErrors.info.content.required).should('exist')
           })
-          context('When submitted without selecting "Yes" or "No"', function() {
-            before(function() {
-              // ensure we start with a clean slate
-              cy.visit(`http://localhost:8001/${this.supplyChainSlug}/strategic-actions/${this.strategicActionSlug}/update/${this.todaySlug}/timing/`)
-              cy.get('main form').as('theForm')
-            })
-            context('should redisplay the page', function() {
-              it('with an error summary at the top and an error message on the field', function() {
-                cy.url().then(function(url) {
-                  /**
-                   * This can't happen 'within' the form
-                   * as once the submit button is clicked,
-                   * the page with the form is replaced
-                   * but that page has a new form instance as far as the DOM is concerned
-                   * so we need to be able to select the (new) form
-                   */
-                  cy.get('main form').get('button[type="submit"]').click()
-                  cy.url().should('eq', url)
-                  cy.get('main').gdsErrorSummary().gdsErrorList()
-                  cy.get('main form').within(() => {
-                    cy.get('.govuk-error-message').should('exist')
-                  })
-                })
-              })
-            })
+          it('shows an error for the Timing page', () => {
+            cy.get('@errors').contains(expectedErrors.timing.required).should('exist')
+          })
+          it('shows an error for the Delivery Status page', () => {
+            cy.get('@errors').contains(expectedErrors.status.required).should('exist')
           })
         })
       })
-      context('that does have a target completion date', function() {})
   })
 })

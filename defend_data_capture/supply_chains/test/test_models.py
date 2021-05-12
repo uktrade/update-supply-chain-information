@@ -54,7 +54,17 @@ def test_archived_date_set_save_strategic_action():
     assert sa.archived_date == date.today()
 
 
-class TestSAUModel:
+class TestStrategicActionUpdate:
+    def setup_method(self):
+        supply_chain = SupplyChainFactory()
+        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
+        self.strategic_action_update: StrategicActionUpdate = (
+            StrategicActionUpdateFactory(
+                strategic_action=strategic_action,
+                supply_chain=strategic_action.supply_chain,
+            )
+        )
+
     def test_since_with_filter(self):
         # Arrange
         sc = SupplyChainFactory.create(name="Supply Chain 1")
@@ -82,16 +92,6 @@ class TestSAUModel:
         assert sau_prog[0] == sau
         assert sau_comp.count() == 0
 
-    def test_slug_init(self):
-        # Arrange
-        sau = StrategicActionUpdateFactory.create(
-            status=StrategicActionUpdate.Status.IN_PROGRESS,
-        )
-
-        # Act
-        # Assert
-        assert date.today().strftime("%m-%Y") == sau.slug
-
     def test_slug_init_without_factory(self):
         # Arrange
         strategic_action = StrategicActionFactory()
@@ -103,19 +103,6 @@ class TestSAUModel:
         )
         # Assert
         assert date.today().strftime("%m-%Y") == sau.slug
-
-
-@pytest.mark.django_db()
-class TestStrategicActionUpdate:
-    def setup_method(self):
-        supply_chain = SupplyChainFactory()
-        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
-        self.strategic_action_update: StrategicActionUpdate = (
-            StrategicActionUpdateFactory(
-                strategic_action=strategic_action,
-                supply_chain=strategic_action.supply_chain,
-            )
-        )
 
     def test_implementation_rag_rating_field_choices_are_green_amber_red(self):
         """

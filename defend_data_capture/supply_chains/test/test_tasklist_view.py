@@ -204,7 +204,7 @@ class TestTaskListView:
             iter(des_set)
         )
         assert route_set == {
-            f"/{slugify(tasklist_stub['sc_name'])}/strategic-actions/{slugify(tasklist_stub['sa_name'])}/update/start/"
+            f"/{slugify(tasklist_stub['sc_name'])}/{slugify(tasklist_stub['sa_name'])}/updates/start/"
         }
 
     @pytest.mark.parametrize(
