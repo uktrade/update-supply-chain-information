@@ -245,13 +245,6 @@ class StrategicActionUpdate(models.Model):
     def __str__(self):
         return f"SAU: {self.strategic_action.name}, {self.slug}, {self.get_status_display()}"
 
-    def some_completion_date(self):
-        if self.strategic_action.target_completion_date is not None:
-            return self.strategic_action.target_completion_date
-        if self.changed_target_completion_date is not None:
-            return self.changed_target_completion_date
-        return None
-
     @property
     def has_existing_target_completion_date(self):
         return self.strategic_action.target_completion_date is not None

@@ -128,46 +128,6 @@ class TestStrategicActionUpdate:
             == "RED"
         )
 
-    def test_some_completion_date_for_existing_date(self):
-        assert self.strategic_action_update.some_completion_date() is not None
-
-    def test_some_completion_date_for_new_date_is_new_date(self):
-        original_date = (
-            self.strategic_action_update.strategic_action.target_completion_date
-        )
-        changed_date = original_date + relativedelta(month=6)
-        self.strategic_action_update.strategic_action.target_completion_date = None
-        self.strategic_action_update.strategic_action.save()
-        self.strategic_action_update.changed_target_completion_date = changed_date
-        self.strategic_action_update.save()
-
-        expected_date = changed_date
-        actual_date = self.strategic_action_update.some_completion_date()
-        assert actual_date is not None
-        assert actual_date == expected_date
-
-    def test_some_completion_date_for_existing_and_new_date_is_existing_date(self):
-        original_date = (
-            self.strategic_action_update.strategic_action.target_completion_date
-        )
-        changed_date = original_date + relativedelta(month=6)
-        self.strategic_action_update.changed_target_completion_date = changed_date
-        self.strategic_action_update.save()
-
-        expected_date = original_date
-        actual_date = self.strategic_action_update.some_completion_date()
-        assert actual_date is not None
-        assert actual_date == expected_date
-
-    def test_some_completion_date_for_neither_date_is_none(self):
-        self.strategic_action_update.strategic_action.target_completion_date = None
-        self.strategic_action_update.strategic_action.save()
-        self.strategic_action_update.changed_target_completion_date = None
-        self.strategic_action_update.save()
-
-        actual_date = self.strategic_action_update.some_completion_date()
-        assert actual_date is None
-
     def test_has_existing_target_completion_date_true(self):
         assert self.strategic_action_update.has_existing_target_completion_date
 
