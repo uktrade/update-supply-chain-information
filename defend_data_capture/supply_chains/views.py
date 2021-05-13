@@ -254,14 +254,22 @@ class MonthlyUpdateMixin:
     slug_url_kwarg = "update_slug"
 
     def get_queryset(self):
+        supply_chain_slug = self.kwargs.get("supply_chain_slug")
         strategic_action_slug = self.kwargs.get("strategic_action_slug")
         return (
-            super().get_queryset().filter(strategic_action__slug=strategic_action_slug)
+            super()
+            .get_queryset()
+            .filter(
+                supply_chain__slug=supply_chain_slug,
+                strategic_action__slug=strategic_action_slug,
+            )
         )
 
-    def get_strategic_action(self, supply_chain_slug, strategic_action_slug):
-        return StrategicAction.objects.filter(supply_chain__slug=supply_chain_slug).get(
-            slug=strategic_action_slug
+    def get_strategic_action(self):
+        supply_chain_slug = self.kwargs.get("supply_chain_slug")
+        strategic_action_slug = self.kwargs.get("strategic_action_slug")
+        return StrategicAction.objects.get(
+            supply_chain__slug=supply_chain_slug, slug=strategic_action_slug
         )
 
     def get_success_url(self):
@@ -333,9 +341,7 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
 
     def get(self, request, *args, **kwargs):
         last_deadline = get_last_working_day_of_previous_month()
-        strategic_action: StrategicAction = self.get_strategic_action(
-            kwargs["supply_chain_slug"], kwargs["strategic_action_slug"]
-        )
+        strategic_action: StrategicAction = self.get_strategic_action()
         current_month_updates = strategic_action.monthly_updates.since(last_deadline)
         if current_month_updates.exists():
             current_month_update: StrategicActionUpdate = (
@@ -360,15 +366,11 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["strategic_action"] = self.get_strategic_action(
-            self.kwargs["supply_chain_slug"], self.kwargs["strategic_action_slug"]
-        )
+        context["strategic_action"] = self.get_strategic_action()
         return context
 
     def form_valid(self, form):
-        strategic_action = self.get_strategic_action(
-            self.kwargs["supply_chain_slug"], self.kwargs["strategic_action_slug"]
-        )
+        strategic_action = self.get_strategic_action()
         form.instance.strategic_action = strategic_action
         form.instance.supply_chain = strategic_action.supply_chain
         return super().form_valid(form)
