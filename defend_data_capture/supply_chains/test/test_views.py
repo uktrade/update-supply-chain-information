@@ -146,7 +146,6 @@ def test_strat_action_summary_page_pagination(logged_in_client, test_user):
     assert len(response.context["strategic_actions"]) == 4
 
 
-@pytest.mark.django_db()
 class TestMonthlyUpdateTimingPage:
     def test_posting_form_saves_changed_target_completion_date_to_strategic_action_update(
         self,
@@ -193,7 +192,6 @@ class TestMonthlyUpdateTimingPage:
             )
 
 
-@pytest.mark.django_db()
 class TestNoCompletionDateMonthlyUpdateNavigationLinks:
     def test_info_view_has_info_timing_status_summary_links(self):
         supply_chain = SupplyChainFactory()
@@ -308,7 +306,6 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
         assert "Summary" in navigation_links.keys()
 
 
-@pytest.mark.django_db()
 class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_info_view_has_info_status_summary_links_if_completion_date_unchanged(self):
         supply_chain = SupplyChainFactory()
