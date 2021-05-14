@@ -1,8 +1,7 @@
 import csv
 import json
-from typing import List
+from typing import List, Dict
 from datetime import date, datetime
-from pprint import pprint
 
 from django.core import management
 from django.core.management.commands import loaddata
@@ -27,12 +26,12 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument(
-            "--model",
-            help=f"model to which data is being ingested.{', '.join(ALL_MODELS)}",
+            "model",
+            help=f"model to which data is being ingested. Supported models {ALL_MODELS}",
         )
 
         parser.add_argument(
-            "--csvfile",
+            "csvfile",
             help="The file system path to the CSV file with the data to import",
         )
 
@@ -41,17 +40,22 @@ class Command(BaseCommand):
             reader = csv.DictReader(f)
             rows = list(reader)
 
-            print(f"Row[0]: {rows[0]}")
-
         return json.dumps(rows)
 
-    def _format_json_object(self, model: str, rows: object) -> object:
+    def _format_json_object(self, model: str, rows: object) -> List:
+        """Format ingest data as per Django expectation.
+
+        :param str model: specify the model to which data will be imported
+        :param object rows: json object with parsed data from CSV file
+
+        Refer https://docs.djangoproject.com/en/3.2/topics/serialization/#serialization-formats-json
+        for more info.
+        """
         formatted_obj = list()
 
         for row in rows:
             formatted_row = {}
             formatted_row["model"] = model
-            # print(f'Row: {row}')
             formatted_row["pk"] = row["id"]
             formatted_row["fields"] = {}
 
@@ -70,45 +74,52 @@ class Command(BaseCommand):
         else:
             return None
 
+    def _update_date_fields(self, row: Dict, *fields):
+        for f in fields:
+            row[f] = self._reformat_date(row[f])
+
     def _format_per_model(self, rows: List) -> List:
 
         for row in rows:
-            # TODO: Refactor code to minimise comparisons
             if row["model"] == MODEL_SUPPLY_CHAIN:
-                row["fields"]["archived_date"] = self._reformat_date(
-                    row["fields"]["archived_date"]
-                )
-                row["fields"]["last_submission_date"] = self._reformat_date(
-                    row["fields"]["last_submission_date"]
+                self._update_date_fields(
+                    row["fields"], "archived_date", "last_submission_date"
                 )
 
             elif row["model"] == MODEL_STRAT_ACTION:
-                row["fields"]["start_date"] = self._reformat_date(
-                    row["fields"]["start_date"]
-                )
-                row["fields"]["target_completion_date"] = self._reformat_date(
-                    row["fields"]["target_completion_date"]
-                )
-                row["fields"]["archived_date"] = self._reformat_date(
-                    row["fields"]["archived_date"]
+                self._update_date_fields(
+                    row["fields"],
+                    "start_date",
+                    "target_completion_date",
+                    "archived_date",
                 )
 
                 row["fields"].pop("str( not required in database)", None)
 
             elif row["model"] == MODEL_STRAT_ACTION_UPDATE:
-                row["fields"]["submission_date"] = self._reformat_date(
-                    row["fields"]["submission_date"]
+                self._update_date_fields(
+                    row["fields"], "submission_date", "date_created"
                 )
-                row["fields"]["date_created"] = self._reformat_date(
-                    row["fields"]["date_created"]
+
+                # TODO: Check with DE
+                row["fields"]["date_created"] = row["fields"]["date_created"] or str(
+                    date.today()
                 )
+
+                row["fields"]["user"] = row["fields"]["user"] or None
+                row["fields"].pop("actual supply chain name (not in database)", None)
 
             elif row["model"] == MODEL_GOV_DEPT:
                 row["fields"]["email_domains"] = [row["fields"]["email_domains"]]
 
         return rows
 
-    def handle(self, *args, **options):
+    def handle(self, **options):
+        if options["model"] not in ALL_MODELS:
+            raise CommandError(
+                f"Unknown model {options['model']}. \n\nRefer help for supported values"
+            )
+
         obj = json.loads(self._get_json_object(options["csvfile"]))
         json_obj = self._format_json_object(options["model"], obj)
 
@@ -116,7 +127,8 @@ class Command(BaseCommand):
             json.dump(json_obj, fp)
             fp.seek(0)
             management.call_command(loaddata.Command(), fp.name, format="json")
-
-        self.stdout.write(
-            self.style.SUCCESS(f"Successfully ingested data into {options['model']}")
-        )
+            self.stdout.write(
+                self.style.SUCCESS(
+                    f"Successfully ingested data into {options['model']}"
+                )
+            )
