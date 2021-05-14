@@ -583,7 +583,7 @@ describe('Testing monthly update forms', () => {
                 cy.get('@theBreadcrumbItems').eq(1).contains('2. Action status').should('exist')
               })
               it('the "Revised Timing" link', () => {
-                cy.get('@theBreadcrumbItems').eq(2).contains('3. Revised Timing').should('not.exist')
+                cy.get('@theBreadcrumbItems').eq(2).contains('3. Revised timing').should('exist')
               })
               it('the "Confirm" link', () => {
                 cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm').should('exist')
