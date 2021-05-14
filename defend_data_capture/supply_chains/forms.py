@@ -18,22 +18,26 @@ from .models import StrategicActionUpdate, RAGRatingHints, StrategicAction, RAGR
 class MakeFieldsRequiredMixin:
     field_to_make_required = None
 
-    def make_field_required(self):
-        if self.field_to_make_required is not None:
-            if isinstance(self.field_to_make_required, str):
-                fields = [self.field_to_make_required]
+    def make_field_required(self, fields_to_make_required=None):
+        if fields_to_make_required is None:
+            fields_to_make_required = self.field_to_make_required
+        if fields_to_make_required is not None:
+            if isinstance(fields_to_make_required, str):
+                fields = [fields_to_make_required]
             else:
-                fields = self.field_to_make_required
+                fields = fields_to_make_required
             for field_name in fields:
                 if field_name in self.fields:
                     self.fields[field_name].required = True
 
-    def make_field_not_required(self):
-        if self.field_to_make_required is not None:
-            if isinstance(self.field_to_make_required, str):
-                fields = [self.field_to_make_required]
+    def make_field_not_required(self, fields_to_make_required=None):
+        if fields_to_make_required is None:
+            fields_to_make_required = self.field_to_make_required
+        if fields_to_make_required is not None:
+            if isinstance(fields_to_make_required, str):
+                fields = [fields_to_make_required]
             else:
-                fields = self.field_to_make_required
+                fields = fields_to_make_required
             for field_name in fields:
                 if field_name in self.fields:
                     self.fields[field_name].required = False
