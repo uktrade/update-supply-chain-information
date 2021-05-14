@@ -188,12 +188,10 @@ describe('Testing monthly update forms', () => {
           it('successfully creates a new update and redirects to its Update Info page', function() {
             cy.visit(this.startURL)
             cy.url().should('eq', this.infoURL)
-            cy.injectAxe()
           })
         })
-        context(`The Update Info page`, function() {
+        context('The Update Info page', function() {
           it('is there', function() {
-            cy.visit(this.infoURL)
             cy.visit(this.infoURL)
             cy.injectAxe()
           })
@@ -215,16 +213,21 @@ describe('Testing monthly update forms', () => {
                 cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
               })
               it('the "Update information" link', () => {
-                cy.get('@theBreadcrumbItems').eq(0).contains('1. Update information')
+                cy.get('@theBreadcrumbItems').eq(0).contains('1. Update information').should('exist')
               })
               it('the "Timing" link', () => {
-                cy.get('@theBreadcrumbItems').eq(1).contains('2. Timing')
+                cy.get('@theBreadcrumbItems').eq(1).contains('2. Timing').should('exist')
               })
               it('the "Action status" link', () => {
-                cy.get('@theBreadcrumbItems').eq(2).contains('3. Action status')
+                cy.get('@theBreadcrumbItems').eq(2).contains('3. Action status').should('exist')
               })
               it('the "Confirm" link', () => {
-                cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm')
+                cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm').should('exist')
+              })
+              context('but should not include', () => {
+                it('the "Revised Timing" link', () => {
+                  cy.get('@theBreadcrumbItems').contains('Revised Timing').should('not.exist')
+                })
               })
             })
             context('The link marked as the current page should be', () => {
@@ -244,13 +247,12 @@ describe('Testing monthly update forms', () => {
             })
             it('shows the previous update', function() {
               cy.get('.app-dit-panel h2:first').contains('Last update')
-              cy.get('.app-dit-panel h2:first + p').contains(this.strategicAction.updateContent)
+              cy.get('.app-dit-panel h2:first + p').contains(this.strategicAction.updateContent).should('exist')
             })
           })
           context('The Update Info form', () => {
             beforeEach(() => {
               cy.get('main form').as('theForm')
-              cy.wrap(valuesToEnter.info).as('valuesToEnter')
             })
             it('is there', () => {
               cy.get("@theForm").should('exist')
@@ -274,12 +276,9 @@ describe('Testing monthly update forms', () => {
                 // ensure we start with a clean slate
                 cy.reload(true, {log: true})
               })
-              beforeEach(() => {
-                cy.get('@valuesToEnter').as('valuesToEnter')
-              })
               it('should go to the "Timing" page when saved', function() {
                 cy.get('@theForm').within(function(theForm) {
-                  cy.get('textarea[name="content"]').type(`${this.valuesToEnter.content}`)
+                  cy.get('textarea[name="content"]').type(valuesToEnter.info.content)
                   cy.location('pathname').invoke('split', '/').its(5).as('strategicActionUpdateID')
                   cy.get('@strategicActionUpdateID').then(function(strategicActionUpdateID) {
                     cy.get('button[type="submit"]').click()
@@ -319,16 +318,21 @@ describe('Testing monthly update forms', () => {
                 cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
               })
               it('the "Update information" link', () => {
-                cy.get('@theBreadcrumbItems').eq(0).contains('1. Update information')
+                cy.get('@theBreadcrumbItems').eq(0).contains('1. Update information').should('exist')
               })
               it('the "Timing" link', () => {
-                cy.get('@theBreadcrumbItems').eq(1).contains('2. Timing')
+                cy.get('@theBreadcrumbItems').eq(1).contains('2. Timing').should('exist')
               })
               it('the "Action status" link', () => {
-                cy.get('@theBreadcrumbItems').eq(2).contains('3. Action status')
+                cy.get('@theBreadcrumbItems').eq(2).contains('3. Action status').should('exist')
               })
               it('the "Confirm" link', () => {
-                cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm')
+                cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm').should('exist')
+              })
+              context('but should not include', () => {
+                it('the "Revised Timing" link', () => {
+                  cy.get('@theBreadcrumbItems').contains('Revised Timing').should('not.exist')
+                })
               })
             })
             context('The link marked as the current page should be', () => {
@@ -347,7 +351,7 @@ describe('Testing monthly update forms', () => {
               cy.monthlyUpdatePageHeader().should('exist')
             })
             it ('warns that there is no expected completion date', () => {
-              cy.get('h1 ~ .govuk-warning-text').should('exist').contains("There's no expected completion date for this action.")
+              cy.get('h1 ~ .govuk-warning-text').contains("There's no expected completion date for this action.").should('exist')
             })
           })
           context('The Timing form', () => {
@@ -364,7 +368,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
             })
             it ('should have a fieldset with legend asking if there is a completion date', () => {
-              cy.get('@theForm').get('fieldset legend h2').contains('Is there an expected completion date?')
+              cy.get('@theForm').get('fieldset legend h2').contains('Is there an expected completion date?').should('exist')
             })
             context('The radio buttons asking if there is an expected completion date', function() {
               beforeEach(() => {
@@ -377,10 +381,10 @@ describe('Testing monthly update forms', () => {
                 cy.get('@theRadioButtons').should('have.length', 2)
               })
               it('the first should have the label "Yes"', () => {
-                cy.get('@theRadioButtons').eq(0).siblings('label').eq(0).contains('Yes')
+                cy.get('@theRadioButtons').eq(0).siblings('label').eq(0).contains('Yes').should('exist')
               })
               it('the second should have the label "No"', () => {
-                cy.get('@theRadioButtons').eq(1).siblings('label').eq(0).contains('No')
+                cy.get('@theRadioButtons').eq(1).siblings('label').eq(0).contains('No').should('exist')
               })
               context('The "Yes" option', function() {
                 before(() => {
@@ -422,15 +426,15 @@ describe('Testing monthly update forms', () => {
                       cy.get('@theDateSection').within(() => {
                         cy.get('input').eq(0).should('have.attr', 'name', 'True-changed_target_completion_date_day')
                         cy.get('input').eq(0).invoke('attr', 'id').then((fieldID) => {
-                          cy.get(`label[for="${fieldID}"]`).should('exist').contains('Day')
+                          cy.get(`label[for="${fieldID}"]`).should('exist').contains('Day').should('exist')
                         })
                         cy.get('input').eq(1).should('have.attr', 'name', 'True-changed_target_completion_date_month')
                         cy.get('input').eq(1).invoke('attr', 'id').then((fieldID) => {
-                          cy.get(`label[for="${fieldID}"]`).should('exist').contains('Month')
+                          cy.get(`label[for="${fieldID}"]`).should('exist').contains('Month').should('exist')
                         })
                         cy.get('input').eq(2).should('have.attr', 'name', 'True-changed_target_completion_date_year')
                         cy.get('input').eq(2).invoke('attr', 'id').then((fieldID) => {
-                          cy.get(`label[for="${fieldID}"]`).should('exist').contains('Year')
+                          cy.get(`label[for="${fieldID}"]`).should('exist').contains('Year').should('exist')
                         })
                       })
                     })
@@ -481,7 +485,7 @@ describe('Testing monthly update forms', () => {
                           approximateTimings.forEach((approximateTiming, index) => {
                             cy.get('input').eq(index).should('have.attr', 'name', 'False-surrogate_is_ongoing')
                             cy.get('input').eq(index).should('have.attr', 'value', approximateTiming[0]).invoke('attr', 'id').then((fieldID) => {
-                              cy.get(`label[for="${fieldID}"]`).should('exist').contains(approximateTiming[1])
+                              cy.get(`label[for="${fieldID}"]`).contains(approximateTiming[1]).should('exist')
                             })
                           })
                         })
@@ -526,21 +530,29 @@ describe('Testing monthly update forms', () => {
             beforeEach(() => {
               cy.get('nav.moj-sub-navigation').as('theBreadcrumbs')
             })
+            it ('should contain an ordered list', () => {
+              cy.get('@theBreadcrumbs').get('ol.moj-sub-navigation__list').should('exist')
+            })
             context('The individual breadcrumbs in the ordered list should be', function() {
               beforeEach(() => {
                 cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
               })
               it('the "Update information" link', () => {
-                cy.get('@theBreadcrumbItems').eq(0).contains('1. Update information')
+                cy.get('@theBreadcrumbItems').eq(0).contains('1. Update information').should('exist')
               })
               it('the "Timing" link', () => {
-                cy.get('@theBreadcrumbItems').eq(1).contains('2. Timing')
+                cy.get('@theBreadcrumbItems').eq(1).contains('2. Timing').should('exist')
               })
               it('the "Action status" link', () => {
-                cy.get('@theBreadcrumbItems').eq(2).contains('3. Action status')
+                cy.get('@theBreadcrumbItems').eq(2).contains('3. Action status').should('exist')
               })
               it('the "Confirm" link', () => {
-                cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm')
+                cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm').should('exist')
+              })
+              context('but should not include', () => {
+                it('the "Revised Timing" link', () => {
+                  cy.get('@theBreadcrumbItems').contains('Revised Timing').should('not.exist')
+                })
               })
             })
             context('The link marked as the current page should be', () => {
@@ -559,16 +571,16 @@ describe('Testing monthly update forms', () => {
               cy.monthlyUpdatePageHeader().should('exist')
             })
             it ('warns that there is no expected completion date', () => {
-              cy.get('body').debug().get('h1 ~ .govuk-warning-text').should('exist').contains("There's no expected completion date for this action.")
+              cy.get('body').get('h1 ~ .govuk-warning-text').contains("There's no expected completion date for this action.").should('exist')
             })
             it ('shows instructions', () => {
               cy.mainForm().find('legend + .govuk-body > p:first-of-type').contains('When considering if delivery of the strategic action is on track, consider:');
               ['costs', 'timings', 'quality'].forEach((itemText, i) => {
-                cy.mainForm().find('legend + .govuk-body > ul > li').eq(i).contains(itemText)
+                cy.mainForm().find('legend + .govuk-body > ul > li').eq(i).contains(itemText).should('exist')
               })
             })
             it('shows the delivery status for the previous month', function() {
-              cy.mainForm().find('legend + .govuk-body > p:last-of-type').contains(`Your last status update was ${valuesToEnter.status.options.Green.lastUpdateValue}`)
+              cy.mainForm().find('legend + .govuk-body > p:last-of-type').contains(`Your last status update was ${valuesToEnter.status.options.Green.lastUpdateValue}`).should('exist')
             })
           })
           context('The Delivery Status form', () => {
@@ -599,16 +611,16 @@ describe('Testing monthly update forms', () => {
                 cy.get('@theRadioHints').should('have.length', 3)
               })
               it('the first should have the label "Green" and the correct hint text', () => {
-                cy.get('@theRadioButtons').eq(0).siblings('label').eq(0).contains('Green')
-                cy.get('@theRadioHints').eq(0).contains('Delivery is on track with no issues')
+                cy.get('@theRadioButtons').eq(0).siblings('label').eq(0).contains('Green').should('exist')
+                cy.get('@theRadioHints').eq(0).contains('Delivery is on track with no issues').should('exist')
               })
               it('the second should have the label "Amber" and the correct hint text', () => {
-                cy.get('@theRadioButtons').eq(1).siblings('label').eq(0).contains('Amber')
-                cy.get('@theRadioHints').eq(1).contains("There's a potential risk to delivery that needs monitoring.")
+                cy.get('@theRadioButtons').eq(1).siblings('label').eq(0).contains('Amber').should('exist')
+                cy.get('@theRadioHints').eq(1).contains("There's a potential risk to delivery that needs monitoring.").should('exist')
               })
               it('the third should have the label "Red" and the correct hint text', () => {
-                cy.get('@theRadioButtons').eq(2).siblings('label').eq(0).contains('Red')
-                cy.get('@theRadioHints').eq(2).contains("There is an issue with delivery of an action. This will require escalation and further support. There is a potential risk to the expected completion date.")
+                cy.get('@theRadioButtons').eq(2).siblings('label').eq(0).contains('Red').should('exist')
+                cy.get('@theRadioHints').eq(2).contains("There is an issue with delivery of an action. This will require escalation and further support. There is a potential risk to the expected completion date.").should('exist')
               })
               context('The "Amber" option', function() {
                 beforeEach(() => {
@@ -639,8 +651,8 @@ describe('Testing monthly update forms', () => {
                       cy.visit(this.confirmURL)
                     })
                     it('shows the saved values', function() {
-                      cy.govukMain().summaryLists().summaryListValue().contains('Amber')
-                      cy.govukMain().summaryLists().summaryListValue().contains(valuesToEnter.status.options.Amber.reason)
+                      cy.govukMain().summaryLists().summaryListValue().contains('Amber').should('exist')
+                      cy.govukMain().summaryLists().summaryListValue().contains(valuesToEnter.status.options.Amber.reason).should('exist')
                     })
                   })
                 })
@@ -674,8 +686,8 @@ describe('Testing monthly update forms', () => {
                       cy.visit(this.confirmURL)
                     })
                     it('shows the saved values', function() {
-                      cy.govukMain().summaryLists().summaryListValue().contains('Red')
-                      cy.govukMain().summaryLists().summaryListValue().contains(valuesToEnter.status.options.Red.reason)
+                      cy.govukMain().summaryLists().summaryListValue().contains('Red').should('exist')
+                      cy.govukMain().summaryLists().summaryListValue().contains(valuesToEnter.status.options.Red.reason).should('exist')
                     })
                   })
                 })
@@ -714,21 +726,29 @@ describe('Testing monthly update forms', () => {
             beforeEach(() => {
               cy.get('nav.moj-sub-navigation').as('theBreadcrumbs')
             })
+            it ('should contain an ordered list', () => {
+              cy.get('@theBreadcrumbs').get('ol.moj-sub-navigation__list').should('exist')
+            })
             context('The individual breadcrumbs in the ordered list should be', function() {
               beforeEach(() => {
                 cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
               })
               it('the "Update information" link', () => {
-                cy.get('@theBreadcrumbItems').eq(0).contains('1. Update information')
+                cy.get('@theBreadcrumbItems').eq(0).contains('1. Update information').should('exist')
               })
               it('the "Timing" link', () => {
-                cy.get('@theBreadcrumbItems').eq(1).contains('2. Timing')
+                cy.get('@theBreadcrumbItems').eq(1).contains('2. Timing').should('exist')
               })
               it('the "Action status" link', () => {
-                cy.get('@theBreadcrumbItems').eq(2).contains('3. Action status')
+                cy.get('@theBreadcrumbItems').eq(2).contains('3. Action status').should('exist')
               })
               it('the "Confirm" link', () => {
-                cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm')
+                cy.get('@theBreadcrumbItems').eq(3).contains('4. Confirm').should('exist')
+              })
+              context('but should not include', () => {
+                it('the "Revised Timing" link', () => {
+                  cy.get('@theBreadcrumbItems').contains('Revised Timing').should('not.exist')
+                })
               })
             })
             context('The link marked as the current page should be', () => {
@@ -747,10 +767,10 @@ describe('Testing monthly update forms', () => {
               cy.monthlyUpdatePageHeader()
             })
             it('a medium-sized heading saying "Check your answers', () => {
-              cy.govukMain().get('h2').should('have.class', 'govuk-heading-m').contains('Check your answers')
+              cy.govukMain().get('h2').should('have.class', 'govuk-heading-m').contains('Check your answers').should('exist')
             })
             it('a prompt to check the information', () => {
-              cy.govukMain().get('h2 + p.govuk-body').contains("Check all the information you've provided is correct before submitting the form.")
+              cy.govukMain().get('h2 + p.govuk-body').contains("Check all the information you've provided is correct before submitting the form.").should('exist')
             })
             it('shouldn\'t have an error summary', function() {
               cy.noGdsErrorSummary()
@@ -764,17 +784,17 @@ describe('Testing monthly update forms', () => {
                   cy.govukMain().summaryLists().eq(0).as('summary')
                 })
                 it('labelled "Latest monthly update"', () => {
-                  cy.get('@summary').summaryListKey().contains('Latest monthly update')
+                  cy.get('@summary').summaryListKey().contains('Latest monthly update').should('exist')
                 })
                 it('with the value entered on the "Info" page', () => {
-                  cy.get('@summary').summaryListValue().contains(valuesToEnter.info.content)
+                  cy.get('@summary').summaryListValue().contains(valuesToEnter.info.content).should('exist')
                 })
                 context('and an actions column including', () => {
                   beforeEach(() => {
                     cy.get('@summary').summaryListActions().as('actions')
                   })
                   it('a "Change" link to the "Info" page', () => {
-                    cy.get('@actions').summaryListChangeLink(this.infoURL)
+                    cy.get('@actions').summaryListChangeLink(this.infoURL).should('exist')
                   })
                   it('with accessible text reading "Change latest monthly update"', () => {
                     cy.get('@actions').govukLink().withFullText('Change latest monthly update')
@@ -786,17 +806,17 @@ describe('Testing monthly update forms', () => {
                   cy.govukMain().summaryLists().eq(1).as('summary')
                 })
                 it('labelled "Estimated date of completion"', () => {
-                  cy.get('@summary').summaryListKey().contains('Estimated date of completion')
+                  cy.get('@summary').summaryListKey().contains('Estimated date of completion').should('exist')
                 })
                 it('with the value entered on the "Timing" page', () => {
-                  cy.get('@summary').summaryListValue().contains(targetCompletionDateRepresentation)
+                  cy.get('@summary').summaryListValue().contains(targetCompletionDateRepresentation).should('exist')
                 })
                 context('and an actions column including', () => {
                   beforeEach(() => {
                     cy.get('@summary').summaryListActions().as('actions')
                   })
                   it('a "Change" link to the "Timing" page', () => {
-                    cy.get('@actions').summaryListChangeLink(this.timingURL)
+                    cy.get('@actions').summaryListChangeLink(this.timingURL).should('exist')
                   })
                   it('with accessible text reading "Change estimated date of completion"', () => {
                     cy.get('@actions').govukLink().withFullText('Change estimated date of completion')
@@ -808,7 +828,7 @@ describe('Testing monthly update forms', () => {
                   cy.govukMain().summaryLists().eq(2).as('summary')
                 })
                 it('labelled "Current delivery status"', () => {
-                  cy.get('@summary').summaryListKey().contains('Current delivery status')
+                  cy.get('@summary').summaryListKey().contains('Current delivery status').should('exist')
                 })
                 it('with the value entered on the "Delivery Status" page', () => {
                   // cy.get('@summary').summaryListValue().contains(valuesToEnter.info.content)
@@ -818,7 +838,7 @@ describe('Testing monthly update forms', () => {
                     cy.get('@summary').summaryListActions().as('actions')
                   })
                   it('a "Change" link to the "Info" page', () => {
-                    cy.get('@actions').summaryListChangeLink(this.statusURL)
+                    cy.get('@actions').summaryListChangeLink(this.statusURL).should('exist')
                   })
                   it('with accessible text reading "Change current delivery status"', () => {
                     cy.get('@actions').govukLink().withFullText('Change current delivery status')
@@ -865,7 +885,7 @@ describe('Testing monthly update forms', () => {
               cy.govukMain().summaryLists().eq(1).as('timingRow')
             })
             it('should show that the "Timing" section value is now "Ongoing"', () => {
-              cy.get('@timingRow').summaryListValue().contains("Ongoing")
+              cy.get('@timingRow').summaryListValue().contains("Ongoing").should('exist')
             })
           })
         })
