@@ -229,9 +229,6 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
                 return YesNoChoices.YES
         return super().get_initial_for_field(field, field_name)
 
-    def is_valid(self):
-        return super().is_valid()
-
     class Meta(AmberReasonForDelayForm.Meta):
         labels = {"reason_for_delays": "Explain issue"}
 
