@@ -328,6 +328,7 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
                     # clear the values from the instance
                     instance.reason_for_completion_date_change = ""
                     instance.changed_target_completion_date = None
+                    instance.changed_is_ongoing = False
         return super().save(commit)
 
     class Meta:
@@ -547,9 +548,14 @@ class MonthlyUpdateSubmissionForm:
         strategic_action: StrategicAction = strategic_action_update.strategic_action
         self.forms = {}
         self.form_classes = (MonthlyUpdateInfoForm,)
-        # if we have form data, we need to decide what forms to use based on that
+        # if we have form data, we need to decide what forms/fields to use based on that
+        use_will_completion_date_change = False
         if form_data is not None:
-            # data will override the decisions we just made…
+            if (
+                "implementation_rag_rating" in form_data.keys()
+                and form_data["implementation_rag_rating"] == RAGRating.RED
+            ):
+                use_will_completion_date_change = True
             additional_form_classes = ()
             if (
                 f"{YesNoChoices.YES}-changed_target_completion_date_year"
@@ -563,13 +569,37 @@ class MonthlyUpdateSubmissionForm:
                         MonthlyUpdateStatusForm,
                         MonthlyUpdateModifiedTimingForm,
                     )
+                    if use_will_completion_date_change:
+                        if (
+                            f"{RAGRating.RED}-will_completion_date_change"
+                            not in form_data.keys()
+                        ):
+                            form_data[
+                                f"{RAGRating.RED}-will_completion_date_change"
+                            ] = YesNoChoices.YES
                 else:
                     additional_form_classes += (
                         MonthlyUpdateTimingForm,
                         MonthlyUpdateStatusForm,
                     )
+                    if use_will_completion_date_change:
+                        if (
+                            f"{RAGRating.RED}-will_completion_date_change"
+                            not in form_data.keys()
+                        ):
+                            form_data[
+                                f"{RAGRating.RED}-will_completion_date_change"
+                            ] = YesNoChoices.NO
             else:
                 additional_form_classes += (MonthlyUpdateStatusForm,)
+                if use_will_completion_date_change:
+                    if (
+                        f"{RAGRating.RED}-will_completion_date_change"
+                        not in form_data.keys()
+                    ):
+                        form_data[
+                            f"{RAGRating.RED}-will_completion_date_change"
+                        ] = YesNoChoices.NO
         else:
             # no form data, we decide what forms to use based on the actual model
             additional_form_classes = ()
