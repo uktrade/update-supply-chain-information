@@ -2,6 +2,8 @@ import supplyChains from '../fixtures/supplyChains.json'
 import strategicActions from '../fixtures/strategicActions.json'
 import strategicActionUpdates from '../fixtures/strategicActionUpdates.json'
 
+const baseUrl = Cypress.config('baseUrl')
+
 const updatesByStrategicActionPK = strategicActionUpdates.reduce((accumulator, update) => {
   accumulator[update.fields.strategic_action] = update;
   return accumulator;
@@ -83,10 +85,15 @@ const todaySlug = `${todayMonth}-${todayYear}`
 
 const targetCompletionDate = new Date();
 targetCompletionDate.setFullYear(today.getFullYear() + 1);
-const targetCompletionDay = targetCompletionDate.toLocaleString('en-GB', {day: 'numeric'});
-const targetCompletionMonth = targetCompletionDate.toLocaleString('en-GB', {month: 'long'});
-const targetCompletionYear = targetCompletionDate.toLocaleString('en-GB', {year: 'numeric'});
-const targetCompletionDateRepresentation = `${targetCompletionDay} ${targetCompletionMonth} ${targetCompletionYear}`
+
+function targetCompletionDateAsString(isoTargetCompletionDate) {
+  const targetCompletionDate = new Date(isoTargetCompletionDate);
+  const targetCompletionDay = targetCompletionDate.toLocaleString('en-GB', {day: 'numeric'});
+  const targetCompletionMonth = targetCompletionDate.toLocaleString('en-GB', {month: 'long'});
+  const targetCompletionYear = targetCompletionDate.toLocaleString('en-GB', {year: 'numeric'});
+  return `${targetCompletionDay} ${targetCompletionMonth} ${targetCompletionYear}`;
+}
+const targetCompletionDateRepresentation = targetCompletionDateAsString(targetCompletionDate);
 
 const valuesToEnter = {
   info: {
@@ -152,22 +159,22 @@ const valuesToEnter = {
 
 const urls = {
   'start': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/start/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/start/`
   },
   'info': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/info/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/info/`
   },
   'timing': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/timing/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/timing/`
   },
   'status': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/delivery-status/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/delivery-status/`
   },
   'revisedtiming': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/revised-timing/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/revised-timing/`
   },
   'confirm': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/confirm/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/confirm/`
   },
 }
 
@@ -407,20 +414,14 @@ describe('Testing monthly update forms', () => {
                 context('When it is selected, it', function() {
                   it('should make the date entry fields visible', () => {
                     cy.get('@theYesOption').click()
-                    cy.get('@theYesOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                      cy.get(`#${subjectID}`).should('be.visible')
-                    })
+                    cy.get('@theYesOption').revealedElement().should('be.visible')
                   })
                   it('the approximate timing or ongoing fields should remain hidden', () => {
-                    cy.get('@theNoOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                      cy.get(`#${subjectID}`).should('be.hidden')
-                    })
+                    cy.get('@theNoOption').revealedElement().should('be.hidden')
                   })
                   context('The revealed date entry fields', function() {
                     beforeEach(() => {
-                      cy.get('@theYesOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                        cy.get(`#${subjectID}`).as('theDateSection')
-                      })
+                      cy.get('@theYesOption').revealedElement().as('theDateSection')
                     })
                     it ('should have all its date fields and labels for day, month, and year', () => {
                       cy.get('@theDateSection').within(() => {
@@ -447,36 +448,32 @@ describe('Testing monthly update forms', () => {
                   cy.reload(true, {log: true})
                 })
                 beforeEach(() => {
-                  cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-radios__item > input[type="radio"]').as('theRadioButtons')
-                  cy.get('@theRadioButtons').eq(0).as('theYesOption')
-                  cy.get('@theRadioButtons').eq(1).as('theNoOption')
+                  // cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-radios__item > input[type="radio"]').as('theRadioButtons')
+                  // cy.get('@theRadioButtons').eq(0).as('theYesOption')
+                  // cy.get('@theRadioButtons').eq(1).as('theNoOption')
+                  cy.mainForm().fieldLabelled('Yes').as('theYesOption')
+                  cy.mainForm().fieldLabelled('No').as('theNoOption')
                 })
                 it('should initially be unchecked', () => {
                   cy.get('@theNoOption').should('not.be.checked')
                 })
                 it('its subject should initially be hidden', () => {
-                  cy.get('@theNoOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                    cy.get(`#${subjectID}`).should('exist')
-                    cy.get(`#${subjectID}`).should('be.hidden')
+                  cy.get('@theNoOption').revealedElement().within((subjectID) => {
+                    cy.root().should('exist')
+                    cy.root().should('be.hidden')
                   })
                 })
                 context('When it is selected, it', function() {
                   it('should make the approximate timing or ongoing fields visible', () => {
                     cy.get('@theNoOption').click()
-                    cy.get('@theNoOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                      cy.get(`#${subjectID}`).should('be.visible')
-                    })
+                    cy.get('@theNoOption').revealedElement().should('be.visible')
                   })
                   it('the date entry fields should remain hidden', () => {
-                    cy.get('@theYesOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                      cy.get(`#${subjectID}`).should('be.hidden')
-                    })
+                    cy.get('@theYesOption').revealedElement().should('be.hidden')
                   })
                   context('The revealed approximate timing or ongoing fields', function() {
                     beforeEach(() => {
-                      cy.get('@theNoOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                        cy.get(`#${subjectID}`).as('theApproximateTimingSection')
-                      })
+                      cy.get('@theNoOption').revealedElement().as('theApproximateTimingSection')
                       cy.wrap(valuesToEnter.timing.No.options.durations).as('approximateTimings')
                     })
                     it('should have radio buttons and labels for 3 months to 2 years or Ongoing', () => {
@@ -628,19 +625,17 @@ describe('Testing monthly update forms', () => {
                 })
                 it('displays the potential risks textbox when selected', function() {
                   cy.get('@amberOption').click()
-                  cy.get('@amberOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                    cy.get(`#${subjectID}`).should('be.visible')
-                    cy.get(`#${subjectID}`).children(0).children('label').should('contain', 'Explain potential risk')
-                    cy.get(`#${subjectID}`).children(0).children('textarea').should('be.visible')
+                  cy.get('@amberOption').revealedElement().within((revealedElement) => {
+                    cy.root().should('be.visible')
+                    cy.root().children(0).children('label').should('contain', 'Explain potential risk')
+                    cy.root().children(0).children('textarea').should('be.visible')
                   })
                 })
                 context('and when completed', () => {
                   beforeEach(() => {
                     cy.get('@theRadioButtons').eq(1).as('amberOption')
                     cy.get('@amberOption').click()
-                    cy.get('@amberOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                      cy.get(`#${subjectID}`).children(0).children('textarea').type(valuesToEnter.status.options.Amber.reason)
-                    })
+                    cy.get('@amberOption').revealedElement().children(0).children('textarea').type(valuesToEnter.status.options.Amber.reason)
                   })
                   it('saves the Amber value and potential risks content when submitted', function() {
                     cy.mainForm().submitButton().click()
@@ -663,19 +658,17 @@ describe('Testing monthly update forms', () => {
                 })
                 it('displays the Explain issue label and textbox when selected', function() {
                   cy.get('@redOption').click()
-                  cy.get('@redOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                      cy.get(`#${subjectID}`).should('be.visible')
-                      cy.get(`#${subjectID}`).children(0).children('label').should('contain', 'Explain issue')
-                      cy.get(`#${subjectID}`).children(0).children('textarea').should('be.visible')
+                  cy.get('@redOption').revealedElement().within((revealedElement) => {
+                      cy.root().should('be.visible')
+                      cy.root().children(0).children('label').should('contain', 'Explain issue')
+                      cy.root().children(0).children('textarea').should('be.visible')
                     })
                 })
                 context('and when completed', () => {
                   beforeEach(() => {
                     cy.get('@theRadioButtons').eq(2).as('redOption')
                     cy.get('@redOption').click()
-                    cy.get('@redOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                      cy.get(`#${subjectID}`).children(0).children('textarea').type(valuesToEnter.status.options.Red.reason)
-                    })
+                    cy.get('@redOption').revealedElement().children(0).children('textarea').type(valuesToEnter.status.options.Red.reason)
                   })
                   it('saves the Red value and potential risks content when submitted', function() {
                     cy.mainForm().submitButton().click()
@@ -690,17 +683,6 @@ describe('Testing monthly update forms', () => {
                       cy.govukMain().summaryLists().summaryListValue().contains(valuesToEnter.status.options.Red.reason).should('exist')
                     })
                   })
-                })
-                it.skip('displays the date change label and radios', function() {
-                  cy.get('@redOption').click()
-                  cy.get('@redOption').invoke('attr', 'aria-controls').then((subjectID) => {
-                      cy.get(`#${subjectID} > .govuk-form-group > fieldset > .govuk-radios > .govuk-radios__item`).as('dateChangeRadios')
-                      cy.get(`#${subjectID}`).should('be.visible')
-                      cy.get(`#${subjectID} > .govuk-form-group > fieldset > legend > h3`).should('contain', 'Will the estimated completion date change?')
-                      cy.get('@dateChangeRadios').should('have.length', 2)
-                      cy.get('@dateChangeRadios').eq(0).should('contain', 'Yes')
-                      cy.get('@dateChangeRadios').eq(1).should('contain', 'No')
-                    })
                 })
               })
               it('Selecting the "Green" option and submitting the form should go to the "Check Your Answers" page', function() {
