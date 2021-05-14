@@ -4,7 +4,12 @@ import pytest
 from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
 
-from supply_chains.models import SupplyChain, StrategicActionUpdate, RAGRating
+from supply_chains.models import (
+    SupplyChain,
+    StrategicActionUpdate,
+    RAGRating,
+    StrategicAction,
+)
 from supply_chains.test.factories import SupplyChainFactory, StrategicActionFactory
 from supply_chains.models import SupplyChain, StrategicActionUpdate
 from supply_chains.test.factories import (
@@ -56,8 +61,10 @@ def test_archived_date_set_save_strategic_action():
 
 class TestStrategicActionUpdate:
     def setup_method(self):
-        supply_chain = SupplyChainFactory()
-        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
+        supply_chain: SupplyChain = SupplyChainFactory()
+        strategic_action: StrategicAction = StrategicActionFactory(
+            supply_chain=supply_chain
+        )
         self.strategic_action_update: StrategicActionUpdate = (
             StrategicActionUpdateFactory(
                 strategic_action=strategic_action,
@@ -326,3 +333,142 @@ class TestStrategicActionUpdate:
         self.strategic_action_update.changed_is_ongoing = False
         self.strategic_action_update.save()
         assert self.strategic_action_update.is_changing_target_completion_date
+
+    def test_saving_as_in_progress_does_not_update_strategic_action_is_ongoing(self):
+        # Guard
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            is not None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+        self.strategic_action_update.changed_target_completion_date = None
+        self.strategic_action_update.changed_is_ongoing = True
+
+        self.strategic_action_update.status = StrategicActionUpdate.Status.IN_PROGRESS
+        self.strategic_action_update.save()
+
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            is not None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+    def test_saving_as_in_progress_does_not_update_strategic_action_target_completion_date(
+        self,
+    ):
+        # Guard
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            is not None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+        original_date = (
+            self.strategic_action_update.strategic_action.target_completion_date
+        )
+        changed_date = original_date + relativedelta(month=6)
+        self.strategic_action_update.changed_target_completion_date = changed_date
+        self.strategic_action_update.changed_is_ongoing = False
+
+        self.strategic_action_update.status = StrategicActionUpdate.Status.IN_PROGRESS
+        self.strategic_action_update.save()
+
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            != changed_date
+        )
+
+    def test_saving_as_completed_does_not_update_strategic_action_is_ongoing(self):
+        # Guard
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            is not None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+        self.strategic_action_update.changed_target_completion_date = None
+        self.strategic_action_update.changed_is_ongoing = True
+
+        self.strategic_action_update.status = StrategicActionUpdate.Status.COMPLETED
+        self.strategic_action_update.save()
+
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            is not None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+    def test_saving_as_completed_does_not_update_strategic_action_target_completion_date(
+        self,
+    ):
+        # Guard
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            is not None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+        original_date = (
+            self.strategic_action_update.strategic_action.target_completion_date
+        )
+        changed_date = original_date + relativedelta(month=6)
+        self.strategic_action_update.changed_target_completion_date = changed_date
+        self.strategic_action_update.changed_is_ongoing = False
+
+        self.strategic_action_update.status = StrategicActionUpdate.Status.COMPLETED
+        self.strategic_action_update.save()
+
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            != changed_date
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+    def test_saving_as_submitted_does_update_strategic_action_is_ongoing(self):
+        # Guard
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            is not None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+        self.strategic_action_update.changed_target_completion_date = None
+        self.strategic_action_update.changed_is_ongoing = True
+
+        self.strategic_action_update.status = StrategicActionUpdate.Status.SUBMITTED
+        self.strategic_action_update.save()
+
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date is None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is True
+
+    def test_saving_as_submitted_does_update_strategic_action_target_completion_date(
+        self,
+    ):
+        original_date = (
+            self.strategic_action_update.strategic_action.target_completion_date
+        )
+        changed_date = original_date + relativedelta(month=6)
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = True
+        self.strategic_action_update.strategic_action.save()
+
+        # Guard
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date is None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is True
+
+        self.strategic_action_update.changed_target_completion_date = changed_date
+        self.strategic_action_update.changed_is_ongoing = False
+
+        self.strategic_action_update.status = StrategicActionUpdate.Status.SUBMITTED
+        self.strategic_action_update.save()
+
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            == changed_date
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
