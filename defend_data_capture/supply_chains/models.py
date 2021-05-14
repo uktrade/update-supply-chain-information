@@ -233,6 +233,27 @@ class StrategicActionUpdate(models.Model):
     slug = models.SlugField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
+        if self.status == StrategicActionUpdate.Status.SUBMITTED:
+            """
+            To finalise the update we must:
+            1. Copy a revised target completion date to the strategic action, or copy is ongoing and clear the SA's date;
+            2. If there is a revised target completion date, record the change in reversion.
+            """
+            strategic_action_changed = False
+            if self.changed_target_completion_date is not None:
+                self.strategic_action.target_completion_date = (
+                    self.changed_target_completion_date
+                )
+                self.strategic_action.is_ongoing = False
+                self.changed_target_completion_date = None
+                strategic_action_changed = True
+            if self.changed_is_ongoing:
+                self.strategic_action.is_ongoing = self.changed_is_ongoing
+                self.strategic_action.target_completion_date = None
+                self.changed_is_ongoing = False
+                strategic_action_changed = True
+            if strategic_action_changed:
+                self.strategic_action.save()
         super().save(*args, **kwargs)
         if not self.slug:
             self.slug = self.date_created.strftime("%m-%Y")

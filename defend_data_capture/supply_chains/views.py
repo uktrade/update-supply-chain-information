@@ -589,28 +589,13 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
         if not form.is_valid():
             return self.get(request, *args, **kwargs)
         """
-        To finalise the update we must:
-        1. Copy a revised target completion date to the strategic action, or copy is ongoing and clear the SA's date;
-        2. If there is a revised target completion date, record the change in reversion;
-        3. Change the update's status to "Completed"
+        To finalise the update we must change the update's status to "Completed"
+        This only goes to "Submitted" when the Supply Chain's entire round of updates for the month is submitted.
         """
         strategic_action_update = self.get_object()
         self.object = strategic_action_update
         strategic_action: StrategicAction = strategic_action_update.strategic_action
-        strategic_action_changed = False
-        if strategic_action_update.changed_target_completion_date is not None:
-            strategic_action.target_completion_date = (
-                strategic_action_update.changed_target_completion_date
-            )
-            strategic_action.is_ongoing = False
-            strategic_action_changed = True
-        if strategic_action_update.changed_is_ongoing:
-            strategic_action.is_ongoing = strategic_action_update.changed_is_ongoing
-            strategic_action.target_completion_date = None
-            strategic_action_changed = True
         strategic_action_update.status = StrategicActionUpdate.Status.COMPLETED
-        if strategic_action_changed:
-            strategic_action.save()
         strategic_action_update.save()
         return HttpResponseRedirect(self.get_success_url())
 
