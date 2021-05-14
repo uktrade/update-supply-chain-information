@@ -1,10 +1,19 @@
-<div class="govuk-form-group">
-    <fieldset class="govuk-fieldset">
+<div class="govuk-form-group{% if yes_no_field.errors %} govuk-form-group--error{% endif %}">
+    <fieldset class="govuk-fieldset"{% if yes_no_field.errors %} aria-describedby="{{ yes_no_field.name }}-yes_no_errors"{% endif %}>
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
             <h3 class="govuk-fieldset__heading ">
                 {{ yes_no_field.label }}
             </h3>
         </legend>
+        {% if yes_no_field.errors %}
+            <div id="{{ yes_no_field.name }}-yes_no_errors">
+                {% for error in yes_no_field.errors %}
+                    <span class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+                    </span>
+                {% endfor %}
+            </div>
+        {% endif %}
         {% with yes_no_field.field.widget.details as has_details %}
             <div class="govuk-radios{% if has_details %}  govuk-radios--conditional{% endif %}"{% if has_details %} data-module="govuk-radios"{% endif %}>
                 {% for radio in yes_no_field %}
