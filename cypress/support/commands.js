@@ -222,5 +222,42 @@ Cypress.Commands.add(
     }
 )
 
+Cypress.Commands.add(
+    /**
+     * yields the element identified by the aria-controls attribute of the subject
+     */
+    'revealedElement',
+    { prevSubject: true },
+    (subject) => {
+        cy.wrap(subject).invoke('attr', 'aria-controls').then((subjectID) => {
+            cy.get(`#${subjectID}`);
+        });
+    }
+)
 
+Cypress.Commands.add(
+    /**
+     * yields the form field whose label text contains the value in labelText
+     */
+    'fieldLabelled',
+    { prevSubject: true },
+    (subject, labelText) => {
+        cy.wrap(subject).find('label').contains(labelText).invoke('attr', 'for').then((fieldId) => {
+            cy.get(`#${fieldId}`);
+        });
+    }
+)
+
+Cypress.Commands.add(
+    /**
+     * yields the tagName of subject
+     */
+    'tagName',
+    { prevSubject: true },
+    (subject) => {
+        cy.wrap(subject).invoke('prop', 'tagName').then((tagName) => {
+            cy.wrap(tagName.toLowerCase());
+        });
+    }
+)
 
