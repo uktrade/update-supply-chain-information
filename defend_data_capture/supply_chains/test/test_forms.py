@@ -520,13 +520,6 @@ class TestMonthlyUpdateStatusForm:
 
 
 @pytest.mark.django_db()
-class TestAmberReasonForDelayForm:
-    """Nothing to test unless the reason_for_delays field is required."""
-
-    pass
-
-
-@pytest.mark.django_db()
 class TestRedReasonForDelayForm:
     """Check that will_completion_date_change only requested when date known."""
 
