@@ -160,22 +160,22 @@ const valuesToEnter = {
 
 const urls = {
   'start': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/start/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/start/`
   },
   'info': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/info/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/info/`
   },
   'timing': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/timing/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/timing/`
   },
   'status': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/delivery-status/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/delivery-status/`
   },
   'revisedtiming': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/revised-timing/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/revised-timing/`
   },
   'confirm': function(strategicAction) {
-    return `http://localhost:8001/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/confirm/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/confirm/`
   },
 }
 
