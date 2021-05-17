@@ -211,14 +211,6 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
     )
 
     def __init__(self, *args, **kwargs):
-        # instance = kwargs.get("instance", None)
-        # if instance is not None:
-        #     initial = kwargs["initial"]
-        #     data = kwargs.get("data", None)
-        #     if data is not None:
-        #         if "will_completion_date_change" not in data.keys() and "will_completion_date_change" not in initial.keys():
-        #             if instance.changed_is_ongoing or instance.changed_target_completion_date is not None:
-        #                 initial["will_completion_date_change"] = YesNoChoices.YES
         super().__init__(*args, **kwargs)
         strategic_action_update: StrategicActionUpdate = kwargs.get("instance", None)
         if strategic_action_update is not None:
@@ -229,11 +221,6 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
                     or strategic_action.is_ongoing
                 ):
                     del self.fields["will_completion_date_change"]
-                # else:
-                #     data = kwargs.get("data", None)
-                #     if data is not None:
-                #         data[self.add_prefix("will_completion_date_change")] = self.get_initial_for_field(self.fields["will_completion_date_change"], "will_completion_date_change")
-                #     # self.fields["will_completion_date_change"].initial = self.get_initial_for_field(self.fields["will_completion_date_change"], "will_completion_date_change")
 
     def get_initial_for_field(self, field, field_name):
         if field_name == "will_completion_date_change":
