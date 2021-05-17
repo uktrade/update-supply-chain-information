@@ -10,8 +10,7 @@ npm-debug.log*
 defend_data_capture/assets/webpack_bundles
 static
 webpack-stats.json
-/env/
-/.idea/
+.idea
 
 backend.pid
 
