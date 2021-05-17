@@ -1,8 +1,10 @@
 from datetime import date, timedelta
 
 import pytest
+import reversion.models
 from dateutil.relativedelta import relativedelta
 from django.core.exceptions import ValidationError
+from reversion.models import Version
 
 from supply_chains.models import (
     SupplyChain,
@@ -17,6 +19,7 @@ from supply_chains.test.factories import (
     StrategicActionFactory,
     StrategicActionUpdateFactory,
 )
+from accounts.models import GovDepartment
 
 pytestmark = pytest.mark.django_db
 
@@ -472,3 +475,136 @@ class TestStrategicActionUpdate:
             == changed_date
         )
         assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+    def test_saving_as_submitted_when_strategic_action_changes_from_target_completion_date_to_ongoing_is_recorded_by_reversion(
+        self,
+    ):
+        # Guard
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            is not None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+        self.strategic_action_update.changed_target_completion_date = None
+        self.strategic_action_update.changed_is_ongoing = True
+        self.strategic_action_update.reason_for_completion_date_change = (
+            "test please delete"
+        )
+        self.strategic_action_update.status = StrategicActionUpdate.Status.SUBMITTED
+        self.strategic_action_update.save()
+
+        version: reversion.models.Version = (
+            Version.objects.get_for_object(
+                self.strategic_action_update.strategic_action
+            )
+            .order_by("revision__date_created")
+            .last()
+        )
+        expected_message = "TIMING: Becoming 'Ongoing': test please delete"
+        assert version.revision.comment == expected_message
+
+    def test_saving_as_submitted_when_strategic_action_changes_from_ongoing_to_target_completion_is_recorded_by_reversion(
+        self,
+    ):
+        original_date = (
+            self.strategic_action_update.strategic_action.target_completion_date
+        )
+        changed_date = original_date + relativedelta(month=6)
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = True
+        self.strategic_action_update.strategic_action.save()
+
+        # Guard
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date is None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is True
+
+        self.strategic_action_update.changed_target_completion_date = changed_date
+        self.strategic_action_update.changed_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = (
+            "test please delete"
+        )
+        self.strategic_action_update.status = StrategicActionUpdate.Status.SUBMITTED
+        self.strategic_action_update.save()
+
+        version: reversion.models.Version = (
+            Version.objects.get_for_object(
+                self.strategic_action_update.strategic_action
+            )
+            .order_by("revision__date_created")
+            .last()
+        )
+        expected_message = "TIMING: Stopped being 'Ongoing': test please delete"
+        assert version.revision.comment == expected_message
+
+    def test_saving_as_submitted_when_strategic_action_changes_target_completion_date_is_recorded_by_reversion(
+        self,
+    ):
+        # Guard
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            is not None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+        changed_date = (
+            self.strategic_action_update.strategic_action.target_completion_date
+            + relativedelta(months=6)
+        )
+
+        self.strategic_action_update.changed_target_completion_date = changed_date
+        self.strategic_action_update.reason_for_completion_date_change = (
+            "test please delete"
+        )
+        self.strategic_action_update.status = StrategicActionUpdate.Status.SUBMITTED
+        self.strategic_action_update.save()
+
+        version: reversion.models.Version = (
+            Version.objects.get_for_object(
+                self.strategic_action_update.strategic_action
+            )
+            .order_by("revision__date_created")
+            .last()
+        )
+        expected_message = "TIMING: Target completion date changed: test please delete"
+        assert version.revision.comment == expected_message
+
+    def test_user_changing_target_completion_date_is_recorded_by_reversion(
+        self, django_user_model
+    ):
+        # Guard
+        assert (
+            self.strategic_action_update.strategic_action.target_completion_date
+            is not None
+        )
+        assert self.strategic_action_update.strategic_action.is_ongoing is False
+
+        changed_date = (
+            self.strategic_action_update.strategic_action.target_completion_date
+            + relativedelta(months=6)
+        )
+
+        expected_user_email = "test_user@example.com"
+        expected_department = GovDepartment.objects.first()
+        expected_user = django_user_model.objects.create(
+            email=expected_user_email, gov_department=expected_department
+        )
+
+        self.strategic_action_update.changed_target_completion_date = changed_date
+        self.strategic_action_update.reason_for_completion_date_change = (
+            "test please delete"
+        )
+        self.strategic_action_update.status = StrategicActionUpdate.Status.SUBMITTED
+        self.strategic_action_update.user = expected_user
+        self.strategic_action_update.save()
+
+        version: reversion.models.Version = (
+            Version.objects.get_for_object(
+                self.strategic_action_update.strategic_action
+            )
+            .order_by("revision__date_created")
+            .last()
+        )
+        assert version.revision.user.email == expected_user_email

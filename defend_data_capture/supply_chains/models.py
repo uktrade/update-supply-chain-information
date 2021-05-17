@@ -158,8 +158,45 @@ class StrategicAction(models.Model):
         if self.is_archived and not self.archived_date:
             self.archived_date = timezone.now().date()
         self.full_clean()
-        # TODO: reversion!
-        return super().save(*args, **kwargs)
+        # Log changes in reversion
+        reversion_message = None
+        reason_for_completion_date_change = kwargs.pop(
+            "reason_for_completion_date_change", ""
+        )
+        user = kwargs.pop("user", None)
+        if self.pk is not None:
+            # the test item factory appears to create a PK for the model, so it might not really exist
+            try:
+                # existing instance so see if target_completion_date/is_ongoing combo has changed
+                previous_self = StrategicAction.objects.get(pk=self.pk)
+                if (
+                    self.target_completion_date != previous_self.target_completion_date
+                    or self.is_ongoing != previous_self.is_ongoing
+                ):
+                    prefix = "TIMING"
+                    change_type = ""
+                    if previous_self.is_ongoing:
+                        # must be moving from "Ongoing" to having a target completion date
+                        change_type = "Stopped being 'Ongoing'"
+                    else:
+                        # either changing to "Ongoing" or date has changed
+                        if self.is_ongoing:
+                            change_type = "Becoming 'Ongoing'"
+                        else:
+                            change_type = "Target completion date changed"
+
+                    reversion_message = (
+                        f"{prefix}: {change_type}: {reason_for_completion_date_change}"
+                    )
+            except StrategicAction.DoesNotExist:
+                pass
+        with reversion.create_revision():
+            result = super().save(*args, **kwargs)
+            if reversion_message is not None:
+                reversion.set_comment(reversion_message)
+            if user is not None:
+                reversion.set_user(user)
+        return result
 
     def last_submitted_update(self):
         return self.monthly_updates.last_month()
@@ -253,7 +290,10 @@ class StrategicActionUpdate(models.Model):
                 self.changed_is_ongoing = False
                 strategic_action_changed = True
             if strategic_action_changed:
-                self.strategic_action.save()
+                self.strategic_action.save(
+                    reason_for_completion_date_change=self.reason_for_completion_date_change,
+                    user=self.user,
+                )
         super().save(*args, **kwargs)
         if not self.slug:
             self.slug = self.date_created.strftime("%m-%Y")
