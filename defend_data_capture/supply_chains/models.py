@@ -189,6 +189,9 @@ class StrategicAction(models.Model):
     def __str__(self):
         return f"SA: {self.name}, {self.supply_chain.gov_department.name}, {self.get_geographic_scope_display()}, SC: {self.supply_chain.name}"
 
+    def __str__(self):
+        return f"{self.name}, {self.supply_chain}"
+
 
 class SAUQuerySet(models.QuerySet):
     def since(self, deadline, *args, **kwargs):
@@ -351,6 +354,9 @@ class StrategicActionUpdate(models.Model):
     @property
     def has_no_timing_information(self):
         return self.has_no_target_completion_date and self.has_no_is_ongoing
+
+    def __str__(self):
+        return f"Update {self.slug} for {self.strategic_action}"
 
 
 class MaturitySelfAssessment(models.Model):
