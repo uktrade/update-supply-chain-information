@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
 from accounts.api_views import UserViewSet
+from supply_chains.admin import admin_site
 from supply_chains.api_views import (
     StrategicActionViewset,
     StrategicActionUpdateViewset,
@@ -31,7 +33,7 @@ router.register(
 
 urlpatterns = [
     path("auth/", include("authbroker_client.urls")),
-    path("admin/", admin.site.urls),
+    path("admin/", admin_site.urls),
     path("api/", include(router.urls)),
     path("", HomePageView.as_view(), name="index"),
     path("<slug:sc_slug>/summary", SCSummary.as_view(), name="sc_summary"),
