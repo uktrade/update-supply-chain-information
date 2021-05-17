@@ -77,6 +77,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     USERNAME_FIELD = "sso_email_user_id"
 
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
 
 class GovDepartment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

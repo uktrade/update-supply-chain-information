@@ -58,6 +58,9 @@ class SupplyChain(models.Model):
             self.archived_date = timezone.now().date()
         return super().save(*args, **kwargs)
 
+    def __str__(self):
+        return self.name
+
 
 @reversion.register()
 class StrategicAction(models.Model):
@@ -139,6 +142,9 @@ class StrategicAction(models.Model):
         self.full_clean()
         return super().save(*args, **kwargs)
 
+    def __str__(self):
+        return f"{self.name}, {self.supply_chain}"
+
 
 class SAUQuerySet(models.QuerySet):
     def since(self, deadline, *args, **kwargs):
@@ -194,6 +200,9 @@ class StrategicActionUpdate(models.Model):
             self.slug = self.date_created.strftime("%m-%Y")
 
         return super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Update {self.slug} for {self.strategic_action}"
 
 
 class MaturitySelfAssessment(models.Model):
