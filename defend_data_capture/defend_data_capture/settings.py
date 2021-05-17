@@ -28,11 +28,12 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
 
 INSTALLED_APPS = [
     "authbroker_client",
-    "django.contrib.admin",
+    "django.contrib.admin.apps.SimpleAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.postgres",
+    "django.contrib.sessions",
     "django.contrib.staticfiles",
     "supply_chains",
     "accounts",
