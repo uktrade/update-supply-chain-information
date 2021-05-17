@@ -809,7 +809,7 @@ class TestMonthlyUpdateModifiedTimingForm:
 
 @pytest.mark.django_db()
 class TestMonthlyUpdateSubmissionFormGeneration:
-    """Should take all necessary steps to effect the transition from in progress to completed."""
+    """Test that the correct form classes are included in the final submission process."""
 
     def setup_method(self):
         supply_chain = SupplyChainFactory()
@@ -1022,7 +1022,7 @@ class TestMonthlyUpdateSubmissionFormGeneration:
 
 @pytest.mark.django_db()
 class TestMonthlyUpdateSubmissionForm:
-    """Should take all necessary steps to effect the transition from in progress to submitted."""
+    """Test the pseudo-form used to submit the completed update."""
 
     def setup_method(self):
         supply_chain = SupplyChainFactory()
