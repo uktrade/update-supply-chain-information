@@ -2,6 +2,8 @@ import supplyChains from '../fixtures/supplyChains.json'
 import strategicActions from '../fixtures/strategicActions.json'
 import strategicActionUpdates from '../fixtures/strategicActionUpdates.json'
 
+const baseUrl = Cypress.config('baseUrl')
+
 const updatesByStrategicActionPK = strategicActionUpdates.reduce((accumulator, update) => {
   accumulator[update.fields.strategic_action] = update;
   return accumulator;
