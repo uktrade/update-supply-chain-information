@@ -44,6 +44,17 @@ class MakeFieldsRequiredMixin:
 
 
 class DetailFormMixin:
+    """
+    This mixin  provides a form with a technique for including sub-forms
+    within a field that uses a Select widget (a RadioSelect in our cases).
+    By overriding base methods, it ensures that the sub-forms
+    are correctly initialised, that their data is saved,
+    and that any validation errors in the form associated with the selected option
+    are surfaced so as to be visible on the containing form.
+    It also adds convenience methods for retrieving the sub-form associated
+    with a specific option, and for iterating over the collection of sub-forms.
+    """
+
     detail_selection_field = None
 
     def __init__(self, *args, **kwargs):
