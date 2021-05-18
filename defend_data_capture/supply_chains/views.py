@@ -121,8 +121,6 @@ class SCTaskListView(
                 strategic_action=sa,
             )
 
-            # Note: route property could be replaced with URL of StrategicActionUpdate view
-            # method, when its available
             if sau:
                 update["status"] = StrategicActionUpdate.Status(sau[0].status)
                 update["route"] = reverse(
@@ -364,24 +362,10 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
         )
         return redirect(update_url)
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["strategic_action"] = self.get_strategic_action()
-        return context
-
-    def form_valid(self, form):
-        strategic_action = self.get_strategic_action()
-        form.instance.strategic_action = strategic_action
-        form.instance.supply_chain = strategic_action.supply_chain
-        return super().form_valid(form)
-
 
 class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly-update-info-form.html"
     form_class = forms.MonthlyUpdateInfoForm
-
-    def post(self, request, *args, **kwargs):
-        return super().post(request, *args, **kwargs)
 
     def get_success_url(self):
         if self.object.strategic_action.target_completion_date is None:
@@ -566,18 +550,6 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
         return form_data
 
     def get_context_data(self, **kwargs):
-        # kwargs[
-        #     "has_revised_date_of_completion"
-        # ] = self.object.is_changing_target_completion_date
-        # kwargs[
-        #     "has_date_of_completion"
-        # ] = self.object.has_updated_target_completion_date
-        # kwargs[
-        #     "has_new_date_of_completion"
-        # ] = self.object.has_new_target_completion_date
-        # kwargs["needs_target_completion_date"] = (
-        #     self.object.has_no_target_completion_date and self.object.has_no_is_ongoing
-        # )
         kwargs = super().get_context_data(**kwargs)
         if "form" in kwargs.keys():
             kwargs["form"].is_valid()

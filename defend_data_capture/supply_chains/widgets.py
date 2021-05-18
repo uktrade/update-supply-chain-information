@@ -1,22 +1,6 @@
 from datetime import date
 
-from django.forms.widgets import RadioSelect, Textarea, MultiWidget, TextInput
-
-
-class GDSRadioSelect(RadioSelect):
-    def __init__(self, attrs=None, choices=()):
-        if attrs is None:
-            attrs = {}
-        if "class" not in attrs.keys():
-            attrs["class"] = "govuk-radios__input"
-        super().__init__(attrs, choices)
-
-
-class HintedFieldMixin:
-    def __init__(self, hint=None, attrs=None, **kwargs):
-        attrs = kwargs.get("attrs", {})
-        super().__init__(**kwargs)
-        self.hint = hint
+from django.forms.widgets import RadioSelect, MultiWidget, TextInput
 
 
 class HintedSelectMixin:
@@ -68,11 +52,6 @@ class DetailSelectMixin:
         if self.select_label:
             context["select_label"] = self.select_label
         return context
-
-
-class HintedRadioSelect(HintedSelectMixin, RadioSelect):
-    template_name = "supply_chains/forms/widgets/gds-radio-group.html"
-    option_template_name = "supply_chains/forms/widgets/gds-radio-option.html"
 
 
 class HintedDetailRadioSelect(DetailSelectMixin, HintedSelectMixin, RadioSelect):

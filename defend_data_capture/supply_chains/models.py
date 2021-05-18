@@ -9,7 +9,7 @@ import reversion
 
 from accounts.models import GovDepartment
 import uuid
-from .utils import get_last_working_day_of_previous_month
+from supply_chains.utils import get_last_working_day_of_previous_month
 
 
 class RAGRating(models.TextChoices):

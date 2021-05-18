@@ -7,12 +7,8 @@ from django.core.exceptions import ValidationError
 from reversion.models import Version
 
 from supply_chains.models import (
-    SupplyChain,
-    StrategicActionUpdate,
-    RAGRating,
     StrategicAction,
 )
-from supply_chains.test.factories import SupplyChainFactory, StrategicActionFactory
 from supply_chains.models import SupplyChain, StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,

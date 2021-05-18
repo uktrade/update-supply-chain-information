@@ -60,7 +60,7 @@ class DetailFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._detail_forms_dict = {}
-        for field_name, key, config in self.detail_forms:
+        for _, key, config in self.detail_forms:
             try:
                 form_class = config["form_class"]
                 kwargs["prefix"] = key
