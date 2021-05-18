@@ -1,18 +1,18 @@
 from datetime import date
-
 from dateutil.relativedelta import relativedelta
+
 from django import forms
 from django.db.models import TextChoices
 from django.forms.utils import ErrorDict
 from django.urls import reverse_lazy
 
-from .widgets import (
+from supply_chains.widgets import (
     DetailSelectMixin,
     DetailRadioSelect,
     HintedDetailRadioSelect,
     DateMultiTextInputWidget,
 )
-from .models import StrategicActionUpdate, StrategicAction, RAGRating
+from supply_chains.models import StrategicActionUpdate, StrategicAction, RAGRating
 
 
 class MakeFieldsRequiredMixin:

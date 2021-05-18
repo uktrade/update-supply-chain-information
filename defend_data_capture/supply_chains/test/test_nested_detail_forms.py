@@ -9,7 +9,6 @@ from supply_chains.models import (
 from supply_chains.test.factories import (
     StrategicActionUpdateFactory,
 )
-
 from supply_chains import forms as our_forms
 from supply_chains.widgets import DetailRadioSelect
 

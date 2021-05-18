@@ -1,10 +1,4 @@
-from supply_chains.widgets import date
-
-import pytest
-
-from django import forms
-from django.core.exceptions import ValidationError
-from supply_chains.widgets import DateMultiTextInputWidget
+from supply_chains.widgets import date, DateMultiTextInputWidget
 
 
 class TestDateMultiTextInputWidget:

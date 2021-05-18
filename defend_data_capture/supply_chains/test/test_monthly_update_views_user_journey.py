@@ -1,25 +1,18 @@
 from datetime import date
 
 import pytest
-
-from django.test import Client
 from django.urls import reverse
 
 from supply_chains.models import (
     StrategicAction,
     StrategicActionUpdate,
-    SupplyChain,
     RAGRating,
 )
 from supply_chains.test.factories import (
     StrategicActionFactory,
-    StrategicActionUpdateFactory,
-    SupplyChainFactory,
 )
-from accounts.test.factories import GovDepartmentFactory
 
 from supply_chains.forms import (
-    MonthlyUpdateInfoForm,
     YesNoChoices,
     ApproximateTimings,
     DetailFormMixin,

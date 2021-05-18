@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.template.defaultfilters import slugify
 from django.template.defaultfilters import date as date_filter
 
-from supply_chains.models import SupplyChain, StrategicActionUpdate
+from supply_chains.models import StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,

@@ -1,11 +1,9 @@
-from datetime import date, timedelta
-
 import pytest
 from django.test import Client
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 
-from supply_chains.models import SupplyChain, StrategicActionUpdate
+from supply_chains.models import StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,

@@ -1,14 +1,10 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 from typing import List, Dict
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect
-from django.template import loader
+from django.http import HttpResponseRedirect
 from django.template.defaultfilters import date as date_filter
-from django.db.models import Count, QuerySet
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.generic import ListView, TemplateView
+from django.db.models import Count
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -17,20 +13,15 @@ from django.views.generic import (
     CreateView,
     TemplateView,
 )
-from django.views.generic.detail import SingleObjectMixin
-from django.views.generic.edit import ModelFormMixin
 
-from supply_chains.models import (
-    SupplyChain,
-    StrategicAction,
-    StrategicActionUpdate,
-    RAGRating,
-)
-from accounts.models import User, GovDepartment
 from supply_chains.forms import (
+    MonthlyUpdateInfoForm,
     MonthlyUpdateSubmissionForm,
     YesNoChoices,
     ApproximateTimings,
+    MonthlyUpdateStatusForm,
+    MonthlyUpdateTimingForm,
+    MonthlyUpdateModifiedTimingForm,
 )
 from supply_chains.models import (
     SupplyChain,
@@ -38,8 +29,6 @@ from supply_chains.models import (
     StrategicActionUpdate,
     RAGRating,
 )
-from supply_chains import forms
-
 from supply_chains.utils import (
     get_last_day_of_this_month,
     get_last_working_day_of_a_month,
@@ -335,7 +324,7 @@ class MonthlyUpdateMixin:
 
 class MonthlyUpdateInfoCreateView(LoginRequiredMixin, MonthlyUpdateMixin, CreateView):
     template_name = "supply_chains/monthly_update_info_form.html"
-    form_class = forms.MonthlyUpdateInfoForm
+    form_class = MonthlyUpdateInfoForm
 
     def get(self, request, *args, **kwargs):
         last_deadline = get_last_working_day_of_previous_month()
@@ -365,7 +354,7 @@ class MonthlyUpdateInfoCreateView(LoginRequiredMixin, MonthlyUpdateMixin, Create
 
 class MonthlyUpdateInfoEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly_update_info_form.html"
-    form_class = forms.MonthlyUpdateInfoForm
+    form_class = MonthlyUpdateInfoForm
 
     def get_success_url(self):
         if self.object.strategic_action.target_completion_date is None:
@@ -382,7 +371,7 @@ class MonthlyUpdateInfoEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateVi
 
 class MonthlyUpdateStatusEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly_update_status_form.html"
-    form_class = forms.MonthlyUpdateStatusForm
+    form_class = MonthlyUpdateStatusForm
 
     completion_date_change_form = None
 
@@ -423,7 +412,7 @@ class MonthlyUpdateStatusEditView(LoginRequiredMixin, MonthlyUpdateMixin, Update
 
 class MonthlyUpdateTimingEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly_update_timing_form.html"
-    form_class = forms.MonthlyUpdateTimingForm
+    form_class = MonthlyUpdateTimingForm
 
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
@@ -440,7 +429,7 @@ class MonthlyUpdateTimingEditView(LoginRequiredMixin, MonthlyUpdateMixin, Update
 
 class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
     template_name = "supply_chains/monthly_update_revised_timing_form.html"
-    form_class = forms.MonthlyUpdateModifiedTimingForm
+    form_class = MonthlyUpdateModifiedTimingForm
 
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)

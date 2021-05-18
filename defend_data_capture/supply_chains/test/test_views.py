@@ -1,25 +1,19 @@
 from unittest import mock
-
-import pytest
 from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 
 import pytest
-from dateutil.relativedelta import relativedelta
 from django.test import Client
 from django.urls import reverse
 
-from accounts.models import User
 from accounts.test.factories import GovDepartmentFactory
 from supply_chains.forms import YesNoChoices, ApproximateTimings
-from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
+from supply_chains.models import StrategicAction, StrategicActionUpdate
 from supply_chains.test.factories import (
-    SupplyChainFactory,
-    StrategicActionFactory,
     StrategicActionUpdateFactory,
 )
 from supply_chains.models import SupplyChain
 from supply_chains.test.factories import StrategicActionFactory, SupplyChainFactory
-from supply_chains.views import MonthlyUpdateInfoEditView
 
 pytestmark = pytest.mark.django_db
 

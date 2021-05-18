@@ -1,10 +1,9 @@
 from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 
 import pytest
-import reversion.models
-from dateutil.relativedelta import relativedelta
-from django.core.exceptions import ValidationError
 from reversion.models import Version
+from django.core.exceptions import ValidationError
 
 from supply_chains.models import (
     StrategicAction,
@@ -512,7 +511,7 @@ class TestStrategicActionUpdate:
         self.strategic_action_update.status = StrategicActionUpdate.Status.SUBMITTED
         self.strategic_action_update.save()
 
-        version: reversion.models.Version = (
+        version: Version = (
             Version.objects.get_for_object(
                 self.strategic_action_update.strategic_action
             )
@@ -549,7 +548,7 @@ class TestStrategicActionUpdate:
         self.strategic_action_update.status = StrategicActionUpdate.Status.SUBMITTED
         self.strategic_action_update.save()
 
-        version: reversion.models.Version = (
+        version: Version = (
             Version.objects.get_for_object(
                 self.strategic_action_update.strategic_action
             )
@@ -583,7 +582,7 @@ class TestStrategicActionUpdate:
         self.strategic_action_update.status = StrategicActionUpdate.Status.SUBMITTED
         self.strategic_action_update.save()
 
-        version: reversion.models.Version = (
+        version: Version = (
             Version.objects.get_for_object(
                 self.strategic_action_update.strategic_action
             )
@@ -624,7 +623,7 @@ class TestStrategicActionUpdate:
         self.strategic_action_update.user = expected_user
         self.strategic_action_update.save()
 
-        version: reversion.models.Version = (
+        version: Version = (
             Version.objects.get_for_object(
                 self.strategic_action_update.strategic_action
             )

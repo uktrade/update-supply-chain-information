@@ -1,13 +1,11 @@
-import pytest
-
 from datetime import date
 
+import pytest
+
 from accounts.test.factories import GovDepartmentFactory, UserFactory
-from supply_chains.models import SupplyChain
 from supply_chains.test.factories import SupplyChainFactory
 from supply_chains.utils import (
     get_last_working_day_of_a_month,
-    get_last_working_day_of_previous_month,
 )
 from supply_chains.mixins import check_matching_gov_department
 

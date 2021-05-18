@@ -1,18 +1,15 @@
-import pytest
 from datetime import date
-from django.urls import reverse
+
+import pytest
 
 from supply_chains.models import (
-    StrategicAction,
     StrategicActionUpdate,
-    SupplyChain,
 )
 from supply_chains.test.factories import (
     StrategicActionFactory,
     StrategicActionUpdateFactory,
     SupplyChainFactory,
 )
-from accounts.test.factories import GovDepartmentFactory
 
 
 @pytest.mark.django_db()

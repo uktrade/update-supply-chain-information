@@ -1,14 +1,14 @@
 from datetime import datetime
+import uuid
 
+import reversion
 from django.db import models
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.template.defaultfilters import slugify
-import reversion
 
 from accounts.models import GovDepartment
-import uuid
 from supply_chains.utils import get_last_working_day_of_previous_month
 
 
