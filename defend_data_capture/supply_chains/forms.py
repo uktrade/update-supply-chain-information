@@ -21,7 +21,7 @@ class MakeFieldsRequiredMixin:
     def make_field_required(self, fields_to_make_required=None):
         if fields_to_make_required is None:
             fields_to_make_required = self.field_to_make_required
-        if fields_to_make_required is not None:
+        if fields_to_make_required:
             if isinstance(fields_to_make_required, str):
                 fields = [fields_to_make_required]
             else:
@@ -33,7 +33,7 @@ class MakeFieldsRequiredMixin:
     def make_field_not_required(self, fields_to_make_required=None):
         if fields_to_make_required is None:
             fields_to_make_required = self.field_to_make_required
-        if fields_to_make_required is not None:
+        if fields_to_make_required:
             if isinstance(fields_to_make_required, str):
                 fields = [fields_to_make_required]
             else:
@@ -209,7 +209,7 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
         strategic_action_update: StrategicActionUpdate = kwargs.get("instance", None)
         if strategic_action_update is not None:
             strategic_action: StrategicAction = strategic_action_update.strategic_action
-            if strategic_action is not None:
+            if strategic_action:
                 if (
                     strategic_action.target_completion_date is None
                     or strategic_action.is_ongoing
@@ -280,7 +280,7 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
         strategic_action_update: StrategicActionUpdate = kwargs.get("instance", None)
         if strategic_action_update is not None:
             strategic_action: StrategicAction = strategic_action_update.strategic_action
-            if strategic_action is not None:
+            if strategic_action:
                 if (
                     strategic_action_update.strategic_action.target_completion_date
                     is None
@@ -301,7 +301,7 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
         if "implementation_rag_rating" in self.data.keys():
             implementation_rag_rating = self.data["implementation_rag_rating"]
             required_form = self.detail_form_for_key(implementation_rag_rating)
-            if required_form is not None:
+            if required_form:
                 # we need the detail form field to be required for validation,
                 # but not on the client as then they can't change their minds…
                 required_form.make_field_required()
@@ -486,7 +486,7 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
         if "is_completion_date_known" in self.data.keys():
             is_completion_date_known = self.data["is_completion_date_known"]
             required_form = self.detail_form_for_key(is_completion_date_known)
-            if required_form is not None:
+            if required_form:
                 form_is_valid = super().is_valid()
                 # we need the detail form field to be required for validation,
                 # but not on the client as then they can't change their minds…
@@ -557,7 +557,7 @@ class MonthlyUpdateSubmissionForm:
         self.form_classes = (MonthlyUpdateInfoForm,)
         # if we have form data, we need to decide what forms/fields to use based on that
         use_will_completion_date_change = False
-        if form_data is not None:
+        if form_data:
             if (
                 "implementation_rag_rating" in form_data.keys()
                 and form_data["implementation_rag_rating"] == RAGRating.RED
