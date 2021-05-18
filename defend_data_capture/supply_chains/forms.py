@@ -12,7 +12,7 @@ from .widgets import (
     HintedDetailRadioSelect,
     DateMultiTextInputWidget,
 )
-from .models import StrategicActionUpdate, RAGRatingHints, StrategicAction, RAGRating
+from .models import StrategicActionUpdate, StrategicAction, RAGRating
 
 
 class MakeFieldsRequiredMixin:
@@ -229,6 +229,20 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
         labels = {"reason_for_delays": "Explain issue"}
 
 
+ImplementationRAGRatingHintsText = [
+    "There is an issue with delivery of an action. This will require escalation and further support. There is a "
+    "potential risk to the expected completion date.",
+    "There's a potential risk to delivery that needs monitoring.",
+    "Delivery is on track with no issues",
+]
+ImplementationRAGRatingHints = {
+    rating[0]: help_text
+    for rating, help_text in zip(
+        reversed(RAGRating.choices), reversed(ImplementationRAGRatingHintsText)
+    )
+}
+
+
 class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
     use_required_attribute = False
     url_pattern_for_page = "monthly-update-status-edit"
@@ -243,7 +257,7 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
                 "data-aria-controls": "{id}-detail",
                 "novalidate": True,
             },
-            hints=RAGRatingHints,
+            hints=ImplementationRAGRatingHints,
             details={
                 RAGRating.RED: {
                     "template": "supply_chains/includes/reason-for-delays.html",
