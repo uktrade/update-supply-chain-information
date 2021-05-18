@@ -425,15 +425,15 @@ describe('Testing monthly update forms', () => {
                     })
                     it ('should have all its date fields and labels for day, month, and year', () => {
                       cy.get('@theDateSection').within(() => {
-                        cy.get('input').eq(0).should('have.attr', 'name', 'True-changed_target_completion_date_day')
+                        cy.get('input').eq(0).should('have.attr', 'name', 'True-changed_value_for_target_completion_date_day')
                         cy.get('input').eq(0).invoke('attr', 'id').then((fieldID) => {
                           cy.get(`label[for="${fieldID}"]`).should('exist').contains('Day').should('exist')
                         })
-                        cy.get('input').eq(1).should('have.attr', 'name', 'True-changed_target_completion_date_month')
+                        cy.get('input').eq(1).should('have.attr', 'name', 'True-changed_value_for_target_completion_date_month')
                         cy.get('input').eq(1).invoke('attr', 'id').then((fieldID) => {
                           cy.get(`label[for="${fieldID}"]`).should('exist').contains('Month').should('exist')
                         })
-                        cy.get('input').eq(2).should('have.attr', 'name', 'True-changed_target_completion_date_year')
+                        cy.get('input').eq(2).should('have.attr', 'name', 'True-changed_value_for_target_completion_date_year')
                         cy.get('input').eq(2).invoke('attr', 'id').then((fieldID) => {
                           cy.get(`label[for="${fieldID}"]`).should('exist').contains('Year').should('exist')
                         })

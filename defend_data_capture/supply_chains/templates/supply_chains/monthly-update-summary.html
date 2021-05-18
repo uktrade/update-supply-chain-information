@@ -46,7 +46,7 @@
                             {% if  strategic_action_update.has_new_is_ongoing%}
                                 Ongoing
                             {% else %}
-                                {{ strategic_action_update.changed_target_completion_date|date:"j F Y" }}
+                                {{ strategic_action_update.changed_value_for_target_completion_date|date:"j F Y" }}
                             {% endif %}
                         {% endif %}
                     </dd>
@@ -97,10 +97,10 @@
                         {% if form.errors %}
                             {% include "supply_chains/includes/summary_errors.html" %}
                         {% else %}
-                            {% if strategic_action_update.changed_is_ongoing %}
+                            {% if strategic_action_update.changed_value_for_is_ongoing %}
                                 Ongoing
                             {% else %}
-                                {{ strategic_action_update.changed_target_completion_date|date:"j F Y" }}
+                                {{ strategic_action_update.changed_value_for_target_completion_date|date:"j F Y" }}
                             {% endif %}
                             {% if strategic_action_update.reason_for_completion_date_change %}
                                 <br>

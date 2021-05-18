@@ -219,8 +219,8 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
     def get_initial_for_field(self, field, field_name):
         if field_name == "will_completion_date_change":
             if (
-                self.instance.changed_is_ongoing
-                or self.instance.changed_target_completion_date is not None
+                self.instance.changed_value_for_is_ongoing
+                or self.instance.changed_value_for_target_completion_date is not None
             ):
                 return YesNoChoices.YES
         return super().get_initial_for_field(field, field_name)
@@ -333,8 +333,8 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
                 ):
                     # clear the values from the instance
                     instance.reason_for_completion_date_change = ""
-                    instance.changed_target_completion_date = None
-                    instance.changed_is_ongoing = False
+                    instance.changed_value_for_target_completion_date = None
+                    instance.changed_value_for_is_ongoing = False
         return super().save(commit)
 
     class Meta:
@@ -344,8 +344,8 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
 
 class CompletionDateForm(MakeFieldsRequiredMixin, forms.ModelForm):
     use_required_attribute = False
-    field_to_make_required = "changed_target_completion_date"
-    changed_target_completion_date = forms.DateField(
+    field_to_make_required = "changed_value_for_target_completion_date"
+    changed_value_for_target_completion_date = forms.DateField(
         widget=DateMultiTextInputWidget(
             attrs={
                 "novalidate": True,
@@ -368,13 +368,13 @@ class CompletionDateForm(MakeFieldsRequiredMixin, forms.ModelForm):
     )
 
     def save(self, commit=True):
-        if "changed_target_completion_date" in self.cleaned_data.keys():
-            self.instance.changed_is_ongoing = False
+        if "changed_value_for_target_completion_date" in self.cleaned_data.keys():
+            self.instance.changed_value_for_is_ongoing = False
         return super().save(commit)
 
     class Meta:
         model = StrategicActionUpdate
-        fields = ["changed_target_completion_date"]
+        fields = ["changed_value_for_target_completion_date"]
 
 
 class ApproximateTimings(TextChoices):
@@ -410,7 +410,7 @@ class ApproximateTimingForm(MakeFieldsRequiredMixin, forms.ModelForm):
 
     def get_initial_for_field(self, field, field_name):
         if field_name == "surrogate_is_ongoing":
-            if self.instance.changed_is_ongoing:
+            if self.instance.changed_value_for_is_ongoing:
                 return ApproximateTimings.ONGOING
         return super().get_initial_for_field(field, field_name)
 
@@ -418,16 +418,16 @@ class ApproximateTimingForm(MakeFieldsRequiredMixin, forms.ModelForm):
         submitted_value = self.cleaned_data["surrogate_is_ongoing"]
         # As this form's field doesn't really exist…
         if submitted_value == ApproximateTimings["ONGOING"]:
-            # we need to either set changed_is_ongoing and clear the completion date…
-            self.instance.changed_is_ongoing = True
-            self.instance.changed_target_completion_date = None
+            # we need to either set changed_value_for_is_ongoing and clear the completion date…
+            self.instance.changed_value_for_is_ongoing = True
+            self.instance.changed_value_for_target_completion_date = None
             # self.instance.reason_for_completion_date_change = ""
         else:
-            # or clear changed_is_ongoing and calculate the new completion date.
-            self.instance.changed_is_ongoing = False
+            # or clear changed_value_for_is_ongoing and calculate the new completion date.
+            self.instance.changed_value_for_is_ongoing = False
             months_hence = int(submitted_value)
-            self.instance.changed_target_completion_date = date.today() + relativedelta(
-                months=+months_hence
+            self.instance.changed_value_for_target_completion_date = (
+                date.today() + relativedelta(months=+months_hence)
             )
         return super().save(commit)
 
@@ -472,9 +472,12 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
     def get_initial_for_field(self, field, field_name):
         if field_name == "is_completion_date_known":
             detail_form = self.detail_form_for_key(YesNoChoices.NO)
-            if detail_form.instance.changed_is_ongoing:
+            if detail_form.instance.changed_value_for_is_ongoing:
                 return YesNoChoices.NO
-            if detail_form.instance.changed_target_completion_date is not None:
+            if (
+                detail_form.instance.changed_value_for_target_completion_date
+                is not None
+            ):
                 return YesNoChoices.YES
         return super().get_initial_for_field(field, field_name)
 
@@ -562,7 +565,7 @@ class MonthlyUpdateSubmissionForm:
                 use_will_completion_date_change = True
             additional_form_classes = ()
             if (
-                f"{YesNoChoices.YES}-changed_target_completion_date_year"
+                f"{YesNoChoices.YES}-changed_value_for_target_completion_date_year"
                 in form_data.keys()
                 or f"{YesNoChoices.NO}-surrogate_is_ongoing" in form_data.keys()
                 or strategic_action_update.has_no_timing_information

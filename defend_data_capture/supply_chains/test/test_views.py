@@ -187,7 +187,7 @@ class TestMonthlyUpdateTimingPage:
             assert strategic_action.target_completion_date is None
             strategic_action_update.refresh_from_db()
             assert (
-                strategic_action_update.changed_target_completion_date
+                strategic_action_update.changed_value_for_target_completion_date
                 == expected_target_completion_date
             )
 
@@ -331,7 +331,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         )
         client = Client()
 
-        self.strategic_action_update.changed_target_completion_date = date(
+        self.strategic_action_update.changed_value_for_target_completion_date = date(
             year=2021, month=12, day=25
         )
         self.strategic_action_update.save()
@@ -358,7 +358,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         )
         client = Client()
 
-        self.strategic_action_update.changed_is_ongoing = True
+        self.strategic_action_update.changed_value_for_is_ongoing = True
         self.strategic_action_update.save()
 
         response = client.get(url)
@@ -404,7 +404,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         )
         client = Client()
 
-        self.strategic_action_update.changed_target_completion_date = date(
+        self.strategic_action_update.changed_value_for_target_completion_date = date(
             year=2021, month=12, day=25
         )
         self.strategic_action_update.save()
@@ -431,7 +431,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         )
         client = Client()
 
-        self.strategic_action_update.changed_is_ongoing = True
+        self.strategic_action_update.changed_value_for_is_ongoing = True
         self.strategic_action_update.save()
 
         response = client.get(url)
@@ -496,7 +496,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         )
         client = Client()
 
-        self.strategic_action_update.changed_target_completion_date = date(
+        self.strategic_action_update.changed_value_for_target_completion_date = date(
             year=2021, month=12, day=25
         )
         self.strategic_action_update.save()
@@ -523,7 +523,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         )
         client = Client()
 
-        self.strategic_action_update.changed_is_ongoing = True
+        self.strategic_action_update.changed_value_for_is_ongoing = True
         self.strategic_action_update.save()
 
         response = client.get(url)

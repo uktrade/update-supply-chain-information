@@ -303,7 +303,7 @@ class TestMonthlyUpdateTimingPage:
         outer_form: DetailFormMixin = response.context_data["form"]
         inner_form = outer_form.detail_form_for_key(YesNoChoices.YES)
         assert inner_form.errors is not None
-        assert "changed_target_completion_date" in inner_form.errors.keys()
+        assert "changed_value_for_target_completion_date" in inner_form.errors.keys()
 
 
 @pytest.mark.django_db()
@@ -316,7 +316,9 @@ class TestMonthlyUpdateSummaryPage:
         strategic_action.save()
         monthly_update.content = "Some content"
         changed_target_completion_date = date(year=2022, month=12, day=25)
-        monthly_update.changed_target_completion_date = changed_target_completion_date
+        monthly_update.changed_value_for_target_completion_date = (
+            changed_target_completion_date
+        )
         monthly_update.implementation_rag_rating = RAGRating.GREEN
         monthly_update.save()
         form_data = {

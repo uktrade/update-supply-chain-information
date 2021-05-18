@@ -466,8 +466,8 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
         form_kwargs = super().get_form_kwargs()
         form_kwargs["data"] = self.build_form_data()
         if (
-            self.object.changed_is_ongoing
-            or self.object.changed_target_completion_date is not None
+            self.object.changed_value_for_is_ongoing
+            or self.object.changed_value_for_target_completion_date is not None
         ):
             form_kwargs["initial"]["will_completion_date_change"] = YesNoChoices.YES
         return form_kwargs
@@ -512,12 +512,12 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
                         additional_form_data = {
                             f"is_completion_date_known": YesNoChoices.YES,
                             f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.YES,
-                            f"{YesNoChoices.YES}-changed_target_completion_date_day": self.object.changed_target_completion_date.day,
-                            f"{YesNoChoices.YES}-changed_target_completion_date_month": self.object.changed_target_completion_date.month,
-                            f"{YesNoChoices.YES}-changed_target_completion_date_year": self.object.changed_target_completion_date.year,
+                            f"{YesNoChoices.YES}-changed_value_for_target_completion_date_day": self.object.changed_value_for_target_completion_date.day,
+                            f"{YesNoChoices.YES}-changed_value_for_target_completion_date_month": self.object.changed_value_for_target_completion_date.month,
+                            f"{YesNoChoices.YES}-changed_value_for_target_completion_date_year": self.object.changed_value_for_target_completion_date.year,
                         }
                         form_data.update(additional_form_data)
-                    elif self.object.changed_is_ongoing:
+                    elif self.object.changed_value_for_is_ongoing:
                         additional_form_data = {
                             f"is_completion_date_known": YesNoChoices.NO,
                             f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.YES,
@@ -536,9 +536,9 @@ class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
             if self.object.has_new_target_completion_date:
                 additional_form_data = {
                     "is_completion_date_known": YesNoChoices.YES,
-                    f"{YesNoChoices.YES}-changed_target_completion_date_day": self.object.changed_target_completion_date.day,
-                    f"{YesNoChoices.YES}-changed_target_completion_date_month": self.object.changed_target_completion_date.month,
-                    f"{YesNoChoices.YES}-changed_target_completion_date_year": self.object.changed_target_completion_date.year,
+                    f"{YesNoChoices.YES}-changed_value_for_target_completion_date_day": self.object.changed_value_for_target_completion_date.day,
+                    f"{YesNoChoices.YES}-changed_value_for_target_completion_date_month": self.object.changed_value_for_target_completion_date.month,
+                    f"{YesNoChoices.YES}-changed_value_for_target_completion_date_year": self.object.changed_value_for_target_completion_date.year,
                 }
                 form_data.update(additional_form_data)
             elif self.object.is_becoming_ongoing or self.object.has_new_is_ongoing:

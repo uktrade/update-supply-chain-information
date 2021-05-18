@@ -233,9 +233,9 @@ class StrategicActionUpdate(models.Model):
         null=True,
     )
     reason_for_delays = models.TextField(blank=True)
-    changed_target_completion_date = models.DateField(null=True, blank=True)
+    changed_value_for_target_completion_date = models.DateField(null=True, blank=True)
     reason_for_completion_date_change = models.TextField(blank=True)
-    changed_is_ongoing = models.BooleanField(null=True, default=False)
+    changed_value_for_is_ongoing = models.BooleanField(null=True, default=False)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         null=True,
@@ -262,17 +262,17 @@ class StrategicActionUpdate(models.Model):
             2. If there is a revised target completion date, record the change in reversion.
             """
             strategic_action_changed = False
-            if self.changed_target_completion_date is not None:
+            if self.changed_value_for_target_completion_date is not None:
                 self.strategic_action.target_completion_date = (
-                    self.changed_target_completion_date
+                    self.changed_value_for_target_completion_date
                 )
                 self.strategic_action.is_ongoing = False
-                self.changed_target_completion_date = None
+                self.changed_value_for_target_completion_date = None
                 strategic_action_changed = True
-            if self.changed_is_ongoing:
-                self.strategic_action.is_ongoing = self.changed_is_ongoing
+            if self.changed_value_for_is_ongoing:
+                self.strategic_action.is_ongoing = self.changed_value_for_is_ongoing
                 self.strategic_action.target_completion_date = None
-                self.changed_is_ongoing = False
+                self.changed_value_for_is_ongoing = False
                 strategic_action_changed = True
             if strategic_action_changed:
                 self.strategic_action.save(
@@ -297,19 +297,19 @@ class StrategicActionUpdate(models.Model):
 
     @property
     def has_changed_target_completion_date(self):
-        return self.changed_target_completion_date is not None
+        return self.changed_value_for_target_completion_date is not None
 
     @property
     def has_updated_target_completion_date(self):
         return (
-            self.changed_target_completion_date is not None
+            self.changed_value_for_target_completion_date is not None
             and self.has_existing_target_completion_date
         )
 
     @property
     def has_new_target_completion_date(self):
         return (
-            self.changed_target_completion_date is not None
+            self.changed_value_for_target_completion_date is not None
             and not self.has_existing_target_completion_date
         )
 
@@ -326,7 +326,7 @@ class StrategicActionUpdate(models.Model):
 
     @property
     def is_becoming_ongoing(self):
-        return self.changed_is_ongoing
+        return self.changed_value_for_is_ongoing
 
     @property
     def has_no_is_ongoing(self):

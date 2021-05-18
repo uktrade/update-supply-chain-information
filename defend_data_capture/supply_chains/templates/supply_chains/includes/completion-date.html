@@ -8,18 +8,18 @@
             </legend>
         {% endif %}
         <div class="govuk-body">
-            {{ form.changed_target_completion_date.label }}
+            {{ form.changed_value_for_target_completion_date.label }}
         </div>
         <div id="{{ id }}-hint" class="govuk-hint">
             For example, 14 9 2021
         </div>
         <div class="govuk-date-input" id="{{ id }}-container">
-            {% for error in form.changed_target_completion_date.errors %}
+            {% for error in form.changed_value_for_target_completion_date.errors %}
                 <span class="govuk-error-message">
-                                <span class="govuk-visually-hidden">Error:</span> {{ error }}
-                            </span>
+                    <span class="govuk-visually-hidden">Error:</span> {{ error }}
+                </span>
             {% endfor %}
-            {{ form.changed_target_completion_date }}
+            {{ form.changed_value_for_target_completion_date }}
         </div>
     </fieldset>
 </div>
