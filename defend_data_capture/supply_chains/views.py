@@ -334,7 +334,7 @@ class MonthlyUpdateMixin:
 
 
 class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
-    template_name = "supply_chains/monthly-update-info-form.html"
+    template_name = "supply_chains/monthly_update_info_form.html"
     form_class = forms.MonthlyUpdateInfoForm
 
     def get(self, request, *args, **kwargs):
@@ -364,7 +364,7 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
 
 
 class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
-    template_name = "supply_chains/monthly-update-info-form.html"
+    template_name = "supply_chains/monthly_update_info_form.html"
     form_class = forms.MonthlyUpdateInfoForm
 
     def get_success_url(self):
@@ -381,7 +381,7 @@ class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
 
 
 class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
-    template_name = "supply_chains/monthly-update-status-form.html"
+    template_name = "supply_chains/monthly_update_status_form.html"
     form_class = forms.MonthlyUpdateStatusForm
 
     completion_date_change_form = None
@@ -422,7 +422,7 @@ class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
 
 
 class MonthlyUpdateTimingEditView(MonthlyUpdateMixin, UpdateView):
-    template_name = "supply_chains/monthly-update-timing-form.html"
+    template_name = "supply_chains/monthly_update_timing_form.html"
     form_class = forms.MonthlyUpdateTimingForm
 
     def post(self, request, *args, **kwargs):
@@ -439,7 +439,7 @@ class MonthlyUpdateTimingEditView(MonthlyUpdateMixin, UpdateView):
 
 
 class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
-    template_name = "supply_chains/monthly-update-revised-timing-form.html"
+    template_name = "supply_chains/monthly_update_revised_timing_form.html"
     form_class = forms.MonthlyUpdateModifiedTimingForm
 
     def post(self, request, *args, **kwargs):
@@ -456,7 +456,7 @@ class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
 
 
 class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
-    template_name = "supply_chains/monthly-update-summary.html"
+    template_name = "supply_chains/monthly_update_summary.html"
     form_class = MonthlyUpdateSubmissionForm
 
     def get_object(self, queryset=None):

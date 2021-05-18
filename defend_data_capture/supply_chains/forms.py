@@ -260,11 +260,11 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
             hints=ImplementationRAGRatingHints,
             details={
                 RAGRating.RED: {
-                    "template": "supply_chains/includes/reason-for-delays.html",
+                    "template": "supply_chains/includes/reason_for_delays.html",
                     "form_class": RedReasonForDelayForm,
                 },
                 RAGRating.AMBER: {
-                    "template": "supply_chains/includes/reason-for-delays.html",
+                    "template": "supply_chains/includes/reason_for_delays.html",
                     "form_class": AmberReasonForDelayForm,
                 },
             },
@@ -458,11 +458,11 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
             },
             details={
                 YesNoChoices.YES: {
-                    "template": "supply_chains/includes/completion-date.html",
+                    "template": "supply_chains/includes/completion_date.html",
                     "form_class": CompletionDateForm,
                 },
                 YesNoChoices.NO: {
-                    "template": "supply_chains/includes/approximate-timing.html",
+                    "template": "supply_chains/includes/approximate_timing.html",
                     "form_class": ApproximateTimingForm,
                 },
             },

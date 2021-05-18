@@ -3,10 +3,10 @@
         {% if field_name not in form.fields %}
             {# this field must be in a detail form… #}
             {% with form.detail_form_for_current_selection as form %}
-                {% include 'supply_chains/includes/gds-detail-error-summary-item.html' %}
+                {% include 'supply_chains/includes/detail_error_summary_item.html' %}
             {% endwith %}
         {% else %}
-            {% include 'supply_chains/includes/gds-error-summary-item.html' %}
+            {% include 'supply_chains/includes/error_summary_item.html' %}
         {% endif %}
     {% endfor %}
 {% endwith %}

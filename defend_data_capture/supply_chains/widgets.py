@@ -55,17 +55,17 @@ class DetailSelectMixin:
 
 
 class HintedDetailRadioSelect(DetailSelectMixin, HintedSelectMixin, RadioSelect):
-    template_name = "supply_chains/forms/widgets/gds-radio-group.html"
-    option_template_name = "supply_chains/forms/widgets/gds-radio-option.html"
+    template_name = "supply_chains/forms/widgets/radio_group.html"
+    option_template_name = "supply_chains/forms/widgets/radio_option.html"
 
 
 class DetailRadioSelect(DetailSelectMixin, RadioSelect):
-    template_name = "supply_chains/forms/widgets/gds-radio-group.html"
-    option_template_name = "supply_chains/forms/widgets/gds-radio-option.html"
+    template_name = "supply_chains/forms/widgets/radio_group.html"
+    option_template_name = "supply_chains/forms/widgets/radio_option.html"
 
 
 class DateMultiTextInputWidget(MultiWidget):
-    template_name = "supply_chains/forms/widgets/gds-date-multiwidget.html"
+    template_name = "supply_chains/forms/widgets/date_multiwidget.html"
 
     def __init__(self, attrs=None, hint=None, labels=None, legend=None):
         widgets = {

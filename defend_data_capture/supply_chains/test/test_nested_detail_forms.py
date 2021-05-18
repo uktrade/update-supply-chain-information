@@ -32,11 +32,11 @@ class OuterTestDetailForm(our_forms.DetailFormMixin, forms.ModelForm):
                 },
                 details={
                     "RED": {
-                        "template": "supply_chains/includes/reason-for-delays.html",
+                        "template": "supply_chains/includes/reason_for_delays.html",
                         "form_class": InnerTestDetailForm,
                     },
                     "AMBER": {
-                        "template": "supply_chains/includes/reason-for-delays.html",
+                        "template": "supply_chains/includes/reason_for_delays.html",
                         "form_class": InnerTestDetailForm,
                     },
                 },
@@ -61,11 +61,11 @@ class OuterTestDetailInvalidForm(our_forms.DetailFormMixin, forms.ModelForm):
                 },
                 details={
                     "RED": {
-                        "template": "supply_chains/includes/reason-for-delays.html",
+                        "template": "supply_chains/includes/reason_for_delays.html",
                         "form_class": InnerTestDetailInvalidForm,
                     },
                     "AMBER": {
-                        "template": "supply_chains/includes/reason-for-delays.html",
+                        "template": "supply_chains/includes/reason_for_delays.html",
                         "form_class": InnerTestDetailForm,
                     },
                 },

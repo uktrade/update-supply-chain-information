@@ -1,7 +1,7 @@
-{% extends 'supply_chains/monthly-update-form-base.html' %}
+{% extends 'supply_chains/monthly_update_form_base.html' %}
 
 {% block form %}
-    {% include 'supply_chains/includes/mu-existing-completion-date.html' %}
+    {% include 'supply_chains/includes/existing_completion_date.html' %}
     <form method="post" action="">
         {% csrf_token %}
         <div class="govuk-form-group{% if form.is_completion_date_known.errors %} govuk-form-group--error{% endif %}">
