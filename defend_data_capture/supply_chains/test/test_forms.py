@@ -345,23 +345,6 @@ class TestMonthlyUpdateStatusForm:
             == form_data[f"{RAGRating.RED}-reason_for_delays"]
         )
 
-    @pytest.mark.skip("Not sure if we need or want to do this")
-    def test_form_removes_the_reason_for_delays_when_RED_and_will_completion_date_change_is_false(
-        self,
-    ):
-        strategic_action_update = self.strategic_action_update
-        assert strategic_action_update.implementation_rag_rating is None
-
-        form_data = {
-            "implementation_rag_rating": RAGRating.RED,
-            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.NO,
-            f"{RAGRating.RED}-reason_for_delays": "Some reason",
-        }
-        form = MonthlyUpdateStatusForm(data=form_data, instance=strategic_action_update)
-        assert form.is_valid()
-        saved_instance = form.save()
-        assert saved_instance.reason_for_delays == ""
-
     def test_form_removes_reason_for_completion_date_change_when_RED_and_will_completion_date_change_is_false(
         self,
     ):
@@ -398,7 +381,6 @@ class TestMonthlyUpdateStatusForm:
         saved_instance = form.save()
         assert saved_instance.changed_value_for_target_completion_date is None
 
-    # @pytest.mark.skip("Not sure if we need or want to do this")
     def test_form_leaves_reason_for_completion_date_change_when_AMBER_and_will_completion_date_change_is_false(
         self,
     ):
@@ -421,7 +403,6 @@ class TestMonthlyUpdateStatusForm:
             == expected_reason_for_completion_date_change
         )
 
-    # @pytest.mark.skip("Not sure if we need or want to do this")
     def test_form_leaves_changed_target_completion_date_when_AMBER_and_will_completion_date_change_is_false(
         self,
     ):
@@ -444,7 +425,6 @@ class TestMonthlyUpdateStatusForm:
             == expected_changed_target_completion_date
         )
 
-    # @pytest.mark.skip("Not sure if we need or want to do this")
     def test_form_leaves_reason_for_completion_date_change_when_GREEN_and_will_completion_date_change_is_false(
         self,
     ):
@@ -467,7 +447,6 @@ class TestMonthlyUpdateStatusForm:
             == expected_reason_for_completion_date_change
         )
 
-    # @pytest.mark.skip("Not sure if we need or want to do this")
     def test_form_leaves_changed_target_completion_date_when_GREEN_and_will_completion_date_change_is_false(
         self,
     ):
@@ -823,98 +802,6 @@ class TestMonthlyUpdateSubmissionFormGeneration:
         self.strategic_action_update = StrategicActionUpdate.objects.create(
             supply_chain=supply_chain, strategic_action=strategic_action
         )
-
-    @pytest.mark.skip("We should always be passing data to this form")
-    def test_monthly_update_submission_form_classes_for_known_unchanging_completion_date(
-        self,
-    ):
-        expected_classes = (
-            MonthlyUpdateInfoForm,
-            MonthlyUpdateStatusForm,
-        )
-        unexpected_classes = (
-            MonthlyUpdateModifiedTimingForm,
-            MonthlyUpdateTimingForm,
-        )
-
-        submission_form = MonthlyUpdateSubmissionForm(
-            instance=self.strategic_action_update
-        )
-        actual_classes = submission_form.forms.keys()
-        for expected_class in expected_classes:
-            assert expected_class.__name__ in actual_classes
-        for unexpected_class in unexpected_classes:
-            assert unexpected_class.__name__ not in actual_classes
-
-    @pytest.mark.skip("We should always be passing data to this form")
-    def test_monthly_update_submission_form_classes_for_known_changing_completion_date(
-        self,
-    ):
-        self.strategic_action_update.changed_value_for_target_completion_date = (
-            self.strategic_action_update.strategic_action.target_completion_date
-            + relativedelta(month=6)
-        )
-        self.strategic_action_update.save()
-        expected_classes = (
-            MonthlyUpdateInfoForm,
-            MonthlyUpdateStatusForm,
-            MonthlyUpdateModifiedTimingForm,
-        )
-        unexpected_classes = (MonthlyUpdateTimingForm,)
-
-        submission_form = MonthlyUpdateSubmissionForm(
-            instance=self.strategic_action_update
-        )
-        actual_classes = submission_form.forms.keys()
-        for expected_class in expected_classes:
-            assert expected_class.__name__ in actual_classes
-        for unexpected_class in unexpected_classes:
-            assert unexpected_class.__name__ not in actual_classes
-
-    @pytest.mark.skip("We should always be passing data to this form")
-    def test_monthly_update_submisssion_form_classes_for_unknown_completion_date(self):
-        self.strategic_action_update.strategic_action.target_completion_date = None
-        self.strategic_action_update.strategic_action.is_ongoing = False
-        self.strategic_action_update.strategic_action.save()
-
-        expected_classes = (
-            MonthlyUpdateInfoForm,
-            MonthlyUpdateStatusForm,
-            MonthlyUpdateTimingForm,
-        )
-        unexpected_classes = (MonthlyUpdateModifiedTimingForm,)
-
-        submission_form = MonthlyUpdateSubmissionForm(
-            instance=self.strategic_action_update
-        )
-        actual_classes = submission_form.forms.keys()
-        for expected_class in expected_classes:
-            assert expected_class.__name__ in actual_classes
-        for unexpected_class in unexpected_classes:
-            assert unexpected_class.__name__ not in actual_classes
-
-    @pytest.mark.skip("We should always be passing data to this form")
-    def test_monthly_update_submisssion_form_classes_for_known_completion_date_becoming_ongoing(
-        self,
-    ):
-        self.strategic_action_update.changed_value_for_is_ongoing = True
-        self.strategic_action_update.save()
-
-        expected_classes = (
-            MonthlyUpdateInfoForm,
-            MonthlyUpdateStatusForm,
-            MonthlyUpdateModifiedTimingForm,
-        )
-        unexpected_classes = (MonthlyUpdateTimingForm,)
-
-        submission_form = MonthlyUpdateSubmissionForm(
-            instance=self.strategic_action_update
-        )
-        actual_classes = submission_form.forms.keys()
-        for expected_class in expected_classes:
-            assert expected_class.__name__ in actual_classes
-        for unexpected_class in unexpected_classes:
-            assert unexpected_class.__name__ not in actual_classes
 
     def test_monthly_update_submission_form_classes_for_known_completion_date_becoming_ongoing_with_new_data(
         self,
