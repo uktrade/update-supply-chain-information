@@ -145,7 +145,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.changed_value_for_target_completion_date = (
             changed_date
         )
@@ -163,7 +163,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.changed_value_for_target_completion_date = (
             changed_date
         )
@@ -176,7 +176,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.strategic_action.target_completion_date = None
         self.strategic_action_update.strategic_action.save()
         self.strategic_action_update.changed_value_for_target_completion_date = (
@@ -207,7 +207,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.changed_value_for_target_completion_date = (
             changed_date
         )
@@ -220,7 +220,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.strategic_action.target_completion_date = None
         self.strategic_action_update.strategic_action.save()
         self.strategic_action_update.changed_value_for_target_completion_date = (
@@ -251,7 +251,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.changed_value_for_target_completion_date = (
             changed_date
         )
@@ -264,7 +264,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.strategic_action.target_completion_date = None
         self.strategic_action_update.strategic_action.save()
         self.strategic_action_update.changed_value_for_target_completion_date = (
@@ -340,7 +340,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.changed_value_for_target_completion_date = (
             changed_date
         )
@@ -381,7 +381,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.changed_value_for_target_completion_date = (
             changed_date
         )
@@ -428,7 +428,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.changed_value_for_target_completion_date = (
             changed_date
         )
@@ -468,7 +468,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.strategic_action.target_completion_date = None
         self.strategic_action_update.strategic_action.is_ongoing = True
         self.strategic_action_update.strategic_action.save()
@@ -527,7 +527,7 @@ class TestStrategicActionUpdate:
         original_date = (
             self.strategic_action_update.strategic_action.target_completion_date
         )
-        changed_date = original_date + relativedelta(month=6)
+        changed_date = original_date + relativedelta(months=6)
         self.strategic_action_update.strategic_action.target_completion_date = None
         self.strategic_action_update.strategic_action.is_ongoing = True
         self.strategic_action_update.strategic_action.save()

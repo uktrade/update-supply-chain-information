@@ -836,7 +836,7 @@ class TestMonthlyUpdateSubmissionFormGeneration:
 
         changed_target_completion_date = (
             self.strategic_action_update.strategic_action.target_completion_date
-            + relativedelta(month=6)
+            + relativedelta(months=6)
         )
         form_data = {
             f"{YesNoChoices.YES}-changed_value_for_target_completion_date_day": changed_target_completion_date.day,
