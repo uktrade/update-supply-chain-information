@@ -148,7 +148,7 @@ def test_strat_action_summary_page_pagination(logged_in_client, test_user):
 
 class TestMonthlyUpdateTimingPage:
     def test_posting_form_saves_changed_target_completion_date_to_strategic_action_update(
-        self,
+        self, logged_in_client, test_user
     ):
         supply_chain: SupplyChain = SupplyChainFactory()
         strategic_action: StrategicAction = StrategicActionFactory(
@@ -180,8 +180,7 @@ class TestMonthlyUpdateTimingPage:
                 "update_slug": strategic_action_update.slug,
             }
             url = reverse("monthly-update-timing-edit", kwargs=url_kwargs)
-            client = Client()
-            response = client.post(url, form_data)
+            response = logged_in_client.post(url, form_data)
             assert response.status_code == 302
             strategic_action.refresh_from_db()
             assert strategic_action.target_completion_date is None
@@ -201,7 +200,9 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
             supply_chain=self.strategic_action.supply_chain,
         )
 
-    def test_info_view_has_info_timing_status_summary_links(self):
+    def test_info_view_has_info_timing_status_summary_links(
+        self, logged_in_client, test_user
+    ):
         url = reverse(
             "monthly-update-info-edit",
             kwargs={
@@ -210,11 +211,10 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
 
         self.strategic_action.target_completion_date = None
         self.strategic_action.save()
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -223,7 +223,9 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
         assert "RevisedTiming" not in navigation_links.keys()
         assert "Summary" in navigation_links.keys()
 
-    def test_timing_view_has_info_timing_status_summary_links(self):
+    def test_timing_view_has_info_timing_status_summary_links(
+        self, logged_in_client, test_user
+    ):
         url = reverse(
             "monthly-update-timing-edit",
             kwargs={
@@ -232,11 +234,10 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
 
         self.strategic_action.target_completion_date = None
         self.strategic_action.save()
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -245,7 +246,9 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
         assert "RevisedTiming" not in navigation_links.keys()
         assert "Summary" in navigation_links.keys()
 
-    def test_status_view_has_info_timing_status_summary_links(self):
+    def test_status_view_has_info_timing_status_summary_links(
+        self, logged_in_client, test_user
+    ):
         url = reverse(
             "monthly-update-status-edit",
             kwargs={
@@ -254,11 +257,10 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
 
         self.strategic_action.target_completion_date = None
         self.strategic_action.save()
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -267,7 +269,9 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
         assert "RevisedTiming" not in navigation_links.keys()
         assert "Summary" in navigation_links.keys()
 
-    def test_summary_view_has_info_timing_status_summary_links(self):
+    def test_summary_view_has_info_timing_status_summary_links(
+        self, logged_in_client, test_user
+    ):
         url = reverse(
             "monthly-update-summary",
             kwargs={
@@ -276,11 +280,10 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
 
         self.strategic_action.target_completion_date = None
         self.strategic_action.save()
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -299,7 +302,9 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
             supply_chain=self.strategic_action.supply_chain,
         )
 
-    def test_info_view_has_info_status_summary_links_if_completion_date_unchanged(self):
+    def test_info_view_has_info_status_summary_links_if_completion_date_unchanged(
+        self, logged_in_client, test_user
+    ):
         url = reverse(
             "monthly-update-info-edit",
             kwargs={
@@ -308,8 +313,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -319,7 +323,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         assert "Summary" in navigation_links.keys()
 
     def test_info_view_has_info_status_revisedtiming_summary_links_if_completion_date_changed(
-        self,
+        self, logged_in_client, test_user
     ):
         url = reverse(
             "monthly-update-info-edit",
@@ -329,14 +333,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
 
         self.strategic_action_update.changed_value_for_target_completion_date = date(
             year=2021, month=12, day=25
         )
         self.strategic_action_update.save()
 
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -346,7 +349,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         assert "Summary" in navigation_links.keys()
 
     def test_info_view_has_info_status_revisedtiming_summary_links_if_is_ongoing_changed(
-        self,
+        self, logged_in_client, test_user
     ):
         url = reverse(
             "monthly-update-info-edit",
@@ -356,12 +359,11 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
 
         self.strategic_action_update.changed_value_for_is_ongoing = True
         self.strategic_action_update.save()
 
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -371,7 +373,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         assert "Summary" in navigation_links.keys()
 
     def test_status_view_has_info_status_summary_links_if_completion_date_unchanged(
-        self,
+        self, logged_in_client, test_user
     ):
         url = reverse(
             "monthly-update-status-edit",
@@ -381,8 +383,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -392,7 +393,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         assert "Summary" in navigation_links.keys()
 
     def test_status_view_has_info_status_revisedtiming_summary_links_if_completion_date_changed(
-        self,
+        self, logged_in_client, test_user
     ):
         url = reverse(
             "monthly-update-status-edit",
@@ -402,14 +403,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
 
         self.strategic_action_update.changed_value_for_target_completion_date = date(
             year=2021, month=12, day=25
         )
         self.strategic_action_update.save()
 
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -419,7 +419,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         assert "Summary" in navigation_links.keys()
 
     def test_status_view_has_info_status_revisedtiming_summary_links_if_is_ongoing_changed(
-        self,
+        self, logged_in_client, test_user
     ):
         url = reverse(
             "monthly-update-status-edit",
@@ -429,12 +429,11 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
 
         self.strategic_action_update.changed_value_for_is_ongoing = True
         self.strategic_action_update.save()
 
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -443,7 +442,9 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         assert "RevisedTiming" in navigation_links.keys()
         assert "Summary" in navigation_links.keys()
 
-    def test_revised_timing_view_has_info_status_revisedtiming_summary_links(self):
+    def test_revised_timing_view_has_info_status_revisedtiming_summary_links(
+        self, logged_in_client, test_user
+    ):
         url = reverse(
             "monthly-update-revised-timing-edit",
             kwargs={
@@ -452,8 +453,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -463,7 +463,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         assert "Summary" in navigation_links.keys()
 
     def test_summary_view_has_info_status_summary_links_if_completion_date_unchanged(
-        self,
+        self, logged_in_client, test_user
     ):
         url = reverse(
             "monthly-update-summary",
@@ -473,8 +473,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -484,7 +483,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         assert "Summary" in navigation_links.keys()
 
     def test_summary_view_has_info_status_revised_timing_summary_links_if_completion_date_changed(
-        self,
+        self, logged_in_client, test_user
     ):
         url = reverse(
             "monthly-update-summary",
@@ -494,14 +493,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
 
         self.strategic_action_update.changed_value_for_target_completion_date = date(
             year=2021, month=12, day=25
         )
         self.strategic_action_update.save()
 
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()
@@ -511,7 +509,7 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         assert "Summary" in navigation_links.keys()
 
     def test_summary_view_has_info_status_revised_timing_summary_links_if_is_ongoing_changed(
-        self,
+        self, logged_in_client, test_user
     ):
         url = reverse(
             "monthly-update-summary",
@@ -521,12 +519,11 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
                 "update_slug": self.strategic_action_update.slug,
             },
         )
-        client = Client()
 
         self.strategic_action_update.changed_value_for_is_ongoing = True
         self.strategic_action_update.save()
 
-        response = client.get(url)
+        response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
         assert "Info" in navigation_links.keys()

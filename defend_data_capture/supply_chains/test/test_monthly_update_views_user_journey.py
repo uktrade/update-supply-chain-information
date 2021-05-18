@@ -49,7 +49,9 @@ def prepare_stuff(
 
 @pytest.mark.django_db()
 class TestMonthlyUpdateCreationView:
-    def test_create_monthly_update_redirects_if_current_monthly_update_exists(self):
+    def test_create_monthly_update_redirects_if_current_monthly_update_exists(
+        self, logged_in_client, test_user
+    ):
         strategic_action, monthly_update, create_monthly_update_url = prepare_stuff(
             "monthly-update-create", with_monthly_update_url_kwarg=False
         )
@@ -61,18 +63,18 @@ class TestMonthlyUpdateCreationView:
                 "update_slug": monthly_update.slug,
             },
         )
-        client = Client()
-        response = client.get(create_monthly_update_url, follow=False)
+        response = logged_in_client.get(create_monthly_update_url, follow=False)
         assert response.status_code == 302
         assert response.url == expected_redirect_url
 
-    def test_create_monthly_update_creates_new_monthly_update_and_redirects_to_it(self):
+    def test_create_monthly_update_creates_new_monthly_update_and_redirects_to_it(
+        self, logged_in_client, test_user
+    ):
         strategic_action, _, create_monthly_update_url = prepare_stuff(
             "monthly-update-create", with_monthly_update=False
         )
         assert strategic_action.monthly_updates.exists() is False
-        client = Client()
-        response = client.get(create_monthly_update_url, follow=False)
+        response = logged_in_client.get(create_monthly_update_url, follow=False)
         assert response.status_code == 302
         strategic_action.refresh_from_db()
         assert strategic_action.monthly_updates.exists() is True
@@ -91,7 +93,9 @@ class TestMonthlyUpdateCreationView:
 
 @pytest.mark.django_db()
 class TestMonthlyUpdateWithoutCompletionDate:
-    def test_monthly_update_info_page_redirects_to_timing_page(self):
+    def test_monthly_update_info_page_redirects_to_timing_page(
+        self, logged_in_client, test_user
+    ):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-info-edit"
         )
@@ -106,12 +110,13 @@ class TestMonthlyUpdateWithoutCompletionDate:
                 "update_slug": monthly_update.slug,
             },
         )
-        client = Client()
-        response = client.post(info_url, data=data)
+        response = logged_in_client.post(info_url, data=data)
         assert response.status_code == 302
         assert response.url == expected_response_url
 
-    def test_monthly_update_timing_page_redirects_to_status_page(self):
+    def test_monthly_update_timing_page_redirects_to_status_page(
+        self, logged_in_client, test_user
+    ):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-timing-edit"
         )
@@ -129,12 +134,13 @@ class TestMonthlyUpdateWithoutCompletionDate:
                 "update_slug": monthly_update.slug,
             },
         )
-        client = Client()
-        response = client.post(info_url, data=data)
+        response = logged_in_client.post(info_url, data=data)
         assert response.status_code == 302
         assert response.url == expected_response_url
 
-    def test_monthly_update_status_page_redirects_to_summary_page(self):
+    def test_monthly_update_status_page_redirects_to_summary_page(
+        self, logged_in_client, test_user
+    ):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
@@ -149,15 +155,14 @@ class TestMonthlyUpdateWithoutCompletionDate:
                 "update_slug": monthly_update.slug,
             },
         )
-        client = Client()
-        response = client.post(info_url, data=data)
+        response = logged_in_client.post(info_url, data=data)
         assert response.status_code == 302
         assert response.url == expected_response_url
 
 
 @pytest.mark.django_db()
 class TestMonthlyUpdateWithCompletionDate:
-    def test_info_page_redirects_to_status_page(self):
+    def test_info_page_redirects_to_status_page(self, logged_in_client, test_user):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-info-edit"
         )
@@ -172,12 +177,11 @@ class TestMonthlyUpdateWithCompletionDate:
                 "update_slug": monthly_update.slug,
             },
         )
-        client = Client()
-        response = client.post(info_url, data=data)
+        response = logged_in_client.post(info_url, data=data)
         assert response.status_code == 302
         assert response.url == expected_response_url
 
-    def test_green_status_redirects_to_summary_page(self):
+    def test_green_status_redirects_to_summary_page(self, logged_in_client, test_user):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
@@ -192,12 +196,11 @@ class TestMonthlyUpdateWithCompletionDate:
                 "update_slug": monthly_update.slug,
             },
         )
-        client = Client()
-        response = client.post(info_url, data=data)
+        response = logged_in_client.post(info_url, data=data)
         assert response.status_code == 302
         assert response.url == expected_response_url
 
-    def test_amber_status_redirects_to_summary_page(self):
+    def test_amber_status_redirects_to_summary_page(self, logged_in_client, test_user):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
@@ -213,13 +216,12 @@ class TestMonthlyUpdateWithCompletionDate:
                 "update_slug": monthly_update.slug,
             },
         )
-        client = Client()
-        response = client.post(info_url, data=data)
+        response = logged_in_client.post(info_url, data=data)
         assert response.status_code == 302
         assert response.url == expected_response_url
 
     def test_red_status_with_changed_completion_date_redirects_to_revised_timing_page(
-        self,
+        self, logged_in_client, test_user
     ):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
@@ -237,12 +239,13 @@ class TestMonthlyUpdateWithCompletionDate:
                 "update_slug": monthly_update.slug,
             },
         )
-        client = Client()
-        response = client.post(info_url, data=data)
+        response = logged_in_client.post(info_url, data=data)
         assert response.status_code == 302
         assert response.url == expected_response_url
 
-    def test_red_status_with_unchanged_completion_date_redirects_to_summary_page(self):
+    def test_red_status_with_unchanged_completion_date_redirects_to_summary_page(
+        self, logged_in_client, test_user
+    ):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
@@ -259,12 +262,13 @@ class TestMonthlyUpdateWithCompletionDate:
                 "update_slug": monthly_update.slug,
             },
         )
-        client = Client()
-        response = client.post(info_url, data=data)
+        response = logged_in_client.post(info_url, data=data)
         assert response.status_code == 302
         assert response.url == expected_response_url
 
-    def test_revised_timing_redirects_to_summary_page(self):
+    def test_revised_timing_redirects_to_summary_page(
+        self, logged_in_client, test_user
+    ):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-revised-timing-edit"
         )
@@ -281,23 +285,23 @@ class TestMonthlyUpdateWithCompletionDate:
                 "update_slug": monthly_update.slug,
             },
         )
-        client = Client()
-        response = client.post(info_url, data=data)
+        response = logged_in_client.post(info_url, data=data)
         assert response.status_code == 302
         assert response.url == expected_response_url
 
 
 @pytest.mark.django_db()
 class TestMonthlyUpdateTimingPage:
-    def test_monthly_update_timing_page_requires_completion_date_if_known(self):
+    def test_monthly_update_timing_page_requires_completion_date_if_known(
+        self, logged_in_client, test_user
+    ):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-timing-edit"
         )
         strategic_action.target_completion_date = None
         strategic_action.save()
         data = {"is_completion_date_known": YesNoChoices.YES}
-        client = Client()
-        response = client.post(info_url, data=data)
+        response = logged_in_client.post(info_url, data=data)
         # form errors return 200
         assert response.status_code == 200
         outer_form: DetailFormMixin = response.context_data["form"]
@@ -308,7 +312,7 @@ class TestMonthlyUpdateTimingPage:
 
 @pytest.mark.django_db()
 class TestMonthlyUpdateSummaryPage:
-    def test_submit_monthly_update(self):
+    def test_submit_monthly_update(self, logged_in_client, test_user):
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-summary"
         )
@@ -328,7 +332,6 @@ class TestMonthlyUpdateSummaryPage:
             "tlist",
             kwargs={"sc_slug": strategic_action.supply_chain.slug},
         )
-        client = Client()
-        response = client.post(info_url, data=form_data)
+        response = logged_in_client.post(info_url, data=form_data)
         assert response.status_code == 302
         assert response.url == expected_response_url

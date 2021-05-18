@@ -333,7 +333,7 @@ class MonthlyUpdateMixin:
         return context
 
 
-class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
+class MonthlyUpdateInfoCreateView(LoginRequiredMixin, MonthlyUpdateMixin, CreateView):
     template_name = "supply_chains/monthly_update_info_form.html"
     form_class = forms.MonthlyUpdateInfoForm
 
@@ -363,7 +363,7 @@ class MonthlyUpdateInfoCreateView(MonthlyUpdateMixin, CreateView):
         return redirect(update_url)
 
 
-class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
+class MonthlyUpdateInfoEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly_update_info_form.html"
     form_class = forms.MonthlyUpdateInfoForm
 
@@ -380,7 +380,7 @@ class MonthlyUpdateInfoEditView(MonthlyUpdateMixin, UpdateView):
         return reverse(next_page_url, kwargs=url_kwargs)
 
 
-class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
+class MonthlyUpdateStatusEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly_update_status_form.html"
     form_class = forms.MonthlyUpdateStatusForm
 
@@ -421,7 +421,7 @@ class MonthlyUpdateStatusEditView(MonthlyUpdateMixin, UpdateView):
         return reverse(next_page_url, kwargs=url_kwargs)
 
 
-class MonthlyUpdateTimingEditView(MonthlyUpdateMixin, UpdateView):
+class MonthlyUpdateTimingEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly_update_timing_form.html"
     form_class = forms.MonthlyUpdateTimingForm
 
@@ -455,7 +455,7 @@ class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
         return reverse(next_page_url, kwargs=url_kwargs)
 
 
-class MonthlyUpdateSummaryView(MonthlyUpdateMixin, UpdateView):
+class MonthlyUpdateSummaryView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
     template_name = "supply_chains/monthly_update_summary.html"
     form_class = MonthlyUpdateSubmissionForm
 
