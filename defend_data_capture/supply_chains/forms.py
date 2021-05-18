@@ -135,8 +135,6 @@ class MonthlyUpdateInfoForm(forms.ModelForm):
         required=True,
         error_messages={
             "required": "Enter details of the latest monthly update",
-            "max_length": "The latest monthly update should be no more than %(limit_value)d characters long (you have entered %(show_value)d)",
-            "min_length": "The latest monthly update should be at least %(limit_value)d characters long (you have entered %(show_value)d)",
         },
         widget=forms.Textarea(
             attrs={
@@ -161,8 +159,6 @@ class AmberReasonForDelayForm(MakeFieldsRequiredMixin, forms.ModelForm):
         label="Explain potential risk",
         error_messages={
             "required": "Enter an explanation of the potential risk",
-            "max_length": "The explanation of the potential risk should be no more than %(limit_value)d characters long (you have entered %(show_value)d)",
-            "min_length": "The explanation of the potential risk should be at least %(limit_value)d characters long (you have entered %(show_value)d)",
         },
         widget=forms.Textarea(
             attrs={
@@ -199,8 +195,6 @@ class RedReasonForDelayForm(AmberReasonForDelayForm):
         label="Explain issue",
         error_messages={
             "required": "Enter an explanation of the issue",
-            "max_length": "The explanation of the issue should be no more than %(limit_value)d characters long (you have entered %(show_value)d)",
-            "min_length": "The explanation of the issue should be at least %(limit_value)d characters long (you have entered %(show_value)d)",
         },
         widget=forms.Textarea(
             attrs={
@@ -509,8 +503,6 @@ class MonthlyUpdateModifiedTimingForm(MonthlyUpdateTimingForm):
         label="Reason for date change",
         error_messages={
             "required": "Enter a reason for the date change",
-            "max_length": "The reason for the date change should be no more than %(limit_value)d characters long (you have entered %(show_value)d)",
-            "min_length": "The reason for the date change should be at least %(limit_value)d characters long (you have entered %(show_value)d)",
         },
         widget=forms.Textarea(
             attrs={
