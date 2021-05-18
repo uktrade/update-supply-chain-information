@@ -16,7 +16,7 @@ jobs:
       - name: Install python packages
         run: pip install -r requirements.txt
       - name: Run unit tests
-        run: which pip && python --version && pytest defend_data_capture --collect-only
+        run: which pip && python --version && pytest defend_data_capture
       - name: Setup node
         uses: actions/setup-node@v2
         with:
