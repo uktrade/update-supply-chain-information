@@ -22,7 +22,7 @@ ALL_MODELS = [
 
 
 class Command(BaseCommand):
-    help = "Ingest CSV formatted data"
+    help = "Ingest CSV formatted resilience tool data"
 
     def add_arguments(self, parser):
         parser.add_argument(
