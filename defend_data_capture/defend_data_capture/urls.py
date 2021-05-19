@@ -52,7 +52,7 @@ urlpatterns = [
         name="strat_action_summary",
     ),
     path(
-        "<slug:supply_chain_slug>/<slug:sa_slug>/<slug:update_slug>/review",
+        "<slug:supply_chain_slug>/<slug:sa_slug>/updates/<slug:update_slug>/review",
         SAUReview.as_view(),
         name="update_review",
     ),
