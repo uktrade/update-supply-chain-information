@@ -30,7 +30,7 @@ def sc_stub(test_user):
         "sc_con_email": sc_con_email,
         "sc_vul_status": sc_vul_status,
         "sc_risk_status": sc_risk_status,
-        "url": reverse("sc_summary", kwargs={"sc_slug": slugify(sc_name)}),
+        "url": reverse("sc_summary", kwargs={"supply_chain_slug": slugify(sc_name)}),
     }
 
 
@@ -51,7 +51,7 @@ class TestSCSummaryView:
 
         # Act
         resp = logged_in_client.get(
-            reverse("sc_summary", kwargs={"sc_slug": slugify(sc_name)})
+            reverse("sc_summary", kwargs={"supply_chain_slug": slugify(sc_name)})
         )
 
         # Assert

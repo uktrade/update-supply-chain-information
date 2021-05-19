@@ -25,7 +25,7 @@ def prepare_stuff(
     strategic_action: StrategicAction = StrategicActionFactory()
     url_kwargs = {
         "supply_chain_slug": strategic_action.supply_chain.slug,
-        "strategic_action_slug": strategic_action.slug,
+        "action_slug": strategic_action.slug,
     }
     if with_monthly_update:
         monthly_update: StrategicActionUpdate = strategic_action.monthly_updates.create(
@@ -48,11 +48,13 @@ class TestMonthlyUpdateCreationView:
         strategic_action, monthly_update, create_monthly_update_url = prepare_stuff(
             "monthly-update-create", with_monthly_update_url_kwarg=False
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         expected_redirect_url = reverse(
             "monthly-update-info-edit",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -66,6 +68,8 @@ class TestMonthlyUpdateCreationView:
         strategic_action, _, create_monthly_update_url = prepare_stuff(
             "monthly-update-create", with_monthly_update=False
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         assert strategic_action.monthly_updates.exists() is False
         response = logged_in_client.get(create_monthly_update_url, follow=False)
         assert response.status_code == 302
@@ -76,7 +80,7 @@ class TestMonthlyUpdateCreationView:
             "monthly-update-info-edit",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -92,6 +96,8 @@ class TestMonthlyUpdateWithoutCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-info-edit"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         strategic_action.target_completion_date = None
         strategic_action.save()
         data = {"content": "This is the content we are sending."}
@@ -99,7 +105,7 @@ class TestMonthlyUpdateWithoutCompletionDate:
             "monthly-update-timing-edit",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -113,6 +119,8 @@ class TestMonthlyUpdateWithoutCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-timing-edit"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         strategic_action.target_completion_date = None
         strategic_action.save()
         data = {
@@ -123,7 +131,7 @@ class TestMonthlyUpdateWithoutCompletionDate:
             "monthly-update-status-edit",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -137,6 +145,8 @@ class TestMonthlyUpdateWithoutCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         strategic_action.target_completion_date = None
         strategic_action.save()
         data = {"implementation_rag_rating": RAGRating.GREEN}
@@ -144,7 +154,7 @@ class TestMonthlyUpdateWithoutCompletionDate:
             "monthly-update-summary",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -159,6 +169,8 @@ class TestMonthlyUpdateWithCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-info-edit"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         data = {
             "content": "This is the content we are sending.",
         }
@@ -166,7 +178,7 @@ class TestMonthlyUpdateWithCompletionDate:
             "monthly-update-status-edit",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -178,6 +190,8 @@ class TestMonthlyUpdateWithCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         data = {
             "implementation_rag_rating": RAGRating.GREEN,
         }
@@ -185,7 +199,7 @@ class TestMonthlyUpdateWithCompletionDate:
             "monthly-update-summary",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -197,6 +211,8 @@ class TestMonthlyUpdateWithCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         data = {
             "implementation_rag_rating": RAGRating.AMBER,
             f"{RAGRating.AMBER}-reason_for_delays": "A reason",
@@ -205,7 +221,7 @@ class TestMonthlyUpdateWithCompletionDate:
             "monthly-update-summary",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -219,6 +235,8 @@ class TestMonthlyUpdateWithCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         data = {
             "implementation_rag_rating": RAGRating.RED,
             "RED-will_completion_date_change": True,
@@ -228,7 +246,7 @@ class TestMonthlyUpdateWithCompletionDate:
             "monthly-update-revised-timing-edit",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -242,6 +260,8 @@ class TestMonthlyUpdateWithCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-status-edit"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         data = {
             "implementation_rag_rating": RAGRating.RED,
             f"{RAGRating.RED}-will_completion_date_change": False,
@@ -251,7 +271,7 @@ class TestMonthlyUpdateWithCompletionDate:
             "monthly-update-summary",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -265,6 +285,8 @@ class TestMonthlyUpdateWithCompletionDate:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-revised-timing-edit"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         data = {
             "is_completion_date_known": YesNoChoices.NO,
             f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONE_YEAR,
@@ -274,7 +296,7 @@ class TestMonthlyUpdateWithCompletionDate:
             "monthly-update-summary",
             kwargs={
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": monthly_update.slug,
             },
         )
@@ -291,6 +313,8 @@ class TestMonthlyUpdateTimingPage:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-timing-edit"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         strategic_action.target_completion_date = None
         strategic_action.save()
         data = {"is_completion_date_known": YesNoChoices.YES}
@@ -309,6 +333,8 @@ class TestMonthlyUpdateSummaryPage:
         strategic_action, monthly_update, info_url = prepare_stuff(
             "monthly-update-summary"
         )
+        test_user.gov_department = strategic_action.supply_chain.gov_department
+        test_user.save()
         strategic_action.target_completion_date = None
         strategic_action.save()
         monthly_update.content = "Some content"
@@ -323,7 +349,7 @@ class TestMonthlyUpdateSummaryPage:
         }
         expected_response_url = reverse(
             "tlist",
-            kwargs={"sc_slug": strategic_action.supply_chain.slug},
+            kwargs={"supply_chain_slug": strategic_action.supply_chain.slug},
         )
         response = logged_in_client.post(info_url, data=form_data)
         assert response.status_code == 302

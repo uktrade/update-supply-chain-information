@@ -24,7 +24,7 @@ def update_stub(test_user):
     sc_name = "Supply Chain 1"
     sa_name = "action 01"
     sa_completion = "2021-02-01"
-    sau_slug = "05-2021"
+    update_slug = "05-2021"
     sau_rag = "Amber"
     sau_reason = "Brexit negotiations"
 
@@ -37,7 +37,7 @@ def update_stub(test_user):
         name=sa_name, supply_chain=sc, target_completion_date=sa_completion
     )
     StrategicActionUpdateFactory(
-        slug=sau_slug,
+        slug=update_slug,
         status=Status.SUBMITTED,
         submission_date=date.today(),
         strategic_action=sa,
@@ -54,13 +54,13 @@ def update_stub(test_user):
         "sa_completion": sa_completion,
         "sau_rag": sau_rag,
         "sau_reason": sau_reason,
-        "sau_slug": sau_slug,
+        "update_slug": update_slug,
         "url": reverse(
             "update_review",
             kwargs={
-                "sc_slug": slugify(sc_name),
+                "supply_chain_slug": slugify(sc_name),
                 "sa_slug": slugify(sa_name),
-                "sau_slug": sau_slug,
+                "update_slug": update_slug,
             },
         ),
     }
@@ -93,9 +93,9 @@ class TestSAUReview:
             reverse(
                 "update_review",
                 kwargs={
-                    "sc_slug": slugify(sc_name),
+                    "supply_chain_slug": slugify(sc_name),
                     "sa_slug": sa.slug,
-                    "sau_slug": sau.slug,
+                    "update_slug": sau.slug,
                 },
             )
         )
@@ -134,7 +134,7 @@ class TestSAUReview:
         # Arrange
         sc_name = "ceramics"
         sa_name = "action 01"
-        sau_slug = "05-2021"
+        update_slug = "05-2021"
         sc = SupplyChainFactory.create(
             name=sc_name,
             gov_department=test_user.gov_department,
@@ -144,7 +144,7 @@ class TestSAUReview:
             name=sa_name, supply_chain=sc, is_ongoing=True
         )
         StrategicActionUpdateFactory(
-            slug=sau_slug,
+            slug=update_slug,
             status=Status.SUBMITTED,
             submission_date=date.today(),
             strategic_action=sa,
@@ -156,9 +156,9 @@ class TestSAUReview:
             reverse(
                 "update_review",
                 kwargs={
-                    "sc_slug": sc_name,
+                    "supply_chain_slug": sc_name,
                     "sa_slug": slugify(sa_name),
-                    "sau_slug": sau_slug,
+                    "update_slug": update_slug,
                 },
             )
         )

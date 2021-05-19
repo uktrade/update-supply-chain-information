@@ -116,7 +116,7 @@ class SCTaskListView(
                     "monthly-update-info-edit",
                     kwargs={
                         "supply_chain_slug": self.supply_chain.slug,
-                        "strategic_action_slug": sa.slug,
+                        "action_slug": sa.slug,
                         "update_slug": sau[0].slug,
                     },
                 )
@@ -126,7 +126,7 @@ class SCTaskListView(
                     "monthly-update-create",
                     kwargs={
                         "supply_chain_slug": self.supply_chain.slug,
-                        "strategic_action_slug": sa.slug,
+                        "action_slug": sa.slug,
                     },
                 )
 
@@ -135,8 +135,10 @@ class SCTaskListView(
         return self._sort_updates(sa_updates)
 
     def _extract_view_data(self, *args, **kwargs):
-        sc_slug = kwargs.get("sc_slug", "DEFAULT")
-        self.supply_chain = SupplyChain.objects.get(slug=sc_slug, is_archived=False)
+        supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
+        self.supply_chain = SupplyChain.objects.get(
+            slug=supply_chain_slug, is_archived=False
+        )
 
         sa_qset = StrategicAction.objects.filter(supply_chain=self.supply_chain)
         self.total_sa = sa_qset.count()
@@ -190,7 +192,7 @@ class SCTaskListView(
                 update.status = StrategicActionUpdate.Status.SUBMITTED
                 update.save()
 
-            return redirect("update_complete", sc_slug=self.supply_chain.slug)
+            return redirect("update_complete", supply_chain_slug=self.supply_chain.slug)
         else:
             self.submit_error = True
             kwargs.setdefault("view", self)
@@ -213,15 +215,15 @@ class SCCompleteView(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
         return total_sa == submitted
 
     def get(self, request, *args, **kwargs):
-        sc_slug = kwargs.get("sc_slug", "DEFAULT")
+        supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
         self.last_deadline = get_last_working_day_of_previous_month()
-        self.supply_chain = SupplyChain.objects.filter(slug=sc_slug, is_archived=False)[
-            0
-        ]
+        self.supply_chain = SupplyChain.objects.filter(
+            slug=supply_chain_slug, is_archived=False
+        )[0]
 
         # This is to gaurd manual access if not actually complete, help them to complete
         if not self._validate():
-            return redirect("tlist", sc_slug=self.supply_chain.slug)
+            return redirect("tlist", supply_chain_slug=self.supply_chain.slug)
 
         supply_chains = request.user.gov_department.supply_chains.order_by("name")
 
@@ -242,21 +244,21 @@ class MonthlyUpdateMixin:
 
     def get_queryset(self):
         supply_chain_slug = self.kwargs.get("supply_chain_slug")
-        strategic_action_slug = self.kwargs.get("strategic_action_slug")
+        action_slug = self.kwargs.get("action_slug")
         return (
             super()
             .get_queryset()
             .filter(
                 supply_chain__slug=supply_chain_slug,
-                strategic_action__slug=strategic_action_slug,
+                strategic_action__slug=action_slug,
             )
         )
 
     def get_strategic_action(self):
         supply_chain_slug = self.kwargs.get("supply_chain_slug")
-        strategic_action_slug = self.kwargs.get("strategic_action_slug")
+        action_slug = self.kwargs.get("action_slug")
         return StrategicAction.objects.get(
-            supply_chain__slug=supply_chain_slug, slug=strategic_action_slug
+            supply_chain__slug=supply_chain_slug, slug=action_slug
         )
 
     def get_success_url(self):
@@ -269,7 +271,7 @@ class MonthlyUpdateMixin:
     def get_navigation_links(self):
         url_kwargs = {
             "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
-            "strategic_action_slug": self.object.strategic_action.slug,
+            "action_slug": self.object.strategic_action.slug,
             "update_slug": self.object.slug,
         }
 
@@ -322,7 +324,9 @@ class MonthlyUpdateMixin:
         return context
 
 
-class MonthlyUpdateInfoCreateView(LoginRequiredMixin, MonthlyUpdateMixin, CreateView):
+class MonthlyUpdateInfoCreateView(
+    LoginRequiredMixin, GovDepPermissionMixin, MonthlyUpdateMixin, CreateView
+):
     template_name = "supply_chains/monthly_update_info_form.html"
     form_class = MonthlyUpdateInfoForm
 
@@ -345,14 +349,16 @@ class MonthlyUpdateInfoCreateView(LoginRequiredMixin, MonthlyUpdateMixin, Create
             "monthly-update-info-edit",
             kwargs={
                 "supply_chain_slug": current_month_update.strategic_action.supply_chain.slug,
-                "strategic_action_slug": current_month_update.strategic_action.slug,
+                "action_slug": current_month_update.strategic_action.slug,
                 "update_slug": current_month_update.slug,
             },
         )
         return redirect(update_url)
 
 
-class MonthlyUpdateInfoEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
+class MonthlyUpdateInfoEditView(
+    LoginRequiredMixin, GovDepPermissionMixin, MonthlyUpdateMixin, UpdateView
+):
     template_name = "supply_chains/monthly_update_info_form.html"
     form_class = MonthlyUpdateInfoForm
 
@@ -364,12 +370,14 @@ class MonthlyUpdateInfoEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateVi
         url_kwargs = {
             "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
             "update_slug": self.object.slug,
-            "strategic_action_slug": self.object.strategic_action.slug,
+            "action_slug": self.object.strategic_action.slug,
         }
         return reverse(next_page_url, kwargs=url_kwargs)
 
 
-class MonthlyUpdateStatusEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
+class MonthlyUpdateStatusEditView(
+    LoginRequiredMixin, GovDepPermissionMixin, MonthlyUpdateMixin, UpdateView
+):
     template_name = "supply_chains/monthly_update_status_form.html"
     form_class = MonthlyUpdateStatusForm
 
@@ -405,12 +413,14 @@ class MonthlyUpdateStatusEditView(LoginRequiredMixin, MonthlyUpdateMixin, Update
         url_kwargs = {
             "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
             "update_slug": self.object.slug,
-            "strategic_action_slug": self.object.strategic_action.slug,
+            "action_slug": self.object.strategic_action.slug,
         }
         return reverse(next_page_url, kwargs=url_kwargs)
 
 
-class MonthlyUpdateTimingEditView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
+class MonthlyUpdateTimingEditView(
+    LoginRequiredMixin, GovDepPermissionMixin, MonthlyUpdateMixin, UpdateView
+):
     template_name = "supply_chains/monthly_update_timing_form.html"
     form_class = MonthlyUpdateTimingForm
 
@@ -422,7 +432,7 @@ class MonthlyUpdateTimingEditView(LoginRequiredMixin, MonthlyUpdateMixin, Update
         url_kwargs = {
             "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
             "update_slug": self.object.slug,
-            "strategic_action_slug": self.object.strategic_action.slug,
+            "action_slug": self.object.strategic_action.slug,
         }
         return reverse(next_page_url, kwargs=url_kwargs)
 
@@ -439,12 +449,14 @@ class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
         url_kwargs = {
             "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
             "update_slug": self.object.slug,
-            "strategic_action_slug": self.object.strategic_action.slug,
+            "action_slug": self.object.strategic_action.slug,
         }
         return reverse(next_page_url, kwargs=url_kwargs)
 
 
-class MonthlyUpdateSummaryView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateView):
+class MonthlyUpdateSummaryView(
+    LoginRequiredMixin, GovDepPermissionMixin, MonthlyUpdateMixin, UpdateView
+):
     template_name = "supply_chains/monthly_update_summary.html"
     form_class = MonthlyUpdateSubmissionForm
 
@@ -561,7 +573,9 @@ class MonthlyUpdateSummaryView(LoginRequiredMixin, MonthlyUpdateMixin, UpdateVie
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse("tlist", kwargs={"sc_slug": self.object.supply_chain.slug})
+        return reverse(
+            "tlist", kwargs={"supply_chain_slug": self.object.supply_chain.slug}
+        )
 
 
 class SASummaryView(
@@ -571,7 +585,7 @@ class SASummaryView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        supply_chain = SupplyChain.objects.get(slug=kwargs.get("sc_slug"))
+        supply_chain = SupplyChain.objects.get(slug=kwargs.get("supply_chain_slug"))
 
         context["strategic_actions"] = self.paginate(
             supply_chain.strategic_actions.filter(is_archived=False).order_by("name"),
@@ -586,10 +600,10 @@ class SCSummary(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        sc_slug = kwargs.get("sc_slug", "DEFAULT")
+        supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
 
         context["supply_chain"] = SupplyChain.objects.filter(
-            slug=sc_slug, is_archived=False
+            slug=supply_chain_slug, is_archived=False
         )[0]
         return context
 
@@ -600,17 +614,17 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        sc_slug, sa_slug, sau_slug = (
-            kwargs.get("sc_slug"),
+        supply_chain_slug, sa_slug, update_slug = (
+            kwargs.get("supply_chain_slug"),
             kwargs.get("sa_slug"),
-            kwargs.get("sau_slug"),
+            kwargs.get("update_slug"),
         )
 
         sau = StrategicActionUpdate.objects.since(
             deadline=self.last_deadline,
             status=StrategicActionUpdate.Status.SUBMITTED,
-            slug=sau_slug,
-            supply_chain__slug=sc_slug,
+            slug=update_slug,
+            supply_chain__slug=supply_chain_slug,
             strategic_action__slug=sa_slug,
         )[0]
 

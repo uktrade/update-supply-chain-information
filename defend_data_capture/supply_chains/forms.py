@@ -637,7 +637,7 @@ class MonthlyUpdateSubmissionForm:
                     pattern,
                     kwargs={
                         "supply_chain_slug": self.instance.supply_chain.slug,
-                        "strategic_action_slug": self.instance.strategic_action.slug,
+                        "action_slug": self.instance.strategic_action.slug,
                         "update_slug": self.instance.slug,
                     },
                 )

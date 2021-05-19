@@ -6,6 +6,7 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
+from accounts.models import GovDepartment
 from accounts.test.factories import GovDepartmentFactory
 from supply_chains.forms import YesNoChoices, ApproximateTimings
 from supply_chains.models import StrategicAction, StrategicActionUpdate
@@ -145,6 +146,8 @@ class TestMonthlyUpdateTimingPage:
         self, logged_in_client, test_user
     ):
         supply_chain: SupplyChain = SupplyChainFactory()
+        test_user.gov_department = supply_chain.gov_department
+        test_user.save()
         strategic_action: StrategicAction = StrategicActionFactory(
             supply_chain=supply_chain
         )
@@ -170,7 +173,7 @@ class TestMonthlyUpdateTimingPage:
             }
             url_kwargs = {
                 "supply_chain_slug": strategic_action.supply_chain.slug,
-                "strategic_action_slug": strategic_action.slug,
+                "action_slug": strategic_action.slug,
                 "update_slug": strategic_action_update.slug,
             }
             url = reverse("monthly-update-timing-edit", kwargs=url_kwargs)
@@ -186,7 +189,7 @@ class TestMonthlyUpdateTimingPage:
 
 
 class TestNoCompletionDateMonthlyUpdateNavigationLinks:
-    def setup_method(self):
+    def setup_method(self, *args, **kwargs):
         self.supply_chain = SupplyChainFactory()
         self.strategic_action = StrategicActionFactory(supply_chain=self.supply_chain)
         self.strategic_action_update = StrategicActionUpdateFactory(
@@ -197,11 +200,13 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
     def test_info_view_has_info_timing_status_summary_links(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-info-edit",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -220,11 +225,13 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
     def test_timing_view_has_info_timing_status_summary_links(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-timing-edit",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -243,11 +250,13 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
     def test_status_view_has_info_timing_status_summary_links(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-status-edit",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -266,11 +275,13 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
     def test_summary_view_has_info_timing_status_summary_links(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-summary",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -299,11 +310,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_info_view_has_info_status_summary_links_if_completion_date_unchanged(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-info-edit",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -319,11 +332,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_info_view_has_info_status_revisedtiming_summary_links_if_completion_date_changed(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-info-edit",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -345,11 +360,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_info_view_has_info_status_revisedtiming_summary_links_if_is_ongoing_changed(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-info-edit",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -369,11 +386,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_status_view_has_info_status_summary_links_if_completion_date_unchanged(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-status-edit",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -389,11 +408,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_status_view_has_info_status_revisedtiming_summary_links_if_completion_date_changed(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-status-edit",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -415,11 +436,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_status_view_has_info_status_revisedtiming_summary_links_if_is_ongoing_changed(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-status-edit",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -439,11 +462,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_revised_timing_view_has_info_status_revisedtiming_summary_links(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-revised-timing-edit",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -459,11 +484,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_summary_view_has_info_status_summary_links_if_completion_date_unchanged(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-summary",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -479,11 +506,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_summary_view_has_info_status_revised_timing_summary_links_if_completion_date_changed(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-summary",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -505,11 +534,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
     def test_summary_view_has_info_status_revised_timing_summary_links_if_is_ongoing_changed(
         self, logged_in_client, test_user
     ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
         url = reverse(
             "monthly-update-summary",
             kwargs={
                 "supply_chain_slug": self.strategic_action.supply_chain.slug,
-                "strategic_action_slug": self.strategic_action.slug,
+                "action_slug": self.strategic_action.slug,
                 "update_slug": self.strategic_action_update.slug,
             },
         )
@@ -525,3 +556,129 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         assert "Status" in navigation_links.keys()
         assert "RevisedTiming" in navigation_links.keys()
         assert "Summary" in navigation_links.keys()
+
+
+class TestMonthlyUpdateFormPagesPermissions:
+    def setup_method(self):
+        self.supply_chain = SupplyChainFactory()
+        self.strategic_action = StrategicActionFactory(supply_chain=self.supply_chain)
+        self.strategic_action_update = StrategicActionUpdateFactory(
+            strategic_action=self.strategic_action,
+            supply_chain=self.strategic_action.supply_chain,
+        )
+
+    def ensure_user_lacks_permissions(self, test_user, supply_chain):
+        # need to be sure the user is from the wrong department for the supply chain
+        department_pk = supply_chain.gov_department.pk
+        wrong_department = (
+            GovDepartment.objects.exclude(pk=department_pk).order_by("?").first()
+        )
+        test_user.gov_department = wrong_department
+        test_user.save()
+
+    def test_monthly_update_create_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-create",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403
+
+    def test_monthly_update_info_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-info-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403
+
+    def test_monthly_update_timing_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-timing-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403
+
+    def test_monthly_update_status_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-status-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403
+
+    def test_monthly_update_revised_timing_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-revised-timing-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403
+
+    def test_monthly_update_summary_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-summary",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403

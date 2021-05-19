@@ -29,7 +29,7 @@ def tasklist_stub(test_user):
         "sc_name": sc_name,
         "sa_description": sa_description,
         "sa_name": sa_name,
-        "url": reverse("tlist", kwargs={"sc_slug": slugify(sc_name)}),
+        "url": reverse("tlist", kwargs={"supply_chain_slug": slugify(sc_name)}),
         "sc": sc,
         "sa": sa,
     }
@@ -44,7 +44,9 @@ def tasklist_in_prog(tasklist_stub):
     )
 
     yield {
-        "url": reverse("tlist", kwargs={"sc_slug": slugify(tasklist_stub["sc_name"])}),
+        "url": reverse(
+            "tlist", kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])}
+        ),
     }
 
 
@@ -57,7 +59,9 @@ def tasklist_part_comp(tasklist_stub):
     )
 
     yield {
-        "url": reverse("tlist", kwargs={"sc_slug": slugify(tasklist_stub["sc_name"])}),
+        "url": reverse(
+            "tlist", kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])}
+        ),
     }
 
 
@@ -71,7 +75,9 @@ def tasklist_completed(tasklist_stub):
         )
 
     yield {
-        "url": reverse("tlist", kwargs={"sc_slug": slugify(tasklist_stub["sc_name"])}),
+        "url": reverse(
+            "tlist", kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])}
+        ),
     }
 
 
@@ -85,7 +91,9 @@ def tasklist_submitted(tasklist_stub):
         )
 
     yield {
-        "url": reverse("tlist", kwargs={"sc_slug": slugify(tasklist_stub["sc_name"])}),
+        "url": reverse(
+            "tlist", kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])}
+        ),
     }
 
 
@@ -106,7 +114,7 @@ class TestTaskListView:
 
         # Act
         resp = logged_in_client.get(
-            reverse("tlist", kwargs={"sc_slug": slugify(sc_name)})
+            reverse("tlist", kwargs={"supply_chain_slug": slugify(sc_name)})
         )
 
         # Assert

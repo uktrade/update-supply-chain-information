@@ -40,21 +40,25 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("", HomePageView.as_view(), name="index"),
-    path("<slug:sc_slug>", SCTaskListView.as_view(), name="tlist"),
-    path("<slug:sc_slug>/complete", SCCompleteView.as_view(), name="update_complete"),
+    path("<slug:supply_chain_slug>", SCTaskListView.as_view(), name="tlist"),
     path(
-        "<slug:sc_slug>/strategic-actions",
+        "<slug:supply_chain_slug>/complete",
+        SCCompleteView.as_view(),
+        name="update_complete",
+    ),
+    path(
+        "<slug:supply_chain_slug>/strategic-actions",
         SASummaryView.as_view(),
         name="strat_action_summary",
     ),
     path(
-        "<slug:sc_slug>/<slug:sa_slug>/<slug:sau_slug>/review",
+        "<slug:supply_chain_slug>/<slug:sa_slug>/<slug:update_slug>/review",
         SAUReview.as_view(),
         name="update_review",
     ),
-    path("<slug:sc_slug>/summary", SCSummary.as_view(), name="sc_summary"),
+    path("<slug:supply_chain_slug>/summary", SCSummary.as_view(), name="sc_summary"),
     path(
-        "<slug:supply_chain_slug>/<slug:strategic_action_slug>/updates/",
+        "<slug:supply_chain_slug>/<slug:action_slug>/updates/",
         include(
             [
                 path(

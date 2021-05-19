@@ -33,7 +33,7 @@ class GovDepPermissionMixin:
     """
 
     def dispatch(self, *args, **kwargs):
-        supply_chain = SupplyChain.objects.get(slug=kwargs.get("sc_slug"))
+        supply_chain = SupplyChain.objects.get(slug=kwargs.get("supply_chain_slug"))
 
         if not check_matching_gov_department(self.request.user, supply_chain):
             raise PermissionDenied
