@@ -1,11 +1,18 @@
+from unittest import mock
 from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 
 import pytest
 from django.test import Client
 from django.urls import reverse
 
-from accounts.models import User
+from accounts.models import GovDepartment
 from accounts.test.factories import GovDepartmentFactory
+from supply_chains.forms import YesNoChoices, ApproximateTimings
+from supply_chains.models import StrategicAction, StrategicActionUpdate
+from supply_chains.test.factories import (
+    StrategicActionUpdateFactory,
+)
 from supply_chains.models import SupplyChain
 from supply_chains.test.factories import StrategicActionFactory, SupplyChainFactory
 
@@ -132,3 +139,546 @@ def test_strat_action_summary_page_pagination(logged_in_client, test_user):
     )
     assert response.status_code == 200
     assert len(response.context["strategic_actions"]) == 4
+
+
+class TestMonthlyUpdateTimingPage:
+    def test_posting_form_saves_changed_target_completion_date_to_strategic_action_update(
+        self, logged_in_client, test_user
+    ):
+        supply_chain: SupplyChain = SupplyChainFactory()
+        test_user.gov_department = supply_chain.gov_department
+        test_user.save()
+        strategic_action: StrategicAction = StrategicActionFactory(
+            supply_chain=supply_chain
+        )
+        strategic_action.target_completion_date = None
+        strategic_action.is_ongoing = True
+        strategic_action.save()
+        strategic_action_update: StrategicActionUpdate = StrategicActionUpdateFactory(
+            strategic_action=strategic_action,
+            status=StrategicActionUpdate.Status.IN_PROGRESS,
+            supply_chain=strategic_action.supply_chain,
+            reason_for_completion_date_change="All things must pass.",
+        )
+
+        mock_today = date(year=2021, month=4, day=23)
+        with mock.patch(
+            "supply_chains.forms.date",
+            mock.Mock(today=mock.Mock(return_value=mock_today)),
+        ):
+            expected_target_completion_date = mock_today + relativedelta(years=+1)
+            form_data = {
+                "is_completion_date_known": YesNoChoices.NO,
+                f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONE_YEAR,
+            }
+            url_kwargs = {
+                "supply_chain_slug": strategic_action.supply_chain.slug,
+                "action_slug": strategic_action.slug,
+                "update_slug": strategic_action_update.slug,
+            }
+            url = reverse("monthly-update-timing-edit", kwargs=url_kwargs)
+            response = logged_in_client.post(url, form_data)
+            assert response.status_code == 302
+            strategic_action.refresh_from_db()
+            assert strategic_action.target_completion_date is None
+            strategic_action_update.refresh_from_db()
+            assert (
+                strategic_action_update.changed_value_for_target_completion_date
+                == expected_target_completion_date
+            )
+
+
+class TestNoCompletionDateMonthlyUpdateNavigationLinks:
+    def setup_method(self, *args, **kwargs):
+        self.supply_chain = SupplyChainFactory()
+        self.strategic_action = StrategicActionFactory(supply_chain=self.supply_chain)
+        self.strategic_action_update = StrategicActionUpdateFactory(
+            strategic_action=self.strategic_action,
+            supply_chain=self.strategic_action.supply_chain,
+        )
+
+    def test_info_view_has_info_timing_status_summary_links(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-info-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+
+        self.strategic_action.target_completion_date = None
+        self.strategic_action.save()
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" not in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_timing_view_has_info_timing_status_summary_links(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-timing-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+
+        self.strategic_action.target_completion_date = None
+        self.strategic_action.save()
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" not in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_status_view_has_info_timing_status_summary_links(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-status-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+
+        self.strategic_action.target_completion_date = None
+        self.strategic_action.save()
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" not in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_summary_view_has_info_timing_status_summary_links(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-summary",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+
+        self.strategic_action.target_completion_date = None
+        self.strategic_action.save()
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" not in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+
+class TestWithCompletionDateMonthlyUpdateNavigationLinks:
+    def setup_method(self):
+        self.supply_chain = SupplyChainFactory()
+        self.strategic_action = StrategicActionFactory(supply_chain=self.supply_chain)
+        self.strategic_action_update = StrategicActionUpdateFactory(
+            strategic_action=self.strategic_action,
+            supply_chain=self.strategic_action.supply_chain,
+        )
+
+    def test_info_view_has_info_status_summary_links_if_completion_date_unchanged(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-info-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" not in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" not in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_info_view_has_info_status_revisedtiming_summary_links_if_completion_date_changed(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-info-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+
+        self.strategic_action_update.changed_value_for_target_completion_date = date(
+            year=2021, month=12, day=25
+        )
+        self.strategic_action_update.save()
+
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" not in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_info_view_has_info_status_revisedtiming_summary_links_if_is_ongoing_changed(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-info-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+
+        self.strategic_action_update.changed_value_for_is_ongoing = True
+        self.strategic_action_update.save()
+
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" not in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_status_view_has_info_status_summary_links_if_completion_date_unchanged(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-status-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" not in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" not in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_status_view_has_info_status_revisedtiming_summary_links_if_completion_date_changed(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-status-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+
+        self.strategic_action_update.changed_value_for_target_completion_date = date(
+            year=2021, month=12, day=25
+        )
+        self.strategic_action_update.save()
+
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" not in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_status_view_has_info_status_revisedtiming_summary_links_if_is_ongoing_changed(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-status-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+
+        self.strategic_action_update.changed_value_for_is_ongoing = True
+        self.strategic_action_update.save()
+
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" not in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_revised_timing_view_has_info_status_revisedtiming_summary_links(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-revised-timing-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" not in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_summary_view_has_info_status_summary_links_if_completion_date_unchanged(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-summary",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" not in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" not in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_summary_view_has_info_status_revised_timing_summary_links_if_completion_date_changed(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-summary",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+
+        self.strategic_action_update.changed_value_for_target_completion_date = date(
+            year=2021, month=12, day=25
+        )
+        self.strategic_action_update.save()
+
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" not in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+    def test_summary_view_has_info_status_revised_timing_summary_links_if_is_ongoing_changed(
+        self, logged_in_client, test_user
+    ):
+        test_user.gov_department = self.supply_chain.gov_department
+        test_user.save()
+        url = reverse(
+            "monthly-update-summary",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+
+        self.strategic_action_update.changed_value_for_is_ongoing = True
+        self.strategic_action_update.save()
+
+        response = logged_in_client.get(url)
+
+        navigation_links = response.context_data["navigation_links"]
+        assert "Info" in navigation_links.keys()
+        assert "Timing" not in navigation_links.keys()
+        assert "Status" in navigation_links.keys()
+        assert "RevisedTiming" in navigation_links.keys()
+        assert "Summary" in navigation_links.keys()
+
+
+class TestMonthlyUpdateFormPagesPermissions:
+    def setup_method(self):
+        self.supply_chain = SupplyChainFactory()
+        self.strategic_action = StrategicActionFactory(supply_chain=self.supply_chain)
+        self.strategic_action_update = StrategicActionUpdateFactory(
+            strategic_action=self.strategic_action,
+            supply_chain=self.strategic_action.supply_chain,
+        )
+
+    def ensure_user_lacks_permissions(self, test_user, supply_chain):
+        # need to be sure the user is from the wrong department for the supply chain
+        department_pk = supply_chain.gov_department.pk
+        wrong_department = (
+            GovDepartment.objects.exclude(pk=department_pk).order_by("?").first()
+        )
+        test_user.gov_department = wrong_department
+        test_user.save()
+
+    def test_monthly_update_create_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-create",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403
+
+    def test_monthly_update_info_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-info-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403
+
+    def test_monthly_update_timing_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-timing-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403
+
+    def test_monthly_update_status_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-status-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403
+
+    def test_monthly_update_revised_timing_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-revised-timing-edit",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403
+
+    def test_monthly_update_summary_view_requires_user_permissions(
+        self, logged_in_client, test_user
+    ):
+        url = reverse(
+            "monthly-update-summary",
+            kwargs={
+                "supply_chain_slug": self.strategic_action.supply_chain.slug,
+                "action_slug": self.strategic_action.slug,
+                "update_slug": self.strategic_action_update.slug,
+            },
+        )
+        client = logged_in_client
+        self.ensure_user_lacks_permissions(
+            test_user=test_user, supply_chain=self.supply_chain
+        )
+        response = client.get(url)
+        assert response.status_code == 403

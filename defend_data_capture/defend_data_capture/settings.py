@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "reversion",
     "webpack_loader",
+    "django.forms",
 ]
 
 MIDDLEWARE = [
@@ -158,3 +159,5 @@ CHARFIELD_MAX_LENGTH = 250
 
 # To address models.W042 - type of the primary key
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"

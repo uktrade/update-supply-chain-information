@@ -15,6 +15,12 @@ from supply_chains.views import (
     SASummaryView,
     SCSummary,
     SAUReview,
+    MonthlyUpdateInfoCreateView,
+    MonthlyUpdateInfoEditView,
+    MonthlyUpdateTimingEditView,
+    MonthlyUpdateStatusEditView,
+    MonthlyUpdateRevisedTimingEditView,
+    MonthlyUpdateSummaryView,
 )
 
 router = routers.DefaultRouter()
@@ -34,17 +40,58 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include(router.urls)),
     path("", HomePageView.as_view(), name="index"),
-    path("<slug:sc_slug>/summary", SCSummary.as_view(), name="sc_summary"),
-    path("<slug:sc_slug>", SCTaskListView.as_view(), name="tlist"),
-    path("<slug:sc_slug>/complete", SCCompleteView.as_view(), name="update_complete"),
+    path("<slug:supply_chain_slug>", SCTaskListView.as_view(), name="tlist"),
     path(
-        "<slug:sc_slug>/strategic-actions",
+        "<slug:supply_chain_slug>/complete",
+        SCCompleteView.as_view(),
+        name="update_complete",
+    ),
+    path(
+        "<slug:supply_chain_slug>/strategic-actions",
         SASummaryView.as_view(),
         name="strat_action_summary",
     ),
     path(
-        "<slug:sc_slug>/<slug:sa_slug>/<slug:sau_slug>/review",
+        "<slug:supply_chain_slug>/<slug:sa_slug>/updates/<slug:update_slug>/review",
         SAUReview.as_view(),
         name="update_review",
+    ),
+    path("<slug:supply_chain_slug>/summary", SCSummary.as_view(), name="sc_summary"),
+    path(
+        "<slug:supply_chain_slug>/<slug:action_slug>/updates/",
+        include(
+            [
+                path(
+                    "start/",
+                    MonthlyUpdateInfoCreateView.as_view(),
+                    name="monthly-update-create",
+                ),
+                path(
+                    "<slug:update_slug>/info/",
+                    MonthlyUpdateInfoEditView.as_view(),
+                    name="monthly-update-info-edit",
+                ),
+                path(
+                    "<slug:update_slug>/timing/",
+                    MonthlyUpdateTimingEditView.as_view(),
+                    name="monthly-update-timing-edit",
+                ),
+                path(
+                    "<slug:update_slug>/delivery-status/",
+                    MonthlyUpdateStatusEditView.as_view(),
+                    name="monthly-update-status-edit",
+                ),
+                path(
+                    "<slug:update_slug>/revised-timing/",
+                    MonthlyUpdateRevisedTimingEditView.as_view(),
+                    name="monthly-update-revised-timing-edit",
+                ),
+                path(
+                    "<slug:update_slug>/confirm/",
+                    MonthlyUpdateSummaryView.as_view(),
+                    name="monthly-update-summary",
+                ),
+            ]
+        ),
     ),
 ]

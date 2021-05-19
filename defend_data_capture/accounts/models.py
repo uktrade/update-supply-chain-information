@@ -1,9 +1,10 @@
+import uuid
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.postgres.fields import ArrayField
-import uuid
 
 
 def get_gov_department_id_from_user_email(email):
