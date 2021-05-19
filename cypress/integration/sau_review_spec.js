@@ -11,7 +11,7 @@ const strategicAction = strategicActions[9].fields
 const update = updates[3].fields
 
 describe('Strategic action update review page', () => {
-  const route = `/${supplyChain.slug}/${strategicAction.slug}/updates/${update.slug}/review`
+  const route = `/${supplyChain.slug}/${strategicAction.slug}/update/${update.slug}/review/`
   it('successfully loads', () => {
     cy.visit(Cypress.config('baseUrl') + route)
     cy.injectAxe()
@@ -30,7 +30,7 @@ describe('Strategic action update review page', () => {
     cy.get('li')
       .contains(supplyChain.name)
       .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.slug}`)
+      .and('eq', `/${supplyChain.slug}/`)
     cy.get('li')
       .contains(`Current monthly update for ${strategicAction.name}`)
       .should('have.attr', 'href')
@@ -79,7 +79,7 @@ describe('Strategic action update review page', () => {
     cy.get('a').contains('Back').click()
     cy.url().should(
       'eq',
-      Cypress.config('baseUrl') + `/${supplyChain.slug}`
+      Cypress.config('baseUrl') + `/${supplyChain.slug}/`
     )
   })
 })

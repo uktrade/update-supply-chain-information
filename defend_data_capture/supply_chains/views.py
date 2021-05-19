@@ -81,13 +81,20 @@ class SCTaskListView(
 
     def _update_review_routes(self) -> None:
         for update in self.sa_updates:
-            tokens = update["route"].split("/")
-
-            # Remove slug 'info' and trailing '/'
-            tokens = tokens[:-2]
-
-            tokens.append("review")
-            update["route"] = "/".join(tokens)
+            url_kwargs = {
+                "update_slug": update["update_slug"],
+                "action_slug": update["action_slug"],
+            }
+            url_kwargs.update(self.kwargs)
+            url = reverse("update_review", kwargs=url_kwargs)
+            update["route"] = url
+            # tokens = update["route"].split("/")
+            #
+            # # Remove slug 'info' and trailing '/'
+            # tokens = tokens[:-2]
+            #
+            # tokens.append("review")
+            # update["route"] = "/".join(tokens)
 
     def _sort_updates(self, updates: List) -> List:
         SORT_ORDER = {
@@ -118,6 +125,8 @@ class SCTaskListView(
 
             if sau:
                 update["status"] = StrategicActionUpdate.Status(sau[0].status)
+                update["update_slug"] = sau[0].slug
+                update["action_slug"] = sa.slug
                 update["route"] = reverse(
                     "monthly-update-info-edit",
                     kwargs={
@@ -622,7 +631,7 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         supply_chain_slug, sa_slug, update_slug = (
             kwargs.get("supply_chain_slug"),
-            kwargs.get("sa_slug"),
+            kwargs.get("action_slug"),
             kwargs.get("update_slug"),
         )
 

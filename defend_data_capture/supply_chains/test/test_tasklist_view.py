@@ -210,16 +210,32 @@ class TestTaskListView:
             iter(des_set)
         )
         assert route_set == {
-            f"/{slugify(tasklist_stub['sc_name'])}/{slugify(tasklist_stub['sa_name'])}/updates/start/"
+            reverse(
+                "monthly-update-create",
+                kwargs={
+                    "supply_chain_slug": slugify(tasklist_stub["sc_name"]),
+                    "action_slug": slugify(tasklist_stub["sa_name"]),
+                },
+            )
         }
 
     @pytest.mark.parametrize(
         "sc_name, num_sas, url, actions_returned",
         (
-            ("sc 1", 4, "/sc-1", 4),
-            ("sc 1", 7, "/sc-1", 5),
-            ("sc 1", 7, "/sc-1?page=2", 2),
-            ("sc 1", 7, "/sc-1?page=300", 2),
+            ("sc 1", 4, reverse("tlist", kwargs={"supply_chain_slug": "sc-1"}), 4),
+            ("sc 1", 7, reverse("tlist", kwargs={"supply_chain_slug": "sc-1"}), 5),
+            (
+                "sc 1",
+                7,
+                reverse("tlist", kwargs={"supply_chain_slug": "sc-1"}) + "?page=2",
+                2,
+            ),
+            (
+                "sc 1",
+                7,
+                reverse("tlist", kwargs={"supply_chain_slug": "sc-1"}) + "?page=300",
+                2,
+            ),
         ),
     )
     def test_pagination(

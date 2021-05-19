@@ -59,7 +59,7 @@ def update_stub(test_user):
             "update_review",
             kwargs={
                 "supply_chain_slug": slugify(sc_name),
-                "sa_slug": slugify(sa_name),
+                "action_slug": slugify(sa_name),
                 "update_slug": update_slug,
             },
         ),
@@ -94,7 +94,7 @@ class TestSAUReview:
                 "update_review",
                 kwargs={
                     "supply_chain_slug": slugify(sc_name),
-                    "sa_slug": sa.slug,
+                    "action_slug": sa.slug,
                     "update_slug": sau.slug,
                 },
             )
@@ -157,7 +157,7 @@ class TestSAUReview:
                 "update_review",
                 kwargs={
                     "supply_chain_slug": sc_name,
-                    "sa_slug": slugify(sa_name),
+                    "action_slug": slugify(sa_name),
                     "update_slug": update_slug,
                 },
             )

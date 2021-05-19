@@ -162,22 +162,22 @@ const valuesToEnter = {
 
 const urls = {
   'start': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/start/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/start/`
   },
   'info': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/info/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/${todaySlug}/latest/`
   },
   'timing': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/timing/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/${todaySlug}/timing/`
   },
   'status': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/delivery-status/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/${todaySlug}/delivery-status/`
   },
   'revisedtiming': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/revised-timing/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/${todaySlug}/revised-timing/`
   },
   'confirm': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/confirm/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/${todaySlug}/confirm/`
   },
 }
 
@@ -279,7 +279,7 @@ describe('Testing monthly update forms', () => {
               cy.mainForm().hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.mainForm().hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
+              cy.mainForm().hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
             })
             context('When submitted with the content field filled out', function() {
               before(() => {
@@ -385,7 +385,7 @@ describe('Testing monthly update forms', () => {
               cy.mainForm().hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.mainForm().hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
+              cy.mainForm().hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
             })
             context('the radio buttons asking for the current delivery status', function() {
               beforeEach(() => {
@@ -627,7 +627,7 @@ describe('Testing monthly update forms', () => {
               cy.mainForm().hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.mainForm().hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
+              cy.mainForm().hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
             })
             it ('should have a fieldset with legend asking if the new completion date is known', () => {
               cy.mainForm().get('fieldset legend h2').contains('Do you know the revised expected completion date?').should('exist')
@@ -946,7 +946,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton('Submit')
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
+              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
             })
           })
         })
