@@ -27,7 +27,6 @@ describe('The Home Page', () => {
     cy.lastWorkingDay().then(deadline => {
           cy.get('li').contains( `You need to complete your monthly update for 5 supply chains by ${deadline}`)
       })
-    cy.get('li').contains('You need to complete your monthly update for 5 supply chains by')
     cy.get('li').contains(
       'Select a supply chain to provide your regular monthly update or to update wider details.'
     )

@@ -1,8 +1,4 @@
-#!/usr/bin/env python3
-
-from datetime import date
-
-from defend_data_capture.supply_chains.utils import (
+from supply_chains.utils import (
     get_last_day_of_this_month,
     get_last_working_day_of_a_month,
 )
