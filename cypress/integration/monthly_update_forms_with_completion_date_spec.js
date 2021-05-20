@@ -162,22 +162,22 @@ const valuesToEnter = {
 
 const urls = {
   'start': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/start/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/start/`
   },
   'info': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/${todaySlug}/latest/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/info/`
   },
   'timing': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/${todaySlug}/timing/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/timing/`
   },
   'status': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/${todaySlug}/delivery-status/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/delivery-status/`
   },
   'revisedtiming': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/${todaySlug}/revised-timing/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/revised-timing/`
   },
   'confirm': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/update/${todaySlug}/confirm/`
+    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/confirm/`
   },
 }
 

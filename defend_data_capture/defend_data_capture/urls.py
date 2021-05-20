@@ -64,7 +64,7 @@ monthly_update_urlpatterns = [
     path(
         "review/",
         SAUReview.as_view(),
-        name="update_review",
+        name="monthly-update-review",
     ),
 ]
 
@@ -72,10 +72,10 @@ strategic_action_urlpatterns = [
     path(
         "strategic-actions/",
         SASummaryView.as_view(),
-        name="strat_action_summary",
+        name="strategic-action-summary",
     ),
     path(
-        "<slug:action_slug>/update/",
+        "<slug:action_slug>/updates/",
         include(
             [
                 path(
@@ -95,12 +95,12 @@ supply_chain_urlpatterns = [
         "<slug:supply_chain_slug>/",
         include(
             [
-                path("", SCTaskListView.as_view(), name="tlist"),
-                path("summary/", SCSummary.as_view(), name="sc_summary"),
+                path("", SCTaskListView.as_view(), name="supply-chain-task-list"),
+                path("summary/", SCSummary.as_view(), name="supply-chain-summary"),
                 path(
                     "complete/",
                     SCCompleteView.as_view(),
-                    name="update_complete",
+                    name="supply-chain-update-complete",
                 ),
                 path("", include(strategic_action_urlpatterns)),
             ]

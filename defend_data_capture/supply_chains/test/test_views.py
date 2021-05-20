@@ -90,7 +90,9 @@ def test_homepage_update_incomplete(logged_in_client, test_user):
 def test_strat_action_summary_page_unauthenticated(test_supply_chain):
     """Test unauthenticated request is redirected."""
     client = Client()
-    response = client.get(reverse("strat_action_summary", args=[test_supply_chain.id]))
+    response = client.get(
+        reverse("strategic-action-summary", args=[test_supply_chain.id])
+    )
     assert response.status_code == 302
 
 
@@ -106,7 +108,7 @@ def test_strat_action_summary_page_unauthorised(
     dep = GovDepartmentFactory()
     sc = SupplyChainFactory(gov_department=dep)
     response = logged_in_client.get(
-        reverse("strat_action_summary", args=[test_supply_chain.slug])
+        reverse("strategic-action-summary", args=[test_supply_chain.slug])
     )
     assert response.status_code == 403
 
@@ -124,7 +126,7 @@ def test_strat_action_summary_page_success(logged_in_client, test_user):
     StrategicActionFactory.create_batch(
         2, supply_chain=sc, is_archived=True, archived_reason="A reason"
     )
-    response = logged_in_client.get(reverse("strat_action_summary", args=[sc.slug]))
+    response = logged_in_client.get(reverse("strategic-action-summary", args=[sc.slug]))
     assert response.status_code == 200
     assert response.context["supply_chain"] == sc
     assert len(response.context["strategic_actions"]) == 5
@@ -135,7 +137,7 @@ def test_strat_action_summary_page_pagination(logged_in_client, test_user):
     sc = SupplyChainFactory(gov_department=test_user.gov_department)
     StrategicActionFactory.create_batch(14, supply_chain=sc)
     response = logged_in_client.get(
-        "%s?page=3" % reverse("strat_action_summary", args=[sc.slug])
+        "%s?page=3" % reverse("strategic-action-summary", args=[sc.slug])
     )
     assert response.status_code == 200
     assert len(response.context["strategic_actions"]) == 4

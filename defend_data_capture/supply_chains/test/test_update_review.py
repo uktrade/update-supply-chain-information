@@ -56,7 +56,7 @@ def update_stub(test_user):
         "sau_reason": sau_reason,
         "update_slug": update_slug,
         "url": reverse(
-            "update_review",
+            "monthly-update-review",
             kwargs={
                 "supply_chain_slug": slugify(sc_name),
                 "action_slug": slugify(sa_name),
@@ -91,7 +91,7 @@ class TestSAUReview:
         # Act
         resp = logged_in_client.get(
             reverse(
-                "update_review",
+                "monthly-update-review",
                 kwargs={
                     "supply_chain_slug": slugify(sc_name),
                     "action_slug": sa.slug,
@@ -154,7 +154,7 @@ class TestSAUReview:
         # Act
         resp = logged_in_client.get(
             reverse(
-                "update_review",
+                "monthly-update-review",
                 kwargs={
                     "supply_chain_slug": sc_name,
                     "action_slug": slugify(sa_name),

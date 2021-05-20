@@ -40,7 +40,8 @@ def taskcomp_stub(test_user):
     yield {
         "sc_name": sc_name,
         "url": reverse(
-            "update_complete", kwargs={"supply_chain_slug": slugify(sc_name)}
+            "supply-chain-update-complete",
+            kwargs={"supply_chain_slug": slugify(sc_name)},
         ),
     }
 
@@ -62,7 +63,10 @@ class TestTaskCompleteView:
 
         # Act
         resp = logged_in_client.get(
-            reverse("update_complete", kwargs={"supply_chain_slug": slugify(sc_name)})
+            reverse(
+                "supply-chain-update-complete",
+                kwargs={"supply_chain_slug": slugify(sc_name)},
+            )
         )
 
         # Assert

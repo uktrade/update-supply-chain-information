@@ -348,7 +348,7 @@ class TestMonthlyUpdateSummaryPage:
             # form_data is irrelevant as this view constructs its own from the true state of the model
         }
         expected_response_url = reverse(
-            "tlist",
+            "supply-chain-task-list",
             kwargs={"supply_chain_slug": strategic_action.supply_chain.slug},
         )
         response = logged_in_client.post(info_url, data=form_data)

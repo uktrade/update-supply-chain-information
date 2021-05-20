@@ -11,7 +11,7 @@ const strategicAction = strategicActions[9].fields
 const update = updates[3].fields
 
 describe('Strategic action update review page', () => {
-  const route = `/${supplyChain.slug}/${strategicAction.slug}/update/${update.slug}/review/`
+  const route = `/${supplyChain.slug}/${strategicAction.slug}/updates/${update.slug}/review/`
   it('successfully loads', () => {
     cy.visit(Cypress.config('baseUrl') + route)
     cy.injectAxe()

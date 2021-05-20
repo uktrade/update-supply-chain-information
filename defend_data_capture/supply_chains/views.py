@@ -86,7 +86,7 @@ class SCTaskListView(
                 "action_slug": update["action_slug"],
             }
             url_kwargs.update(self.kwargs)
-            url = reverse("update_review", kwargs=url_kwargs)
+            url = reverse("monthly-update-review", kwargs=url_kwargs)
             update["route"] = url
 
     def _sort_updates(self, updates: List) -> List:
@@ -200,7 +200,9 @@ class SCTaskListView(
                 update.status = StrategicActionUpdate.Status.SUBMITTED
                 update.save()
 
-            return redirect("update_complete", supply_chain_slug=self.supply_chain.slug)
+            return redirect(
+                "supply-chain-update-complete", supply_chain_slug=self.supply_chain.slug
+            )
         else:
             self.submit_error = True
             kwargs.setdefault("view", self)
@@ -231,7 +233,9 @@ class SCCompleteView(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
 
         # This is to gaurd manual access if not actually complete, help them to complete
         if not self._validate():
-            return redirect("tlist", supply_chain_slug=self.supply_chain.slug)
+            return redirect(
+                "supply-chain-task-list", supply_chain_slug=self.supply_chain.slug
+            )
 
         supply_chains = request.user.gov_department.supply_chains.order_by("name")
 
@@ -582,7 +586,8 @@ class MonthlyUpdateSummaryView(
 
     def get_success_url(self):
         return reverse(
-            "tlist", kwargs={"supply_chain_slug": self.object.supply_chain.slug}
+            "supply-chain-task-list",
+            kwargs={"supply_chain_slug": self.object.supply_chain.slug},
         )
 
 
