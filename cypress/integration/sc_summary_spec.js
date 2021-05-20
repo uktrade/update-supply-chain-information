@@ -8,7 +8,7 @@ const user = users[0].fields
 
 describe('Supply chain summary page', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + `/${supplyChain.fields.slug}/summary`)
+    cy.visit(Cypress.config('baseUrl') + `/${supplyChain.fields.slug}/summary/`)
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -25,11 +25,11 @@ describe('Supply chain summary page', () => {
     cy.get('li')
       .contains(`${supplyChain.fields.name}`)
       .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.fields.slug}`)
+      .and('eq', `/${supplyChain.fields.slug}/`)
     cy.get('li')
       .contains(`Full details of ${supplyChain.fields.name}`)
       .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.fields.slug}/summary`)
+      .and('eq', `/${supplyChain.fields.slug}/summary/`)
   })
   it('displays the header', () => {
     cy.get('h1').contains(`Summary of ${supplyChain.fields.name}`)
@@ -80,7 +80,7 @@ describe('Supply chain summary page', () => {
     cy.get('a').contains('Back to task list').click()
     cy.url().should(
       'eq',
-      Cypress.config('baseUrl') + `/${supplyChain.fields.slug}`
+      Cypress.config('baseUrl') + `/${supplyChain.fields.slug}/`
     )
   })
 })

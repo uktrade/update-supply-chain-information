@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
@@ -37,30 +35,47 @@ router.register(
     basename="strategic-action-update",
 )
 
-urlpatterns = [
-    path("auth/", include("authbroker_client.urls")),
-    path("admin/", admin_site.urls),
-    path("api/", include(router.urls)),
-    path("", HomePageView.as_view(), name="index"),
-    path("<slug:supply_chain_slug>", SCTaskListView.as_view(), name="tlist"),
+monthly_update_urlpatterns = [
     path(
-        "<slug:supply_chain_slug>/complete",
-        SCCompleteView.as_view(),
-        name="update_complete",
+        "info/",
+        MonthlyUpdateInfoEditView.as_view(),
+        name="monthly-update-info-edit",
     ),
     path(
-        "<slug:supply_chain_slug>/strategic-actions",
-        SASummaryView.as_view(),
-        name="strat_action_summary",
+        "timing/",
+        MonthlyUpdateTimingEditView.as_view(),
+        name="monthly-update-timing-edit",
     ),
     path(
-        "<slug:supply_chain_slug>/<slug:sa_slug>/updates/<slug:update_slug>/review",
+        "delivery-status/",
+        MonthlyUpdateStatusEditView.as_view(),
+        name="monthly-update-status-edit",
+    ),
+    path(
+        "revised-timing/",
+        MonthlyUpdateRevisedTimingEditView.as_view(),
+        name="monthly-update-revised-timing-edit",
+    ),
+    path(
+        "confirm/",
+        MonthlyUpdateSummaryView.as_view(),
+        name="monthly-update-summary",
+    ),
+    path(
+        "review/",
         SAUReview.as_view(),
-        name="update_review",
+        name="monthly-update-review",
     ),
-    path("<slug:supply_chain_slug>/summary", SCSummary.as_view(), name="sc_summary"),
+]
+
+strategic_action_urlpatterns = [
     path(
-        "<slug:supply_chain_slug>/<slug:action_slug>/updates/",
+        "strategic-actions/",
+        SASummaryView.as_view(),
+        name="strategic-action-summary",
+    ),
+    path(
+        "<slug:action_slug>/updates/",
         include(
             [
                 path(
@@ -68,32 +83,34 @@ urlpatterns = [
                     MonthlyUpdateInfoCreateView.as_view(),
                     name="monthly-update-create",
                 ),
-                path(
-                    "<slug:update_slug>/info/",
-                    MonthlyUpdateInfoEditView.as_view(),
-                    name="monthly-update-info-edit",
-                ),
-                path(
-                    "<slug:update_slug>/timing/",
-                    MonthlyUpdateTimingEditView.as_view(),
-                    name="monthly-update-timing-edit",
-                ),
-                path(
-                    "<slug:update_slug>/delivery-status/",
-                    MonthlyUpdateStatusEditView.as_view(),
-                    name="monthly-update-status-edit",
-                ),
-                path(
-                    "<slug:update_slug>/revised-timing/",
-                    MonthlyUpdateRevisedTimingEditView.as_view(),
-                    name="monthly-update-revised-timing-edit",
-                ),
-                path(
-                    "<slug:update_slug>/confirm/",
-                    MonthlyUpdateSummaryView.as_view(),
-                    name="monthly-update-summary",
-                ),
+                path("<slug:update_slug>/", include(monthly_update_urlpatterns)),
             ]
         ),
     ),
+]
+
+supply_chain_urlpatterns = [
+    path("", HomePageView.as_view(), name="index"),
+    path(
+        "<slug:supply_chain_slug>/",
+        include(
+            [
+                path("", SCTaskListView.as_view(), name="supply-chain-task-list"),
+                path("summary/", SCSummary.as_view(), name="supply-chain-summary"),
+                path(
+                    "complete/",
+                    SCCompleteView.as_view(),
+                    name="supply-chain-update-complete",
+                ),
+                path("", include(strategic_action_urlpatterns)),
+            ]
+        ),
+    ),
+]
+
+urlpatterns = [
+    path("auth/", include("authbroker_client.urls")),
+    path("admin/", admin_site.urls),
+    path("api/", include(router.urls)),
+    path("", include(supply_chain_urlpatterns)),
 ]

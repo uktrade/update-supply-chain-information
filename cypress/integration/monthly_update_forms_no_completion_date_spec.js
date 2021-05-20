@@ -276,7 +276,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
+              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
             })
             context('When submitted with the content field filled out', function() {
               before(() => {
@@ -372,7 +372,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
+              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
             })
             it ('should have a fieldset with legend asking if there is a completion date', () => {
               cy.get('@theForm').get('fieldset legend h2').contains('Is there an expected completion date?').should('exist')
@@ -595,7 +595,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
+              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
             })
             context('the radio buttons asking for the current delivery status', function() {
               beforeEach(() => {
@@ -843,7 +843,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton('Submit')
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}`)
+              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
             })
           })
           context('Following the Timing row "Change" link and changing the selection to "Ongoing"', () => {

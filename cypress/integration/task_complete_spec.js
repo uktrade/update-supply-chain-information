@@ -8,7 +8,7 @@ const supplyChain = supplyChains[4].fields
 
 describe('The Supply Chain TaskComplete Page', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + `/${supplyChain.slug}/complete`)
+    cy.visit(Cypress.config('baseUrl') + `/${supplyChain.slug}/complete/`)
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -25,11 +25,11 @@ describe('The Supply Chain TaskComplete Page', () => {
     cy.get('li')
       .contains(supplyChain.name)
       .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.slug}`)
+      .and('eq', `/${supplyChain.slug}/`)
     cy.get('li')
       .contains('Update complete')
       .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.slug}/complete`)
+      .and('eq', `/${supplyChain.slug}/complete/`)
   })
   it('displays the correct text', () => {
     cy.get('h1').contains('Update complete')
@@ -53,14 +53,14 @@ const completedSC = supplyChains[1].fields
 
 describe('Validate complete view for manual access', () => {
   it('successfully loads completed un-submitted Supply chain, by redirecting to tasklist page', () => {
-    cy.visit(Cypress.config('baseUrl') + `/${completedSC.slug}/complete`)
+    cy.visit(Cypress.config('baseUrl') + `/${completedSC.slug}/complete/`)
   })
   it('displays breadcrumbs', () => {
     cy.get('li').contains('Home').should('have.attr', 'href').and('eq', `/`)
     cy.get('li')
       .contains(completedSC.name)
       .should('have.attr', 'href')
-      .and('eq', `/${completedSC.slug}`)
+      .and('eq', `/${completedSC.slug}/`)
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
