@@ -3,10 +3,6 @@ import re
 import os
 
 import pytest
-
-from django.test import Client
-from django.urls import reverse
-from django.template.defaultfilters import slugify
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
