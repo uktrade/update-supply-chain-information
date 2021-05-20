@@ -1,9 +1,10 @@
+import uuid
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.postgres.fields import ArrayField
-import uuid
 
 
 def get_gov_department_id_from_user_email(email):
@@ -76,6 +77,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         "Unselect this instead of deleting accounts.",
     )
     USERNAME_FIELD = "sso_email_user_id"
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
 
 class GovDepartment(models.Model):

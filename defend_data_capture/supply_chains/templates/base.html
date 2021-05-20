@@ -20,7 +20,7 @@
     <nav role="navigation">
         <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
     </nav>
-    <header role="banner"> 
+    <header role="banner">
         <div class="govuk-header" data-module="govuk-header">
             <div class="govuk-header__container govuk-width-container">
                 <div class="govuk-header__logo">
@@ -41,7 +41,7 @@
                         Resilience tool
                     </a>
                     <span class="app-header-span">
-                        <p class="app-header-item">{{ request.user.first_name }} {{ request.user.last_name }} - {{ request.user.gov_department.name }}</p>
+                        <p class="app-header-item">{{ request.user }} - {{ request.user.gov_department.name }}</p>
                     </span>
                 </div>
             </div>

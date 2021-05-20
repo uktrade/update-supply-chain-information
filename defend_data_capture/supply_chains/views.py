@@ -1,30 +1,40 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 from typing import List, Dict
 
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponse
-from django.template import loader
+from django.http import HttpResponseRedirect
 from django.template.defaultfilters import date as date_filter
-from django.db.models import Count, QuerySet
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.views.generic import ListView, TemplateView
+from django.db.models import Count
 from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.generic import (
+    ListView,
+    UpdateView,
+    CreateView,
+    TemplateView,
+)
 
+from supply_chains.forms import (
+    MonthlyUpdateInfoForm,
+    MonthlyUpdateSubmissionForm,
+    YesNoChoices,
+    ApproximateTimings,
+    MonthlyUpdateStatusForm,
+    MonthlyUpdateTimingForm,
+    MonthlyUpdateModifiedTimingForm,
+)
 from supply_chains.models import (
     SupplyChain,
     StrategicAction,
     StrategicActionUpdate,
     RAGRating,
 )
-from accounts.models import User, GovDepartment
 from supply_chains.utils import (
     get_last_day_of_this_month,
     get_last_working_day_of_a_month,
     get_last_working_day_of_previous_month,
-    PaginationMixin,
-    GovDepPermissionMixin,
 )
+from supply_chains.mixins import PaginationMixin, GovDepPermissionMixin
 
 
 class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
@@ -71,7 +81,13 @@ class SCTaskListView(
 
     def _update_review_routes(self) -> None:
         for update in self.sa_updates:
-            update["route"] += "/review"
+            tokens = update["route"].split("/")
+
+            # Remove slug 'info' and trailing '/'
+            tokens = tokens[:-2]
+
+            tokens.append("review")
+            update["route"] = "/".join(tokens)
 
     def _sort_updates(self, updates: List) -> List:
         SORT_ORDER = {
@@ -100,22 +116,35 @@ class SCTaskListView(
                 strategic_action=sa,
             )
 
-            # Note: route property could be replaced with URL of StrategicActionUpdate view
-            # method, when its available
             if sau:
                 update["status"] = StrategicActionUpdate.Status(sau[0].status)
-                update["route"] = f"{self.supply_chain.slug}/{sa.slug}/{sau[0].slug}"
+                update["route"] = reverse(
+                    "monthly-update-info-edit",
+                    kwargs={
+                        "supply_chain_slug": self.supply_chain.slug,
+                        "action_slug": sa.slug,
+                        "update_slug": sau[0].slug,
+                    },
+                )
             else:
                 update["status"] = StrategicActionUpdate.Status.NOT_STARTED
-                update["route"] = f"{self.supply_chain.slug}/{sa.slug}/new"
+                update["route"] = reverse(
+                    "monthly-update-create",
+                    kwargs={
+                        "supply_chain_slug": self.supply_chain.slug,
+                        "action_slug": sa.slug,
+                    },
+                )
 
             sa_updates.append(update)
 
         return self._sort_updates(sa_updates)
 
     def _extract_view_data(self, *args, **kwargs):
-        sc_slug = kwargs.get("sc_slug", "DEFAULT")
-        self.supply_chain = SupplyChain.objects.get(slug=sc_slug, is_archived=False)
+        supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
+        self.supply_chain = SupplyChain.objects.get(
+            slug=supply_chain_slug, is_archived=False
+        )
 
         sa_qset = StrategicAction.objects.filter(supply_chain=self.supply_chain)
         self.total_sa = sa_qset.count()
@@ -136,8 +165,6 @@ class SCTaskListView(
             supply_chain=self.supply_chain,
             status=StrategicActionUpdate.Status.SUBMITTED,
         ).count()
-
-        self.total_sa == self.completed_updates and self.completed_updates != 0
 
         self.update_complete = (
             self.total_sa == self.completed_updates and self.total_sa != 0
@@ -171,7 +198,7 @@ class SCTaskListView(
                 update.status = StrategicActionUpdate.Status.SUBMITTED
                 update.save()
 
-            return redirect("update_complete", sc_slug=self.supply_chain.slug)
+            return redirect("update_complete", supply_chain_slug=self.supply_chain.slug)
         else:
             self.submit_error = True
             kwargs.setdefault("view", self)
@@ -194,15 +221,15 @@ class SCCompleteView(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
         return total_sa == submitted
 
     def get(self, request, *args, **kwargs):
-        sc_slug = kwargs.get("sc_slug", "DEFAULT")
+        supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
         self.last_deadline = get_last_working_day_of_previous_month()
-        self.supply_chain = SupplyChain.objects.filter(slug=sc_slug, is_archived=False)[
-            0
-        ]
+        self.supply_chain = SupplyChain.objects.filter(
+            slug=supply_chain_slug, is_archived=False
+        )[0]
 
         # This is to gaurd manual access if not actually complete, help them to complete
         if not self._validate():
-            return redirect("tlist", sc_slug=self.supply_chain.slug)
+            return redirect("tlist", supply_chain_slug=self.supply_chain.slug)
 
         supply_chains = request.user.gov_department.supply_chains.order_by("name")
 
@@ -216,6 +243,347 @@ class SCCompleteView(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
         return render(request, self.template_name, context=kwargs)
 
 
+class MonthlyUpdateMixin:
+    model = StrategicActionUpdate
+    context_object_name = "strategic_action_update"
+    slug_url_kwarg = "update_slug"
+
+    def get_queryset(self):
+        supply_chain_slug = self.kwargs.get("supply_chain_slug")
+        action_slug = self.kwargs.get("action_slug")
+        return (
+            super()
+            .get_queryset()
+            .filter(
+                supply_chain__slug=supply_chain_slug,
+                strategic_action__slug=action_slug,
+            )
+        )
+
+    def get_strategic_action(self):
+        supply_chain_slug = self.kwargs.get("supply_chain_slug")
+        action_slug = self.kwargs.get("action_slug")
+        return StrategicAction.objects.get(
+            supply_chain__slug=supply_chain_slug, slug=action_slug
+        )
+
+    def get_success_url(self):
+        # This method needs to be implemented by the pages
+        # so as to express their rules for what the "next" page is
+        raise NotImplementedError(
+            f"get_success_url() not implemented by {self.__class__}"
+        )
+
+    def get_navigation_links(self):
+        url_kwargs = {
+            "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
+            "action_slug": self.object.strategic_action.slug,
+            "update_slug": self.object.slug,
+        }
+
+        navigation_links = {
+            "Info": {
+                "label": "Update information",
+                "url": reverse_lazy("monthly-update-info-edit", kwargs=url_kwargs),
+                "view": MonthlyUpdateInfoEditView,
+            },
+            "Timing": {
+                "label": "Timing",
+                "url": reverse_lazy("monthly-update-timing-edit", kwargs=url_kwargs),
+                "view": MonthlyUpdateTimingEditView,
+            },
+            "Status": {
+                "label": "Action status",
+                "url": reverse_lazy("monthly-update-status-edit", kwargs=url_kwargs),
+                "view": MonthlyUpdateStatusEditView,
+            },
+            "RevisedTiming": {
+                "label": "Revised timing",
+                "url": reverse_lazy(
+                    "monthly-update-revised-timing-edit", kwargs=url_kwargs
+                ),
+                "view": MonthlyUpdateRevisedTimingEditView,
+            },
+            "Summary": {
+                "label": "Confirm",
+                "url": reverse_lazy("monthly-update-summary", kwargs=url_kwargs),
+                "view": MonthlyUpdateSummaryView,
+            },
+        }
+        if self.object.has_existing_target_completion_date:
+            navigation_links.pop("Timing")
+            if (
+                not self.object.has_changed_target_completion_date
+                and not isinstance(self, MonthlyUpdateRevisedTimingEditView)
+                and not self.object.is_becoming_ongoing
+            ):
+                navigation_links.pop("RevisedTiming")
+        else:
+            navigation_links.pop("RevisedTiming")
+        for title, info in navigation_links.items():
+            info["is_current_page"] = isinstance(self, info["view"])
+        return navigation_links
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["navigation_links"] = self.get_navigation_links()
+        return context
+
+
+class MonthlyUpdateInfoCreateView(
+    LoginRequiredMixin, GovDepPermissionMixin, MonthlyUpdateMixin, CreateView
+):
+    template_name = "supply_chains/monthly_update_info_form.html"
+    form_class = MonthlyUpdateInfoForm
+
+    def get(self, request, *args, **kwargs):
+        last_deadline = get_last_working_day_of_previous_month()
+        strategic_action: StrategicAction = self.get_strategic_action()
+        current_month_updates = strategic_action.monthly_updates.since(last_deadline)
+        if current_month_updates.exists():
+            current_month_update: StrategicActionUpdate = (
+                current_month_updates.order_by("date_created").last()
+            )
+        else:
+            current_month_update: StrategicActionUpdate = (
+                strategic_action.monthly_updates.create(
+                    status=StrategicActionUpdate.Status.IN_PROGRESS,
+                    supply_chain=strategic_action.supply_chain,
+                )
+            )
+        update_url = reverse(
+            "monthly-update-info-edit",
+            kwargs={
+                "supply_chain_slug": current_month_update.strategic_action.supply_chain.slug,
+                "action_slug": current_month_update.strategic_action.slug,
+                "update_slug": current_month_update.slug,
+            },
+        )
+        return redirect(update_url)
+
+
+class MonthlyUpdateInfoEditView(
+    LoginRequiredMixin, GovDepPermissionMixin, MonthlyUpdateMixin, UpdateView
+):
+    template_name = "supply_chains/monthly_update_info_form.html"
+    form_class = MonthlyUpdateInfoForm
+
+    def get_success_url(self):
+        if self.object.strategic_action.target_completion_date is None:
+            next_page_url = "monthly-update-timing-edit"
+        else:
+            next_page_url = "monthly-update-status-edit"
+        url_kwargs = {
+            "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
+            "update_slug": self.object.slug,
+            "action_slug": self.object.strategic_action.slug,
+        }
+        return reverse(next_page_url, kwargs=url_kwargs)
+
+
+class MonthlyUpdateStatusEditView(
+    LoginRequiredMixin, GovDepPermissionMixin, MonthlyUpdateMixin, UpdateView
+):
+    template_name = "supply_chains/monthly_update_status_form.html"
+    form_class = MonthlyUpdateStatusForm
+
+    completion_date_change_form = None
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if "RED-will_completion_date_change" in self.request.POST:
+            self.completion_date_change_form = form.detail_form_for_key(RAGRating.RED)
+        return form
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        return form_kwargs
+
+    def form_valid(self, form):
+        return super().form_valid(form)
+
+    def get_success_url(self):
+        next_page_url = "monthly-update-summary"
+        if self.completion_date_change_form:
+            if self.completion_date_change_form.is_valid():
+                if (
+                    self.completion_date_change_form.cleaned_data[
+                        "will_completion_date_change"
+                    ]
+                    == YesNoChoices.YES
+                ):
+                    next_page_url = "monthly-update-revised-timing-edit"
+        url_kwargs = {
+            "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
+            "update_slug": self.object.slug,
+            "action_slug": self.object.strategic_action.slug,
+        }
+        return reverse(next_page_url, kwargs=url_kwargs)
+
+
+class MonthlyUpdateTimingEditView(
+    LoginRequiredMixin, GovDepPermissionMixin, MonthlyUpdateMixin, UpdateView
+):
+    template_name = "supply_chains/monthly_update_timing_form.html"
+    form_class = MonthlyUpdateTimingForm
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        next_page_url = "monthly-update-status-edit"
+        url_kwargs = {
+            "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
+            "update_slug": self.object.slug,
+            "action_slug": self.object.strategic_action.slug,
+        }
+        return reverse(next_page_url, kwargs=url_kwargs)
+
+
+class MonthlyUpdateRevisedTimingEditView(MonthlyUpdateTimingEditView):
+    template_name = "supply_chains/monthly_update_revised_timing_form.html"
+    form_class = MonthlyUpdateModifiedTimingForm
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        next_page_url = "monthly-update-summary"
+        url_kwargs = {
+            "supply_chain_slug": self.object.strategic_action.supply_chain.slug,
+            "update_slug": self.object.slug,
+            "action_slug": self.object.strategic_action.slug,
+        }
+        return reverse(next_page_url, kwargs=url_kwargs)
+
+
+class MonthlyUpdateSummaryView(
+    LoginRequiredMixin, GovDepPermissionMixin, MonthlyUpdateMixin, UpdateView
+):
+    template_name = "supply_chains/monthly_update_summary.html"
+    form_class = MonthlyUpdateSubmissionForm
+
+    def get_object(self, queryset=None):
+        return super().get_object(queryset)
+
+    def get_form_kwargs(self):
+        form_kwargs = super().get_form_kwargs()
+        form_kwargs["data"] = self.build_form_data()
+        if (
+            self.object.changed_value_for_is_ongoing
+            or self.object.changed_value_for_target_completion_date is not None
+        ):
+            form_kwargs["initial"]["will_completion_date_change"] = YesNoChoices.YES
+        return form_kwargs
+
+    def build_form_data(self):
+        """
+        As this page won't really display the form but needs to show error messages for missing or invalid values,
+        we have to build a representation of the form data that would have caused the current state of our instance
+        had a form been submitted to us.
+        When this is passed into the "form" constructor via form_kwargs, it takes care of instantiating
+        the forms we actually need with this data. Then the form is validated (in get_context_data)
+        which gives us the valid or invalid forms we use to build the page.
+        """
+        # we always have the content field and the delivery status
+        form_data = {
+            "content": self.object.content,
+            "implementation_rag_rating": self.object.implementation_rag_rating,
+        }
+        # we always have the action status form, but we need to determine how to configure it
+        if (
+            self.object.implementation_rag_rating is not None
+            and self.object.implementation_rag_rating != RAGRating.GREEN
+        ):
+            # Red or Amber, so must include the reason for delays
+            if self.object.implementation_rag_rating == RAGRating.AMBER:
+                form_data[
+                    f"{RAGRating.AMBER}-reason_for_delays"
+                ] = self.object.reason_for_delays
+            elif self.object.implementation_rag_rating == RAGRating.RED:
+                form_data[
+                    f"{RAGRating.RED}-reason_for_delays"
+                ] = self.object.reason_for_delays
+                # if the status is RED and the timing is changing, include the revised timing fields
+                if (
+                    self.object.implementation_rag_rating == RAGRating.RED
+                    and self.object.is_changing_target_completion_date
+                ):
+                    form_data[
+                        f"reason_for_completion_date_change"
+                    ] = self.object.reason_for_completion_date_change
+                    if self.object.has_changed_target_completion_date:
+                        additional_form_data = {
+                            f"is_completion_date_known": YesNoChoices.YES,
+                            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.YES,
+                            f"{YesNoChoices.YES}-changed_value_for_target_completion_date_day": self.object.changed_value_for_target_completion_date.day,
+                            f"{YesNoChoices.YES}-changed_value_for_target_completion_date_month": self.object.changed_value_for_target_completion_date.month,
+                            f"{YesNoChoices.YES}-changed_value_for_target_completion_date_year": self.object.changed_value_for_target_completion_date.year,
+                        }
+                        form_data.update(additional_form_data)
+                    elif self.object.changed_value_for_is_ongoing:
+                        additional_form_data = {
+                            f"is_completion_date_known": YesNoChoices.NO,
+                            f"{RAGRating.RED}-will_completion_date_change": YesNoChoices.YES,
+                            f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONGOING,
+                        }
+                        form_data.update(additional_form_data)
+        # we only have the timing form if the instance either didn't already know its target completion date
+        # or didn't already know it was ongoing
+        # or still doesn't know either of those things from pending changes
+        if (
+            self.object.has_new_target_completion_date
+            or self.object.has_new_is_ongoing
+            or self.object.is_becoming_ongoing
+            or self.object.has_no_timing_information
+        ):
+            if self.object.has_new_target_completion_date:
+                additional_form_data = {
+                    "is_completion_date_known": YesNoChoices.YES,
+                    f"{YesNoChoices.YES}-changed_value_for_target_completion_date_day": self.object.changed_value_for_target_completion_date.day,
+                    f"{YesNoChoices.YES}-changed_value_for_target_completion_date_month": self.object.changed_value_for_target_completion_date.month,
+                    f"{YesNoChoices.YES}-changed_value_for_target_completion_date_year": self.object.changed_value_for_target_completion_date.year,
+                }
+                form_data.update(additional_form_data)
+            elif self.object.is_becoming_ongoing or self.object.has_new_is_ongoing:
+                additional_form_data = {
+                    "is_completion_date_known": YesNoChoices.NO,
+                    f"{YesNoChoices.NO}-surrogate_is_ongoing": ApproximateTimings.ONGOING,
+                }
+                form_data.update(additional_form_data)
+        return form_data
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        if "form" in kwargs.keys():
+            kwargs["form"].is_valid()
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if not form.is_valid():
+            return self.get(request, *args, **kwargs)
+        """
+        To finalise the update we must change the update's status to "Completed"
+        This only goes to "Submitted" when the Supply Chain's entire round of updates for the month is submitted.
+        """
+        strategic_action_update = self.get_object()
+        self.object = strategic_action_update
+        strategic_action: StrategicAction = strategic_action_update.strategic_action
+        strategic_action_update.status = StrategicActionUpdate.Status.COMPLETED
+        strategic_action_update.save()
+        return HttpResponseRedirect(self.get_success_url())
+
+    def get_success_url(self):
+        return reverse(
+            "tlist", kwargs={"supply_chain_slug": self.object.supply_chain.slug}
+        )
+
+
 class SASummaryView(
     LoginRequiredMixin, GovDepPermissionMixin, PaginationMixin, TemplateView
 ):
@@ -223,7 +591,7 @@ class SASummaryView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        supply_chain = SupplyChain.objects.get(slug=kwargs.get("sc_slug"))
+        supply_chain = SupplyChain.objects.get(slug=kwargs.get("supply_chain_slug"))
 
         context["strategic_actions"] = self.paginate(
             supply_chain.strategic_actions.filter(is_archived=False).order_by("name"),
@@ -238,10 +606,10 @@ class SCSummary(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        sc_slug = kwargs.get("sc_slug", "DEFAULT")
+        supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
 
         context["supply_chain"] = SupplyChain.objects.filter(
-            slug=sc_slug, is_archived=False
+            slug=supply_chain_slug, is_archived=False
         )[0]
         return context
 
@@ -252,17 +620,17 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        sc_slug, sa_slug, sau_slug = (
-            kwargs.get("sc_slug"),
+        supply_chain_slug, sa_slug, update_slug = (
+            kwargs.get("supply_chain_slug"),
             kwargs.get("sa_slug"),
-            kwargs.get("sau_slug"),
+            kwargs.get("update_slug"),
         )
 
         sau = StrategicActionUpdate.objects.since(
             deadline=self.last_deadline,
             status=StrategicActionUpdate.Status.SUBMITTED,
-            slug=sau_slug,
-            supply_chain__slug=sc_slug,
+            slug=update_slug,
+            supply_chain__slug=supply_chain_slug,
             strategic_action__slug=sa_slug,
         )[0]
 

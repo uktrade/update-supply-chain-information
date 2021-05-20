@@ -21,18 +21,19 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", default="secret-key")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
 
 
 # Application definition
 
 INSTALLED_APPS = [
     "authbroker_client",
-    "django.contrib.admin",
+    "django.contrib.admin.apps.SimpleAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.postgres",
+    "django.contrib.sessions",
     "django.contrib.staticfiles",
     "supply_chains",
     "accounts",
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "reversion",
     "webpack_loader",
+    "django.forms",
 ]
 
 MIDDLEWARE = [
@@ -50,6 +52,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "reversion.middleware.RevisionMiddleware",
 ]
 
@@ -147,12 +150,15 @@ WEBPACK_LOADER = {
 }
 
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", "static"))
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "assets/webpack_bundles"),
+]
 
 CHARFIELD_MAX_LENGTH = 250
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "assets"),
-]
-
 # To address models.W042 - type of the primary key
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"

@@ -1,12 +1,16 @@
 __pycache__/
 *.py[cod]
-defend_data_capture/env/
+# virtual env
+env 
+# environment variables
 .env
 
 node_modules
 npm-debug.log*
 defend_data_capture/assets/webpack_bundles
+static
 webpack-stats.json
+.idea
 
 backend.pid
 
@@ -14,4 +18,5 @@ backend.pid
 cypress/videos/
 cypress/screenshots/
 
-static
+# VS code
+settings.json
