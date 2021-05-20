@@ -37,7 +37,7 @@ router.register(
 
 monthly_update_urlpatterns = [
     path(
-        "latest/",
+        "info/",
         MonthlyUpdateInfoEditView.as_view(),
         name="monthly-update-info-edit",
     ),
