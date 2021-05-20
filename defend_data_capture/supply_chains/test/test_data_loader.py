@@ -1,9 +1,9 @@
-from datetime import date, timedelta
 from io import StringIO
 import re
 import os
 
 import pytest
+
 from django.test import Client
 from django.urls import reverse
 from django.template.defaultfilters import slugify
@@ -12,9 +12,7 @@ from django.core.management.base import CommandError
 
 from supply_chains.management.commands import data_loader as sut
 from accounts.models import GovDepartment
-from supply_chains.models import SupplyChain
-
-# from supply_chains.test.factories import SupplyChainFactory, GovDepartmentFactory
+from supply_chains.models import StrategicAction, StrategicActionUpdate, SupplyChain
 
 
 pytestmark = pytest.mark.django_db
@@ -25,6 +23,8 @@ class TestDataLoader:
     LOAD_CMD = "data_loader"
     ACCOUNTS_FILE = os.path.join(DATA_FILES_LOC, "accounts_sample.csv")
     SC_FILE = os.path.join(DATA_FILES_LOC, "supply_chain_sample.csv")
+    SA_FILE = os.path.join(DATA_FILES_LOC, "strat_action_sample.csv")
+    SAU_FILE = os.path.join(DATA_FILES_LOC, "action_update_sample.csv")
     INV_ACCOUNTS_FILE = os.path.join(DATA_FILES_LOC, "accounts_sample_no_ids.csv")
 
     def invoke_load(self, *args):
@@ -64,7 +64,20 @@ class TestDataLoader:
 
         # Assert
         assert re.match(f".*(Successfully) .* {sut.MODEL_SUPPLY_CHAIN}.*", res)
-        assert SupplyChain.objects.count() is 9
+        assert SupplyChain.objects.count() is 3
+        assert SupplyChain.objects.filter(name__startswith="medic").count() is 2
+
+    def test_load_sc_data_twice(self):
+        # Arrange
+        self.invoke_load(sut.MODEL_GOV_DEPT, self.ACCOUNTS_FILE)
+        self.invoke_load(sut.MODEL_SUPPLY_CHAIN, self.SC_FILE)
+
+        # Act
+        res = self.invoke_load(sut.MODEL_SUPPLY_CHAIN, self.SC_FILE)
+
+        # Assert
+        assert re.match(f".*(Successfully) .* {sut.MODEL_SUPPLY_CHAIN}.*", res)
+        assert SupplyChain.objects.count() is 3
         assert SupplyChain.objects.filter(name__startswith="medic").count() is 2
 
     def test_load_sc_inv_model(self):
@@ -75,3 +88,33 @@ class TestDataLoader:
         # Assert
         with pytest.raises(CommandError, match=f"Unknown model {inv_model}"):
             self.invoke_load(inv_model, self.SC_FILE)
+
+    def test_load_sa_data(self):
+        # Arrange
+        self.invoke_load(sut.MODEL_GOV_DEPT, self.ACCOUNTS_FILE)
+        self.invoke_load(sut.MODEL_SUPPLY_CHAIN, self.SC_FILE)
+
+        # Act
+        res = self.invoke_load(sut.MODEL_STRAT_ACTION, self.SA_FILE)
+
+        # Assert
+        assert re.match(f".*(Successfully) .* {sut.MODEL_STRAT_ACTION}.*", res)
+        assert StrategicAction.objects.count() is 4
+        assert (
+            StrategicAction.objects.filter(name__startswith="Strategic action").count()
+            is 4
+        )
+
+    def test_load_sau_data(self):
+        # Arrange
+        self.invoke_load(sut.MODEL_GOV_DEPT, self.ACCOUNTS_FILE)
+        self.invoke_load(sut.MODEL_SUPPLY_CHAIN, self.SC_FILE)
+        self.invoke_load(sut.MODEL_STRAT_ACTION, self.SA_FILE)
+
+        # Act
+        res = self.invoke_load(sut.MODEL_STRAT_ACTION_UPDATE, self.SAU_FILE)
+
+        # Assert
+        assert re.match(f".*(Successfully) .* {sut.MODEL_STRAT_ACTION_UPDATE}.*", res)
+        assert StrategicActionUpdate.objects.count() is 4
+        assert StrategicActionUpdate.objects.filter(status="submitted").count() is 4

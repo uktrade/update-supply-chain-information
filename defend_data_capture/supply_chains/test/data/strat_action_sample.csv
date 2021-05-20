@@ -1,0 +1,5 @@
+id,name,start_date,description,impact,category,geographic_scope,supporting_organisations,is_ongoing,target_completion_date,is_archived,archived_date,archived_reason,other_dependencies,specific_related_products,supply_chain,str( not required in database)
+230a0ce2-f365-4db6-8af0-710702c2fe27,Strategic action 1,8/1/20,hello world,,diversify,uk_wide,,0,,0,,,,Human medicines,fecad835-63f8-4a60-b408-b80c10f80bef,medicines
+e11dfeb8-1d52-4efb-9bd0-61ef174f1ed2,Strategic action 2,8/1/20,abcd,,partner,uk_wide,,0,,0,,,,Human medicines,fecad835-63f8-4a60-b408-b80c10f80bef,medicines
+3190ac8f-8e86-46ea-b611-f2c28d5e413a,Strategic action 3,8/1/20,xyz,,create,uk_wide,,0,,0,,,,Human medicines,fecad835-63f8-4a60-b408-b80c10f80bef,medicines
+e49a723c-a726-4ee6-897a-03c318204149,Strategic action 4,8/1/20,abc123xyz,,expand,uk_wide,,0,,0,,,,Life critical nutritional feeds (parenteral),fecad835-63f8-4a60-b408-b80c10f80bef,medicines

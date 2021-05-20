@@ -1,0 +1,5 @@
+id,status,submission_date,date_created,content,implementation_rag_rating,reason_for_delays,user,strategic_action,supply_chain,actual supply chain name (not in database)
+7a921831-539e-4514-853b-8769ca295b94,submitted,4/30/21,,agile practices,,,,230a0ce2-f365-4db6-8af0-710702c2fe27,fecad835-63f8-4a60-b408-b80c10f80bef,medicines
+c92b72f7-4c54-4d52-adf7-f168987443a2,submitted,4/30/21,,waterfall execution,,,,e11dfeb8-1d52-4efb-9bd0-61ef174f1ed2,fecad835-63f8-4a60-b408-b80c10f80bef,medicines
+ca427a2e-5008-4d4d-af54-3289c59ba2ea,submitted,4/30/21,,slim agile,,,,3190ac8f-8e86-46ea-b611-f2c28d5e413a,fecad835-63f8-4a60-b408-b80c10f80bef,medicines
+eb9ebe60-7bbb-402a-b8b6-2765e734a474,submitted,4/30/21,,hybrid model,,,,e49a723c-a726-4ee6-897a-03c318204149,fecad835-63f8-4a60-b408-b80c10f80bef,medicines
