@@ -88,13 +88,6 @@ class SCTaskListView(
             url_kwargs.update(self.kwargs)
             url = reverse("update_review", kwargs=url_kwargs)
             update["route"] = url
-            # tokens = update["route"].split("/")
-            #
-            # # Remove slug 'info' and trailing '/'
-            # tokens = tokens[:-2]
-            #
-            # tokens.append("review")
-            # update["route"] = "/".join(tokens)
 
     def _sort_updates(self, updates: List) -> List:
         SORT_ORDER = {
