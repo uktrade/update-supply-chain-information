@@ -42,7 +42,7 @@ class Command(BaseCommand):
 
         return json.dumps(rows)
 
-    def _format_json_object(self, model: str, rows: object) -> List:
+    def _format_json_object(self, model: str, rows: List) -> List:
         """Format ingest data as per Django expectation.
 
         :param str model: specify the model to which data will be imported
