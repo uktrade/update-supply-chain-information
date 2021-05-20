@@ -46,7 +46,7 @@ class TestFixtureFixup:
                 year=2021, month=4, day=22
             ),
             UUID("1c18c53b-2f7a-4539-8b34-6a12d7ba371e"): date(
-                year=2021, month=4, day=28
+                year=2021, month=4, day=22
             ),
         }
         with mock.patch(
@@ -58,8 +58,15 @@ class TestFixtureFixup:
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()
             }
+            updated_last_submission_dates = {
+                sau.pk: sau.supply_chain.last_submission_date
+                for sau in StrategicActionUpdate.objects.all()
+            }
             for pk, updated_date in updated_submission_dates.items():
                 assert updated_date == expected_submission_dates[pk]
+            for pk, updated_date in updated_last_submission_dates.items():
+                if expected_submission_dates[pk]:
+                    assert updated_date == expected_submission_dates[pk]
 
     def test_updates_one_month_after_base_date(self):
         """ Should set the dates one month later. """
@@ -77,7 +84,7 @@ class TestFixtureFixup:
                 year=2021, month=5, day=22
             ),
             UUID("1c18c53b-2f7a-4539-8b34-6a12d7ba371e"): date(
-                year=2021, month=5, day=28
+                year=2021, month=5, day=22
             ),
         }
         with mock.patch(
@@ -89,8 +96,15 @@ class TestFixtureFixup:
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()
             }
+            updated_last_submission_dates = {
+                sau.pk: sau.supply_chain.last_submission_date
+                for sau in StrategicActionUpdate.objects.all()
+            }
             for pk, updated_date in updated_submission_dates.items():
                 assert updated_date == expected_submission_dates[pk]
+            for pk, updated_date in updated_last_submission_dates.items():
+                if expected_submission_dates[pk]:
+                    assert updated_date == expected_submission_dates[pk]
 
     def test_updates_one_year_after_base_date(self):
         """ Should set the dates one month later. """
@@ -108,7 +122,7 @@ class TestFixtureFixup:
                 year=2022, month=4, day=22
             ),
             UUID("1c18c53b-2f7a-4539-8b34-6a12d7ba371e"): date(
-                year=2022, month=4, day=28
+                year=2022, month=4, day=22
             ),
         }
         with mock.patch(
@@ -120,8 +134,15 @@ class TestFixtureFixup:
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()
             }
+            updated_last_submission_dates = {
+                sau.pk: sau.supply_chain.last_submission_date
+                for sau in StrategicActionUpdate.objects.all()
+            }
             for pk, updated_date in updated_submission_dates.items():
                 assert updated_date == expected_submission_dates[pk]
+            for pk, updated_date in updated_last_submission_dates.items():
+                if expected_submission_dates[pk]:
+                    assert updated_date == expected_submission_dates[pk]
 
     def test_updates_one_year_before_base_date(self):
         """ Should set the dates one month later. """
@@ -139,7 +160,7 @@ class TestFixtureFixup:
                 year=2020, month=4, day=22
             ),
             UUID("1c18c53b-2f7a-4539-8b34-6a12d7ba371e"): date(
-                year=2020, month=4, day=28
+                year=2020, month=4, day=22
             ),
         }
         with mock.patch(
@@ -151,5 +172,12 @@ class TestFixtureFixup:
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()
             }
+            updated_last_submission_dates = {
+                sau.pk: sau.supply_chain.last_submission_date
+                for sau in StrategicActionUpdate.objects.all()
+            }
             for pk, updated_date in updated_submission_dates.items():
                 assert updated_date == expected_submission_dates[pk]
+            for pk, updated_date in updated_last_submission_dates.items():
+                if expected_submission_dates[pk]:
+                    assert updated_date == expected_submission_dates[pk]
