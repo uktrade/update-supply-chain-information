@@ -261,3 +261,11 @@ Cypress.Commands.add(
     }
 )
 
+Cypress.Commands.add(
+    'lastWorkingDay',
+    () => {
+        cy.exec('python get_last_working_day_this_month.py').then(result => {
+            cy.wrap(result.stdout)
+    })
+    }
+)
