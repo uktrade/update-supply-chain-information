@@ -102,8 +102,8 @@ class Command(BaseCommand):
                 )
 
                 # TODO: Check with DE
-                row["fields"]["date_created"] = row["fields"]["date_created"] or str(
-                    date.today()
+                row["fields"]["date_created"] = (
+                    row["fields"]["date_created"] or row["fields"]["submission_date"]
                 )
 
                 row["fields"]["user"] = row["fields"]["user"] or None

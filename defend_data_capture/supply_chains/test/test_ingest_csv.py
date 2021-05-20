@@ -6,7 +6,7 @@ import pytest
 from django.core.management import call_command
 from django.core.management.base import CommandError
 
-from supply_chains.management.commands import data_loader as sut
+from supply_chains.management.commands import ingest_csv as sut
 from accounts.models import GovDepartment
 from supply_chains.models import StrategicAction, StrategicActionUpdate, SupplyChain
 
@@ -16,7 +16,7 @@ DATA_FILES_LOC = "defend_data_capture/supply_chains/test/data"
 
 
 class TestDataLoader:
-    LOAD_CMD = "data_loader"
+    LOAD_CMD = "ingest_csv"
     ACCOUNTS_FILE = os.path.join(DATA_FILES_LOC, "accounts_sample.csv")
     SC_FILE = os.path.join(DATA_FILES_LOC, "supply_chain_sample.csv")
     SA_FILE = os.path.join(DATA_FILES_LOC, "strat_action_sample.csv")
