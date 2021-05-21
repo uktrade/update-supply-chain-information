@@ -1,11 +1,9 @@
-import factory
 import factory.fuzzy
 from datetime import date
 
 from accounts.test.factories import GovDepartmentFactory, UserFactory
 from supply_chains.models import (
     StrategicAction,
-    StrategicActionUpdate,
     RAGRating,
     SupplyChain,
 )

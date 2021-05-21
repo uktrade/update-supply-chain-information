@@ -1,0 +1,53 @@
+{% extends 'supply_chains/monthly_update_form_base.html' %}
+
+{% block form %}
+    {% include 'supply_chains/includes/existing_completion_date.html' %}
+    <form method="post" action="">
+        {% csrf_token %}
+        <div class="govuk-form-group{% if form.is_completion_date_known.errors %} govuk-form-group--error{% endif %}">
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h2 class="govuk-fieldset__heading ">
+                        {{ form.is_completion_date_known.label }}
+                    </h2>
+                </legend>
+                {% if form.is_completion_date_known.errors %}
+                    {% for error in form.is_completion_date_known.errors %}
+                        <span class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+                    </span>
+                    {% endfor %}
+                {% endif %}
+                <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+                    {% for radio in form.is_completion_date_known %}
+                        {{ radio.tag }}
+                    {% endfor %}
+                </div>
+            </fieldset>
+        </div>
+        <div class="govuk-form-group{% if form.errors %} govuk-form-group--error{% endif %}">
+            <h2 class="govuk-label-wrapper govuk-heading-m">
+                <label class="govuk-label govuk-label--m" for="{{ form.reason_for_completion_date_change.id_for_label }}">
+                    {{ form.reason_for_completion_date_change.label }}
+                </label>
+            </h2>
+            {% if form.reason_for_completion_date_change.errors %}
+                {% for error in form.reason_for_completion_date_change.errors %}
+                    <span class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+                    </span>
+                {% endfor %}
+            {% endif %}
+            {{ form.reason_for_completion_date_change }}
+        </div>
+        <div class="govuk-button-group">
+            <button class="govuk-button" data-module="govuk-button" type="submit">
+                Save and continue
+            </button>
+
+            <a href="{% url 'supply-chain-task-list' supply_chain_slug=strategic_action_update.supply_chain.slug %}" class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
+                Cancel
+            </a>
+        </div>
+    </form>
+{% endblock form %}

@@ -5,7 +5,7 @@ from django.test import Client
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 
-from supply_chains.models import SupplyChain, StrategicActionUpdate
+from supply_chains.models import StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,
@@ -39,7 +39,10 @@ def taskcomp_stub(test_user):
 
     yield {
         "sc_name": sc_name,
-        "url": reverse("update_complete", kwargs={"sc_slug": slugify(sc_name)}),
+        "url": reverse(
+            "supply-chain-update-complete",
+            kwargs={"supply_chain_slug": slugify(sc_name)},
+        ),
     }
 
 
@@ -60,7 +63,10 @@ class TestTaskCompleteView:
 
         # Act
         resp = logged_in_client.get(
-            reverse("update_complete", kwargs={"sc_slug": slugify(sc_name)})
+            reverse(
+                "supply-chain-update-complete",
+                kwargs={"supply_chain_slug": slugify(sc_name)},
+            )
         )
 
         # Assert

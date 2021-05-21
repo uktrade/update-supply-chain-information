@@ -11,6 +11,7 @@ docker-compose -f docker-compose.yaml -f docker-compose.override.yaml up -d
 python defend_data_capture/manage.py testserver \
     --addrport 8001 \
     --settings=test_settings \
+    --noinput \
     cypress/fixtures/govDepartment.json cypress/fixtures/user.json \
     cypress/fixtures/supplyChains.json cypress/fixtures/strategicActions.json \
     cypress/fixtures/strategicActionUpdates.json \

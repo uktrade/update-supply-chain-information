@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@ministryofjustice/frontend": "^0.2.2",
-    "css-loader": "^3.3.0",
+    "css-loader": "^5.2.4",
     "extract-loader": "^3.1.0",
     "file-loader": "^5.0.2",
     "govuk-frontend": "^3.11.0",
@@ -28,7 +28,7 @@
   "scripts": {
     "dev": "webpack --config webpack.config.js --mode=development --watch",
     "build": "webpack --config webpack.config.js",
-    "clean": "rm -f .defend-data-capture/assets/webpack_bundles/*",
+    "clean": "rm -f defend_data_capture/assets/webpack_bundles/*",
     "heroku-postbuild": "npm run build"
   }
 }

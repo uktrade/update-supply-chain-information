@@ -1,8 +1,8 @@
-from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 
 from accounts.api_views import UserViewSet
+from supply_chains.admin import admin_site
 from supply_chains.api_views import (
     StrategicActionViewset,
     StrategicActionUpdateViewset,
@@ -15,6 +15,12 @@ from supply_chains.views import (
     SASummaryView,
     SCSummary,
     SAUReview,
+    MonthlyUpdateInfoCreateView,
+    MonthlyUpdateInfoEditView,
+    MonthlyUpdateTimingEditView,
+    MonthlyUpdateStatusEditView,
+    MonthlyUpdateRevisedTimingEditView,
+    MonthlyUpdateSummaryView,
 )
 
 router = routers.DefaultRouter()
@@ -29,22 +35,82 @@ router.register(
     basename="strategic-action-update",
 )
 
+monthly_update_urlpatterns = [
+    path(
+        "info/",
+        MonthlyUpdateInfoEditView.as_view(),
+        name="monthly-update-info-edit",
+    ),
+    path(
+        "timing/",
+        MonthlyUpdateTimingEditView.as_view(),
+        name="monthly-update-timing-edit",
+    ),
+    path(
+        "delivery-status/",
+        MonthlyUpdateStatusEditView.as_view(),
+        name="monthly-update-status-edit",
+    ),
+    path(
+        "revised-timing/",
+        MonthlyUpdateRevisedTimingEditView.as_view(),
+        name="monthly-update-revised-timing-edit",
+    ),
+    path(
+        "confirm/",
+        MonthlyUpdateSummaryView.as_view(),
+        name="monthly-update-summary",
+    ),
+    path(
+        "review/",
+        SAUReview.as_view(),
+        name="monthly-update-review",
+    ),
+]
+
+strategic_action_urlpatterns = [
+    path(
+        "strategic-actions/",
+        SASummaryView.as_view(),
+        name="strategic-action-summary",
+    ),
+    path(
+        "<slug:action_slug>/updates/",
+        include(
+            [
+                path(
+                    "start/",
+                    MonthlyUpdateInfoCreateView.as_view(),
+                    name="monthly-update-create",
+                ),
+                path("<slug:update_slug>/", include(monthly_update_urlpatterns)),
+            ]
+        ),
+    ),
+]
+
+supply_chain_urlpatterns = [
+    path("", HomePageView.as_view(), name="index"),
+    path(
+        "<slug:supply_chain_slug>/",
+        include(
+            [
+                path("", SCTaskListView.as_view(), name="supply-chain-task-list"),
+                path("summary/", SCSummary.as_view(), name="supply-chain-summary"),
+                path(
+                    "complete/",
+                    SCCompleteView.as_view(),
+                    name="supply-chain-update-complete",
+                ),
+                path("", include(strategic_action_urlpatterns)),
+            ]
+        ),
+    ),
+]
+
 urlpatterns = [
     path("auth/", include("authbroker_client.urls")),
-    path("admin/", admin.site.urls),
+    path("admin/", admin_site.urls),
     path("api/", include(router.urls)),
-    path("", HomePageView.as_view(), name="index"),
-    path("<slug:sc_slug>/summary", SCSummary.as_view(), name="sc_summary"),
-    path("<slug:sc_slug>", SCTaskListView.as_view(), name="tlist"),
-    path("<slug:sc_slug>/complete", SCCompleteView.as_view(), name="update_complete"),
-    path(
-        "<slug:sc_slug>/strategic-actions",
-        SASummaryView.as_view(),
-        name="strat_action_summary",
-    ),
-    path(
-        "<slug:sc_slug>/<slug:sa_slug>/<slug:sau_slug>/review",
-        SAUReview.as_view(),
-        name="update_review",
-    ),
+    path("", include(supply_chain_urlpatterns)),
 ]

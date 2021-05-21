@@ -28,11 +28,12 @@ ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["localhost"])
 
 INSTALLED_APPS = [
     "authbroker_client",
-    "django.contrib.admin",
+    "django.contrib.admin.apps.SimpleAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
-    "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.postgres",
+    "django.contrib.sessions",
     "django.contrib.staticfiles",
     "supply_chains",
     "accounts",
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "reversion",
     "webpack_loader",
+    "django.forms",
 ]
 
 MIDDLEWARE = [
@@ -158,3 +160,5 @@ CHARFIELD_MAX_LENGTH = 250
 
 # To address models.W042 - type of the primary key
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"

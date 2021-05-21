@@ -1,11 +1,9 @@
-from datetime import date, timedelta
-
 import pytest
 from django.test import Client
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 
-from supply_chains.models import SupplyChain, StrategicActionUpdate
+from supply_chains.models import StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,
@@ -31,7 +29,9 @@ def tasklist_stub(test_user):
         "sc_name": sc_name,
         "sa_description": sa_description,
         "sa_name": sa_name,
-        "url": reverse("tlist", kwargs={"sc_slug": slugify(sc_name)}),
+        "url": reverse(
+            "supply-chain-task-list", kwargs={"supply_chain_slug": slugify(sc_name)}
+        ),
         "sc": sc,
         "sa": sa,
     }
@@ -46,7 +46,10 @@ def tasklist_in_prog(tasklist_stub):
     )
 
     yield {
-        "url": reverse("tlist", kwargs={"sc_slug": slugify(tasklist_stub["sc_name"])}),
+        "url": reverse(
+            "supply-chain-task-list",
+            kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])},
+        ),
     }
 
 
@@ -59,7 +62,10 @@ def tasklist_part_comp(tasklist_stub):
     )
 
     yield {
-        "url": reverse("tlist", kwargs={"sc_slug": slugify(tasklist_stub["sc_name"])}),
+        "url": reverse(
+            "supply-chain-task-list",
+            kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])},
+        ),
     }
 
 
@@ -73,7 +79,10 @@ def tasklist_completed(tasklist_stub):
         )
 
     yield {
-        "url": reverse("tlist", kwargs={"sc_slug": slugify(tasklist_stub["sc_name"])}),
+        "url": reverse(
+            "supply-chain-task-list",
+            kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])},
+        ),
     }
 
 
@@ -87,7 +96,10 @@ def tasklist_submitted(tasklist_stub):
         )
 
     yield {
-        "url": reverse("tlist", kwargs={"sc_slug": slugify(tasklist_stub["sc_name"])}),
+        "url": reverse(
+            "supply-chain-task-list",
+            kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])},
+        ),
     }
 
 
@@ -108,7 +120,9 @@ class TestTaskListView:
 
         # Act
         resp = logged_in_client.get(
-            reverse("tlist", kwargs={"sc_slug": slugify(sc_name)})
+            reverse(
+                "supply-chain-task-list", kwargs={"supply_chain_slug": slugify(sc_name)}
+            )
         )
 
         # Assert
@@ -204,16 +218,44 @@ class TestTaskListView:
             iter(des_set)
         )
         assert route_set == {
-            f"{slugify(tasklist_stub['sc_name'])}/{slugify(tasklist_stub['sa_name'])}/new"
+            reverse(
+                "monthly-update-create",
+                kwargs={
+                    "supply_chain_slug": slugify(tasklist_stub["sc_name"]),
+                    "action_slug": slugify(tasklist_stub["sa_name"]),
+                },
+            )
         }
 
     @pytest.mark.parametrize(
         "sc_name, num_sas, url, actions_returned",
         (
-            ("sc 1", 4, "/sc-1", 4),
-            ("sc 1", 7, "/sc-1", 5),
-            ("sc 1", 7, "/sc-1?page=2", 2),
-            ("sc 1", 7, "/sc-1?page=300", 2),
+            (
+                "sc 1",
+                4,
+                reverse("supply-chain-task-list", kwargs={"supply_chain_slug": "sc-1"}),
+                4,
+            ),
+            (
+                "sc 1",
+                7,
+                reverse("supply-chain-task-list", kwargs={"supply_chain_slug": "sc-1"}),
+                5,
+            ),
+            (
+                "sc 1",
+                7,
+                reverse("supply-chain-task-list", kwargs={"supply_chain_slug": "sc-1"})
+                + "?page=2",
+                2,
+            ),
+            (
+                "sc 1",
+                7,
+                reverse("supply-chain-task-list", kwargs={"supply_chain_slug": "sc-1"})
+                + "?page=300",
+                2,
+            ),
         ),
     )
     def test_pagination(

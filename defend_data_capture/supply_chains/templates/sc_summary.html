@@ -8,10 +8,10 @@
         <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
       </li>
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'tlist' sc_slug=supply_chain.slug %}">{{ supply_chain.name }}</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' supply_chain_slug=supply_chain.slug %}">{{ supply_chain.name }}</a>
       </li>
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'sc_summary' sc_slug=supply_chain.slug %}" aria-current="page">Full details of {{ supply_chain.name }}</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-summary' supply_chain_slug=supply_chain.slug %}" aria-current="page">Full details of {{ supply_chain.name }}</a>
       </li>
     </ol>
   </nav>
@@ -25,6 +25,6 @@
     {% include "includes/sc_key_info_list.html" %}
 
 
-    <a href={% url 'tlist' sc_slug=supply_chain.slug %} class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back to task list</a>
+    <a href={% url 'supply-chain-task-list' supply_chain_slug=supply_chain.slug %} class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back to task list</a>
 
 {% endblock %}
