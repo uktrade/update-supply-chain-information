@@ -42,7 +42,7 @@ class Command(BaseCommand):
 
         return json.dumps(rows)
 
-    def _format_json_object(self, model: str, rows: List) -> List:
+    def _format_to_django_object(self, model: str, rows: List) -> List:
         """Format ingest data as per Django expectation.
 
         :param str model: specify the model to which data will be imported
@@ -101,7 +101,6 @@ class Command(BaseCommand):
                     row["fields"], "submission_date", "date_created"
                 )
 
-                # TODO: Check with DE
                 row["fields"]["date_created"] = (
                     row["fields"]["date_created"] or row["fields"]["submission_date"]
                 )
@@ -121,7 +120,7 @@ class Command(BaseCommand):
             )
 
         obj = json.loads(self._get_json_object(options["csvfile"]))
-        json_obj = self._format_json_object(options["model"], obj)
+        json_obj = self._format_to_django_object(options["model"], obj)
 
         with NamedTemporaryFile(suffix=".json", mode="w") as fp:
             json.dump(json_obj, fp)
