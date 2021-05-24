@@ -9,31 +9,35 @@ from django.core.management import call_command
 from django.conf import settings
 
 from supply_chains.models import StrategicActionUpdate
-from supply_chains.management.commands.loaddata import Command
+from supply_chains.management.commands.datafixup import Command
 
 pytestmark = pytest.mark.django_db
 
 
+@pytest.fixture(scope="function")
+def django_db_setup(django_db_setup, django_db_blocker):
+    with django_db_blocker.unblock():
+        call_command("datafixup")
+
+
 class TestFixtureFixup:
+    ROOT_DIR = settings.BASE_DIR.parent
+    fixtures = [
+        f"{ROOT_DIR}/cypress/fixtures/govDepartment.json",
+        f"{ROOT_DIR}/cypress/fixtures/user.json",
+        f"{ROOT_DIR}/cypress/fixtures/supplyChains.json",
+        f"{ROOT_DIR}/cypress/fixtures/strategicActions.json",
+        f"{ROOT_DIR}/cypress/fixtures/strategicActionUpdates.json",
+    ]
+
     def call_command(self, *args, **kwargs):
         out = StringIO()
-        call_command("loaddata", *args, stdout=out, stderr=StringIO(), **kwargs)
+        call_command("datafixup", *args, stdout=out, stderr=StringIO(), **kwargs)
         return out.getvalue()
-
-    def setup_method(self):
-        self.ROOT_DIR = settings.BASE_DIR.parent
-        self.fixtures = [
-            f"{self.ROOT_DIR}/cypress/fixtures/govDepartment.json",
-            f"{self.ROOT_DIR}/cypress/fixtures/user.json",
-            f"{self.ROOT_DIR}/cypress/fixtures/supplyChains.json",
-            f"{self.ROOT_DIR}/cypress/fixtures/strategicActions.json",
-            f"{self.ROOT_DIR}/cypress/fixtures/strategicActionUpdates.json",
-        ]
 
     def test_updates_in_month_of_base_date(self):
         """ Should leave the dates unaltered. """
         base_date = Command.BASE_DATE
-        # leap_year_day = date(year=2020, month=2, day=29)
         expected_submission_dates = {
             UUID("3ac4b5ac-bba3-47e5-9964-7613aa2fcd88"): None,
             UUID("7c18ca98-5947-4ea1-9e2d-2a834462a453"): None,
@@ -50,10 +54,10 @@ class TestFixtureFixup:
             ),
         }
         with mock.patch(
-            "supply_chains.management.commands.loaddata.date",
+            "supply_chains.management.commands.datafixup.date",
             mock.Mock(today=mock.Mock(return_value=base_date)),
         ):
-            out = self.call_command(*self.fixtures)
+            out = self.call_command()
             updated_submission_dates = {
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()
@@ -71,7 +75,6 @@ class TestFixtureFixup:
     def test_updates_one_month_after_base_date(self):
         """ Should set the dates one month later. """
         base_date = Command.BASE_DATE + relativedelta(months=1)
-        # leap_year_day = date(year=2020, month=2, day=29)
         expected_submission_dates = {
             UUID("3ac4b5ac-bba3-47e5-9964-7613aa2fcd88"): None,
             UUID("7c18ca98-5947-4ea1-9e2d-2a834462a453"): None,
@@ -88,10 +91,10 @@ class TestFixtureFixup:
             ),
         }
         with mock.patch(
-            "supply_chains.management.commands.loaddata.date",
+            "supply_chains.management.commands.datafixup.date",
             mock.Mock(today=mock.Mock(return_value=base_date)),
         ):
-            out = self.call_command(*self.fixtures)
+            out = self.call_command()
             updated_submission_dates = {
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()
@@ -109,7 +112,6 @@ class TestFixtureFixup:
     def test_updates_one_year_after_base_date(self):
         """ Should set the dates one month later. """
         base_date = Command.BASE_DATE + relativedelta(years=1)
-        # leap_year_day = date(year=2020, month=2, day=29)
         expected_submission_dates = {
             UUID("3ac4b5ac-bba3-47e5-9964-7613aa2fcd88"): None,
             UUID("7c18ca98-5947-4ea1-9e2d-2a834462a453"): None,
@@ -126,10 +128,10 @@ class TestFixtureFixup:
             ),
         }
         with mock.patch(
-            "supply_chains.management.commands.loaddata.date",
+            "supply_chains.management.commands.datafixup.date",
             mock.Mock(today=mock.Mock(return_value=base_date)),
         ):
-            out = self.call_command(*self.fixtures)
+            out = self.call_command()
             updated_submission_dates = {
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()
@@ -147,7 +149,6 @@ class TestFixtureFixup:
     def test_updates_one_year_before_base_date(self):
         """ Should set the dates one month later. """
         base_date = Command.BASE_DATE + relativedelta(years=-1)
-        # leap_year_day = date(year=2020, month=2, day=29)
         expected_submission_dates = {
             UUID("3ac4b5ac-bba3-47e5-9964-7613aa2fcd88"): None,
             UUID("7c18ca98-5947-4ea1-9e2d-2a834462a453"): None,
@@ -164,10 +165,10 @@ class TestFixtureFixup:
             ),
         }
         with mock.patch(
-            "supply_chains.management.commands.loaddata.date",
+            "supply_chains.management.commands.datafixup.date",
             mock.Mock(today=mock.Mock(return_value=base_date)),
         ):
-            out = self.call_command(*self.fixtures)
+            out = self.call_command()
             updated_submission_dates = {
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()

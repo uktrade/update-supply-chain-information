@@ -1,19 +1,19 @@
 from datetime import date
 
 from dateutil.relativedelta import relativedelta
-from django.core.management.commands.loaddata import Command as OriginalCommand
+from django.core.management import BaseCommand
 
 from supply_chains.models import SupplyChain, StrategicActionUpdate
 
 
-class Command(OriginalCommand):
+class Command(BaseCommand):
     BASE_DATE = date(year=2021, month=5, day=1)
 
-    def handle(self, *fixture_labels, **options):
-        super().handle(*fixture_labels, **options)
+    def handle(self, *args, **options):
         months_to_add = relativedelta(months=self.calculate_months_to_add())
         updates = StrategicActionUpdate.objects.all()
         self.update_submission_and_created_dates(updates, months_to_add)
+        print("Fixtures fixed")
 
     def update_submission_and_created_dates(self, updates, months_to_add):
         updated_updates = []
