@@ -23,7 +23,7 @@ describe('The Home Page', () => {
       `Update supply chain information`
     )
     cy.get('h2').contains('Complete your monthly update')
-    cy.get('li').contains('You need to complete your monthly update for 5 supply chains')
+    cy.get('li').invoke('text').should('match', /You need to complete your monthly update for \d+ supply chains/)
     cy.get('li').contains(
       'Select a supply chain to provide your regular monthly update or to update wider details.'
     )
@@ -46,7 +46,7 @@ describe('The Home Page', () => {
   it('displays second page of supply chains after clicking Next', () => {
     cy.contains('Next').click()
     cy.url().should('eq', Cypress.config('baseUrl') + '/?page=2')
-    cy.get('tbody').find('tr').should('have.length', 1)
+    cy.get('tbody').find('tr').should('have.length', 2)
   })
   it('displays first page of supply chains after clicking Previous', () => {
     cy.contains('Previous').click()

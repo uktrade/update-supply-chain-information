@@ -38,7 +38,7 @@ describe('The Supply Chain TaskComplete Page', () => {
     )
   })
   it('displays the correct inset text', () => {
-    cy.get('div').contains(`You have given updates for 1 of 6 supply chains.`)
+    cy.get('h2 + p').invoke('text').should('match', /You have given updates for\s+\d+ of \d+ supply chains./)
   })
   it('displays the correct link back to home', () => {
     cy.get('p').contains(
