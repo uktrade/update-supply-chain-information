@@ -42,7 +42,7 @@
             </div>
         {% endif %}
     {% else %}
-        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title"      data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
             <div class="govuk-notification-banner__header">
             <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
                 No action required
@@ -89,14 +89,19 @@
                 </td>
                 <td class="govuk-table__cell">
                     {% if update.status.label == "Not started" %}
-                        <strong class="govuk-tag govuk-tag--grey">
+                        <strong class="govuk-tag tasklist-right-aligned-tag govuk-tag--grey">
                             {{ update.status.label }}
                         </strong>
                     {% elif update.status.label == "In progress" %}
-                        <strong class="govuk-tag govuk-tag--blue">
+                        <strong class="govuk-tag tasklist-right-aligned-tag govuk-tag--blue">
+                            {{ update.status.label }}
+                        </strong>
+                    {% elif update.status.label == "Submitted" %}
+                        <strong class="govuk-tag tasklist-right-aligned-tag govuk-tag--green">
                             {{ update.status.label }}
                         </strong>
                     {% else %}
+                    <strong class="govuk-tag tasklist-right-aligned-tag">
                         {{ update.status.label }}
                     </strong>
                     {% endif %}
