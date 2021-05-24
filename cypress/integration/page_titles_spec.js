@@ -6,25 +6,9 @@ const supplyChain = supplyChains.find((supplyChain) => supplyChain.fields.slug =
 const strategicAction = strategicActions.find((strategicAction) => strategicAction.fields.supply_chain === supplyChain.pk && strategicAction.fields.slug === 'sa-title-test')
 const strategicActionUpdate = strategicActionUpdates.find((strategicActionUpdate) => strategicActionUpdate.fields.strategic_action === strategicAction.pk && strategicActionUpdate.fields.slug === '05-2021');
 
+import { urlBuilder } from "../support/utils.js"
 
-const urls = {
-    home: Cypress.config('baseUrl'),
-    supplyChain: {
-        taskList: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/`,
-        summary: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/summary/`,
-        strategicActions: {
-            summary: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/strategic-actions/`,
-            update: {
-                info: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/info/`,
-                timing: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/timing/`,
-                status: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/delivery-status/`,
-                revisedTiming: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/revised-timing/`,
-                confirm: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/confirm/`,
-                review: `/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/review/`,
-            }
-        }
-    }
-};
+const urls = urlBuilder(supplyChain, strategicAction, strategicActionUpdate);
 
 const expectedTitles = {
     home: () => 'Update supply chain information',
