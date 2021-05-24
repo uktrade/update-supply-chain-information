@@ -39,7 +39,7 @@ const expectedTitles = {
                 status: () => `Current delivery status - ${strategicAction.fields.name} update – ${supplyChain.fields.name} – ${expectedTitles.home()}`,
                 revisedTiming: () => `Revised expected completion date - ${strategicAction.fields.name} update – ${supplyChain.fields.name} – ${expectedTitles.home()}`,
                 confirm: () => `Check your answers - ${strategicAction.fields.name} update – ${supplyChain.fields.name} – ${expectedTitles.home()}`,
-                review: () => `Current monthly update - ${strategicAction.fields.name} update – ${supplyChain.fields.name} – ${expectedTitles.home()}`,
+                review: () => `Current monthly update - ${strategicAction.fields.name} – ${supplyChain.fields.name} – ${expectedTitles.home()}`,
             }
         },
         updateComplete: () => `Update complete – ${supplyChain.fields.name} – ${expectedTitles.home()}`,
