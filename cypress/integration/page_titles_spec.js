@@ -46,89 +46,82 @@ const expectedTitles = {
     }
 };
 
-context('The <title> of', () => {
 
-    describe('The Home Page', () => {
-        it('has the correct title', () => {
-            cy.visit(urls.home);
-            cy.title().should('equal', expectedTitles.home());
-        });
+describe('The Home Page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.home);
+        cy.title().should('equal', expectedTitles.home());
     });
+});
 
-    context('The Supply Chain', () => {
-        describe('Task List page', () => {
-            it('has the correct title', () => {
-                cy.visit(urls.supplyChain.taskList);
-                cy.title().should('equal', expectedTitles.supplyChain.taskList())
-            });
-        });
+describe('The Task List page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.supplyChain.taskList);
+        cy.title().should('equal', expectedTitles.supplyChain.taskList())
+    });
+});
 
-        describe('Summary page', () => {
-            it('has the correct title', () => {
-                cy.visit(urls.supplyChain.summary);
-                cy.title().should('equal', expectedTitles.supplyChain.summary())
-            });
-        });
+describe('The Supply Chain Summary page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.supplyChain.summary);
+        cy.title().should('equal', expectedTitles.supplyChain.summary())
+    });
+});
 
-        describe('Strategic Actions Summary page', () => {
-            it('has the correct title', () => {
-                cy.visit(urls.supplyChain.strategicActions.summary);
-                cy.title().should('equal', expectedTitles.supplyChain.strategicActions.summary())
-            });
-        });
+describe('The Strategic Actions Summary page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.supplyChain.strategicActions.summary);
+        cy.title().should('equal', expectedTitles.supplyChain.strategicActions.summary())
+    });
+});
 
-        context('The Strategic Action Update', () => {
-            describe('Info page', () => {
-                it('has the correct title', () => {
-                    cy.visit(urls.supplyChain.strategicActions.update.info);
-                    cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.info())
-                });
-            })
+describe('The Strategic Action Update Info page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.supplyChain.strategicActions.update.info);
+        cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.info())
+    });
+});
 
-            describe('Timing page', () => {
-                it('has the correct title', () => {
-                    cy.visit(urls.supplyChain.strategicActions.update.timing);
-                    cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.timing())
-                });
-            })
+describe('The Strategic Action Update Timing page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.supplyChain.strategicActions.update.timing);
+        cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.timing())
+    });
+});
 
-            describe('Status page', () => {
-                it('has the correct title', () => {
-                    cy.visit(urls.supplyChain.strategicActions.update.status);
-                    cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.status())
-                });
-            })
+describe('The Strategic Action Update Status page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.supplyChain.strategicActions.update.status);
+        cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.status())
+    });
+});
 
-            describe('Revised Timing page', () => {
-                it('has the correct title', () => {
-                    cy.visit(urls.supplyChain.strategicActions.update.revisedTiming);
-                    cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.revisedTiming())
-                });
-            })
+describe('The Strategic Action Update Revised Timing page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.supplyChain.strategicActions.update.revisedTiming);
+        cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.revisedTiming())
+    });
+});
 
-            describe('Check Your Answers page', () => {
-                it('has the correct title', () => {
-                    cy.visit(urls.supplyChain.strategicActions.update.confirm);
-                    cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.confirm())
-                });
-            })
+describe('The Strategic Action Update Check Your Answers page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.supplyChain.strategicActions.update.confirm);
+        cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.confirm())
+    });
+});
 
-            describe('Update Complete page', () => {
-                it('has the correct title', () => {
-                    cy.visit(urls.supplyChain.taskList);
-                    cy.mainForm().submitButton().click()
-                    cy.title().should('equal', expectedTitles.supplyChain.updateComplete())
-                });
-            })
+describe('The Strategic Action Update Complete page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.supplyChain.taskList);
+        cy.mainForm().submitButton().click()
+        cy.title().should('equal', expectedTitles.supplyChain.updateComplete())
+    });
+});
 
-            describe('Review Submitted Update page', () => {
-                it('has the correct title', () => {
-                    cy.visit(urls.supplyChain.taskList);
-                    cy.get(`#updates .govuk-link[href="${urls.supplyChain.strategicActions.update.review}"]`).click()
-                    cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.review())
-                });
-            })
-        })
-
-    })
-})
+describe('The Strategic Action Update Review page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.supplyChain.taskList);
+        cy.get(`#updates .govuk-link[href="${urls.supplyChain.strategicActions.update.review}"]`).click()
+        cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.review())
+    });
+});
