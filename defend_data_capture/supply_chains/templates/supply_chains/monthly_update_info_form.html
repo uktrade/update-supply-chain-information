@@ -1,5 +1,7 @@
 {% extends 'supply_chains/monthly_update_form_base.html' %}
 
+{% block page_title %}Update information - {{ block.super }}{% endblock page_title %}
+
 {% block form %}
     {% with strategic_action_update.strategic_action.last_submitted_update as previous_update %}
         {% if previous_update.content %}
