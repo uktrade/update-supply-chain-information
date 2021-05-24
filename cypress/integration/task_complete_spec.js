@@ -52,7 +52,7 @@ describe('The Supply Chain TaskComplete Page', () => {
 const completedSC = supplyChains[1].fields
 
 describe('Validate complete view for manual access', () => {
-  it('successfully loads completed un-submitted Supply chain, by redirecting to tasklist page', () => {
+  it('successfully loads ready_to_submit Supply chain, by redirecting to tasklist page', () => {
     cy.visit(Cypress.config('baseUrl') + `/${completedSC.slug}/complete/`)
   })
   it('displays breadcrumbs', () => {
@@ -74,7 +74,7 @@ describe('Validate complete view for manual access', () => {
   it('displays 2 strategic actions in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 2)
     cy.get('tbody').find('td').should('have.length', 4)
-    cy.get('td').contains('completed')
+    cy.get('td').contains('Ready to submit')
   })
   it('displays enabled submit button', () => {
     cy.get('form').find('button').should('be.enabled')

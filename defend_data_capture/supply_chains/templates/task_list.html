@@ -26,7 +26,7 @@
                     Update completed
                 </strong>
                 <div>
-                    {{ view.completed_updates }} of {{ view.total_sa }} mandatory actions are complete.
+                    {{ view.ready_to_submit_updates }} of {{ view.total_sa }} mandatory actions are complete.
                 </div>
             </div>
             <br>
@@ -37,7 +37,7 @@
                     <span class="govuk-warning-text__assistive">Warning</span>
                     Update incomplete
                 </strong>
-                <div class="tasklist-summary">{{ view.completed_updates }} of {{ view.total_sa }}
+                <div class="tasklist-summary">{{ view.ready_to_submit_updates }} of {{ view.total_sa }}
                     mandatory actions are complete.</div>
             </div>
         {% endif %}
@@ -83,7 +83,7 @@
         <tbody class="govuk-table__body">
             {% for update in view.sa_updates %}
             <tr class="govuk-table__row">
-                <td class="govuk-table__cell">
+                <td class="govuk-table__cell govuk-!-width-one-half">
                     <a href={{ update.route }} class="govuk-link">Update {{ update.name }}</a>
                     <p class="tasklist-action-description"> {{ update.description|truncatewords:10 }} </p>
                 </td>
@@ -97,8 +97,7 @@
                             {{ update.status.label }}
                         </strong>
                     {% else %}
-                    <strong class="govuk-tag">
-                        {{ update.status }}
+                        {{ update.status.label }}
                     </strong>
                     {% endif %}
                 </td>

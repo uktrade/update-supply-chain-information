@@ -94,7 +94,7 @@ class SCTaskListView(
         SORT_ORDER = {
             "Not started": 0,
             "In progress": 1,
-            "Completed": 2,
+            "Ready to submit": 2,
             "Submitted": 3,
         }
 
@@ -154,11 +154,11 @@ class SCTaskListView(
 
         self.sa_updates = self._get_sa_update_list(sa_qset)
 
-        self.completed_updates = StrategicActionUpdate.objects.since(
+        self.ready_to_submit_updates = StrategicActionUpdate.objects.since(
             self.last_deadline,
             supply_chain=self.supply_chain,
             status__in=[
-                StrategicActionUpdate.Status.COMPLETED,
+                StrategicActionUpdate.Status.READY_TO_SUBMIT,
                 StrategicActionUpdate.Status.SUBMITTED,
             ],
         ).count()
@@ -170,7 +170,7 @@ class SCTaskListView(
         ).count()
 
         self.update_complete = (
-            self.total_sa == self.completed_updates and self.total_sa != 0
+            self.total_sa == self.ready_to_submit_updates and self.total_sa != 0
         )
         self.update_submitted = (
             self.total_sa == self.submitted_only_updates and self.total_sa != 0
@@ -186,14 +186,14 @@ class SCTaskListView(
         return super().dispatch(*args, **kwargs)
 
     def post(self, *args, **kwargs):
-        if self.total_sa == self.completed_updates and self.total_sa:
+        if self.total_sa == self.ready_to_submit_updates and self.total_sa:
             self.supply_chain.last_submission_date = date.today()
             self.supply_chain.save()
 
             updates = StrategicActionUpdate.objects.since(
                 self.last_deadline,
                 supply_chain=self.supply_chain,
-                status=StrategicActionUpdate.Status.COMPLETED,
+                status=StrategicActionUpdate.Status.READY_TO_SUBMIT,
             )
 
             for update in updates.iterator():
@@ -575,13 +575,13 @@ class MonthlyUpdateSummaryView(
         if not form.is_valid():
             return self.get(request, *args, **kwargs)
         """
-        To finalise the update we must change the update's status to "Completed"
+        To finalise the update we must change the update's status to "Ready to submit"
         This only goes to "Submitted" when the Supply Chain's entire round of updates for the month is submitted.
         """
         strategic_action_update = self.get_object()
         self.object = strategic_action_update
         strategic_action: StrategicAction = strategic_action_update.strategic_action
-        strategic_action_update.status = StrategicActionUpdate.Status.COMPLETED
+        strategic_action_update.status = StrategicActionUpdate.Status.READY_TO_SUBMIT
         strategic_action_update.save()
         return HttpResponseRedirect(self.get_success_url())
 
