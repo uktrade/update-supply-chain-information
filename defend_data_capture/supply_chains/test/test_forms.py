@@ -913,7 +913,7 @@ class TestMonthlyUpdateSubmissionFormGeneration:
 
 @pytest.mark.django_db()
 class TestMonthlyUpdateSubmissionForm:
-    """Test the pseudo-form used to submit the completed update."""
+    """Test the pseudo-form used to submit the ready_to_submit update."""
 
     def setup_method(self):
         supply_chain = SupplyChainFactory()

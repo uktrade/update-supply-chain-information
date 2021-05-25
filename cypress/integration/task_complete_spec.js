@@ -52,7 +52,7 @@ describe('The Supply Chain TaskComplete Page', () => {
 const completedSC = supplyChains[1].fields
 
 describe('Validate complete view for manual access', () => {
-  it('successfully loads completed un-submitted Supply chain, by redirecting to tasklist page', () => {
+  it('successfully loads ready_to_submit Supply chain, by redirecting to tasklist page', () => {
     cy.visit(Cypress.config('baseUrl') + `/${completedSC.slug}/complete/`)
   })
   it('displays breadcrumbs', () => {
@@ -64,17 +64,16 @@ describe('Validate complete view for manual access', () => {
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
-    cy.get('div').contains(`Update complete`)
-    cy.get('div').contains(`2 of 2 mandatory actions are complete.`)
+    cy.get('div').contains('Update complete')
+    cy.get('div').contains('All actions are ready to be submitted.')
   })
-  it('displays correct table headers', () => {
-    cy.get('thead').find('th').should('have.length', 2)
-    cy.get('th').contains('Monthly strategic actions updates')
+  it('displays the correct table caption', () => {
+    cy.get('caption').contains('Monthly strategic actions updates')
   })
   it('displays 2 strategic actions in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 2)
     cy.get('tbody').find('td').should('have.length', 4)
-    cy.get('td').contains('completed')
+    cy.get('td').contains('Ready to submit')
   })
   it('displays enabled submit button', () => {
     cy.get('form').find('button').should('be.enabled')

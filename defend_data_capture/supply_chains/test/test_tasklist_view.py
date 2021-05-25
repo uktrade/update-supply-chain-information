@@ -56,7 +56,7 @@ def tasklist_in_prog(tasklist_stub):
 @pytest.fixture
 def tasklist_part_comp(tasklist_stub):
     StrategicActionUpdateFactory(
-        status=Status.COMPLETED,
+        status=Status.READY_TO_SUBMIT,
         strategic_action=tasklist_stub["sa"][0],
         supply_chain=tasklist_stub["sc"],
     )
@@ -73,7 +73,7 @@ def tasklist_part_comp(tasklist_stub):
 def tasklist_completed(tasklist_stub):
     for sa_index in range(4):
         StrategicActionUpdateFactory(
-            status=Status.COMPLETED,
+            status=Status.READY_TO_SUBMIT,
             strategic_action=tasklist_stub["sa"][sa_index],
             supply_chain=tasklist_stub["sc"],
         )
@@ -146,7 +146,8 @@ class TestTaskListView:
         # Assert
         v = resp.context["view"]
         assert v.total_sa == 4
-        assert v.completed_updates == 0
+        assert v.ready_to_submit_updates == 0
+        assert v.incomplete_updates == 4
         assert v.supply_chain.name == tasklist_stub["sc_name"]
 
     def test_action_summary_progress(self, logged_in_client, tasklist_in_prog):
@@ -159,7 +160,8 @@ class TestTaskListView:
         status_set = set([x["status"] for x in v.sa_updates])
 
         assert v.total_sa == 4
-        assert v.completed_updates == 0
+        assert v.ready_to_submit_updates == 0
+        assert v.incomplete_updates == 4
         assert status_set == {Status.NOT_STARTED, Status.IN_PROGRESS}
 
     def test_action_summary_part_complete(self, logged_in_client, tasklist_part_comp):
@@ -172,8 +174,9 @@ class TestTaskListView:
         status_set = set([x["status"] for x in v.sa_updates])
 
         assert v.total_sa == 4
-        assert v.completed_updates == 1
-        assert status_set == {Status.NOT_STARTED, Status.COMPLETED}
+        assert v.ready_to_submit_updates == 1
+        assert v.incomplete_updates == 3
+        assert status_set == {Status.NOT_STARTED, Status.READY_TO_SUBMIT}
 
     def test_action_summary_complete(self, logged_in_client, tasklist_completed):
         # Arrange
@@ -185,8 +188,9 @@ class TestTaskListView:
         status_set = set([x["status"] for x in v.sa_updates])
 
         assert v.total_sa == 4
-        assert v.completed_updates == 4
-        assert status_set == {Status.COMPLETED}
+        assert v.ready_to_submit_updates == 4
+        assert v.incomplete_updates == 0
+        assert status_set == {Status.READY_TO_SUBMIT}
 
     def test_action_summary_submitted(self, logged_in_client, tasklist_submitted):
         # Arrange
@@ -198,7 +202,8 @@ class TestTaskListView:
         status_set = set([x["status"] for x in v.sa_updates])
 
         assert v.total_sa == 4
-        assert v.completed_updates == 4
+        assert v.ready_to_submit_updates == 4
+        assert v.incomplete_updates == 0
         assert status_set == {Status.SUBMITTED}
 
     def test_action_list(self, logged_in_client, tasklist_stub):

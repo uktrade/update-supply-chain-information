@@ -262,7 +262,7 @@ def test_filter_updates_by_if_submitted(
     Test that when is_submitted is given in query paramters with a value of
     either true or false, the '/api/strategic-action-updates' endpoint returns
     the appropriate SrategicActionUpdate objects.
-    When false, updates with a status of either completed or in_progress
+    When false, updates with a status of either ready_to_submit or in_progress
     should be returned.
     """
     client = test_client_with_token
