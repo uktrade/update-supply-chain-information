@@ -1,6 +1,7 @@
 from datetime import date
 from typing import List, Dict
 
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import date as date_filter
