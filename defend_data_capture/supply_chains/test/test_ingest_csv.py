@@ -35,7 +35,7 @@ class TestDataLoader:
 
         # Assert
         assert re.match(f".*(Successfully) .* {sut.MODEL_GOV_DEPT}.*", res)
-        assert GovDepartment.objects.count() is 7
+        assert GovDepartment.objects.count() == 7
 
     def test_load_accounts_no_data(self):
         # Arrange
@@ -60,8 +60,8 @@ class TestDataLoader:
 
         # Assert
         assert re.match(f".*(Successfully) .* {sut.MODEL_SUPPLY_CHAIN}.*", res)
-        assert SupplyChain.objects.count() is 3
-        assert SupplyChain.objects.filter(name__startswith="medic").count() is 2
+        assert SupplyChain.objects.count() == 3
+        assert SupplyChain.objects.filter(name__startswith="medic").count() == 2
 
     def test_load_sc_data_twice(self):
         # Arrange
@@ -73,8 +73,8 @@ class TestDataLoader:
 
         # Assert
         assert re.match(f".*(Successfully) .* {sut.MODEL_SUPPLY_CHAIN}.*", res)
-        assert SupplyChain.objects.count() is 3
-        assert SupplyChain.objects.filter(name__startswith="medic").count() is 2
+        assert SupplyChain.objects.count() == 3
+        assert SupplyChain.objects.filter(name__startswith="medic").count() == 2
 
     def test_load_sc_inv_model(self):
         # Arrange
@@ -95,10 +95,10 @@ class TestDataLoader:
 
         # Assert
         assert re.match(f".*(Successfully) .* {sut.MODEL_STRAT_ACTION}.*", res)
-        assert StrategicAction.objects.count() is 4
+        assert StrategicAction.objects.count() == 4
         assert (
             StrategicAction.objects.filter(name__startswith="Strategic action").count()
-            is 4
+            == 4
         )
 
     def test_load_sau_data(self):
@@ -112,5 +112,5 @@ class TestDataLoader:
 
         # Assert
         assert re.match(f".*(Successfully) .* {sut.MODEL_STRAT_ACTION_UPDATE}.*", res)
-        assert StrategicActionUpdate.objects.count() is 4
-        assert StrategicActionUpdate.objects.filter(status="submitted").count() is 4
+        assert StrategicActionUpdate.objects.count() == 4
+        assert StrategicActionUpdate.objects.filter(status="submitted").count() == 4

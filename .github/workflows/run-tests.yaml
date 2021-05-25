@@ -28,8 +28,8 @@ jobs:
       - name: Bring up db container
         run: docker-compose -f docker-compose.yaml up -d
       - name: Run unit tests
-        run: pytest defend_data_capture
-        env:
-          SET_HSTS_HEADERS: ''
+        run: pytest --cache-clear --cov=defend_data_capture defend_data_capture > pytest-coverage.txt
+      - name: Comment coverage
+        uses: coroo/pytest-coverage-commentator@v1.0.2
       - name: Run functional tests
         run: bash run_functional_tests.sh
