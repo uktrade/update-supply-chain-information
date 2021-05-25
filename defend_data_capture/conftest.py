@@ -46,7 +46,9 @@ def test_in_progress_strategic_action_update():
 
 @pytest.fixture
 def test_completed_strategic_action_update():
-    update = StrategicActionUpdateFactory(status=StrategicActionUpdate.Status.COMPLETED)
+    update = StrategicActionUpdateFactory(
+        status=StrategicActionUpdate.Status.READY_TO_SUBMIT
+    )
     update.save()
     yield update
 

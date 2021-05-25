@@ -26,7 +26,7 @@
                     Update completed
                 </strong>
                 <div>
-                    {{ view.completed_updates }} of {{ view.total_sa }} mandatory actions are complete.
+                    All actions are ready to be submitted.
                 </div>
             </div>
             <br>
@@ -37,12 +37,11 @@
                     <span class="govuk-warning-text__assistive">Warning</span>
                     Update incomplete
                 </strong>
-                <div class="tasklist-summary">{{ view.completed_updates }} of {{ view.total_sa }}
-                    mandatory actions are complete.</div>
+                <div class="tasklist-summary">{{ view.incomplete_updates }} out of {{ view.total_sa }} actions are not ready to be submitted.</div>
             </div>
         {% endif %}
     {% else %}
-        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title"      data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
             <div class="govuk-notification-banner__header">
             <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
                 No action required
@@ -72,33 +71,30 @@
     {% endif %}
 
     <table class="govuk-table" id="updates">
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">
-                    <h2 class="govuk-heading-l tasklist-actions-header">Monthly strategic actions<br> updates</h2>
-                </th>
-                <th scope="col" class="govuk-table__header"></th>
-            </tr>
-        </thead>
+        <caption class="govuk-table__caption govuk-heading-l">Monthly strategic actions updates</caption>
         <tbody class="govuk-table__body">
             {% for update in view.sa_updates %}
-            <tr class="govuk-table__row">
-                <td class="govuk-table__cell">
+            <tr class="govuk-table__row tasklist-top-border">
+                <td class="govuk-table__cell govuk-!-width-one-half">
                     <a href={{ update.route }} class="govuk-link">Update {{ update.name }}</a>
                     <p class="tasklist-action-description"> {{ update.description|truncatewords:10 }} </p>
                 </td>
                 <td class="govuk-table__cell">
                     {% if update.status.label == "Not started" %}
-                        <strong class="govuk-tag govuk-tag--grey">
+                        <strong class="govuk-tag tasklist-right-aligned-tag govuk-tag--grey">
                             {{ update.status.label }}
                         </strong>
                     {% elif update.status.label == "In progress" %}
-                        <strong class="govuk-tag govuk-tag--blue">
+                        <strong class="govuk-tag tasklist-right-aligned-tag govuk-tag--blue">
+                            {{ update.status.label }}
+                        </strong>
+                    {% elif update.status.label == "Submitted" %}
+                        <strong class="govuk-tag tasklist-right-aligned-tag govuk-tag--green">
                             {{ update.status.label }}
                         </strong>
                     {% else %}
-                    <strong class="govuk-tag">
-                        {{ update.status }}
+                    <strong class="govuk-tag tasklist-right-aligned-tag">
+                        {{ update.status.label }}
                     </strong>
                     {% endif %}
                 </td>

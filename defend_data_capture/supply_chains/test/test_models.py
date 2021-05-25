@@ -100,7 +100,7 @@ class TestStrategicActionUpdate:
         sau_comp = StrategicActionUpdate.objects.since(
             deadline=date.today() - timedelta(days=1),
             supply_chain=sc,
-            status=StrategicActionUpdate.Status.COMPLETED,
+            status=StrategicActionUpdate.Status.READY_TO_SUBMIT,
         )
 
         # Assert
@@ -416,7 +416,9 @@ class TestStrategicActionUpdate:
         self.strategic_action_update.changed_value_for_target_completion_date = None
         self.strategic_action_update.changed_value_for_is_ongoing = True
 
-        self.strategic_action_update.status = StrategicActionUpdate.Status.COMPLETED
+        self.strategic_action_update.status = (
+            StrategicActionUpdate.Status.READY_TO_SUBMIT
+        )
         self.strategic_action_update.save()
 
         assert (
@@ -444,7 +446,9 @@ class TestStrategicActionUpdate:
         )
         self.strategic_action_update.changed_value_for_is_ongoing = False
 
-        self.strategic_action_update.status = StrategicActionUpdate.Status.COMPLETED
+        self.strategic_action_update.status = (
+            StrategicActionUpdate.Status.READY_TO_SUBMIT
+        )
         self.strategic_action_update.save()
 
         assert (
