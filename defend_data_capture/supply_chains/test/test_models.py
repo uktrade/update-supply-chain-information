@@ -34,8 +34,10 @@ def test_supply_chain_submitted_since_query():
 
 def test_archived_date_set_when_save_supply_chain():
     """Test archived_date is set when archived supply chain saved."""
-    sc = SupplyChainFactory(is_archived=True)
+    reason = "No reason"
+    sc = SupplyChainFactory(is_archived=True, archived_reason=reason)
     assert sc.archived_date == date.today()
+    assert sc.archived_reason == reason
 
 
 def test_no_archived_date_save_strategic_action():
@@ -49,6 +51,14 @@ def test_no_archived_date_save_strategic_action():
         "An archived_reason must be given when archiving a strategic action."
         in excifno.value.messages
     )
+
+
+def test_no_archived_reason_save_supply_chain():
+    """Validate that no supply chain can be archived w/o archive_reason"""
+    msg = "An archived_reason must be given when archiving a supply chain."
+    with pytest.raises(ValidationError) as excifno:
+        SupplyChainFactory(is_archived=True)
+        assert msg in excifno.value.messages
 
 
 def test_archived_date_set_save_strategic_action():
