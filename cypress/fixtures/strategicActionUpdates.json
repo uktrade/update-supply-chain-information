@@ -110,5 +110,24 @@
       "supply_chain": "a69d5624-1316-49a6-8a1a-4ac935ad13e3",
       "slug": "04-2021"
     }
+  },
+  {
+    "model": "supply_chains.strategicactionupdate",
+    "pk": "ae9a9de0-1e98-4c36-96bd-1cc98b0eaf51",
+    "fields": {
+      "status": "completed",
+      "submission_date": null,
+      "date_created": "2021-05-21",
+      "content": "Created for the page title tests.",
+      "implementation_rag_rating": null,
+      "reason_for_delays": "",
+      "changed_value_for_target_completion_date": null,
+      "reason_for_completion_date_change": "",
+      "changed_value_for_is_ongoing": false,
+      "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
+      "strategic_action": "94de03d1-416e-438b-92f5-2dfcd5f531af",
+      "supply_chain": "3dcb2693-5ce7-420b-bfcf-ee70be2921fc",
+      "slug": "05-2021"
+    }
   }
 ]
