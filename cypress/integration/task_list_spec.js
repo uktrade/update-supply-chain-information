@@ -25,7 +25,7 @@ describe('The Supply Chain Tasklist Page', () => {
     cy.get('li')
       .contains(`${supplyChain.name}`)
       .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.slug}`)
+      .and('eq', `/${supplyChain.slug}/`)
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${supplyChain.name}`)
@@ -43,17 +43,6 @@ describe('The Supply Chain Tasklist Page', () => {
   })
   it('displays enabled submit button', () => {
     cy.get('button').contains('Submit monthly update')
-  })
-  it('links to the strategic action summary page', () => {
-    cy.get('a').contains('View strategic action summary')
-    .should('have.attr', 'href')
-    .and('equal', `/${supplyChain.slug}/strategic-actions`)
-  })
-  it('links to the supply chain summary page', () => {
-    cy.get('a').contains('View supply chain summary')
-    .should('have.attr', 'href')
-    .and('equal', `/${supplyChain.slug}/summary`)
-
   })
 })
 
@@ -83,7 +72,7 @@ describe('Allowed to submit completed Supply Chains', () => {
       cy.get('form').find('button').click()
       cy.url().should(
         'eq',
-        Cypress.config('baseUrl') + `/${completedSC.slug}/complete`
+        Cypress.config('baseUrl') + `/${completedSC.slug}/complete/`
       )
       cy.get('li').contains('Home')
       cy.get('li').contains('Update complete')
@@ -151,12 +140,12 @@ describe('Paginate Strategic actions', () => {
   })
   it('displays second page of strategic actions after clicking Next', () => {
     cy.contains('Next').click()
-    cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}?page=2`)
+    cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}/?page=2`)
     cy.get('tbody').find('tr').should('have.length', 2)
   })
   it('displays first page of strategic actions after clicking Previous', () => {
     cy.contains('Previous').click()
-    cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}?page=1`)
+    cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}/?page=1`)
   })
   it('displays enabled submit button', () => {
     cy.get('button').contains('Submit monthly update')
@@ -177,7 +166,7 @@ describe('Error handling while submitting in-complete updates', () => {
   })
   it('display error on submission', () => {
     cy.get('form').find('button').click()
-    cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}`)
+    cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}/`)
     cy.get('#error-summary-title').contains('There is a problem')
     cy.get('li')
       .find('a')

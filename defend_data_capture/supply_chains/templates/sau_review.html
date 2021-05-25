@@ -1,5 +1,6 @@
-
 {% extends "base.html" %}
+
+{% block page_title %}Current monthly update - {{ strategic_action.name }} – {{ supply_chain.name }} – {{ block.super }}{% endblock page_title %}
 
 {% block breadcrumbs %}
 <nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
@@ -8,10 +9,10 @@
         <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
       </li>
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'tlist' supply_chain.slug %}">{{ supply_chain.name }}</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' supply_chain.slug %}">{{ supply_chain.name }}</a>
       </li>
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'update_review' supply_chain.slug strategic_action.slug update.slug %}" aria-current="page">Current monthly update for {{ strategic_action.name }}</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'monthly-update-review' supply_chain.slug strategic_action.slug update.slug %}" aria-current="page">Current monthly update for {{ strategic_action.name }}</a>
       </li>
     </ol>
   </nav>
@@ -59,6 +60,6 @@
     </div>
   </dl>
 
-  <a href={% url 'tlist' supply_chain.slug %} class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back</a>
+  <a href={% url 'supply-chain-task-list' supply_chain.slug %} class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back</a>
 
 {% endblock %}

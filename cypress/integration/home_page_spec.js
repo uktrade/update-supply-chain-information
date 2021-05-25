@@ -20,10 +20,14 @@ describe('The Home Page', () => {
   })
   it('displays the correct text', () => {
     cy.get('h1').contains(
-      `Update supply chain information`
+      'Update supply chain information'
     )
+    cy.get('p').contains("It's important to keep your departmental action plan records up to date. This is so we can work towards constantly improving the UK's supply chain resilience.")
     cy.get('h2').contains('Complete your monthly update')
-    cy.get('li').contains('You need to complete your monthly update for 5 supply chains')
+    cy.get('li').invoke('text').should('match', /You need to complete your monthly update for \d+ supply chains/)
+    cy.lastWorkingDay().then(deadline => {
+      cy.get('li:first-of-type').invoke('text').should('match', new RegExp(`\\s*You need to complete your monthly update for \\d+ supply chains by\\s*${deadline}\\s*`))
+    })
     cy.get('li').contains(
       'Select a supply chain to provide your regular monthly update or to update wider details.'
     )
@@ -46,7 +50,7 @@ describe('The Home Page', () => {
   it('displays second page of supply chains after clicking Next', () => {
     cy.contains('Next').click()
     cy.url().should('eq', Cypress.config('baseUrl') + '/?page=2')
-    cy.get('tbody').find('tr').should('have.length', 1)
+    cy.get('tbody').find('tr').should('have.length', 2)
   })
   it('displays first page of supply chains after clicking Previous', () => {
     cy.contains('Previous').click()
