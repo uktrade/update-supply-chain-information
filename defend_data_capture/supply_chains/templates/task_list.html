@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block page_title %}Update {{ view.supply_chain.name }} – {{ block.super }}{% endblock %}
+
 {% block breadcrumbs %}
 <nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
     <ol class="govuk-breadcrumbs__list">
@@ -117,35 +119,7 @@
             </button>
         </form>
     {% else %}
-    <br>
-    <br>
+        <a href={% url 'index' %} class="govuk-button govuk-button--secondary">Back to home</a>
     {% endif %}
-
-
-    <h2 class="govuk-heading-l">Strategic action summary</h2>
-    <p class="govuk-body">
-        Make sure you have updated and completed all relevant sections.
-    </p>
-    <p class="govuk-body">
-        This includes: Description of the action, impact, strategic action framework category and depedencies
-    </p>
-    <p class="govuk-body">
-        <a href={% url 'strategic-action-summary' view.supply_chain.slug %} class="govuk-link">View strategic action summary</a>
-    </p>
-
-    <h2 class="govuk-heading-l">Supply chain summary</h2>
-    <p class="govuk-body">
-        Make sure you have updated and completed all relevant sections.
-    </p>
-    <p class="govuk-body">
-        This includes: Key information, vulnerability assessment, scenario assessment, maturity self assessment, risk monitoring and archived strategic actions
-    </p>
-    <p class="govuk-body">
-        <a href={% url 'supply-chain-summary' view.supply_chain.slug %} class="govuk-link">View supply chain summary</a>
-    </p>
-
-    <br>
-    <a href={% url 'index' %} class="govuk-button govuk-button--secondary">Back to home</a>
-
 
 {% endblock %}

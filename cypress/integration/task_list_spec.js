@@ -44,17 +44,6 @@ describe('The Supply Chain Tasklist Page', () => {
   it('displays enabled submit button', () => {
     cy.get('button').contains('Submit monthly update')
   })
-  it('links to the strategic action summary page', () => {
-    cy.get('a').contains('View strategic action summary')
-    .should('have.attr', 'href')
-    .and('equal', `/${supplyChain.slug}/strategic-actions/`)
-  })
-  it('links to the supply chain summary page', () => {
-    cy.get('a').contains('View supply chain summary')
-    .should('have.attr', 'href')
-    .and('equal', `/${supplyChain.slug}/summary/`)
-
-  })
 })
 
 const completedSC = supplyChains[1].fields

@@ -94,5 +94,23 @@
     "risk_severity_status_disagree_reason": "",
     "slug": "supply-chain-6"
   }
-}
+},
+  {
+    "model": "supply_chains.supplychain",
+    "pk": "3dcb2693-5ce7-420b-bfcf-ee70be2921fc",
+    "fields": {
+      "name": "Supply Chain 7",
+      "last_submission_date": "2021-04-01",
+      "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
+      "contact_name": "nobody",
+      "contact_email": "nobody@trade.gov.uk",
+      "vulnerability_status": "low",
+      "vulnerability_status_disagree_reason": "",
+      "risk_severity_status": "low",
+      "risk_severity_status_disagree_reason": "",
+      "slug": "supply-chain-7",
+      "is_archived": false,
+      "archived_date": null
+    }
+  }
 ]

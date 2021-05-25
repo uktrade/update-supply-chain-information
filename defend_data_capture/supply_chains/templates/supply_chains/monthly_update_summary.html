@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 
+{% block page_title %}Check your answers - {{ strategic_action_update.strategic_action.name }} update – {{ strategic_action_update.supply_chain.name }} – {{ block.super }}{% endblock page_title %}
+
 {% block breadcrumbs %}
     {% include "supply_chains/includes/monthly_update_form_breadcrumbs.html" %}
 {% endblock breadcrumbs %}

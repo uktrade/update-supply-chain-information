@@ -261,3 +261,11 @@ Cypress.Commands.add(
     }
 )
 
+Cypress.Commands.add(
+    'lastWorkingDay',
+    () => {
+        cy.exec('env PYTHONPATH=defend_data_capture python defend_data_capture/scripts/get_last_working_day_this_month.py').then(result => {
+            cy.wrap(result.stdout)
+    })
+    }
+)
