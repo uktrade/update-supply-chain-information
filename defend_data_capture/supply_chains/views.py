@@ -169,6 +169,8 @@ class SCTaskListView(
             status=StrategicActionUpdate.Status.SUBMITTED,
         ).count()
 
+        self.incomplete_updates = self.total_sa - self.ready_to_submit_updates
+
         self.update_complete = (
             self.total_sa == self.ready_to_submit_updates and self.total_sa != 0
         )

@@ -30,7 +30,7 @@ describe('The Supply Chain Tasklist Page', () => {
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${supplyChain.name}`)
     cy.get('div').contains(`Update incomplete`)
-    cy.get('div').contains(`1 of 7 mandatory actions are complete.`)
+    cy.get('div').contains('6 out of 7 actions are not ready to be submitted.')
   })
   it('displays correct table headers', () => {
     cy.get('thead').find('th').should('have.length', 2)
@@ -54,8 +54,8 @@ describe('Allowed to submit ready_to_submit Supply Chains', () => {
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
-    cy.get('div').contains(`Update complete`)
-    cy.get('div').contains(`2 of 2 mandatory actions are complete.`)
+    cy.get('div').contains('Update complete')
+    cy.get('div').contains('All actions are ready to be submitted.')
   })
   it('displays 2 strategic action in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 2)

@@ -64,8 +64,8 @@ describe('Validate complete view for manual access', () => {
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
-    cy.get('div').contains(`Update complete`)
-    cy.get('div').contains(`2 of 2 mandatory actions are complete.`)
+    cy.get('div').contains('Update complete')
+    cy.get('div').contains('All actions are ready to be submitted.')
   })
   it('displays correct table headers', () => {
     cy.get('thead').find('th').should('have.length', 2)

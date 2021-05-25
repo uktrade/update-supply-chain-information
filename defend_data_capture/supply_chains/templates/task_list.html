@@ -26,7 +26,7 @@
                     Update completed
                 </strong>
                 <div>
-                    {{ view.ready_to_submit_updates }} of {{ view.total_sa }} mandatory actions are complete.
+                    All actions are ready to be submitted.
                 </div>
             </div>
             <br>
@@ -37,8 +37,7 @@
                     <span class="govuk-warning-text__assistive">Warning</span>
                     Update incomplete
                 </strong>
-                <div class="tasklist-summary">{{ view.ready_to_submit_updates }} of {{ view.total_sa }}
-                    mandatory actions are complete.</div>
+                <div class="tasklist-summary">{{ view.incomplete_updates }} out of {{ view.total_sa }} actions are not ready to be submitted.</div>
             </div>
         {% endif %}
     {% else %}
@@ -75,7 +74,7 @@
         <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">
-                    <h2 class="govuk-heading-l tasklist-actions-header">Monthly strategic actions<br> updates</h2>
+                    <h2 class="govuk-heading-l tasklist-actions-header">Monthly strategic actions updates</h2>
                 </th>
                 <th scope="col" class="govuk-table__header"></th>
             </tr>

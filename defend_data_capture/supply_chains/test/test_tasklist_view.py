@@ -147,6 +147,7 @@ class TestTaskListView:
         v = resp.context["view"]
         assert v.total_sa == 4
         assert v.ready_to_submit_updates == 0
+        assert v.incomplete_updates == 4
         assert v.supply_chain.name == tasklist_stub["sc_name"]
 
     def test_action_summary_progress(self, logged_in_client, tasklist_in_prog):
@@ -160,6 +161,7 @@ class TestTaskListView:
 
         assert v.total_sa == 4
         assert v.ready_to_submit_updates == 0
+        assert v.incomplete_updates == 4
         assert status_set == {Status.NOT_STARTED, Status.IN_PROGRESS}
 
     def test_action_summary_part_complete(self, logged_in_client, tasklist_part_comp):
@@ -173,6 +175,7 @@ class TestTaskListView:
 
         assert v.total_sa == 4
         assert v.ready_to_submit_updates == 1
+        assert v.incomplete_updates == 3
         assert status_set == {Status.NOT_STARTED, Status.READY_TO_SUBMIT}
 
     def test_action_summary_complete(self, logged_in_client, tasklist_completed):
@@ -186,6 +189,7 @@ class TestTaskListView:
 
         assert v.total_sa == 4
         assert v.ready_to_submit_updates == 4
+        assert v.incomplete_updates == 0
         assert status_set == {Status.READY_TO_SUBMIT}
 
     def test_action_summary_submitted(self, logged_in_client, tasklist_submitted):
@@ -199,6 +203,7 @@ class TestTaskListView:
 
         assert v.total_sa == 4
         assert v.ready_to_submit_updates == 4
+        assert v.incomplete_updates == 0
         assert status_set == {Status.SUBMITTED}
 
     def test_action_list(self, logged_in_client, tasklist_stub):
