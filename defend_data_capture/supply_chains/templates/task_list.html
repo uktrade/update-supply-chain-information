@@ -71,17 +71,10 @@
     {% endif %}
 
     <table class="govuk-table" id="updates">
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">
-                    <h2 class="govuk-heading-l tasklist-actions-header">Monthly strategic actions updates</h2>
-                </th>
-                <th scope="col" class="govuk-table__header"></th>
-            </tr>
-        </thead>
+        <caption class="govuk-table__caption govuk-heading-l">Monthly strategic actions updates</caption>
         <tbody class="govuk-table__body">
             {% for update in view.sa_updates %}
-            <tr class="govuk-table__row">
+            <tr class="govuk-table__row tasklist-top-border">
                 <td class="govuk-table__cell govuk-!-width-one-half">
                     <a href={{ update.route }} class="govuk-link">Update {{ update.name }}</a>
                     <p class="tasklist-action-description"> {{ update.description|truncatewords:10 }} </p>

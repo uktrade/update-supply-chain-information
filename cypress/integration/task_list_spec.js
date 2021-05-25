@@ -32,9 +32,8 @@ describe('The Supply Chain Tasklist Page', () => {
     cy.get('div').contains(`Update incomplete`)
     cy.get('div').contains('6 out of 7 actions are not ready to be submitted.')
   })
-  it('displays correct table headers', () => {
-    cy.get('thead').find('th').should('have.length', 2)
-    cy.get('th').contains('Monthly strategic actions updates')
+  it('displays the correct table caption', () => {
+    cy.get('caption').contains('Monthly strategic actions updates')
   })
   it('displays 5 strategic action in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 5)
@@ -95,9 +94,8 @@ describe('Allowed to view submitted Supply chain', () => {
     )
     cy.get('h2').contains('Before you submit').should('not.exist')
   })
-  it('displays correct table headers', () => {
-    cy.get('thead').find('th').should('have.length', 2)
-    cy.get('th').contains('Monthly strategic actions updates')
+  it('displays the correct table caption', () => {
+    cy.get('caption').contains('Monthly strategic actions updates')
   })
   it('displays 1 strategic action in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 1)

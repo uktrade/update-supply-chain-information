@@ -67,9 +67,8 @@ describe('Validate complete view for manual access', () => {
     cy.get('div').contains('Update complete')
     cy.get('div').contains('All actions are ready to be submitted.')
   })
-  it('displays correct table headers', () => {
-    cy.get('thead').find('th').should('have.length', 2)
-    cy.get('th').contains('Monthly strategic actions updates')
+  it('displays the correct table caption', () => {
+    cy.get('caption').contains('Monthly strategic actions updates')
   })
   it('displays 2 strategic actions in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 2)
