@@ -16,6 +16,7 @@ python defend_data_capture/manage.py testserver \
     cypress/fixtures/supplyChains.json cypress/fixtures/strategicActions.json \
     cypress/fixtures/strategicActionUpdates.json \
     & echo $! > backend.pid \
+    & defend_data_capture/manage.py datafixup \
     & (sleep 5 && npx cypress run --headless --browser chrome)
 
 cypress_failed=$?
