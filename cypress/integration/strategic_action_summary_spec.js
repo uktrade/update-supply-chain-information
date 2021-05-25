@@ -14,7 +14,7 @@ describe('The strategic action summary page', () => {
   it('successfully loads', () => {
     cy.visit(
       Cypress.config('baseUrl') +
-        `/${supplyChain.fields.slug}/strategic-actions`
+        `/${supplyChain.fields.slug}/strategic-actions/`
     )
     cy.injectAxe()
   })
@@ -32,11 +32,11 @@ describe('The strategic action summary page', () => {
     cy.get('li')
       .contains(`${supplyChain.fields.name}`)
       .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.fields.slug}`)
+      .and('eq', `/${supplyChain.fields.slug}/`)
     cy.get('li')
       .contains(`Strategic actions for ${supplyChain.fields.name}`)
       .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.fields.slug}/strategic-actions`)
+      .and('eq', `/${supplyChain.fields.slug}/strategic-actions/`)
   })
   it('displays the header and paragraph text', () => {
     cy.get('h1').contains(`Strategic actions for ${supplyChain.fields.name}`)
@@ -166,7 +166,7 @@ describe('The strategic action summary page', () => {
     cy.url().should(
       'eq',
       Cypress.config('baseUrl') +
-        `/${supplyChain.fields.slug}/strategic-actions?page=2`
+        `/${supplyChain.fields.slug}/strategic-actions/?page=2`
     )
     cy.get('.govuk-accordion__section').should('have.length', 1)
   })
@@ -175,14 +175,14 @@ describe('The strategic action summary page', () => {
     cy.url().should(
       'eq',
       Cypress.config('baseUrl') +
-        `/${supplyChain.fields.slug}/strategic-actions?page=1`
+        `/${supplyChain.fields.slug}/strategic-actions/?page=1`
     )
   })
   it('takes user to task list when button is clicked', () => {
     cy.get('a').contains('Back to task list').click()
     cy.url().should(
       'eq',
-      Cypress.config('baseUrl') + `/${supplyChain.fields.slug}`
+      Cypress.config('baseUrl') + `/${supplyChain.fields.slug}/`
     )
   })
 })

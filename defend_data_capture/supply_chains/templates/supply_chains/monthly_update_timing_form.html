@@ -1,5 +1,7 @@
 {% extends 'supply_chains/monthly_update_form_base.html' %}
 
+{% block page_title %}Expected completion date - {{ block.super }}{% endblock page_title %}
+
 {% block form %}
     {% include 'supply_chains/includes/existing_completion_date.html' %}
     <form method="post" action="">
@@ -30,7 +32,7 @@
                 Save and continue
             </button>
 
-            <a href="{% url 'tlist' supply_chain_slug=strategic_action_update.supply_chain.slug %}" class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
+            <a href="{% url 'supply-chain-task-list' supply_chain_slug=strategic_action_update.supply_chain.slug %}" class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
                 Cancel
             </a>
         </div>
