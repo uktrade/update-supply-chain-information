@@ -32,14 +32,18 @@ class SupplyChain(models.Model):
     objects = SupplyChainQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
-    last_submission_date = models.DateField(null=True)
+    last_submission_date = models.DateField(null=True, blank=True)
     gov_department = models.ForeignKey(
         GovDepartment,
         on_delete=models.PROTECT,
         related_name="supply_chains",
     )
-    contact_name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
-    contact_email = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
+    contact_name = models.CharField(
+        max_length=settings.CHARFIELD_MAX_LENGTH, blank=True
+    )
+    contact_email = models.CharField(
+        max_length=settings.CHARFIELD_MAX_LENGTH, blank=True
+    )
     vulnerability_status = models.CharField(
         choices=StatusRating.choices,
         max_length=6,
@@ -52,17 +56,29 @@ class SupplyChain(models.Model):
     risk_severity_status_disagree_reason = models.TextField(blank=True)
     slug = models.SlugField(null=True, blank=True)
     is_archived = models.BooleanField(default=False)
+    archived_reason = models.TextField(blank=True)
     archived_date = models.DateField(null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+
         if self.is_archived and self.archived_date is None:
             self.archived_date = timezone.now().date()
+
+        self.full_clean()
+
         return super().save(*args, **kwargs)
 
     def __str__(self):
         return f"SC: {self.name}, {self.gov_department.name}"
+
+    def clean_fields(self, exclude=None):
+        super().clean_fields(exclude=exclude)
+        if self.is_archived and self.archived_reason == "":
+            raise ValidationError(
+                "An archived_reason must be given when archiving a supply chain."
+            )
 
 
 @reversion.register()
@@ -96,9 +112,9 @@ class StrategicAction(models.Model):
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
-    start_date = models.DateField(null=True)
+    start_date = models.DateField(null=True, blank=True)
     description = models.TextField()
-    impact = models.TextField()
+    impact = models.TextField(blank=True)
     category = models.CharField(
         choices=Category.choices,
         max_length=9,
