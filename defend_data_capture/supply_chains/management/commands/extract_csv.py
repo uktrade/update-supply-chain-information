@@ -60,7 +60,7 @@ class Command(BaseCommand):
 
         # iterate through the rows,
         # - Remove escape/meta chars - []""
-        # - Add email_domians_$i field for every domian encountered
+        # - Add email_domains_$i field for every domain encountered
         # - Push largest domains to the top of the list - This will be header for CSV
         for row in rows:
             formatted_row = {}
@@ -90,7 +90,7 @@ class Command(BaseCommand):
     def handle(self, **options):
         if options["model"] not in ALL_MODELS:
             raise CommandError(
-                f"Unknown model {options['model']}. \n\nRefer help for supported values"
+                f"Unknown model {options['model']}. \n\nRefer to help for supported values"
             )
 
         try:
