@@ -28,8 +28,4 @@ jobs:
       - name: Bring up db container
         run: docker-compose -f docker-compose.yaml up -d
       - name: Run unit tests
-        run: pytest --cache-clear --cov=defend_data_capture defend_data_capture > pytest-coverage.txt
-      - name: Comment coverage
-        uses: coroo/pytest-coverage-commentator@v1.0.2
-      - name: Run functional tests
-        run: bash run_functional_tests.sh
+        run: pytest --cache-clear --cov=defend_data_capture --cov-report=xml defend_data_capture

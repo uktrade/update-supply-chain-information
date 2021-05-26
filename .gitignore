@@ -22,4 +22,4 @@ cypress/screenshots/
 settings.json
 
 # pytest coverage
-.coverage
+*coverage*
