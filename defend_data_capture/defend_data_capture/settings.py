@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "supply_chains",
     "accounts",
+    "healthcheck",
     "rest_framework",
     "rest_framework.authtoken",
     "reversion",
