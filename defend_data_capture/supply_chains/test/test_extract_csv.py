@@ -6,6 +6,7 @@ import re
 
 import pytest
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.core.files.temp import NamedTemporaryFile
 
 from supply_chains.management.commands.ingest_csv import (
@@ -65,11 +66,11 @@ class TestExtractCSV:
         lookup = {x["name"]: x for x in rows}
         assert (
             lookup[trade_name]["name"] == trade_name
-            and lookup[trade_name]["email_domains_0"] == trade_domian
+            and lookup[trade_name]["email_domain_0"] == trade_domian
         )
         assert (
             lookup[hmrc_name]["name"] == hmrc_name
-            and lookup[hmrc_name]["email_domains_0"] == hmrc_domain
+            and lookup[hmrc_name]["email_domain_0"] == hmrc_domain
         )
 
     def test_dump_accounts_data_multi_domain(self):
@@ -84,7 +85,7 @@ class TestExtractCSV:
 
         # Assert
         assert len(rows) == 1
-        assert all(k in rows[0] for k in ("email_domains_0", "email_domains_1"))
+        assert all(k in rows[0] for k in ("email_domain_0", "email_domain_1"))
 
     def test_dump_accounts_no_data(self):
         # Arrange
@@ -203,3 +204,12 @@ class TestExtractCSV:
 
         sa_ids = [x["strategic_action"] for x in rows]
         assert all([a == b for a, b in zip(sorted(sa_ids), sorted(exp_sa_ids))])
+
+    def test_dump_inv_model(self):
+        # Arrange
+        inv_model = "hello world"
+
+        # Act
+        # Assert
+        with pytest.raises(CommandError, match=f"Unknown model {inv_model}"):
+            self.invoke_dump(inv_model, self.data_file.name)

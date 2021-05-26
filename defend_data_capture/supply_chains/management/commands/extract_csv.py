@@ -60,7 +60,7 @@ class Command(BaseCommand):
 
         # iterate through the rows,
         # - Remove escape/meta chars - []""
-        # - Add email_domains_$i field for every domain encountered
+        # - Add email_domain_$i field for every domain encountered
         # - Push largest domains to the top of the list - This will be header for CSV
         for row in rows:
             formatted_row = {}
@@ -73,7 +73,7 @@ class Command(BaseCommand):
                     domain_tokens = domains.split(",")
 
                     for index in range(len(domain_tokens)):
-                        formatted_row[f"email_domains_{index}"] = domain_tokens[
+                        formatted_row[f"email_domain_{index}"] = domain_tokens[
                             index
                         ].strip()
                 else:
