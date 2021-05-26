@@ -30,11 +30,10 @@ describe('The Supply Chain Tasklist Page', () => {
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${supplyChain.name}`)
     cy.get('div').contains(`Update incomplete`)
-    cy.get('div').contains(`1 of 7 mandatory actions are complete.`)
+    cy.get('div').contains('6 out of 7 actions are not ready to be submitted.')
   })
-  it('displays correct table headers', () => {
-    cy.get('thead').find('th').should('have.length', 2)
-    cy.get('th').contains('Monthly strategic actions updates')
+  it('displays the correct table caption', () => {
+    cy.get('caption').contains('Monthly strategic actions updates')
   })
   it('displays 5 strategic action in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 5)
@@ -48,19 +47,19 @@ describe('The Supply Chain Tasklist Page', () => {
 
 const completedSC = supplyChains[1].fields
 
-describe('Allowed to submit completed Supply Chains', () => {
+describe('Allowed to submit ready_to_submit Supply Chains', () => {
   it('successfully loads', () => {
     cy.visit(Cypress.config('baseUrl') + `/${completedSC.slug}`)
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
-    cy.get('div').contains(`Update complete`)
-    cy.get('div').contains(`2 of 2 mandatory actions are complete.`)
+    cy.get('div').contains('Update complete')
+    cy.get('div').contains('All actions are ready to be submitted.')
   })
   it('displays 2 strategic action in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 2)
     cy.get('tbody').find('td').should('have.length', 4)
-    cy.get('td').contains('completed')
+    cy.get('td').contains('Ready to submit')
   })
   it('displays enabled submit button', () => {
     cy.get('button').contains('Submit monthly update')
@@ -95,14 +94,13 @@ describe('Allowed to view submitted Supply chain', () => {
     )
     cy.get('h2').contains('Before you submit').should('not.exist')
   })
-  it('displays correct table headers', () => {
-    cy.get('thead').find('th').should('have.length', 2)
-    cy.get('th').contains('Monthly strategic actions updates')
+  it('displays the correct table caption', () => {
+    cy.get('caption').contains('Monthly strategic actions updates')
   })
   it('displays 1 strategic action in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 1)
     cy.get('tbody').find('td').should('have.length', 2)
-    cy.get('td').contains('submitted')
+    cy.get('td').contains('Submitted')
   })
   it('displays strategic action name with hyperlink', () => {
     cy.get('td')
@@ -152,7 +150,7 @@ describe('Paginate Strategic actions', () => {
   })
 })
 
-describe('Error handling while submitting in-complete updates', () => {
+describe('Error handling while submitting incomplete updates', () => {
   it('successfully loads', () => {
     cy.visit(Cypress.config('baseUrl') + `/${largeSC.slug}`)
   })
