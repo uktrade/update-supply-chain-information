@@ -8,7 +8,7 @@ docker-compose -f docker-compose.yaml -f docker-compose.override.yaml up -d
 # Run the django application on port 8001 with fixtures for cypress
 # Save the pid for the server to a file 'backend.pid'
 # Run all cypress tests after a 5 second delay to allow the django server to be brought up
-export SET_HSTS_HEADERS=''
+export SET_HSTS_HEADERS='False'
 python defend_data_capture/manage.py testserver \
     --addrport 8001 \
     --settings=test_settings \
