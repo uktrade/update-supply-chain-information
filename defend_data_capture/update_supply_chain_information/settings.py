@@ -56,7 +56,7 @@ MIDDLEWARE = [
     "reversion.middleware.RevisionMiddleware",
 ]
 
-ROOT_URLCONF = "defend_data_capture.urls"
+ROOT_URLCONF = "update_supply_chain_information.urls"
 
 TEMPLATES = [
     {
@@ -74,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "defend_data_capture.wsgi.application"
+WSGI_APPLICATION = "update_supply_chain_information.wsgi.application"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

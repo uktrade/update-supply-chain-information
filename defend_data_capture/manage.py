@@ -6,7 +6,9 @@ import sys
 
 def main():
     """Run administrative tasks."""
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "defend_data_capture.settings")
+    os.environ.setdefault(
+        "DJANGO_SETTINGS_MODULE", "update_supply_chain_information.settings"
+    )
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:

@@ -1,5 +1,5 @@
 """
-WSGI config for defend_data_capture project.
+WSGI config for update_supply_chain_information project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "defend_data_capture.settings")
+os.environ.setdefault(
+    "DJANGO_SETTINGS_MODULE", "update_supply_chain_information.settings"
+)
 
 application = get_wsgi_application()
