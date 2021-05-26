@@ -7,23 +7,23 @@ import django.utils.timezone
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('supply_chains', '0001_initial'),
+        ("supply_chains", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='maturityselfassessment',
-            name='date_created',
+            model_name="maturityselfassessment",
+            name="date_created",
             field=models.DateField(default=django.utils.timezone.now),
         ),
         migrations.AlterField(
-            model_name='scenarioassessment',
-            name='date_created',
+            model_name="scenarioassessment",
+            name="date_created",
             field=models.DateField(default=django.utils.timezone.now),
         ),
         migrations.AlterField(
-            model_name='vulnerabilityassessment',
-            name='date_created',
+            model_name="vulnerabilityassessment",
+            name="date_created",
             field=models.DateField(default=django.utils.timezone.now),
         ),
     ]

@@ -11,27 +11,27 @@ Python version 3.8 is required to run this project - [install here](https://www.
 The project uses a `Makefile` to make running commands easier. `make` commands need to be run at the same directory level as the Makefile.
 
 ### Setting up environment variables:
-- Environment variables can be found in the `defend_data_capture/sample.env`
-- Copy these to a `.env` file in the `defend_data_capture` folder
+- Environment variables can be found in the `update_supply_chain_information/sample.env`
+- Copy these to a `.env` file in the `update_supply_chain_information` folder
 - The `AUTHBROKER_CLIENT_ID` and `AUTHBROKER_CLIENT_SECRET` values needed for staff SSO can be found in [passman](https://passman.ci.uktrade.digital/2fa/verify/?next=/secret/61f0a3bf-33f3-427e-8ade-cdee0c637031/)
 
 ### Setting up static files
 The project uses [webpack](https://webpack.js.org/) to build static files, to setup:
 - Install node version 14.x
 - Run `npm install` to install all node modules, including webpack and the govuk-frontend npm package
-- Run `npm run dev` - webpack will then bundle all static files in `defend_data_capture/assets` and create 'bundles' in `defend_data_capture/assets/webpack_bundles`. When making changes to static files, e.g. updating `application.scss`, webpack will recompile the files when edited and create a new bundle.
+- Run `npm run dev` - webpack will then bundle all static files in `update_supply_chain_information/assets` and create 'bundles' in `update_supply_chain_information/assets/webpack_bundles`. When making changes to static files, e.g. updating `application.scss`, webpack will recompile the files when edited and create a new bundle.
 
 ### Styles
 The project mainly uses styles from the [govuk-frontend](https://github.com/alphagov/govuk-frontend) npm package. Examples of how to use these styles can be found in components on the [GOVUK design system](https://design-system.service.gov.uk/components/).
 
-Where it is not possible to use a govuk style, the [moj-frontend](https://github.com/ministryofjustice/moj-frontend) library (an extension of govuk-frontend) has been used, and any custom styles added to `defend_data_capture/assets/application.scss`, with classes prefixed with `.app-`.
+Where it is not possible to use a govuk style, the [moj-frontend](https://github.com/ministryofjustice/moj-frontend) library (an extension of govuk-frontend) has been used, and any custom styles added to `update_supply_chain_information/assets/application.scss`, with classes prefixed with `.app-`.
 
 ### To run the app:
 - Create a virtual environment using `python3 -m venv env`, and activate it using `source env/bin/activate`
 - Run `pip install -r requirements.txt` to install the dependencies into your environment
 - If you haven't yet created a local database, run `make create-db`. This will create the database, run migrations, create  initial reversions and load fixture data.
 - If you have already created a local db, run `make setup` to bring up the database container, or `make setup-db` to bring up the container, apply database migrations and load fixture data.
-- cd into the `/defend_data_capture` folder and run `python manage.py runserver`
+- cd into the `/update_supply_chain_information` folder and run `python manage.py runserver`
 - You must access the app on http://localhost:8000 as this is the URL which is configured as the 'redirect URL' for our authbroker credentials in staff SSO
 
 ### To just load fixture data: 

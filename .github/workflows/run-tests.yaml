@@ -24,11 +24,11 @@ jobs:
       - name: Run webpack
         run: nohup npm run dev &
       - name: Collect static files
-        run: python defend_data_capture/manage.py collectstatic 
+        run: python update_supply_chain_information/manage.py collectstatic
       - name: Bring up db container
         run: docker-compose -f docker-compose.yaml up -d
       - name: Run unit tests
-        run: pytest defend_data_capture
+        run: pytest update_supply_chain_information
         env:
           SET_HSTS_HEADERS: False
       - name: Run functional tests
