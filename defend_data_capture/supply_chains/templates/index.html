@@ -7,10 +7,16 @@
     </p>
     <h2 class="govuk-heading-l"> Complete your monthly update</h2>
     <ul class="govuk-list govuk-list--bullet">
-        <li>
-            You need to complete your monthly update for <strong>{{ num_in_prog_supply_chains }} supply chains</strong> by
-            <span class="govuk-body govuk-!-font-weight-bold">{{ deadline|date:"l jS F Y" }}</span>
-        </li>
+        {% if update_complete %}
+            <li>
+                Your monthly update is complete. All supply chains have been completed for this month.
+            </li>
+        {% else %}
+            <li>
+                You need to complete your monthly update. Complete <strong>{{ num_in_prog_supply_chains }} supply chains</strong> by
+                <span class="govuk-body govuk-!-font-weight-bold">{{ deadline|date:"l jS F Y" }}</span>.
+            </li>
+        {% endif %}
         <li>
             Select a supply chain to provide your regular monthly update or to update wider details.
         </li>
