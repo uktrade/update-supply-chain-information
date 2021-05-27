@@ -20,10 +20,6 @@ def test_correct_middleware_exists():
     ]
 
 
-# def test_security_settings_on():
-#     assert settings.SECURE_BROWSER_XSS_FILTER is True
-
-
 class TestCustomMiddleware:
     def test_custom_cache_control_middleware(self):
         """
