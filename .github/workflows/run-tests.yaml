@@ -4,7 +4,7 @@ jobs:
   run-all-tests:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: postgres://postgres:password@localhost:5432/defend
+      DATABASE_URL: postgres://postgres:password@localhost:5432/supply_chain_info
       OAUTHLIB_INSECURE_TRANSPORT: 1
       RUNNING_LOCALLY: 0
     steps:

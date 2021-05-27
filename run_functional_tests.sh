@@ -26,7 +26,7 @@ if [ "$running_locally" == true ]; then
     # Kill the application using the pid previously saved
     kill $(cat backend.pid)
     # Drop the test database
-    docker-compose exec db psql -h localhost -U postgres -c "DROP DATABASE IF EXISTS test_defend"
+    docker-compose exec db psql -h localhost -U postgres -c "DROP DATABASE IF EXISTS test_supply_chain_info"
 fi
 
 exit $cypress_failed
