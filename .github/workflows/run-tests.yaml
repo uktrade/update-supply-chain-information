@@ -29,7 +29,13 @@ jobs:
         run: docker-compose -f docker-compose.yaml up -d
       - name: Run unit tests
         run: pytest update_supply_chain_information
+        run: pytest --cache-clear --cov=defend_data_capture/supply_chains --cov-report=xml defend_data_capture
         env:
           SET_HSTS_HEADERS: False
+      - name: Upload coverage to codecov
+        uses: codecov/codecov-action@v1.5.0
+        with:
+          fail_ci_if_error: true
+          verbose: true
       - name: Run functional tests
         run: bash run_functional_tests.sh
