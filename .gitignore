@@ -20,3 +20,6 @@ cypress/screenshots/
 
 # VS code
 settings.json
+
+# pytest coverage
+*coverage*
