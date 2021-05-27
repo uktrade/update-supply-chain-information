@@ -24,9 +24,9 @@ describe('The Home Page', () => {
     )
     cy.get('p').contains("It's important to keep your departmental action plan records up to date. This is so we can work towards constantly improving the UK's supply chain resilience.")
     cy.get('h2').contains('Complete your monthly update')
-    cy.get('li').invoke('text').should('match', /You need to complete your monthly update for \d+ supply chains/)
+    cy.get('li').invoke('text').should('match', /You need to complete your monthly update. Complete \d+ supply chains/)
     cy.lastWorkingDay().then(deadline => {
-      cy.get('li:first-of-type').invoke('text').should('match', new RegExp(`\\s*You need to complete your monthly update for \\d+ supply chains by\\s*${deadline}\\s*`))
+      cy.get('li:first-of-type').invoke('text').should('match', new RegExp(`\\s*You need to complete your monthly update. Complete \\d+ supply chains by\\s*${deadline}\\s*`))
     })
     cy.get('li').contains(
       'Select a supply chain to provide your regular monthly update or to update wider details.'
