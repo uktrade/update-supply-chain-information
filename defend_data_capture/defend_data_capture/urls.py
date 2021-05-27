@@ -1,7 +1,10 @@
 from django.urls import path, include
+from django.utils.decorators import decorator_from_middleware
 from rest_framework import routers
 
 from accounts.api_views import UserViewSet
+from healthcheck.middleware import StatsMiddleware
+from healthcheck.views import HealthCheckView
 from supply_chains.admin import admin_site
 from supply_chains.api_views import (
     StrategicActionViewset,
@@ -108,9 +111,18 @@ supply_chain_urlpatterns = [
     ),
 ]
 
+healthcheck_urlpatterns = [
+    path(
+        "healthcheck/",
+        decorator_from_middleware(StatsMiddleware)(HealthCheckView.as_view()),
+        name="healthcheck",
+    )
+]
+
 urlpatterns = [
     path("auth/", include("authbroker_client.urls")),
     path("admin/", admin_site.urls),
     path("api/", include(router.urls)),
+    path("", include(healthcheck_urlpatterns)),
     path("", include(supply_chain_urlpatterns)),
 ]
