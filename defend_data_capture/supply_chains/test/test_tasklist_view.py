@@ -219,7 +219,7 @@ class TestTaskListView:
 
         assert len(v.sa_updates) == 4
         assert status_set == {Status.NOT_STARTED}
-        assert len(des_set) is 1 and tasklist_stub["sa_description"] == next(
+        assert len(des_set) == 1 and tasklist_stub["sa_description"] == next(
             iter(des_set)
         )
         assert route_set == {
