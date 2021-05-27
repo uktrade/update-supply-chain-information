@@ -37,3 +37,4 @@ class TestCustomMiddleware:
             response["Cache-Control"]
             == "max-age=0, no-cache, no-store, must-revalidate, private"
         )
+        assert response["Pragma"] == "no-cache"
