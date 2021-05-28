@@ -752,7 +752,7 @@ describe('Testing monthly update forms', () => {
               cy.govukMain().get('h2').should('have.class', 'govuk-heading-m').contains('Check your answers').should('exist')
             })
             it('a prompt to check the information', () => {
-              cy.govukMain().get('h2 + p.govuk-body').contains("Check all the information you've provided is correct before submitting the form.").should('exist')
+              cy.govukMain().get('h2 + p.govuk-body').contains("Check all the information you've provided is correct before confirming.").should('exist')
             })
             it('shouldn\'t have an error summary', function() {
               cy.noGdsErrorSummary()
@@ -839,8 +839,8 @@ describe('Testing monthly update forms', () => {
             it('should have a CSRF token', () => {
               cy.get("@theForm").hasDjangoCSRFToken()
             })
-            it('should have a submit button saying "Submit"', () => {
-              cy.get('@theForm').hasSubmitButton('Submit')
+            it('should have a submit button saying "Confirm"', () => {
+              cy.get('@theForm').hasSubmitButton('Confirm')
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
               cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)

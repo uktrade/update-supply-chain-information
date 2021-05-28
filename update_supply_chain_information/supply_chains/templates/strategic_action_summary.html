@@ -87,7 +87,7 @@
               {% if action.is_ongoing %}
               Ongoing
               {% else %}
-              {{ action.target_completion_date|date:"SHORT_DATE_FORMAT"|default:"No information" }}
+              {{ action.target_completion_date|date:"j F Y"|default:"No information" }}
               {% endif %}
             </dd>
           </div>

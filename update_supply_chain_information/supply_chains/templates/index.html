@@ -30,7 +30,7 @@
             <tr class="govuk-table__row">
                 <th scope="col" class="govuk-table__header">Supply chain</th>
                 <th scope="col" class="govuk-table__header">No. strategic<br> actions</th>
-                <th scope="col" class="govuk-table__header">Last updated</th>
+                <th scope="col" class="govuk-table__header govuk-table__header--numeric">Last updated</th>
             </tr>
         </thead>
         <tbody class="govuk-table__body">
@@ -40,7 +40,7 @@
                         <a href={% url 'supply-chain-task-list' supply_chain_slug=supplychain.slug %}  class="govuk-link">{{ supplychain.name }}</a>
                     </th>
                     <td class="govuk-table__cell">{{supplychain.strategic_action_count}}</td>
-                    <td class="govuk-table__cell">{{supplychain.last_submission_date|date:"d/m/Y"}}</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">{{supplychain.last_submission_date|date:"j M Y"}}</td>
                 </tr>
             {% endfor %}
         </tbody>
