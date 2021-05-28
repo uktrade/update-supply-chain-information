@@ -5,16 +5,25 @@
     <p class="govuk-body">
         It's important to keep your departmental action plan records up to date. This is so we can work towards constantly improving the UK's supply chain resilience.
     </p>
-    <h2 class="govuk-heading-l"> Complete your monthly update</h2>
-    <ul class="govuk-list govuk-list--bullet">
-        <li>
-            You need to complete your monthly update for <strong>{{ num_in_prog_supply_chains }} supply chains</strong> by
-            <span class="govuk-body govuk-!-font-weight-bold">{{ deadline|date:"l jS F Y" }}</span>
-        </li>
-        <li>
-            Select a supply chain to provide your regular monthly update or to update wider details.
-        </li>
-    </ul>
+    {% if update_complete %}
+        <h2 class="govuk-heading-l">Your monthly update is complete</h2>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                All supply chains have been completed for this month.
+            </li>
+        </ul>
+    {% else %}
+        <h2 class="govuk-heading-l">Complete your monthly update</h2>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>
+                You need to complete your monthly update. Complete <strong>{{ num_in_prog_supply_chains }} supply chains</strong> by
+                <span class="govuk-body govuk-!-font-weight-bold">{{ deadline|date:"l jS F Y" }}</span>.
+            </li>
+            <li>
+                Select a supply chain to provide your regular monthly update.
+            </li>
+        </ul>
+    {% endif %}
 
     <table class="govuk-table">
         <thead class="govuk-table__head">
