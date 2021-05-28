@@ -61,7 +61,6 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
         ).count()
         context["gov_department_name"] = self.request.user.gov_department.name
 
-        # TODO: Remove attribute update_complete if its not going to be used by RT-170
         context["update_complete"] = (
             context["num_updated_supply_chains"] == self.object_list.count()
         )
