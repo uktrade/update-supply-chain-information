@@ -651,7 +651,7 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
             context["completion_estimation"] = "Ongoing"
         else:
             context["completion_estimation"] = date_filter(
-                sau.strategic_action.target_completion_date, "d F Y"
+                sau.strategic_action.target_completion_date, "j F Y"
             )
 
         return context
