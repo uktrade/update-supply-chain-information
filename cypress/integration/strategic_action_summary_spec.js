@@ -136,7 +136,7 @@ describe('The strategic action summary page', () => {
       tableElement,
       5,
       'What is the estimated date of completion?',
-      '02/08/2023'
+      '8 February 2023'
     )
 
     cy.forms.checkSummaryTableContent(

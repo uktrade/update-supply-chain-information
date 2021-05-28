@@ -120,7 +120,7 @@ class TestSAUReview:
         # Assert
         assert resp.context["supply_chain"].name == update_stub["sc_name"]
         assert resp.context["completion_estimation"] == date_filter(
-            datetime.strptime(update_stub["sa_completion"], r"%Y-%m-%d"), "d F Y"
+            datetime.strptime(update_stub["sa_completion"], r"%Y-%m-%d"), "j F Y"
         )
         assert (
             resp.context["update"].implementation_rag_rating == update_stub["sau_rag"]

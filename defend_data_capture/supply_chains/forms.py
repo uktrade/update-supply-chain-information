@@ -233,7 +233,7 @@ ImplementationRAGRatingHintsText = [
     "There is an issue with delivery of an action. This will require escalation and further support. There is a "
     "potential risk to the expected completion date.",
     "There's a potential risk to delivery that needs monitoring.",
-    "Delivery is on track with no issues",
+    "Delivery is on track with no issues.",
 ]
 ImplementationRAGRatingHints = {
     rating[0]: help_text
