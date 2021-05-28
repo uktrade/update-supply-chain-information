@@ -24,13 +24,18 @@ describe('The Home Page', () => {
     )
     cy.get('p').contains("It's important to keep your departmental action plan records up to date. This is so we can work towards constantly improving the UK's supply chain resilience.")
     cy.get('h2').contains('Complete your monthly update')
+    cy.get('h2').contains('Your monthly update is complete').should('not.exist')
     cy.get('li').invoke('text').should('match', /You need to complete your monthly update. Complete \d+ supply chains/)
     cy.lastWorkingDay().then(deadline => {
       cy.get('li:first-of-type').invoke('text').should('match', new RegExp(`\\s*You need to complete your monthly update. Complete \\d+ supply chains by\\s*${deadline}\\s*`))
     })
     cy.get('li').contains(
-      'Select a supply chain to provide your regular monthly update or to update wider details.'
+      'Select a supply chain to provide your regular monthly update.'
     )
+    cy.get('li').contains(
+      'All supply chains have been completed for this month'
+    ).should('not.exist')
+
   })
   it('displays correct table headers', () => {
     cy.get('thead').find('th').should('have.length', 3)
