@@ -35,7 +35,7 @@ class TestDataLoader:
 
         # Assert
         assert re.match(f".*(Successfully) .* {sut.MODEL_GOV_DEPT}.*", res)
-        assert GovDepartment.objects.count() == 7
+        assert GovDepartment.objects.count() == 8
 
     def test_load_accounts_no_data(self):
         # Arrange
