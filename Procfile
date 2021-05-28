@@ -1,1 +1,1 @@
-web: python update_supply_chain_information/manage.py migrate --noinput && gunicorn --chdir ./update_supply_chain_information update_supply_chain_information.wsgi:application --bind 0.0.0.0:$PORT --log-file -
+web: python update_supply_chain_information/manage.py migrate --noinput && gunicorn --chdir ./update_supply_chain_information config.wsgi:application --bind 0.0.0.0:$PORT --log-file -
