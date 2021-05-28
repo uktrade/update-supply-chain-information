@@ -2,13 +2,13 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
-from defend_data_capture import settings
+from update_supply_chain_information import settings
 
 
 def test_correct_middleware_exists():
     assert settings.MIDDLEWARE == [
         "django.middleware.security.SecurityMiddleware",
-        "defend_data_capture.middleware.add_cache_control_header_middleware",
+        "update_supply_chain_information.middleware.add_cache_control_header_middleware",
         "django.contrib.sessions.middleware.SessionMiddleware",
         "django.middleware.common.CommonMiddleware",
         "django.middleware.csrf.CsrfViewMiddleware",
