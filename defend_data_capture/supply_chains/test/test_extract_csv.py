@@ -9,6 +9,7 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.core.files.temp import NamedTemporaryFile
 
+import accounts.models
 from supply_chains.management.commands.ingest_csv import (
     MODEL_GOV_DEPT,
     MODEL_SUPPLY_CHAIN,
@@ -49,8 +50,8 @@ class TestExtractCSV:
 
     def test_dump_accounts_data(self):
         # Arrange
-        trade_domian = "trade.gov.uk"
-        trade_name = "DiT"
+        trade_domian = "dosac.gov.uk"
+        trade_name = "DOSAC"
         hmrc_domain = "hmrc.gov.uk"
         hmrc_name = "HMRC"
         GovDepartmentFactory(email_domains=[trade_domian], name=trade_name)
@@ -61,7 +62,7 @@ class TestExtractCSV:
         rows = self.load_csv()
 
         # Assert
-        assert len(rows) == 2
+        assert len(rows) == 3
 
         lookup = {x["name"]: x for x in rows}
         assert (
@@ -75,8 +76,8 @@ class TestExtractCSV:
 
     def test_dump_accounts_data_multi_domain(self):
         # Arrange
-        trade_domians = "trade.gov.uk", "digital.trade.gov.uk"
-        trade_name = "DiT"
+        trade_domians = "dosac.gov.uk", "analogue.dosac.gov.uk"
+        trade_name = "DOSAC"
         GovDepartmentFactory(email_domains=trade_domians, name=trade_name)
 
         # Act
@@ -84,11 +85,12 @@ class TestExtractCSV:
         rows = self.load_csv()
 
         # Assert
-        assert len(rows) == 1
+        assert len(rows) == 2
         assert all(k in rows[0] for k in ("email_domain_0", "email_domain_1"))
 
     def test_dump_accounts_no_data(self):
         # Arrange
+        accounts.models.GovDepartment.objects.all().delete()
         # Act
         self.invoke_dump(MODEL_GOV_DEPT, self.data_file.name)
 
