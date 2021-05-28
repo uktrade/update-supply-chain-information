@@ -7,14 +7,14 @@ module.exports = {
   context: __dirname,
   entry: {
     main: [
-      './defend_data_capture/assets/js/application.js',
-      './defend_data_capture/assets/stylesheets/application.scss',
-      './defend_data_capture/assets/stylesheets/supply_chain.scss',
+      './update_supply_chain_information/assets/js/application.js',
+      './update_supply_chain_information/assets/stylesheets/application.scss',
+      './update_supply_chain_information/assets/stylesheets/supply_chain.scss',
     ],
   },
   output: {
     // Where Webpack will compile assets to
-    path: path.resolve('./defend_data_capture/assets/webpack_bundles/'),
+    path: path.resolve('./update_supply_chain_information/assets/webpack_bundles/'),
     // Where the compiled assets will be accessed through Django
     // (they are picked up by `collectstatic`)
     publicPath: '/static/',

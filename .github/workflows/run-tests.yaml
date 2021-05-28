@@ -4,7 +4,7 @@ jobs:
   run-all-tests:
     runs-on: ubuntu-latest
     env:
-      DATABASE_URL: postgres://postgres:password@localhost:5432/defend
+      DATABASE_URL: postgres://postgres:password@localhost:5432/supply_chain_info
       OAUTHLIB_INSECURE_TRANSPORT: 1
       RUNNING_LOCALLY: 0
     steps:
@@ -24,11 +24,11 @@ jobs:
       - name: Run webpack
         run: nohup npm run dev &
       - name: Collect static files
-        run: python defend_data_capture/manage.py collectstatic
+        run: python update_supply_chain_information/manage.py collectstatic
       - name: Bring up db container
         run: docker-compose -f docker-compose.yaml up -d
       - name: Run unit tests
-        run: pytest --cache-clear --cov=defend_data_capture/supply_chains --cov-report=xml defend_data_capture
+        run: pytest --cache-clear --cov=update_supply_chain_information/supply_chains --cov-report=xml update_supply_chain_information
         env:
           SET_HSTS_HEADERS: False
       - name: Upload coverage to codecov

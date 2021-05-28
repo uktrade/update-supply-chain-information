@@ -1,5 +1,5 @@
 {
-  "name": "defend-data-capture",
+  "name": "update-supply-chain-information",
   "version": "1.0.0",
   "description": "A Django app focused on collecting data about the UK's most valuable supply chains. This app is primarily a form in which other government departments can submit updates and provide information about the supply chains they manage.",
   "private": true,
@@ -28,7 +28,7 @@
   "scripts": {
     "dev": "webpack --config webpack.config.js --mode=development --watch",
     "build": "webpack --config webpack.config.js",
-    "clean": "rm -f defend_data_capture/assets/webpack_bundles/*",
+    "clean": "rm -f update_supply_chain_information/assets/webpack_bundles/*",
     "heroku-postbuild": "npm run build"
   }
 }

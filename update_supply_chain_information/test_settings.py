@@ -1,4 +1,4 @@
-from defend_data_capture.settings import *
+from config.settings import *
 
 # Points to the mock-sso docker container
 AUTHBROKER_URL = "http://localhost:8080"
