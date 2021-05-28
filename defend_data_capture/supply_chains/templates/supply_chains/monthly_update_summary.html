@@ -10,7 +10,7 @@
     {% include "supply_chains/includes/summary_page_error_summary.html" %}
     <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
     <h2 class="govuk-heading-m">Check your answers</h2>
-    <p class="govuk-body">Check all the information you've provided is correct before submitting the form.</p>
+    <p class="govuk-body">Check all the information you've provided is correct before confirming.</p>
     {# Always include the content form #}
     {% with form.forms.MonthlyUpdateInfoForm as form %}
     <dl class="govuk-summary-list govuk-!-margin-bottom-3">
@@ -123,7 +123,7 @@
         {% csrf_token %}
         <div class="govuk-button-group">
             <button class="govuk-button" data-module="govuk-button" type="submit">
-                Submit
+                Confirm
             </button>
 
             <a href="{% url 'supply-chain-task-list' supply_chain_slug=strategic_action_update.supply_chain.slug %}" class="govuk-button govuk-button--secondary" data-module="govuk-button" type="button">
