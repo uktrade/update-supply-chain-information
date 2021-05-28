@@ -11,7 +11,7 @@ from healthcheck.models import HealthCheck
 def expected_HTTP_headers():
     yield {
         "Content-Type": "text/xml",
-        "Cache-Control": "no-cache, no-store, must-revalidate",
+        "Cache-Control": "max-age=0, no-cache, no-store, must-revalidate, private",
     }
 
 
