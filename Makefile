@@ -4,6 +4,8 @@ setup:
 setup-db: setup
 	python update_supply_chain_information/manage.py migrate
 	python update_supply_chain_information/manage.py createinitialrevisions
+	# Remove the DIT gov department added in a data migration
+	python update_supply_chain_information/manage.py flush --no-input
 	make load-data
 
 create-db: setup
