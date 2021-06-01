@@ -5,5 +5,6 @@ updates:
     schedule:
       interval: "daily"
     ignore:
-      - dependency-name: "webpack-dev-server"
-      - dependency-name: "ws"
+      - dependency-name: webpack-dev-server
+      - dependency-name: ws
+    rebase-strategy: disabled
