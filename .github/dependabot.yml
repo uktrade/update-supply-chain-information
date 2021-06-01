@@ -5,7 +5,5 @@ updates:
     schedule:
       interval: "daily"
     ignore:
-      - dependency-name: "ws"
-        versions: ["5.x", "7.4.5"]
       - dependency-name: "webpack-dev-server"
-        versions: ["3.x"]
+      - dependency-name: "ws"
