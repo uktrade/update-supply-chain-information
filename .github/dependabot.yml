@@ -3,8 +3,8 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "daily"
     ignore:
-      - dependency-name: "webpack-dev-server"
-        versions: ["3.x"]
+      - dependency-name: "ws"
+        versions: ["5.x", "7.4.5"]
 
