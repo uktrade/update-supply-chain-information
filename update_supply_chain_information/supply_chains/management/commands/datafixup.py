@@ -2,6 +2,7 @@ from datetime import date
 
 from dateutil.relativedelta import relativedelta
 from django.core.management import BaseCommand
+from django.db import connection
 
 from supply_chains.models import SupplyChain, StrategicActionUpdate
 
@@ -10,6 +11,7 @@ class Command(BaseCommand):
     BASE_DATE = date(year=2021, month=5, day=1)
 
     def handle(self, *args, **options):
+        self.db_name = connection.creation.create_test_db(keepdb=True)
         months_to_add = relativedelta(months=self.calculate_months_to_add())
         updates = StrategicActionUpdate.objects.all()
         self.update_submission_and_created_dates(updates, months_to_add)
