@@ -13,7 +13,7 @@
     "file-loader": "^5.0.2",
     "govuk-frontend": "^3.11.0",
     "mini-css-extract-plugin": "^1.4.1",
-    "node-sass": "^4.13.0",
+    "node-sass": "^6.0.0",
     "sass-loader": "^8.0.0",
     "webpack": "^5.31.2",
     "webpack-bundle-tracker": "^0.4.3",
