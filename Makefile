@@ -20,6 +20,7 @@ tests:
 
 load-data: setup
 	python update_supply_chain_information/manage.py loaddata cypress/fixtures/*.json
+	python update_supply_chain_information/manage.py datafixup --not-testing
 
 functional-tests:
 	sh run_functional_tests.sh
