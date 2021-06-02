@@ -15,6 +15,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options["not_testing"] is False:
+            if "TEST" not in connection.creation.connection.settings_dict:
+                connection.creation.connection.settings_dict["TEST"] = {}
+            connection.creation.connection.settings_dict["TEST"]["MIGRATE"] = False
             _ = connection.creation.create_test_db(keepdb=True)
         months_to_add = relativedelta(months=self.calculate_months_to_add())
         updates = StrategicActionUpdate.objects.all()
