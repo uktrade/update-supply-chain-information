@@ -10,8 +10,12 @@ from supply_chains.models import SupplyChain, StrategicActionUpdate
 class Command(BaseCommand):
     BASE_DATE = date(year=2021, month=5, day=1)
 
+    def add_arguments(self, parser):
+        parser.add_argument("--not-testing", action="store_true")
+
     def handle(self, *args, **options):
-        self.db_name = connection.creation.create_test_db(keepdb=True)
+        if options["not_testing"] is False:
+            _ = connection.creation.create_test_db(keepdb=True)
         months_to_add = relativedelta(months=self.calculate_months_to_add())
         updates = StrategicActionUpdate.objects.all()
         self.update_submission_and_created_dates(updates, months_to_add)
