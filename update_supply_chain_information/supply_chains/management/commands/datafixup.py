@@ -11,15 +11,17 @@ class Command(BaseCommand):
     BASE_DATE = date(year=2021, month=5, day=1)
 
     def add_arguments(self, parser):
-        parser.add_argument("--not-testing", action="store_true")
+        parser.add_argument("--dev", action="store_true")
 
-    def handle(self, *args, **options):
-        if options["not_testing"] is False:
-            _ = connection.creation.create_test_db(keepdb=True)
+    def handle(self, **options):
+        db_instance = "Dev"
+        if not options["dev"]:
+            connection.creation.create_test_db(keepdb=True)
+            db_instance = "Test"
         months_to_add = relativedelta(months=self.calculate_months_to_add())
         updates = StrategicActionUpdate.objects.all()
         self.update_submission_and_created_dates(updates, months_to_add)
-        print("Fixtures fixed")
+        self.stdout.write(self.style.SUCCESS(f"Fixtures fixed on {db_instance} db"))
 
     def update_submission_and_created_dates(self, updates, months_to_add):
         updated_updates = []
