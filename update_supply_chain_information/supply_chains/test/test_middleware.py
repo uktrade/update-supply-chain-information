@@ -4,9 +4,9 @@ from django.urls import reverse
 
 from config import settings
 
-
 def test_correct_middleware_exists():
     assert settings.MIDDLEWARE == [
+        "elasticapm.contrib.django.middleware.TracingMiddleware",
         "django.middleware.security.SecurityMiddleware",
         "config.middleware.add_cache_control_header_middleware",
         "django.contrib.sessions.middleware.SessionMiddleware",
