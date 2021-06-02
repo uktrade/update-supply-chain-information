@@ -9,7 +9,7 @@
   "dependencies": {
     "@ministryofjustice/frontend": "^0.2.2",
     "css-loader": "^5.2.4",
-    "extract-loader": "^3.1.0",
+    "extract-loader": "^5.1.0",
     "file-loader": "^5.0.2",
     "govuk-frontend": "^3.11.0",
     "mini-css-extract-plugin": "^1.4.1",
