@@ -6,6 +6,8 @@ from django.db import connection
 
 from supply_chains.models import SupplyChain, StrategicActionUpdate
 
+Status = StrategicActionUpdate.Status
+
 
 class Command(BaseCommand):
     BASE_DATE = date(year=2021, month=5, day=1)
@@ -15,9 +17,11 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         db_instance = "Dev"
+
         if not options["dev"]:
             connection.creation.create_test_db(keepdb=True)
             db_instance = "Test"
+
         months_to_add = relativedelta(months=self.calculate_months_to_add())
         updates = StrategicActionUpdate.objects.all()
         self.update_submission_and_created_dates(updates, months_to_add)
@@ -27,13 +31,17 @@ class Command(BaseCommand):
         updated_updates = []
         updated_supply_chains = []
         for update in updates:
-            if update.status == StrategicActionUpdate.Status.SUBMITTED:
-                if update.submission_date is not None:
+            if update.status in [Status.SUBMITTED, Status.READY_TO_SUBMIT]:
+                if update.submission_date:
                     update.submission_date += months_to_add
                     update.date_created += months_to_add
                     update.supply_chain.last_submission_date = update.submission_date
                     updated_updates.append(update)
                     updated_supply_chains.append(update.supply_chain)
+                else:
+                    update.date_created += months_to_add
+                    updated_updates.append(update)
+
         StrategicActionUpdate.objects.bulk_update(
             updated_updates, ["submission_date", "date_created"]
         )
