@@ -20,7 +20,7 @@
     "webpack-cli": "^4.6.0"
   },
   "devDependencies": {
-    "axe-core": "^4.1.4",
+    "axe-core": "^4.2.1",
     "cypress": "^6.9.1",
     "cypress-axe": "^0.12.2",
     "webpack-dev-server": "^3.9.0"
