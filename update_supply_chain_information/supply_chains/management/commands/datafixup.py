@@ -23,6 +23,9 @@ class Command(BaseCommand):
         db_instance = "Dev"
 
         if not options["dev"]:
+            if "TEST" not in connection.creation.connection.settings_dict:
+                connection.creation.connection.settings_dict["TEST"] = {}
+            connection.creation.connection.settings_dict["TEST"]["MIGRATE"] = False
             connection.creation.create_test_db(keepdb=True)
             db_instance = "Test"
 
