@@ -1,8 +1,10 @@
 from pathlib import Path
 import environ
+import sys
 import os
 
 from django.urls import reverse_lazy
+from django_log_formatter_ecs import ECSFormatter
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -119,6 +121,33 @@ AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
     "accounts.auth.CustomAuthbrokerBackend",
 ]
+
+# Format logging in ECS format for ELK
+if not DEBUG:
+    LOGGING = {
+        "version": 1,
+        "formatters": {
+            "ecs_formatter": {
+                "()": ECSFormatter,
+            },
+        },
+        "handlers": {
+            "ecs": {
+                "formatter": "ecs_formatter",
+                "class": "logging.StreamHandler",
+                "stream": sys.stdout,
+            },
+        },
+        "loggers": {
+            "django": {
+                "handlers": ["ecs"],
+                "level": "INFO",
+            },
+        },
+    }
+
+# App name for django_log_formatter_ecs
+DLFE_APP_NAME="update-supply-chain-information"
 
 LOGIN_URL = reverse_lazy("authbroker_client:login")
 LOGIN_REDIRECT_URL = reverse_lazy("index")
