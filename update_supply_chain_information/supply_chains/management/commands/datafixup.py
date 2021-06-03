@@ -8,10 +8,6 @@ from supply_chains.models import SupplyChain, StrategicActionUpdate
 
 Status = StrategicActionUpdate.Status
 
-# exclude_update_list = [
-#     "ae9a9de0-1e98-4c36-96bd-1cc98b0eaf51", # Supply Chain 7, SA Title Test
-# ]
-
 
 class Command(BaseCommand):
     BASE_DATE = date(year=2021, month=5, day=1)
@@ -46,12 +42,7 @@ class Command(BaseCommand):
                     updated_updates.append(update)
                     updated_supply_chains.append(update.supply_chain)
                 else:
-                    # if update.id in exclude_update_list:
-                    #     continue
                     update.date_created += months_to_add
-                    print(
-                        f"----- ID : {update.id}\t{update.status}\tDate created: {update.date_created} ----"
-                    )
                     updated_updates.append(update)
 
         StrategicActionUpdate.objects.bulk_update(
