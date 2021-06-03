@@ -9,15 +9,14 @@ docker-compose -f docker-compose.yaml -f docker-compose.override.yaml up -d
 # Save the pid for the server to a file 'backend.pid'
 # Run all cypress tests after a 5 second delay to allow the django server to be brought up
 export SET_HSTS_HEADERS='False'
-python update_supply_chain_information/manage.py testserver \
-    --addrport 8001 \
+
+# reset db before test run
+make drop-db && make create-db
+
+python update_supply_chain_information/manage.py runserver \
     --settings=test_settings \
-    --noinput \
-    cypress/fixtures/govDepartment.json cypress/fixtures/user.json \
-    cypress/fixtures/supplyChains.json cypress/fixtures/strategicActions.json \
-    cypress/fixtures/strategicActionUpdates.json \
+    8001 \
     & echo $! > backend.pid \
-    & (sleep 3 && update_supply_chain_information/manage.py datafixup) \
     & (sleep 5 && npx cypress run --headless --browser chrome)
 
 cypress_failed=$?
@@ -26,7 +25,7 @@ if [ "$running_locally" == true ]; then
     # Kill the application using the pid previously saved
     kill $(cat backend.pid)
     # Drop the test database
-    docker-compose exec db psql -h localhost -U postgres -c "DROP DATABASE IF EXISTS test_supply_chain_info"
+    make drop-db && make create-db
 fi
 
 exit $cypress_failed
