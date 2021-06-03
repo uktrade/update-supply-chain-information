@@ -26,7 +26,9 @@ class TestFixtureFixup:
 
     def call_command(self, *args, **kwargs):
         out = StringIO()
-        call_command("datafixup", *args, stdout=out, stderr=StringIO(), **kwargs)
+        call_command(
+            "datafixup", "--noinput", *args, stdout=out, stderr=StringIO(), **kwargs
+        )
         return out.getvalue()
 
     def test_updates_in_month_of_base_date(self):
