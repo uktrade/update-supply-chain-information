@@ -10,20 +10,33 @@ Status = StrategicActionUpdate.Status
 
 
 class Command(BaseCommand):
+    """Utility to manipulate sample data/fixtures
+
+    Note: This command will write into database and update mostly date related fileds.
+    Hence care must be taken while running this command.
+    """
+
     BASE_DATE = date(year=2021, month=5, day=1)
 
+    def get_confirmtion(self):
+        answer = ""
+        while answer not in ["y", "n"]:
+            answer = input("Continue to modify exisitng data [Y/N]? ").lower()
+        return answer == "y"
+
     def add_arguments(self, parser):
-        parser.add_argument("--dev", action="store_true")
+        parser.add_argument(
+            "--noinput",
+            action="store_true",
+            help="do not prompt for confimation",
+        )
 
     def handle(self, **options):
         db_instance = "Dev"
 
-        if not options["dev"]:
-            if "TEST" not in connection.creation.connection.settings_dict:
-                connection.creation.connection.settings_dict["TEST"] = {}
-            connection.creation.connection.settings_dict["TEST"]["MIGRATE"] = False
-            connection.creation.create_test_db(keepdb=True)
-            db_instance = "Test"
+        if not options["noinput"]:
+            if not self.get_confirmtion():
+                return
 
         months_to_add = relativedelta(months=self.calculate_months_to_add())
         updates = StrategicActionUpdate.objects.all()
