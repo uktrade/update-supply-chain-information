@@ -23,4 +23,4 @@ load-data: setup
 	python update_supply_chain_information/manage.py datafixup --dev
 
 functional-tests:
-	sh run_functional_tests.sh
+	bash run_functional_tests.sh
