@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "django.contrib.sessions",
     "django.contrib.staticfiles",
+    "elasticapm.contrib.django",
     "supply_chains",
     "accounts",
     "healthcheck",
@@ -47,8 +48,12 @@ INSTALLED_APPS = [
     "django.forms",
 ]
 
+# Elastic APM middleware automatically added to trace django requests
+# https://www.elastic.co/guide/en/apm/agent/python/current/configuration.html#config-django-autoinsert-middleware
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "config.middleware.add_cache_control_header_middleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -56,7 +61,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "reversion.middleware.RevisionMiddleware",
 ]
 
@@ -211,3 +215,12 @@ CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
 CSRF_COOKIE_HTTPONLY = env('CSRF_COOKIE_HTTPONLY', default=True)
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
 SESSION_COOKIE_AGE = env('SESSION_COOKIE_AGE', default=60 * 60 * 10)
+
+# Settings for application performance monitoring
+ELASTIC_APM = {
+  "SERVICE_NAME": "update-supply-chain-information",
+  "SECRET_TOKEN": env("APM_SECRET_TOKEN", default=""),
+  "SERVER_URL" : "https://apm.elk.uktrade.digital",
+  "ENVIRONMENT": env("APM_ENVIRONMENT", default=""),
+  "SERVER_TIMEOUT": env("APM_SERVER_TIMEOUT", default=""),
+}

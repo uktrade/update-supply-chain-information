@@ -20,6 +20,7 @@ django-reversion==3.0.9
 django-staff-sso-client==3.1.0
 django-webpack-loader==0.7.0
 djangorestframework==3.12.2
+elastic-apm==6.2.0
 et-xmlfile==1.0.1
 factory-boy==3.2.0
 Faker==6.0.0
