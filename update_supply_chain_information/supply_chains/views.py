@@ -78,6 +78,9 @@ class SCTaskListView(
     template_name = "task_list.html"
     tasks_per_page = 5
 
+    # This value, used for request processing, is initialised in dispatch()
+    last_deadline = None
+
     def _update_review_routes(self) -> None:
         for update in self.sa_updates:
             url_kwargs = {
