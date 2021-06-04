@@ -32,7 +32,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
-        db_instance = "Dev"
+        db_name = connection.settings_dict['NAME']
 
         if not options["noinput"]:
             if not self.get_confirmtion():
@@ -41,7 +41,7 @@ class Command(BaseCommand):
         months_to_add = relativedelta(months=self.calculate_months_to_add())
         updates = StrategicActionUpdate.objects.all()
         self.update_submission_and_created_dates(updates, months_to_add)
-        self.stdout.write(self.style.SUCCESS(f"Fixtures fixed on {db_instance} db"))
+        self.stdout.write(self.style.SUCCESS(f"Fixtures fixed on {db_name} db"))
 
     def update_submission_and_created_dates(self, updates, months_to_add):
         updated_updates = []
