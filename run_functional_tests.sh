@@ -11,7 +11,8 @@ docker-compose -f docker-compose.yaml -f docker-compose.override.yaml up -d
 export SET_HSTS_HEADERS='False'
 
 # reset db before test run
-make drop-db && make create-db
+make drop-db
+make create-db
 
 python update_supply_chain_information/manage.py runserver \
     --settings=test_settings \
