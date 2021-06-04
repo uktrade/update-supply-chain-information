@@ -14,13 +14,6 @@ from supply_chains.management.commands.datafixup import Command
 pytestmark = pytest.mark.django_db
 
 
-@pytest.fixture(scope="function")
-def django_db_setup(django_db_setup, django_db_blocker):
-    with django_db_blocker.unblock():
-        call_command("datafixup")
-
-
-@pytest.mark.skip
 class TestFixtureFixup:
     ROOT_DIR = settings.BASE_DIR.parent
     fixtures = [
@@ -33,7 +26,9 @@ class TestFixtureFixup:
 
     def call_command(self, *args, **kwargs):
         out = StringIO()
-        call_command("datafixup", *args, stdout=out, stderr=StringIO(), **kwargs)
+        call_command(
+            "datafixup", "--noinput", *args, stdout=out, stderr=StringIO(), **kwargs
+        )
         return out.getvalue()
 
     def test_updates_in_month_of_base_date(self):
@@ -58,7 +53,7 @@ class TestFixtureFixup:
             "supply_chains.management.commands.datafixup.date",
             mock.Mock(today=mock.Mock(return_value=base_date)),
         ):
-            out = self.call_command()
+            self.call_command()
             updated_submission_dates = {
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()
@@ -132,7 +127,7 @@ class TestFixtureFixup:
             "supply_chains.management.commands.datafixup.date",
             mock.Mock(today=mock.Mock(return_value=base_date)),
         ):
-            out = self.call_command()
+            self.call_command()
             updated_submission_dates = {
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()
@@ -169,7 +164,7 @@ class TestFixtureFixup:
             "supply_chains.management.commands.datafixup.date",
             mock.Mock(today=mock.Mock(return_value=base_date)),
         ):
-            out = self.call_command()
+            self.call_command()
             updated_submission_dates = {
                 sau.pk: sau.submission_date
                 for sau in StrategicActionUpdate.objects.all()
