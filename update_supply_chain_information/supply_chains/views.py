@@ -77,6 +77,9 @@ class SCTaskListView(
 ):
     template_name = "task_list.html"
     tasks_per_page = 5
+    # although last_deadline is initialised here, the value will become stale
+    # as the server doesn't reload the class on every request
+    # so it will be re-initialised per-request in the dispatch() method
     last_deadline = get_last_working_day_of_previous_month()
 
     def _update_review_routes(self) -> None:
@@ -181,6 +184,9 @@ class SCTaskListView(
             self._update_review_routes()
 
     def dispatch(self, *args, **kwargs):
+        # initialise value of last_deadline for this request
+        # see declaration of last_deadline above for explanation of why this is necessary
+        self.last_deadline = get_last_working_day_of_previous_month()
         self._extract_view_data(*args, **kwargs)
         self.sa_updates = self.paginate(self.sa_updates, self.tasks_per_page)
 
