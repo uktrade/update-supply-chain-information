@@ -148,7 +148,6 @@ class TestMonthlyUpdateAtMonthTransition:
         responding_view = context["view"]
         assert responding_view is not None
         assert responding_view.update_submitted is True
-        response.render()
         assert (
             "You have already submitted the monthly update for this supply chain"
             in response.rendered_content
@@ -186,7 +185,6 @@ class TestMonthlyUpdateAtMonthTransition:
         responding_view = context["view"]
         assert responding_view is not None
         assert responding_view.update_submitted is False
-        response.render()
         assert (
             "You have already submitted the monthly update for this supply chain"
             not in response.rendered_content
