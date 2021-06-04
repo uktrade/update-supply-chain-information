@@ -77,10 +77,6 @@ class SCTaskListView(
 ):
     template_name = "task_list.html"
     tasks_per_page = 5
-    # although last_deadline is initialised here, the value will become stale
-    # as the server doesn't reload the class on every request
-    # so it will be re-initialised per-request in the dispatch() method
-    last_deadline = get_last_working_day_of_previous_month()
 
     def _update_review_routes(self) -> None:
         for update in self.sa_updates:
@@ -185,7 +181,9 @@ class SCTaskListView(
 
     def dispatch(self, *args, **kwargs):
         # initialise value of last_deadline for this request
-        # see declaration of last_deadline above for explanation of why this is necessary
+        # Although this is a class attribute for ease of access in various methods,
+        # it's only needed by methods involved in request processing
+        # so it makes more sense to initialise it here rather than declaring it in the class definition.
         self.last_deadline = get_last_working_day_of_previous_month()
         self._extract_view_data(*args, **kwargs)
         self.sa_updates = self.paginate(self.sa_updates, self.tasks_per_page)
@@ -634,6 +632,7 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
     last_deadline = get_last_working_day_of_previous_month()
 
     def get_context_data(self, **kwargs):
+        self.banana = True
         context = super().get_context_data(**kwargs)
         supply_chain_slug, sa_slug, update_slug = (
             kwargs.get("supply_chain_slug"),
