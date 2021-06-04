@@ -9,11 +9,11 @@ setup-db: setup
 	make load-data
 
 create-db: setup
-	docker-compose exec db psql -h localhost -U postgres -c "CREATE DATABASE supply_chain_info WITH OWNER postgres ENCODING 'UTF8';"
+	docker-compose exec -T db psql -h localhost -U postgres -c "CREATE DATABASE supply_chain_info WITH OWNER postgres ENCODING 'UTF8';"
 	make setup-db
 
 drop-db: setup
-	docker-compose exec db psql -h localhost -U postgres -c "DROP DATABASE supply_chain_info"
+	docker-compose exec -T db psql -h localhost -U postgres -c "DROP DATABASE supply_chain_info"
 
 tests:
 	pytest update_supply_chain_information
