@@ -124,8 +124,7 @@ urlpatterns = [
     path("auth/", include("authbroker_client.urls")),
     path("admin/", admin_site.urls),
     path("api/", include(router.urls)),
+    path("bananas/", BananasView.as_view()),
     path("", include(healthcheck_urlpatterns)),
     path("", include(supply_chain_urlpatterns)),
 ]
-
-urlpatterns += [path("bananas/", BananasView.as_view())]
