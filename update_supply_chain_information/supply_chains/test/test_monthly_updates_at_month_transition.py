@@ -45,8 +45,13 @@ def mock_today() -> date:
 
 
 @pytest.fixture
-def mock_last_month_deadline() -> date:
+def mock_wrong_last_month_deadline() -> date:
     return date(year=2021, month=4, day=30)
+
+
+@pytest.fixture
+def mock_correct_last_month_deadline() -> date:
+    return date(year=2021, month=5, day=28)
 
 
 @pytest.fixture
@@ -115,12 +120,12 @@ def http_request(user) -> HttpRequest:
 
 
 class TestMonthlyUpdateAtMonthTransition:
-    def test_task_list_view_shows_new_update_required(
+    def test_task_list_view_shows_update_submitted_with_wrong_deadline(
         self,
         supply_chain: SupplyChain,
         http_request,
         mock_today: date,
-        mock_last_month_deadline: date,
+        mock_wrong_last_month_deadline,
     ):
         view_kwargs = {"supply_chain_slug": supply_chain.slug}
 
@@ -132,7 +137,47 @@ class TestMonthlyUpdateAtMonthTransition:
                 "supply_chains.views.SCTaskListView.last_deadline",
                 new_callable=mock.PropertyMock,
             ) as mocked_last_deadline_property:
-                mocked_last_deadline_property.return_value = mock_last_month_deadline
+                mocked_last_deadline_property.return_value = (
+                    mock_wrong_last_month_deadline
+                )
+                from supply_chains.views import SCTaskListView
+
+                view = SCTaskListView.as_view()
+                response: TemplateResponse = view(http_request, **view_kwargs)
+        context = response.context_data
+        responding_view = context["view"]
+        assert responding_view is not None
+        assert responding_view.update_submitted is True
+        response.render()
+        assert (
+            "You have already submitted the monthly update for this supply chain"
+            in response.rendered_content
+        )
+        assert (
+            "1 out of 1 actions are not ready to be submitted."
+            not in response.rendered_content
+        )
+
+    def test_task_list_view_shows_new_update_required_with_correct_deadline(
+        self,
+        supply_chain: SupplyChain,
+        http_request,
+        mock_today: date,
+        mock_correct_last_month_deadline,
+    ):
+        view_kwargs = {"supply_chain_slug": supply_chain.slug}
+
+        with mock.patch(
+            "supply_chains.utils.date",
+            mock.Mock(today=mock.Mock(return_value=mock_today)),
+        ):
+            with mock.patch(
+                "supply_chains.views.SCTaskListView.last_deadline",
+                new_callable=mock.PropertyMock,
+            ) as mocked_last_deadline_property:
+                mocked_last_deadline_property.return_value = (
+                    mock_correct_last_month_deadline
+                )
                 from supply_chains.views import SCTaskListView
 
                 view = SCTaskListView.as_view()
