@@ -9,18 +9,25 @@ setup-db: setup
 	make load-data
 
 create-db: setup
-	docker-compose exec db psql -h localhost -U postgres -c "CREATE DATABASE supply_chain_info WITH OWNER postgres ENCODING 'UTF8';"
+	docker-compose exec -T db psql -h localhost -U postgres -c "CREATE DATABASE supply_chain_info WITH OWNER postgres ENCODING 'UTF8';"
 	make setup-db
 
 drop-db: setup
-	docker-compose exec db psql -h localhost -U postgres -c "DROP DATABASE supply_chain_info"
+	docker-compose exec -T db psql -h localhost -U postgres -c "DROP DATABASE supply_chain_info"
+
+create-test-db: setup
+	docker-compose exec -T db psql -h localhost -U postgres -c "CREATE DATABASE test_supply_chain_info WITH OWNER postgres ENCODING 'UTF8';"
+	make setup-db
+
+drop-test-db: setup
+	docker-compose exec -T db psql -h localhost -U postgres -c "DROP DATABASE test_supply_chain_info"
 
 tests:
 	pytest update_supply_chain_information
 
 load-data: setup
 	python update_supply_chain_information/manage.py loaddata cypress/fixtures/*.json
-	python update_supply_chain_information/manage.py datafixup --dev
+	python update_supply_chain_information/manage.py datafixup --noinput
 
 functional-tests:
 	bash run_functional_tests.sh
