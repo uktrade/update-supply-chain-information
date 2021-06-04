@@ -15,6 +15,13 @@ create-db: setup
 drop-db: setup
 	docker-compose exec -T db psql -h localhost -U postgres -c "DROP DATABASE supply_chain_info"
 
+create-test-db: setup
+	docker-compose exec -T db psql -h localhost -U postgres -c "CREATE DATABASE test_supply_chain_info WITH OWNER postgres ENCODING 'UTF8';"
+	make setup-db
+
+drop-test-db: setup
+	docker-compose exec -T db psql -h localhost -U postgres -c "DROP DATABASE test_supply_chain_info"
+
 tests:
 	pytest update_supply_chain_information
 
