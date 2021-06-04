@@ -7,7 +7,7 @@
     "node": "14.16.1"
   },
   "dependencies": {
-    "@ministryofjustice/frontend": "^0.2.2",
+    "@ministryofjustice/frontend": "^0.2.4",
     "css-loader": "^5.2.4",
     "extract-loader": "^3.1.0",
     "file-loader": "^5.0.2",
