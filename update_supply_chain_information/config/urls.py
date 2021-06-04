@@ -24,7 +24,6 @@ from supply_chains.views import (
     MonthlyUpdateStatusEditView,
     MonthlyUpdateRevisedTimingEditView,
     MonthlyUpdateSummaryView,
-    BananasView,
 )
 
 router = routers.DefaultRouter()
@@ -124,7 +123,6 @@ urlpatterns = [
     path("auth/", include("authbroker_client.urls")),
     path("admin/", admin_site.urls),
     path("api/", include(router.urls)),
-    path("bananas/", BananasView.as_view()),
     path("", include(healthcheck_urlpatterns)),
     path("", include(supply_chain_urlpatterns)),
 ]

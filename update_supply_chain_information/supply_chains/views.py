@@ -655,14 +655,3 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
             )
 
         return context
-
-
-class BananasView(TemplateView):
-    template_name = "bananas.html"
-    content_type = "text/plain"
-
-    time = datetime.now()
-
-    def get_context_data(self, **kwargs):
-        kwargs["time"] = self.time
-        return super().get_context_data(**kwargs)
