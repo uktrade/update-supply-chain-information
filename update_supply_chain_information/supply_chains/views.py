@@ -632,10 +632,10 @@ class SCSummary(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
 
 class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
     template_name = "sau_review.html"
-    last_deadline = get_last_working_day_of_previous_month()
+    last_deadline = None
 
     def get_context_data(self, **kwargs):
-        self.banana = True
+        self.last_deadline = get_last_working_day_of_previous_month()
         context = super().get_context_data(**kwargs)
         supply_chain_slug, sa_slug, update_slug = (
             kwargs.get("supply_chain_slug"),
