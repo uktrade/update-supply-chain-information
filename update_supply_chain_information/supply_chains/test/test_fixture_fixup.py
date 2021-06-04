@@ -20,6 +20,7 @@ def django_db_setup(django_db_setup, django_db_blocker):
         call_command("datafixup")
 
 
+@pytest.mark.skip
 class TestFixtureFixup:
     ROOT_DIR = settings.BASE_DIR.parent
     fixtures = [

@@ -14,10 +14,13 @@ distlib==0.3.1
 Django==3.2.2
 django-environ==0.4.5
 django-import-export==2.5.0
+django-ipware==3.0.2
+django-log-formatter-ecs==0.0.5
 django-reversion==3.0.9
 django-staff-sso-client==3.1.0
 django-webpack-loader==0.7.0
 djangorestframework==3.12.2
+elastic-apm==6.2.0
 et-xmlfile==1.0.1
 factory-boy==3.2.0
 Faker==6.0.0
@@ -31,7 +34,9 @@ importlib-metadata==4.0.1
 iniconfig==1.1.1
 jdcal==1.4.1
 korean-lunar-calendar==0.2.1
+kubi-ecs-logger==0.1.0
 MarkupPy==1.14
+marshmallow==3.6.1
 mypy-extensions==0.4.3
 nodeenv==1.5.0
 oauthlib==3.1.0

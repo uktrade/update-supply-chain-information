@@ -1,8 +1,10 @@
 from pathlib import Path
 import environ
+import sys
 import os
 
 from django.urls import reverse_lazy
+from django_log_formatter_ecs import ECSFormatter
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -35,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "django.contrib.sessions",
     "django.contrib.staticfiles",
+    "elasticapm.contrib.django",
     "supply_chains",
     "accounts",
     "healthcheck",
@@ -45,8 +48,12 @@ INSTALLED_APPS = [
     "django.forms",
 ]
 
+# Elastic APM middleware automatically added to trace django requests
+# https://www.elastic.co/guide/en/apm/agent/python/current/configuration.html#config-django-autoinsert-middleware
+
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "config.middleware.add_cache_control_header_middleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -54,7 +61,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "reversion.middleware.RevisionMiddleware",
 ]
 
@@ -120,6 +126,33 @@ AUTHENTICATION_BACKENDS = [
     "accounts.auth.CustomAuthbrokerBackend",
 ]
 
+# Format logging in ECS format for ELK
+if not DEBUG:
+    LOGGING = {
+        "version": 1,
+        "formatters": {
+            "ecs_formatter": {
+                "()": ECSFormatter,
+            },
+        },
+        "handlers": {
+            "ecs": {
+                "formatter": "ecs_formatter",
+                "class": "logging.StreamHandler",
+                "stream": sys.stdout,
+            },
+        },
+        "loggers": {
+            "django": {
+                "handlers": ["ecs"],
+                "level": "INFO",
+            },
+        },
+    }
+
+# App name for django_log_formatter_ecs
+DLFE_APP_NAME="update-supply-chain-information"
+
 LOGIN_URL = reverse_lazy("authbroker_client:login")
 LOGIN_REDIRECT_URL = reverse_lazy("index")
 AUTH_USER_MODEL = "accounts.User"
@@ -182,3 +215,12 @@ CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
 CSRF_COOKIE_HTTPONLY = env('CSRF_COOKIE_HTTPONLY', default=True)
 SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
 SESSION_COOKIE_AGE = env('SESSION_COOKIE_AGE', default=60 * 60 * 10)
+
+# Settings for application performance monitoring
+ELASTIC_APM = {
+  "SERVICE_NAME": "update-supply-chain-information",
+  "SECRET_TOKEN": env("APM_SECRET_TOKEN", default=""),
+  "SERVER_URL" : "https://apm.elk.uktrade.digital",
+  "ENVIRONMENT": env("APM_ENVIRONMENT", default=""),
+  "SERVER_TIMEOUT": env("APM_SERVER_TIMEOUT", default=""),
+}

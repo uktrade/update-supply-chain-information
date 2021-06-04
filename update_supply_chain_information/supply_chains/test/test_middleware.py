@@ -4,10 +4,11 @@ from django.urls import reverse
 
 from config import settings
 
-
 def test_correct_middleware_exists():
     assert settings.MIDDLEWARE == [
+        "elasticapm.contrib.django.middleware.TracingMiddleware",
         "django.middleware.security.SecurityMiddleware",
+        "whitenoise.middleware.WhiteNoiseMiddleware",
         "config.middleware.add_cache_control_header_middleware",
         "django.contrib.sessions.middleware.SessionMiddleware",
         "django.middleware.common.CommonMiddleware",
@@ -15,7 +16,6 @@ def test_correct_middleware_exists():
         "django.contrib.auth.middleware.AuthenticationMiddleware",
         "django.contrib.messages.middleware.MessageMiddleware",
         "django.middleware.clickjacking.XFrameOptionsMiddleware",
-        "whitenoise.middleware.WhiteNoiseMiddleware",
         "reversion.middleware.RevisionMiddleware",
     ]
 

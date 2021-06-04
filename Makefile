@@ -4,6 +4,8 @@ setup:
 setup-db: setup
 	python update_supply_chain_information/manage.py migrate
 	python update_supply_chain_information/manage.py createinitialrevisions
+	# Remove the DIT gov department added in a data migration
+	python update_supply_chain_information/manage.py flush --no-input
 	make load-data
 
 create-db: setup
@@ -18,6 +20,7 @@ tests:
 
 load-data: setup
 	python update_supply_chain_information/manage.py loaddata cypress/fixtures/*.json
+	python update_supply_chain_information/manage.py datafixup --dev
 
 functional-tests:
-	sh run_functional_tests.sh
+	bash run_functional_tests.sh

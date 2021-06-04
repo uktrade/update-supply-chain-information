@@ -448,9 +448,6 @@ describe('Testing monthly update forms', () => {
                   cy.reload(true, {log: true})
                 })
                 beforeEach(() => {
-                  // cy.get('@theForm').get('div.govuk-form-group > fieldset.govuk-fieldset > *[data-module="govuk-radios"] > .govuk-radios__item > input[type="radio"]').as('theRadioButtons')
-                  // cy.get('@theRadioButtons').eq(0).as('theYesOption')
-                  // cy.get('@theRadioButtons').eq(1).as('theNoOption')
                   cy.mainForm().fieldLabelled('Yes').as('theYesOption')
                   cy.mainForm().fieldLabelled('No').as('theNoOption')
                 })
