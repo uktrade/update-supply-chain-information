@@ -77,6 +77,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         "Unselect this instead of deleting accounts.",
     )
     USERNAME_FIELD = "sso_email_user_id"
+    REQUIRED_FIELDS = ["email", "first_name", "last_name"]
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
