@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from typing import List, Dict
 
 
@@ -77,7 +77,9 @@ class SCTaskListView(
 ):
     template_name = "task_list.html"
     tasks_per_page = 5
-    last_deadline = get_last_working_day_of_previous_month()
+
+    # This value, used for request processing, is initialised in dispatch()
+    last_deadline = None
 
     def _update_review_routes(self) -> None:
         for update in self.sa_updates:
@@ -181,6 +183,11 @@ class SCTaskListView(
             self._update_review_routes()
 
     def dispatch(self, *args, **kwargs):
+        # initialise value of last_deadline for this request
+        # Although this is a class attribute for ease of access in various methods,
+        # it's only needed by methods involved in request processing
+        # so it makes more sense to initialise it here rather than declaring it in the class definition.
+        self.last_deadline = get_last_working_day_of_previous_month()
         self._extract_view_data(*args, **kwargs)
         self.sa_updates = self.paginate(self.sa_updates, self.tasks_per_page)
 
@@ -625,9 +632,10 @@ class SCSummary(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
 
 class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
     template_name = "sau_review.html"
-    last_deadline = get_last_working_day_of_previous_month()
+    last_deadline = None
 
     def get_context_data(self, **kwargs):
+        self.last_deadline = get_last_working_day_of_previous_month()
         context = super().get_context_data(**kwargs)
         supply_chain_slug, sa_slug, update_slug = (
             kwargs.get("supply_chain_slug"),
