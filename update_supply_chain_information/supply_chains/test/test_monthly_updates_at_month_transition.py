@@ -1,7 +1,5 @@
-from datetime import date, timedelta
+from datetime import date
 from unittest import mock
-
-from dateutil.relativedelta import relativedelta
 
 import pytest
 from django.http import HttpRequest
@@ -13,12 +11,8 @@ from supply_chains.models import (
     StrategicActionUpdate,
     RAGRating,
 )
-from supply_chains.test.factories import (
-    SupplyChainFactory,
-    StrategicActionFactory,
-    StrategicActionUpdateFactory,
-)
 from accounts.models import User, GovDepartment
+from supply_chains.views import SCTaskListView
 
 pytestmark = pytest.mark.django_db
 
@@ -39,19 +33,8 @@ def submission_date() -> date:
     return date(year=2021, month=5, day=27)
 
 
-@pytest.fixture
-def mock_today() -> date:
-    return date(year=2021, month=6, day=1)
-
-
-@pytest.fixture
-def mock_wrong_last_month_deadline() -> date:
-    return date(year=2021, month=4, day=30)
-
-
-@pytest.fixture
-def mock_correct_last_month_deadline() -> date:
-    return date(year=2021, month=5, day=28)
+mock_wrong_last_month_deadline = date(year=2021, month=4, day=30)
+mock_correct_last_month_deadline = date(year=2021, month=5, day=28)
 
 
 @pytest.fixture
@@ -120,32 +103,24 @@ def http_request(user) -> HttpRequest:
 
 
 class TestMonthlyUpdateAtMonthTransition:
+    @mock.patch(
+        "supply_chains.views.get_last_working_day_of_previous_month",
+        return_value=mock_wrong_last_month_deadline,
+    )
     def test_task_list_view_shows_update_submitted_with_wrong_deadline(
         self,
+        mocked_deadline,
         supply_chain: SupplyChain,
         http_request,
-        mock_today: date,
-        mock_wrong_last_month_deadline,
     ):
         view_kwargs = {"supply_chain_slug": supply_chain.slug}
 
-        with mock.patch(
-            "supply_chains.utils.date",
-            mock.Mock(today=mock.Mock(return_value=mock_today)),
-        ):
-            with mock.patch(
-                "supply_chains.views.SCTaskListView.last_deadline",
-                new_callable=mock.PropertyMock,
-            ) as mocked_last_deadline_property:
-                mocked_last_deadline_property.return_value = (
-                    mock_wrong_last_month_deadline
-                )
-                from supply_chains.views import SCTaskListView
-
-                view = SCTaskListView.as_view()
-                response: TemplateResponse = view(http_request, **view_kwargs)
+        view = SCTaskListView.as_view()
+        response: TemplateResponse = view(http_request, **view_kwargs)
         context = response.context_data
         responding_view = context["view"]
+
+        mocked_deadline.assert_called_once()
         assert responding_view is not None
         assert responding_view.update_submitted is True
         assert (
@@ -157,32 +132,24 @@ class TestMonthlyUpdateAtMonthTransition:
             not in response.rendered_content
         )
 
+    @mock.patch(
+        "supply_chains.views.get_last_working_day_of_previous_month",
+        return_value=mock_correct_last_month_deadline,
+    )
     def test_task_list_view_shows_new_update_required_with_correct_deadline(
         self,
+        mocked_deadline,
         supply_chain: SupplyChain,
         http_request,
-        mock_today: date,
-        mock_correct_last_month_deadline,
     ):
         view_kwargs = {"supply_chain_slug": supply_chain.slug}
 
-        with mock.patch(
-            "supply_chains.utils.date",
-            mock.Mock(today=mock.Mock(return_value=mock_today)),
-        ):
-            with mock.patch(
-                "supply_chains.views.SCTaskListView.last_deadline",
-                new_callable=mock.PropertyMock,
-            ) as mocked_last_deadline_property:
-                mocked_last_deadline_property.return_value = (
-                    mock_correct_last_month_deadline
-                )
-                from supply_chains.views import SCTaskListView
-
-                view = SCTaskListView.as_view()
-                response: TemplateResponse = view(http_request, **view_kwargs)
+        view = SCTaskListView.as_view()
+        response: TemplateResponse = view(http_request, **view_kwargs)
         context = response.context_data
         responding_view = context["view"]
+
+        mocked_deadline.assert_called_once()
         assert responding_view is not None
         assert responding_view.update_submitted is False
         assert (
