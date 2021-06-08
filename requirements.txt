@@ -19,7 +19,7 @@ django-ipware==3.0.2
 django-log-formatter-ecs==0.0.5
 django-reversion==3.0.9
 django-staff-sso-client==3.1.0
-django-webpack-loader==0.7.0
+django-webpack-loader==1.0.0
 djangorestframework==3.12.2
 elastic-apm==6.2.0
 et-xmlfile==1.0.1
