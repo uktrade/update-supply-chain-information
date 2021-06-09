@@ -8,6 +8,6 @@
 
 {% block body %}
     {% include "supply_chains/includes/error_summary.html" %}
-    <h1 class="govuk-heading-xl">Strategic action monthly update</h1>
+    <h1 class="govuk-heading-xl">Monthly update for {{ strategic_action_update.strategic_action.name }}</h1>
     {% block form %}{% endblock form %}
 {% endblock body %}
