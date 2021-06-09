@@ -58,10 +58,13 @@ class SupplyChain(models.Model):
         max_length=6,
     )
     risk_severity_status_disagree_reason = models.TextField(blank=True)
-    slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
+    slug = models.SlugField(
+        null=True, blank=True, unique=True, max_length=MAX_SLUG_LENGTH
+    )
     is_archived = models.BooleanField(default=False)
     archived_reason = models.TextField(blank=True)
     archived_date = models.DateField(null=True, blank=True)
+    last_modified = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -152,6 +155,7 @@ class StrategicAction(models.Model):
         related_name="strategic_actions",
     )
     slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
+    last_modified = models.DateTimeField(auto_now=True)
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
@@ -282,6 +286,7 @@ class StrategicActionUpdate(models.Model):
         related_name="monthly_updates",
     )
     slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
+    last_modified = models.DateTimeField(auto_now=True)
 
     def save(self, *args, **kwargs):
         if self.status == StrategicActionUpdate.Status.SUBMITTED:
@@ -462,6 +467,7 @@ class MaturitySelfAssessment(models.Model):
         on_delete=models.PROTECT,
         related_name="maturity_self_assessment",
     )
+    last_modified = models.DateTimeField(auto_now=True)
 
 
 class VulnerabilityAssessment(models.Model):
@@ -513,6 +519,7 @@ class VulnerabilityAssessment(models.Model):
         on_delete=models.PROTECT,
         related_name="vulnerability_assessment",
     )
+    last_modified = models.DateTimeField(auto_now=True)
 
 
 class ScenarioAssessment(models.Model):
@@ -572,3 +579,4 @@ class ScenarioAssessment(models.Model):
         on_delete=models.PROTECT,
         related_name="scenario_assessment",
     )
+    last_modified = models.DateTimeField(auto_now=True)

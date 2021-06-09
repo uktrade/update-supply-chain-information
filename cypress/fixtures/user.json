@@ -7,7 +7,8 @@
       "last_name": "Holland",
       "email": "vyvyan.holland@email.com",
       "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
-      "is_superuser": "True"
+      "is_superuser": "True",
+      "last_modified": "2021-06-01 00:00:00.000000+01:00"
     }
   },
   {
@@ -20,7 +21,8 @@
       "email": "admin.user@email.com",
       "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
       "is_superuser": "True",
-      "receive_feedback_emails": "True"
+      "receive_feedback_emails": "True",
+      "last_modified": "2021-06-01 00:00:00.000000+01:00"
     }
   }
 ]
