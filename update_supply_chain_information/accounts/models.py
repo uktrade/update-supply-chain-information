@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.postgres.fields import ArrayField
+from django.utils import timezone
 
 
 def get_gov_department_id_from_user_email(email):
@@ -80,6 +81,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text="Designates whether this user should be treated as active. "
         "Unselect this instead of deleting accounts.",
     )
+    last_modified = models.DateTimeField(auto_now=True)
     USERNAME_FIELD = "sso_email_user_id"
     REQUIRED_FIELDS = ["email", "first_name", "last_name"]
 
@@ -91,6 +93,7 @@ class GovDepartment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     email_domains = ArrayField(models.CharField(max_length=100))
+    last_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name

@@ -4,7 +4,8 @@
     "pk": "15fb0d63-2ee6-4652-8acd-222bd2718703",
     "fields": {
       "name": "DIT",
-      "email_domains": ["trade.gov.uk", "digital.trade.gov.uk"]
+      "email_domains": ["trade.gov.uk", "digital.trade.gov.uk"],
+      "last_modified": "2021-06-01 00:00:00.000000+01:00"
     }
   },
   {
@@ -12,7 +13,8 @@
     "pk": "35727354-6698-4586-9b78-a0f426b86bc9",
     "fields": {
       "name": "Another department",
-      "email_domains": ["dep.gov.uk"]
+      "email_domains": ["dep.gov.uk"],
+      "last_modified": "2021-06-01 00:00:00.000000+01:00"
     }
   }
 ]

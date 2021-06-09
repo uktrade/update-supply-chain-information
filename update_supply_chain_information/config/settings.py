@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "supply_chains",
     "accounts",
     "healthcheck",
+    "activity_stream",
     "rest_framework",
     "rest_framework.authtoken",
     "reversion",
@@ -151,7 +152,7 @@ if not DEBUG:
     }
 
 # App name for django_log_formatter_ecs
-DLFE_APP_NAME="update-supply-chain-information"
+DLFE_APP_NAME = "update-supply-chain-information"
 
 LOGIN_URL = reverse_lazy("authbroker_client:login")
 LOGIN_REDIRECT_URL = reverse_lazy("index")
@@ -211,16 +212,16 @@ if SET_HSTS_HEADERS:
     SECURE_SSL_REDIRECT = True
 
 # Settings for CSRF and Session cookies
-CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
-CSRF_COOKIE_HTTPONLY = env('CSRF_COOKIE_HTTPONLY', default=True)
-SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
-SESSION_COOKIE_AGE = env('SESSION_COOKIE_AGE', default=60 * 60 * 10)
+CSRF_COOKIE_SECURE = env("CSRF_COOKIE_SECURE", default=True)
+CSRF_COOKIE_HTTPONLY = env("CSRF_COOKIE_HTTPONLY", default=True)
+SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE", default=True)
+SESSION_COOKIE_AGE = env("SESSION_COOKIE_AGE", default=60 * 60 * 10)
 
 # Settings for application performance monitoring
 ELASTIC_APM = {
-  "SERVICE_NAME": "update-supply-chain-information",
-  "SECRET_TOKEN": env("APM_SECRET_TOKEN", default=""),
-  "SERVER_URL" : "https://apm.elk.uktrade.digital",
-  "ENVIRONMENT": env("APM_ENVIRONMENT", default=""),
-  "SERVER_TIMEOUT": env("APM_SERVER_TIMEOUT", default=""),
+    "SERVICE_NAME": "update-supply-chain-information",
+    "SECRET_TOKEN": env("APM_SECRET_TOKEN", default=""),
+    "SERVER_URL": "https://apm.elk.uktrade.digital",
+    "ENVIRONMENT": env("APM_ENVIRONMENT", default=""),
+    "SERVER_TIMEOUT": env("APM_SERVER_TIMEOUT", default=""),
 }

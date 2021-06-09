@@ -12,7 +12,8 @@
     "vulnerability_status_disagree_reason": "hello world",
     "risk_severity_status": "medium",
     "risk_severity_status_disagree_reason": "",
-    "slug": "supply-chain-1"
+    "slug": "supply-chain-1",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
   }
 },
 {
@@ -28,7 +29,8 @@
     "vulnerability_status_disagree_reason": "",
     "risk_severity_status": "low",
     "risk_severity_status_disagree_reason": "",
-    "slug": "supply-chain-2"
+    "slug": "supply-chain-2",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
   }
 },
 {
@@ -44,7 +46,8 @@
     "vulnerability_status_disagree_reason": "",
     "risk_severity_status": "low",
     "risk_severity_status_disagree_reason": "",
-    "slug": "supply-chain-3"
+    "slug": "supply-chain-3",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
   }
 },
 {
@@ -60,7 +63,8 @@
     "vulnerability_status_disagree_reason": "",
     "risk_severity_status": "low",
     "risk_severity_status_disagree_reason": "",
-    "slug": "supply-chain-4"
+    "slug": "supply-chain-4",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
   }
 },
 {
@@ -76,7 +80,8 @@
     "vulnerability_status_disagree_reason": "",
     "risk_severity_status": "low",
     "risk_severity_status_disagree_reason": "",
-    "slug": "supply-chain-5"
+    "slug": "supply-chain-5",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
   }
 },
 {
@@ -92,7 +97,8 @@
     "vulnerability_status_disagree_reason": "",
     "risk_severity_status": "low",
     "risk_severity_status_disagree_reason": "",
-    "slug": "supply-chain-6"
+    "slug": "supply-chain-6",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
   }
 },
   {
@@ -110,7 +116,8 @@
       "risk_severity_status_disagree_reason": "",
       "slug": "supply-chain-7",
       "is_archived": false,
-      "archived_date": null
+      "archived_date": null,
+      "last_modified": "2021-06-01 00:00:00.000000+01:00"
     }
   },
   {
@@ -128,7 +135,8 @@
       "risk_severity_status_disagree_reason": "",
       "slug": "supply-chain-of-other-dep",
       "is_archived": false,
-      "archived_date": null
+      "archived_date": null,
+      "last_modified": "2021-06-01 00:00:00.000000+01:00"
     }
   }
 ]
