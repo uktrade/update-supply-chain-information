@@ -1,6 +1,6 @@
 # update-supply-chain-information
 
-A Django app focused on collecting data about the UK's most valuable supply chains. This app is primarily a form in which other government departments can submit updates and provide information about the supply chains they manage. 
+A Django app focused on collecting data about the UK's most valuable supply chains. This app is primarily a form in which other government departments can submit updates and provide information about the supply chains they manage.
 
 The app uses the standard Django MVC architecture, alongside some Django REST framework end-points. These end-points will allow for the future development of a pipeline that will feed the app's data into [Data Workspace](https://data.trade.gov.uk/). This data will later serve a series of visualisations which will be hosted on Data Workspace.
 
@@ -34,12 +34,30 @@ Where it is not possible to use a govuk style, the [moj-frontend](https://github
 - cd into the `/update_supply_chain_information` folder and run `python manage.py runserver`
 - You must access the app on http://localhost:8000 as this is the URL which is configured as the 'redirect URL' for our authbroker credentials in staff SSO
 
-### To just load fixture data: 
+### To just load fixture data:
 - When you have your database container running and with up-to-date migrations, you can run `make load-data` to load fixture data into the database.
 
 ### To run tests:
 - To run the suite of python unit tests, written in pytest, run `make tests`
 - To run the suite of functional tests, using cypress, run `make functional-tests`. These run against DIT's [mock-sso](https://github.com/uktrade/mock-sso) application which runs in a docker container on port 8080. As mock-sso's `api/v1/user/me` endpoint returns [a specific user profile fixture](https://github.com/uktrade/mock-sso/blob/master/app/oauth/user.js#L51), the same fixture has been created for use in the functional tests at `cypress/fixtures/user.json`.
+
+## Load testing
+
+Load testing is carried out using preferred tool [Locust](https://locust.io/). Main focus of these tests are to find *max concurrent users*
+that can be supported by the web app. Hence the test scenario is written to achieve just that.
+
+Test specific configs are saved at *.locust.conf* while *load_test/locustfile.py* define the scenario.
+
+### To start load test
+
+- Start *dev* or *testserver* in one terminal
+- Start locust tool in another terminal with below command
+
+```python
+locust --config .locust.conf
+```
+
+Refer to the tool's docs for more info on the flags used.
 
 ### Automated accessibility testing:
 The project uses the [cypress-axe](https://github.com/component-driven/cypress-axe) package which allows for the automation of accessibility testing within tests written with cypress.
@@ -52,10 +70,10 @@ To add accessibility testing to a cypress spec:
 
 - Generate your pre-commit hooks by running `pre-commit install`.
 - When commiting your files, there will be output from Black saying your file has failed, which kickstarts the autocorrector.
-- Stage the files again with the Black corrections, and commit.  
+- Stage the files again with the Black corrections, and commit.
 
 ## Integrations
 
 ### Staff SSO
-This project uses DIT's Staff SSO as it's authentication broker, which the app communicates with via [The Django Staff SSO client](https://github.com/uktrade/django-staff-sso-client). This provides a global session around DIT's projects, meaning they all share a centralised authentication. In this app, we extend the authentication slightly, in order to obtain and record the government department that a user should be assigned to. This is done using the domain from the email address in their Staff SSO profile. 
+This project uses DIT's Staff SSO as it's authentication broker, which the app communicates with via [The Django Staff SSO client](https://github.com/uktrade/django-staff-sso-client). This provides a global session around DIT's projects, meaning they all share a centralised authentication. In this app, we extend the authentication slightly, in order to obtain and record the government department that a user should be assigned to. This is done using the domain from the email address in their Staff SSO profile.
 
