@@ -1,8 +1,8 @@
 Cypress.Commands.add(
     'monthlyUpdatePageHeader',
-    {prevSubject: false,},
-    () => {
-        cy.govukMain().find('h1').contains('Strategic action monthly update')
+    {prevSubject: false},
+    (actionName) => {
+        return cy.govukMain().find('h1').contains(`Monthly update for ${actionName}`)
     }
 )
 

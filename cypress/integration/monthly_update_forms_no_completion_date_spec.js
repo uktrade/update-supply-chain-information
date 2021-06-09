@@ -48,6 +48,7 @@ const strategicActionsForTest = strategicActions.reduce((accumulator, action) =>
         'strategicActionSlug': action.fields.slug,
         'updateSlug': update.fields.slug,
         'updateContent': update.fields.content,
+        'name': action.fields.name
       };
     } else if (/^Has no update/.test(action.fields.description)) {
       const supplyChain = supplyChainsByPK[action.fields.supply_chain];
@@ -249,8 +250,8 @@ describe('Testing monthly update forms', () => {
             })
           })
           context('The Update Info page content', function() {
-            it('has the correct page header', () => {
-              cy.monthlyUpdatePageHeader().should('exist')
+            it('has the correct page header', function() {
+              cy.monthlyUpdatePageHeader(this.strategicAction.name).should('exist')
             })
             it('shows the previous update', function() {
               cy.get('.app-dit-panel h2:first').contains('Last update')
@@ -354,8 +355,8 @@ describe('Testing monthly update forms', () => {
             })
           })
           context('The Timing page content', function() {
-            it('has the correct page header', () => {
-              cy.monthlyUpdatePageHeader().should('exist')
+            it('has the correct page header', function() {
+              cy.monthlyUpdatePageHeader(this.strategicAction.name).should('exist')
             })
             it ('warns that there is no expected completion date', () => {
               cy.get('h1 ~ .govuk-warning-text').contains("There's no expected completion date for this action.").should('exist')
@@ -561,8 +562,8 @@ describe('Testing monthly update forms', () => {
             })
           })
           context('The Delivery Status page content', function() {
-            it('has the correct page header', () => {
-              cy.monthlyUpdatePageHeader().should('exist')
+            it('has the correct page header', function() {
+              cy.monthlyUpdatePageHeader(this.strategicAction.name).should('exist')
             })
             it ('warns that there is no expected completion date', () => {
               cy.get('body').get('h1 ~ .govuk-warning-text').contains("There's no expected completion date for this action.").should('exist')
@@ -742,8 +743,8 @@ describe('Testing monthly update forms', () => {
             })
           })
           context('The Check Your Answers page content should include', function() {
-            it('the correct page header', () => {
-              cy.monthlyUpdatePageHeader()
+            it('the correct page header', function() {
+              cy.monthlyUpdatePageHeader(this.strategicAction.name)
             })
             it('a medium-sized heading saying "Check your answers', () => {
               cy.govukMain().get('h2').should('have.class', 'govuk-heading-m').contains('Check your answers').should('exist')
