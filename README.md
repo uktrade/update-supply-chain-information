@@ -57,7 +57,7 @@ Test specific configs are saved at *.locust.conf* while *load_test/locustfile.py
 locust --config .locust.conf
 ```
 
-Refer tool's docs for more info on the flags used.
+Refer to the tool's docs for more info on the flags used.
 
 ### Automated accessibility testing:
 The project uses the [cypress-axe](https://github.com/component-driven/cypress-axe) package which allows for the automation of accessibility testing within tests written with cypress.
