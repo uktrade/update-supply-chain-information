@@ -2,6 +2,7 @@ import users from '../fixtures/user.json'
 import govDepartments from '../fixtures/govDepartment.json'
 
 const user = users[0].fields
+const adminUser = users[1].fields
 const govDepartment = govDepartments[0].fields
 
 describe('The Home Page', () => {
@@ -17,6 +18,12 @@ describe('The Home Page', () => {
       'have.text',
       `${user.first_name} ${user.last_name} - ${govDepartment.name}`
     )
+  })
+  it("displays the BETA phase banner with feedback link", () => {
+    const bannerContents = cy.get('.govuk-phase-banner').children()
+    bannerContents.get('.govuk-phase-banner__content__tag').contains('beta')
+    bannerContents.get('.govuk-phase-banner__text').contains('This is a new service – your feedback will help us to improve it.')
+    bannerContents.get('a').contains('feedback').should('have.attr', 'href').and('eq', `mailto:${adminUser.email}`)
   })
   it('displays the correct text', () => {
     cy.get('h1').contains(
