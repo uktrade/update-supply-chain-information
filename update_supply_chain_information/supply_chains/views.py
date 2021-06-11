@@ -23,6 +23,7 @@ from supply_chains.forms import (
     MonthlyUpdateStatusForm,
     MonthlyUpdateTimingForm,
     MonthlyUpdateModifiedTimingForm,
+    StrategicActionEditForm
 )
 from supply_chains.models import (
     SupplyChain,
@@ -615,6 +616,30 @@ class SASummaryView(
         )
         context["supply_chain"] = supply_chain
         return context
+
+
+class SAEditView(LoginRequiredMixin, GovDepPermissionMixin, UpdateView):
+    model = StrategicAction
+    template_name = "edit_strategic_action.html"
+    form_class = StrategicActionEditForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        supply_chain = SupplyChain.objects.get(slug=kwargs.get("supply_chain_slug"))
+        strategic_action = StrategicAction.objects.get(
+            slug=kwargs.get("strategic_action_slug"),
+            supply_chain__slug=supply_chain.slug,
+        )
+        context["strategic_action"] = strategic_action
+        context["supply_chain"] = supply_chain
+        return context
+
+    def get(self, request, *args, **kwargs):
+        supply_chain = SupplyChain.objects.get(slug=kwargs.get("supply_chain_slug"))
+        self.object = StrategicAction.objects.get(
+            slug=kwargs.get("strategic_action_slug"),
+            supply_chain__slug=supply_chain.slug,
+        )
 
 
 class SCSummary(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):

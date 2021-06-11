@@ -658,3 +658,17 @@ class MonthlyUpdateSubmissionForm:
         for form_class, form in self.forms.items():
             errors.update(form.errors)
         return errors
+
+
+class StrategicActionEditForm(forms.ModelForm):
+    class Meta:
+        model = StrategicAction
+        fields = [
+            "description",
+            "impact",
+            "category",
+            "geographic_scope",
+            "supporting_organisations",
+            "specific_related_products",
+            "other_dependencies",
+        ]

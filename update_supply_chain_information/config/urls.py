@@ -15,6 +15,7 @@ from supply_chains.views import (
     HomePageView,
     SCTaskListView,
     SCCompleteView,
+    SAEditView,
     SASummaryView,
     SCSummary,
     SAUReview,
@@ -76,6 +77,11 @@ strategic_action_urlpatterns = [
         "strategic-actions/",
         SASummaryView.as_view(),
         name="strategic-action-summary",
+    ),
+    path(
+        "strategic-actions/<slug:strategic_action_slug>/edit",
+        SAEditView.as_view(),
+        name="edit-strategic-action"
     ),
     path(
         "<slug:action_slug>/updates/",
