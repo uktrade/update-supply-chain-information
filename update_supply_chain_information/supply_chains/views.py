@@ -335,8 +335,14 @@ class MonthlyUpdateMixin:
                 navigation_links.pop("RevisedTiming")
         else:
             navigation_links.pop("RevisedTiming")
+        found_current_page = False
         for title, info in navigation_links.items():
-            info["is_current_page"] = isinstance(self, info["view"])
+            is_current_page = isinstance(self, info["view"])
+            if is_current_page:
+                found_current_page = True
+                info["is_current_page"] = True
+            if found_current_page:
+                info["not_a_link"] = True
         return navigation_links
 
     def get_context_data(self, **kwargs):
