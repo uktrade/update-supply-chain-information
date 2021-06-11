@@ -1,10 +1,8 @@
 {% extends "base.html" %}
 
+{% block page_header %} {{ block.super }} {% endblock %}
+
 {% block body %}
-    <h1 class="govuk-heading-xl">Update supply chain information</h1>
-    <p class="govuk-body">
-        It's important to keep your departmental action plan records up to date. This is so we can work towards constantly improving the UK's supply chain resilience.
-    </p>
     {% if update_complete %}
         <h2 class="govuk-heading-l">Your monthly update is complete</h2>
         <ul class="govuk-list govuk-list--bullet">

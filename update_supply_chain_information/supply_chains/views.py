@@ -617,16 +617,16 @@ class SASummaryView(
         return context
 
 
-class SCSummary(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
+class SCSummary(LoginRequiredMixin, PaginationMixin, TemplateView):
     template_name = "sc_summary.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
+        # supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
 
-        context["supply_chain"] = SupplyChain.objects.filter(
-            slug=supply_chain_slug, is_archived=False
-        )[0]
+        # context["supply_chain"] = SupplyChain.objects.filter(
+        #     slug=supply_chain_slug, is_archived=False
+        # )[0]
         return context
 
 

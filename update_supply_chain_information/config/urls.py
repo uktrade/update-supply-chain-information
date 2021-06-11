@@ -94,12 +94,12 @@ strategic_action_urlpatterns = [
 
 supply_chain_urlpatterns = [
     path("", HomePageView.as_view(), name="index"),
+    path("summary/", SCSummary.as_view(), name="supply-chain-summary"),
     path(
         "<slug:supply_chain_slug>/",
         include(
             [
                 path("", SCTaskListView.as_view(), name="supply-chain-task-list"),
-                path("summary/", SCSummary.as_view(), name="supply-chain-summary"),
                 path(
                     "complete/",
                     SCCompleteView.as_view(),

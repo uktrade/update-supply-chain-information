@@ -5,27 +5,31 @@
 {% block breadcrumbs %}
 <nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
     <ol class="govuk-breadcrumbs__list">
-      <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
-      </li>
-      <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' supply_chain_slug=supply_chain.slug %}">{{ supply_chain.name }}</a>
-      </li>
-      <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-summary' supply_chain_slug=supply_chain.slug %}" aria-current="page">Full details of {{ supply_chain.name }}</a>
-      </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-summary' %}" aria-current="page">Supply chain
+                summary</a>
+        </li>
     </ol>
-  </nav>
+</nav>
 {% endblock %}
 
+{% block page_header %} {{ block.super }} {% endblock %}
+
 {% block body %}
-    <h1 class="govuk-heading-xl"> Summary of {{ supply_chain.name }}</h1>
 
-    <h2 class="govuk-heading-l">Key information</h2>
+    <h2 class="govuk-heading-xl"> Supply chain summary</h1>
+    <p class="govuk-body">
+        Select a supply chain to view or edit details
+    </p>
 
-    {% include "includes/sc_key_info_list.html" %}
+    {% comment %}
+        {% include "includes/sc_key_info_list.html" %}
+    {% endcomment %}
 
-
-    <a href={% url 'supply-chain-task-list' supply_chain_slug=supply_chain.slug %} class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back to task list</a>
+    <a href={% url 'index' %}
+        class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back to home</a>
 
 {% endblock %}
