@@ -60,6 +60,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     last_name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     email = models.EmailField()
+    receive_feedback_emails = models.BooleanField(
+        default=False,
+        help_text="If True, feedback emails from other users will be sent to the address in the user's email field.",
+    )
     gov_department = models.ForeignKey(
         "GovDepartment",
         on_delete=models.PROTECT,
