@@ -3,7 +3,11 @@ from django.test import Client
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 
-from supply_chains.test.factories import SupplyChainFactory, GovDepartmentFactory
+from supply_chains.test.factories import (
+    SupplyChainFactory,
+    GovDepartmentFactory,
+    UserFactory,
+)
 from supply_chains.models import SupplyChain
 
 
@@ -32,9 +36,7 @@ def sc_stub(test_user):
         "sc_con_email": sc_con_email,
         "sc_vul_status": sc_vul_status,
         "sc_risk_status": sc_risk_status,
-        "url": reverse(
-            "supply-chain-summary", kwargs={"supply_chain_slug": slugify(sc_name)}
-        ),
+        "url": reverse("supply-chain-summary"),
     }
 
 
@@ -47,21 +49,20 @@ class TestSCSummaryView:
         # Assert
         assert resp.status_code == 302
 
-    def test_auth_no_perm(self, logged_in_client):
+    def test_auth_no_perm(self, sc_stub, logged_in_client):
         # Arrange
         sc_name = "ceramics"
         dep = GovDepartmentFactory()
-        sc = SupplyChainFactory(gov_department=dep, name=sc_name)
+        UserFactory(gov_department=dep)
+        SupplyChainFactory(gov_department=dep, name=sc_name)
 
         # Act
-        resp = logged_in_client.get(
-            reverse(
-                "supply-chain-summary", kwargs={"supply_chain_slug": slugify(sc_name)}
-            )
-        )
+        resp = logged_in_client.get(sc_stub["url"])
 
         # Assert
-        assert resp.status_code == 403
+        assert resp.status_code == 200
+        assert len(resp.context["supply_chains"]) == 1
+        assert resp.context["supply_chains"][0].name == sc_stub["sc_name"]
 
     def test_auth_logged_in(self, sc_stub, logged_in_client):
         # Arrange
@@ -70,7 +71,7 @@ class TestSCSummaryView:
 
         # Assert
         assert resp.status_code == 200
-        assert resp.context["supply_chain"].name == sc_stub["sc_name"]
+        assert resp.context["supply_chains"][0].name == sc_stub["sc_name"]
 
     def test_sc_summary(self, logged_in_client, sc_stub):
         # Arrange
@@ -78,13 +79,61 @@ class TestSCSummaryView:
         resp = logged_in_client.get(sc_stub["url"])
 
         # Assert
-        assert resp.context["supply_chain"].contact_name == sc_stub["sc_con_name"]
-        assert resp.context["supply_chain"].contact_email == sc_stub["sc_con_email"]
+        assert resp.context["supply_chains"][0].contact_name == sc_stub["sc_con_name"]
+        assert resp.context["supply_chains"][0].contact_email == sc_stub["sc_con_email"]
         assert (
-            resp.context["supply_chain"].vulnerability_status
+            resp.context["supply_chains"][0].vulnerability_status
             == sc_stub["sc_vul_status"]
         )
         assert (
-            resp.context["supply_chain"].risk_severity_status
+            resp.context["supply_chains"][0].risk_severity_status
             == sc_stub["sc_risk_status"]
         )
+
+    def test_sc_summary_multiple(self, logged_in_client, test_user):
+        # Arrange
+        SupplyChainFactory.create_batch(4, gov_department=test_user.gov_department)
+
+        # Act
+        resp = logged_in_client.get(reverse("supply-chain-summary"))
+
+        # Assert
+        assert resp.status_code == 200
+        assert resp.context["supply_chains"].paginator.count == 4
+
+    @pytest.mark.parametrize(
+        "num_scs, url, pages_returned, objects_returned",
+        (
+            (
+                2,
+                reverse("supply-chain-summary"),
+                1,
+                2,
+            ),
+            (7, reverse("supply-chain-summary"), 2, 5),
+            (7, reverse("supply-chain-summary") + "?page=2", 2, 2),
+        ),
+    )
+    def test_pagination(
+        self,
+        logged_in_client,
+        test_user,
+        num_scs,
+        url,
+        pages_returned,
+        objects_returned,
+    ):
+        # Arrange
+        SupplyChainFactory.create_batch(
+            num_scs, gov_department=test_user.gov_department
+        )
+
+        # Act
+        resp = logged_in_client.get(url)
+
+        # Assert
+        p = resp.context["supply_chains"]
+
+        assert resp.status_code == 200
+        assert p.paginator.num_pages == pages_returned
+        assert len(p.object_list) == objects_returned

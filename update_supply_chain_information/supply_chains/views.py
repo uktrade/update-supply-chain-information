@@ -624,7 +624,9 @@ class SCSummary(LoginRequiredMixin, PaginationMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         context["supply_chains"] = self.paginate(
-            SupplyChain.objects.filter(gov_department=self.request.user.gov_department),
+            SupplyChain.objects.filter(
+                is_archived=False, gov_department=self.request.user.gov_department
+            ).order_by("name"),
             5,
         )
 
