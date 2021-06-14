@@ -9,5 +9,18 @@
       "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
       "is_superuser": "True"
     }
+  },
+  {
+    "model": "accounts.user",
+    "pk": "a4ba6142-b4f2-4338-b65c-c8b1f5055815",
+    "fields": {
+      "sso_email_user_id": "admin.user-1@id.mock-sso",
+      "first_name": "Admin user",
+      "last_name": "Holland",
+      "email": "admin.user@email.com",
+      "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
+      "is_superuser": "True",
+      "receive_feedback_emails": "True"
+    }
   }
 ]
