@@ -25,9 +25,27 @@
         Select a supply chain to view or edit details
     </p>
 
-    {% comment %}
-        {% include "includes/sc_key_info_list.html" %}
-    {% endcomment %}
+    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+        {% for sc in supply_chains %}
+            <div class="govuk-accordion__section ">
+                <div class="govuk-accordion__section-header">
+                <h2 class="govuk-accordion__section-heading">
+                    <span class="govuk-accordion__section-button" id="accordion-default-heading">
+                        {{ sc.name }}
+                    </span>
+                </h2>
+                </div>
+                <div id="accordion-default-content" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading">
+                    {% include "includes/sc_key_info_list.html" %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% if supply_chains.has_other_pages %}
+        {% include 'includes/pagination.html' with objects=supply_chains objects_name="supply chains" %}
+    {% endif %}
+
 
     <a href={% url 'index' %}
         class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back to home</a>
