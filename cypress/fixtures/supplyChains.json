@@ -112,5 +112,23 @@
       "is_archived": false,
       "archived_date": null
     }
+  },
+  {
+    "model": "supply_chains.supplychain",
+    "pk": "932b784f-77fe-40d0-ab1b-cba4bef16c77",
+    "fields": {
+      "name": "Supply chain of other dep",
+      "last_submission_date": "2021-04-01",
+      "gov_department": "35727354-6698-4586-9b78-a0f426b86bc9",
+      "contact_name": "nobody",
+      "contact_email": "nobody@dep.gov.uk",
+      "vulnerability_status": "low",
+      "vulnerability_status_disagree_reason": "",
+      "risk_severity_status": "low",
+      "risk_severity_status_disagree_reason": "",
+      "slug": "supply-chain-of-other-dep",
+      "is_archived": false,
+      "archived_date": null
+    }
   }
 ]
