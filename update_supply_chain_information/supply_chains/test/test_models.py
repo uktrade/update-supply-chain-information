@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 
 from supply_chains.models import (
     StrategicAction,
+    RAGRating,
 )
 from supply_chains.models import SupplyChain, StrategicActionUpdate
 from supply_chains.test.factories import (
@@ -645,3 +646,408 @@ class TestStrategicActionUpdate:
             .last()
         )
         assert version.revision.user.email == expected_user_email
+
+    def test_has_action_status_true_if_has_implementation_rag_rating_green(self):
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.action_status_complete
+
+    def test_has_action_status_true_if_has_implementation_rag_rating_amber_and_reason_for_delays(
+        self,
+    ):
+        self.strategic_action_update.implementation_rag_rating = RAGRating.AMBER
+        self.strategic_action_update.reason_for_delays = "Foo"
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.action_status_complete
+
+    def test_has_action_status_false_if_has_implementation_rag_rating_amber_but_no_reason_for_delays(
+        self,
+    ):
+        self.strategic_action_update.implementation_rag_rating = RAGRating.AMBER
+        self.strategic_action_update.reason_for_delays = ""
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.action_status_complete
+
+    def test_has_action_status_true_if_has_implementation_rag_rating_red_and_reason_for_delays(
+        self,
+    ):
+        self.strategic_action_update.implementation_rag_rating = RAGRating.RED
+        self.strategic_action_update.reason_for_delays = "Foo"
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.action_status_complete
+
+    def test_has_action_status_false_if_has_implementation_rag_rating_red_but_no_reason_for_delays(
+        self,
+    ):
+        self.strategic_action_update.implementation_rag_rating = RAGRating.RED
+        self.strategic_action_update.reason_for_delays = ""
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.action_status_complete
+
+    def test_has_action_status_false_if_doesnt_have_implementation_rag_rating(self):
+        self.strategic_action_update.implementation_rag_rating = None
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.action_status_complete
+
+    def test_has_initial_timing_true_if_initial_target_completion_date_given(self):
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.changed_value_for_target_completion_date = (
+            date.today()
+        )
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.has_initial_timing
+
+    def test_has_initial_timing_true_if_initial_is_ongoing_given(self):
+        self.strategic_action_update.changed_value_for_is_ongoing = True
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.has_initial_timing
+
+    def test_has_initial_timing_false_if_no_initial_timing_given(self):
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.has_initial_timing
+
+    def test_has_revised_timing_true_if_changed_completion_date_given(self):
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.changed_value_for_target_completion_date = (
+            date.today() + relativedelta(months=1)
+        )
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=2)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.is_changing_target_completion_date
+
+    def test_has_revised_timing_false_if_changed_is_ongoing_given(self):
+        self.strategic_action_update.changed_value_for_is_ongoing = True
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=1)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.is_changing_target_completion_date
+
+    def test_has_revised_timing_false_if_no_revised_timing_given_and_has_current_completion_date(
+        self,
+    ):
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=1)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.is_changing_target_completion_date
+
+    def test_has_revised_timing_false_if_no_revised_timing_given_and_currently_is_ongoing(
+        self,
+    ):
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = True
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.is_changing_target_completion_date
+
+    def test_has_existing_timing_false_if_no_target_completion_date_or_is_ongoing_given(
+        self,
+    ):
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.has_existing_timing
+
+    def test_has_existing_timing_true_if_target_completion_date_given(self):
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=1)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.has_existing_timing
+
+    def test_has_existing_timing_true_if_is_ongoing_given(self):
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = True
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.has_existing_timing
+
+    def test_has_content_true_if_content_given(self):
+        self.strategic_action_update.content = "Stuff"
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.content_complete
+
+    def test_has_content_false_if_blank_content_given(self):
+        self.strategic_action_update.content = ""
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.content_complete
+
+    def test_complete_false_if_content_not_given(self):
+        self.strategic_action_update.content = ""
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=2)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.complete
+
+    def test_complete_false_if_initial_timing_required_but_not_given(self):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.complete
+
+    def test_complete_false_if_revised_completion_date_present_but_reason_for_completion_date_change_not_given(
+        self,
+    ):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.changed_value_for_target_completion_date = (
+            date.today() + relativedelta(months=1)
+        )
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=2)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.complete
+
+    def test_complete_false_if_revised_is_ongoing_present_but_reason_for_completion_date_change_not_given(
+        self,
+    ):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = True
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=2)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.complete
+
+    def test_complete_false_if_action_status_not_given(self):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=2)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.implementation_rag_rating = None
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.complete
+
+    def test_complete_false_if_action_status_amber_and_no_reason_for_delays(self):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = True
+        self.strategic_action_update.implementation_rag_rating = RAGRating.AMBER
+        self.strategic_action_update.reason_for_delays = ""
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.complete
+
+    def test_complete_false_if_action_status_red_and_no_reason_for_delays(self):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = True
+        self.strategic_action_update.implementation_rag_rating = RAGRating.RED
+        self.strategic_action_update.reason_for_delays = ""
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert not self.strategic_action_update.complete
+
+    def test_complete_true_if_all_correct_with_initial_completion_date_given(self):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = (
+            date.today() + relativedelta(months=1)
+        )
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.complete
+
+    def test_complete_true_if_all_correct_with_initial_is_ongoing_given(self):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = True
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.complete
+
+    def test_complete_true_if_all_correct_with_revised_completion_date_given(self):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = (
+            date.today() + relativedelta(months=1)
+        )
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = "Foo"
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=2)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.complete
+
+    def test_complete_true_if_all_correct_with_revised_is_ongoing_given(self):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = (
+            date.today() + relativedelta(months=1)
+        )
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = "Foo"
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=2)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.complete
+
+    def test_complete_true_if_all_correct_with_existing_completion_date(self):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = (
+            date.today() + relativedelta(months=2)
+        )
+        self.strategic_action_update.strategic_action.is_ongoing = False
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.complete
+
+    def test_complete_true_if_all_correct_with_existing_is_ongoing(self):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = True
+        self.strategic_action_update.implementation_rag_rating = RAGRating.GREEN
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.complete
+
+    def test_complete_true_if_all_correct_with_rag_rating_amber_and_reason_for_delays_given(
+        self,
+    ):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = True
+        self.strategic_action_update.implementation_rag_rating = RAGRating.AMBER
+        self.strategic_action_update.reason_for_delays = "Foo"
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.complete
+
+    def test_complete_true_if_all_correct_with_rag_rating_red_and_reason_for_delays_given(
+        self,
+    ):
+        self.strategic_action_update.content = "Foo"
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        self.strategic_action_update.changed_value_for_is_ongoing = False
+        self.strategic_action_update.reason_for_completion_date_change = ""
+        self.strategic_action_update.strategic_action.target_completion_date = None
+        self.strategic_action_update.strategic_action.is_ongoing = True
+        self.strategic_action_update.implementation_rag_rating = RAGRating.RED
+        self.strategic_action_update.reason_for_delays = "Foo"
+        self.strategic_action_update.strategic_action.save()
+        self.strategic_action_update.save()
+        self.strategic_action_update.refresh_from_db()
+        assert self.strategic_action_update.complete
