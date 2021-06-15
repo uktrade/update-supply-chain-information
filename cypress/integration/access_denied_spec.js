@@ -24,6 +24,6 @@ describe('The access denied page', () => {
   })
   it('Displays correct links', () => {
       cy.get('a').contains('homepage').should('have.attr', 'href').and('eq', '/')
-      cy.get('a').contains('Contact the Resilience Tool team').should('have.attr', 'href').and('eq', `mailto:${adminUser.email}`)
+      cy.get('a').contains('Contact the Resilience Tool team').should('have.attr', 'href').and('eq', `mailto:${Cypress.env('FEEDBACK_GROUP_EMAIL')}?bcc=${adminUser.email}`)
   })
 })
