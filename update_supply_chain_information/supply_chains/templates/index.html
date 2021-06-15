@@ -16,7 +16,7 @@
         <h2 class="govuk-heading-l">Complete your monthly update</h2>
         <ul class="govuk-list govuk-list--bullet">
             <li>
-                You need to complete your monthly update. Complete <strong>{{ num_in_prog_supply_chains }} supply chains</strong> by
+                You need to complete your monthly update. Complete <strong>{{ num_in_prog_supply_chains }} supply chain{{ num_in_prog_supply_chains|pluralize }}</strong> by
                 <span class="govuk-body govuk-!-font-weight-bold">{{ deadline|date:"l jS F Y" }}</span>.
             </li>
             <li>
