@@ -307,9 +307,6 @@ class StrategicActionUpdate(models.Model):
                 pass
             self.save(*args, **kwargs)
 
-    def __str__(self):
-        return f"SAU: {self.strategic_action.name}, {self.slug}, {self.get_status_display()}"
-
     @property
     def has_existing_target_completion_date(self):
         return self.strategic_action.target_completion_date is not None
