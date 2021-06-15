@@ -211,7 +211,7 @@ class TestMonthlyUpdateTimingPage:
             )
 
 
-class TestNoCompletionDateMonthlyUpdateNavigationLinks:
+class TestNoCompletionDateMonthlyUpdateNavigationItems:
     def setup_method(self, *args, **kwargs):
         self.supply_chain = SupplyChainFactory()
         self.strategic_action = StrategicActionFactory(supply_chain=self.supply_chain)
@@ -341,7 +341,7 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
         assert "is_current_page" in navigation_links["Summary"]
 
 
-class TestWithCompletionDateMonthlyUpdateNavigationLinks:
+class TestWithCompletionDateMonthlyUpdateNavigationItems:
     def setup_method(self):
         self.supply_chain = SupplyChainFactory()
         self.strategic_action = StrategicActionFactory(supply_chain=self.supply_chain)
