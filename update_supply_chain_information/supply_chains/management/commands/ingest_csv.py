@@ -8,6 +8,9 @@ from django.core.management.commands import loaddata
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files.temp import NamedTemporaryFile
 
+from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
+from accounts.models import GovDepartment
+
 MODEL_GOV_DEPT = "accounts.govdepartment"
 MODEL_SUPPLY_CHAIN = "supply_chains.supplychain"
 MODEL_STRAT_ACTION = "supply_chains.strategicaction"
@@ -19,6 +22,8 @@ ALL_MODELS = [
     MODEL_STRAT_ACTION,
     MODEL_STRAT_ACTION_UPDATE,
 ]
+
+GENERIC_ARCHIVE_REASON = "Archived with generic reason"
 
 
 class Command(BaseCommand):
@@ -96,6 +101,20 @@ class Command(BaseCommand):
 
                 row["fields"].pop("str( not required in database)", None)
 
+                orgs = row["fields"]["supporting_organisations"]
+                row["fields"]["supporting_organisations"] = [
+                    x.strip() for x in orgs.split(",")
+                ]
+
+                if row["fields"]["is_archived"] == "0":
+                    row["fields"]["is_archived"] = False
+                elif row["fields"]["is_archived"] == "1":
+                    row["fields"]["is_archived"] = True
+
+                if row["fields"]["is_archived"]:
+                    if row["fields"]["archived_reason"] == "":
+                        row["fields"]["archived_reason"] = GENERIC_ARCHIVE_REASON
+
             elif row["model"] == MODEL_STRAT_ACTION_UPDATE:
                 self._update_date_fields(
                     row["fields"], "submission_date", "date_created"
@@ -113,6 +132,35 @@ class Command(BaseCommand):
 
         return rows
 
+    def _save_objects(self, model: str) -> None:
+        """Save objects being ingested
+
+        :param str model: specify the model to which data will be imported
+
+        This method is necessary to trigger our save over-rides within models as exisitng
+        admin command loaddata doesn't invoke that.
+        """
+        if model == MODEL_GOV_DEPT:
+            ingested_model = GovDepartment
+
+        if model == MODEL_SUPPLY_CHAIN:
+            # ingested_model = SupplyChain
+            ingested_model = GovDepartment
+
+        if model == MODEL_STRAT_ACTION:
+            ingested_model = StrategicAction
+
+        if model == MODEL_STRAT_ACTION_UPDATE:
+            ingested_model = StrategicActionUpdate
+
+        try:
+            for obj in ingested_model.objects.all():
+                obj.save()
+        except Exception:
+            print(f"Deleting ingested data for {model}")
+            ingested_model.objects.all().delete()
+            raise
+
     def handle(self, **options):
         if options["model"] not in ALL_MODELS:
             raise CommandError(
@@ -126,6 +174,7 @@ class Command(BaseCommand):
             json.dump(json_obj, fp)
             fp.seek(0)
             management.call_command(loaddata.Command(), fp.name, format="json")
+            self._save_objects(options["model"])
             self.stdout.write(
                 self.style.SUCCESS(
                     f"Successfully ingested data into {options['model']}"
