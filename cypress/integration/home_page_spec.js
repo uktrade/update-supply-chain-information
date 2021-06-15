@@ -23,7 +23,7 @@ describe('The Home Page', () => {
     const bannerContents = cy.get('.govuk-phase-banner').children()
     bannerContents.get('.govuk-phase-banner__content__tag').contains('beta')
     bannerContents.get('.govuk-phase-banner__text').contains('This is a new service – your feedback will help us to improve it.')
-    bannerContents.get('a').contains('feedback').should('have.attr', 'href').and('eq', `mailto:${adminUser.email}`)
+    bannerContents.get('a').contains('feedback').should('have.attr', 'href').and('eq', `mailto:${Cypress.env('FEEDBACK_GROUP_EMAIL')}?bcc=${adminUser.email}`)
   })
   it('displays the correct text', () => {
     cy.get('h1').contains(
