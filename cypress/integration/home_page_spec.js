@@ -39,7 +39,7 @@ describe('The Home Page', () => {
     cy.get('li').contains(
       'Select a supply chain to provide your regular monthly update.'
     )
-    cy.get('li').contains(
+    cy.get('p').contains(
       'All supply chains have been completed for this month'
     ).should('not.exist')
 
