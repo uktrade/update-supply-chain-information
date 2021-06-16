@@ -2,6 +2,7 @@
 {% load render_bundle from webpack_loader %}
 {% load webpack_static from webpack_loader %}
 {% load supply_chain_filters %}
+{% load supply_chain_tags %}
 <html lang="en" class="govuk-template ">
 
 <head>
@@ -47,14 +48,13 @@
             </div>
         </div>
         <div class="govuk-phase-banner govuk-width-container">
-            <p class="govuk-phase-banner__content app-phase-banner-content">
-                <span>
-                    <strong class="govuk-tag govuk-phase-banner__content__tag">
-                        beta
-                    </strong>
-                    <span class="govuk-phase-banner__text">
-                        This is a new service – your <a class="govuk-link" href="#">feedback</a> will help us to improve it.
-                    </span>
+            <p class="govuk-phase-banner__content">
+                <strong class="govuk-tag govuk-phase-banner__content__tag">
+                beta
+                </strong>
+                {% get_feedback_emails_as_string as feedback_emails %}
+                <span class="govuk-phase-banner__text">
+                    This is a new service – your <a class="govuk-link" href="mailto:{{ 'FEEDBACK_GROUP_EMAIL'|env }}?bcc={{ feedback_emails }}">feedback</a> will help us to improve it.
                 </span>
             </p>
         </div>
