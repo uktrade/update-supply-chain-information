@@ -64,7 +64,7 @@ describe('Supply chain summary page', () => {
       table,
       tableElement,
       2,
-      String.raw`The current vulnerability status is 'Low'. Is this accurate?`,
+      String.raw`The current vulnerability status is 'Green'. Is this accurate?`,
       'No' + ' ' + supplyChain.fields.vulnerability_status_disagree_reason
     )
 

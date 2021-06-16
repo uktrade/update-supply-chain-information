@@ -83,6 +83,24 @@ class Command(BaseCommand):
         for f in fields:
             row[f] = self._reformat_date(row[f])
 
+    def _update_archive_fields(self, row: Dict) -> Dict:
+        if row["fields"]["is_archived"] == "0":
+            row["fields"]["is_archived"] = False
+        elif row["fields"]["is_archived"] == "1":
+            row["fields"]["is_archived"] = True
+
+        if row["fields"]["is_archived"]:
+            # As archive for supply chain is added recently, historic data may not have all the properties
+            try:
+                row["fields"]["archived_reason"]
+            except KeyError:
+                row["fields"]["archived_reason"] = ""
+
+            if row["fields"]["archived_reason"] == "":
+                row["fields"]["archived_reason"] = GENERIC_ARCHIVE_REASON
+
+        return row
+
     def _format_per_model(self, rows: List) -> List:
 
         for row in rows:
@@ -90,6 +108,12 @@ class Command(BaseCommand):
                 self._update_date_fields(
                     row["fields"], "archived_date", "last_submission_date"
                 )
+
+                row["fields"]["vulnerability_status"] = row["fields"][
+                    "vulnerability_status"
+                ].upper()
+
+                row = self._update_archive_fields(row)
 
             elif row["model"] == MODEL_STRAT_ACTION:
                 self._update_date_fields(
@@ -106,14 +130,7 @@ class Command(BaseCommand):
                     x.strip() for x in orgs.split(",")
                 ]
 
-                if row["fields"]["is_archived"] == "0":
-                    row["fields"]["is_archived"] = False
-                elif row["fields"]["is_archived"] == "1":
-                    row["fields"]["is_archived"] = True
-
-                if row["fields"]["is_archived"]:
-                    if row["fields"]["archived_reason"] == "":
-                        row["fields"]["archived_reason"] = GENERIC_ARCHIVE_REASON
+                row = self._update_archive_fields(row)
 
             elif row["model"] == MODEL_STRAT_ACTION_UPDATE:
                 self._update_date_fields(
@@ -144,8 +161,7 @@ class Command(BaseCommand):
             ingested_model = GovDepartment
 
         if model == MODEL_SUPPLY_CHAIN:
-            # ingested_model = SupplyChain
-            ingested_model = GovDepartment
+            ingested_model = SupplyChain
 
         if model == MODEL_STRAT_ACTION:
             ingested_model = StrategicAction
