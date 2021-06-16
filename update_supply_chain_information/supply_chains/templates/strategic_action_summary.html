@@ -76,7 +76,7 @@
               Which other government departments are supporting this strategic action?
             </dt>
             <dd class="govuk-summary-list__value">
-              {{ action.get_supporting_organisations_display|default:"No information" }}
+              {{ action.supporting_organisations|join:", "|default:"No information" }}
             </dd>
           </div>
           <div class="govuk-summary-list__row">
