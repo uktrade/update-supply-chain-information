@@ -47,7 +47,7 @@ def supply_chain(submission_date: date) -> SupplyChain:
         contact_name="Mr. Banana",
         contact_email="banana.email",
         gov_department=GovDepartment.objects.first(),
-        vulnerability_status=SupplyChain.StatusRating.LOW,
+        vulnerability_status=RAGRating.GREEN,
         vulnerability_status_disagree_reason="",
         risk_severity_status=SupplyChain.StatusRating.LOW,
         risk_severity_status_disagree_reason="",

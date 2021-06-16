@@ -15,7 +15,7 @@ class SupplyChainFactory(factory.django.DjangoModelFactory):
     gov_department = factory.SubFactory(GovDepartmentFactory)
     contact_name = factory.Faker("name")
     contact_email = factory.Faker("email")
-    vulnerability_status = factory.fuzzy.FuzzyChoice(SupplyChain.StatusRating)
+    vulnerability_status = factory.fuzzy.FuzzyChoice(RAGRating)
     vulnerability_status_disagree_reason = factory.Faker("sentence")
     risk_severity_status = factory.fuzzy.FuzzyChoice(SupplyChain.StatusRating)
     risk_severity_status_disagree_reason = factory.Faker("sentence")

@@ -46,7 +46,7 @@ class SupplyChain(models.Model):
         max_length=settings.CHARFIELD_MAX_LENGTH, blank=True
     )
     vulnerability_status = models.CharField(
-        choices=StatusRating.choices,
+        choices=RAGRating.choices,
         max_length=6,
     )
     vulnerability_status_disagree_reason = models.TextField(blank=True)
