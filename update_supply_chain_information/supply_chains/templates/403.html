@@ -13,7 +13,7 @@
              to find the information you need</li>
         {% get_feedback_emails_as_string as feedback_emails %}
         <li>
-            <a class="govuk-link" href="mailto:{{ feedback_emails }}">Contact the Resilience Tool team</a>
+            <a class="govuk-link" href="mailto:{{ 'FEEDBACK_GROUP_EMAIL'|env }}?bcc={{ feedback_emails }}">Contact the Resilience Tool team</a>
              if you think you do have permission to access this page.
         </li>
     </ul>
