@@ -63,7 +63,7 @@ def supply_chain(submission_date: date) -> SupplyChain:
         impact="Improved banana availability",
         category=StrategicAction.Category.EXPAND,
         geographic_scope=StrategicAction.GeographicScope.ENGLAND_ONLY,
-        supporting_organisations="",
+        supporting_organisations=[""],
         is_ongoing=False,
         target_completion_date=date(year=2021, month=11, day=27),
         is_archived=False,

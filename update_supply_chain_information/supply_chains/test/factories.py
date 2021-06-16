@@ -31,7 +31,7 @@ class StrategicActionFactory(factory.django.DjangoModelFactory):
     impact = factory.Faker("text")
     category = factory.fuzzy.FuzzyChoice(StrategicAction.Category)
     geographic_scope = factory.fuzzy.FuzzyChoice(StrategicAction.GeographicScope)
-    supporting_organisations = factory.fuzzy.FuzzyChoice(StrategicAction.SupportingOrgs)
+    supporting_organisations = ["DIT"]
     target_completion_date = factory.Faker("date_object")
     is_archived = False
     specific_related_products = factory.Faker("text")
