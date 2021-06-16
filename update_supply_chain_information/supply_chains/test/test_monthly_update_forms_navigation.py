@@ -86,6 +86,23 @@ def strategic_action_update_timing_status_incomplete(strategic_action_without_ti
 
 
 @pytest.fixture
+def strategic_action_update_revised_timing_incomplete(
+    strategic_action_with_completion_date,
+):
+    strategic_action_update = StrategicActionUpdateFactory(
+        strategic_action=strategic_action_with_completion_date,
+        supply_chain=strategic_action_with_completion_date.supply_chain,
+        content="Foo",
+        changed_value_for_target_completion_date=None,
+        changed_value_for_is_ongoing=False,
+        implementation_rag_rating=RAGRating.GREEN,
+        reason_for_delays="",
+        reason_for_completion_date_change="",
+    )
+    return strategic_action_update
+
+
+@pytest.fixture
 def strategic_action_update_status_incomplete_with_changed_completion_date(
     strategic_action_without_timing,
 ):
@@ -872,6 +889,65 @@ class TestWithCompletionDateRevisedTimingPageNavigationLinks:
 
         timing_item = navigation_items["RevisedTiming"]
         assert "not_a_link" in timing_item
+
+    def test_update_revised_timing_view_not_linked_to_self_when_not_completed(
+        self,
+        strategic_action_update_revised_timing_incomplete,
+        logged_in_client,
+        test_user,
+    ):
+        test_user.gov_department = (
+            strategic_action_update_revised_timing_incomplete.supply_chain.gov_department
+        )
+        test_user.save()
+
+        response = logged_in_client.get(
+            self.revised_timing_url(strategic_action_update_revised_timing_incomplete)
+        )
+        navigation_items = response.context_data["navigation_links"]
+
+        revised_timing_item = navigation_items["RevisedTiming"]
+        assert "not_a_link" in revised_timing_item
+
+    def test_update_revised_timing_view_not_linked_to_summary_when_not_completed(
+        self,
+        strategic_action_update_revised_timing_incomplete,
+        logged_in_client,
+        test_user,
+    ):
+        test_user.gov_department = (
+            strategic_action_update_revised_timing_incomplete.supply_chain.gov_department
+        )
+        test_user.save()
+
+        response = logged_in_client.get(
+            self.revised_timing_url(strategic_action_update_revised_timing_incomplete)
+        )
+        navigation_items = response.context_data["navigation_links"]
+
+        summary_item = navigation_items["Summary"]
+        assert "not_a_link" in summary_item
+
+    def test_update_revised_timing_view_linked_to_summary_when_completed(
+        self,
+        strategic_action_update_complete_with_revised_completion_date,
+        logged_in_client,
+        test_user,
+    ):
+        test_user.gov_department = (
+            strategic_action_update_complete_with_revised_completion_date.supply_chain.gov_department
+        )
+        test_user.save()
+
+        response = logged_in_client.get(
+            self.revised_timing_url(
+                strategic_action_update_complete_with_revised_completion_date
+            )
+        )
+        navigation_items = response.context_data["navigation_links"]
+
+        summary_item = navigation_items["Summary"]
+        assert "not_a_link" not in summary_item
 
 
 class TestWithCompletionDateSummaryPageNavigationLinks:
