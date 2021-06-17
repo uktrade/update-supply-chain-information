@@ -275,6 +275,7 @@ class MonthlyUpdateMixin:
     model = StrategicActionUpdate
     context_object_name = "strategic_action_update"
     slug_url_kwarg = "update_slug"
+    object: StrategicActionUpdate = None
 
     def get_queryset(self):
         supply_chain_slug = self.kwargs.get("supply_chain_slug")
@@ -314,16 +315,19 @@ class MonthlyUpdateMixin:
                 "label": "Update information",
                 "url": reverse_lazy("monthly-update-info-edit", kwargs=url_kwargs),
                 "view": MonthlyUpdateInfoEditView,
+                "complete": self.object.content_complete,
             },
             "Timing": {
                 "label": "Timing",
                 "url": reverse_lazy("monthly-update-timing-edit", kwargs=url_kwargs),
                 "view": MonthlyUpdateTimingEditView,
+                "complete": self.object.initial_timing_complete,
             },
             "Status": {
                 "label": "Action status",
                 "url": reverse_lazy("monthly-update-status-edit", kwargs=url_kwargs),
                 "view": MonthlyUpdateStatusEditView,
+                "complete": self.object.action_status_complete,
             },
             "RevisedTiming": {
                 "label": "Revised timing",
@@ -331,25 +335,39 @@ class MonthlyUpdateMixin:
                     "monthly-update-revised-timing-edit", kwargs=url_kwargs
                 ),
                 "view": MonthlyUpdateRevisedTimingEditView,
+                "complete": self.object.revised_timing_complete,
             },
             "Summary": {
                 "label": "Confirm",
                 "url": reverse_lazy("monthly-update-summary", kwargs=url_kwargs),
                 "view": MonthlyUpdateSummaryView,
+                "complete": self.object.complete,
             },
         }
         if self.object.has_existing_target_completion_date:
             navigation_links.pop("Timing")
-            if (
-                not self.object.has_changed_target_completion_date
-                and not isinstance(self, MonthlyUpdateRevisedTimingEditView)
-                and not self.object.is_becoming_ongoing
+            if not self.object.is_changing_target_completion_date and not isinstance(
+                self, MonthlyUpdateRevisedTimingEditView
             ):
                 navigation_links.pop("RevisedTiming")
         else:
             navigation_links.pop("RevisedTiming")
+        found_current_page = False
         for title, info in navigation_links.items():
-            info["is_current_page"] = isinstance(self, info["view"])
+            is_current_page = isinstance(self, info["view"])
+            if is_current_page:
+                found_current_page = True
+                info["is_current_page"] = True
+            if (found_current_page and not info["complete"]) or is_current_page:
+                info["not_a_link"] = True
+        # special case: there's nothing on the model to tell us that the user wants to change timing
+        # for an update with existing timing information, i.e. via the Revised Timing page
+        # so we have to rely on that page being the view for this case
+        if isinstance(self, MonthlyUpdateRevisedTimingEditView):
+            # on the Revised Timing page…
+            if not self.object.is_changing_target_completion_date:
+                # but no values for revised timing have been provided yet
+                navigation_links["Summary"]["not_a_link"] = True
         return navigation_links
 
     def get_context_data(self, **kwargs):

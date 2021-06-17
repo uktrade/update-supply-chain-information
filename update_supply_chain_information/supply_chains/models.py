@@ -311,9 +311,6 @@ class StrategicActionUpdate(models.Model):
                 pass
             self.save(*args, **kwargs)
 
-    def __str__(self):
-        return f"SAU: {self.strategic_action.name}, {self.slug}, {self.get_status_display()}"
-
     @property
     def has_existing_target_completion_date(self):
         return self.strategic_action.target_completion_date is not None
@@ -374,6 +371,60 @@ class StrategicActionUpdate(models.Model):
     @property
     def has_no_timing_information(self):
         return self.has_no_target_completion_date and self.has_no_is_ongoing
+
+    @property
+    def has_new_timing(self):
+        return self.has_new_target_completion_date or self.has_new_is_ongoing
+
+    @property
+    def has_existing_timing(self):
+        return self.has_existing_target_completion_date or self.is_currently_ongoing
+
+    @property
+    def has_revised_timing(self):
+        return self.has_existing_timing and (
+            self.changed_value_for_target_completion_date
+            or self.changed_value_for_is_ongoing
+        )
+
+    @property
+    def needs_initial_timing(self):
+        return not self.has_existing_timing
+
+    @property
+    def content_complete(self):
+        return bool(self.content)
+
+    @property
+    def initial_timing_complete(self):
+        return self.has_existing_timing or self.has_new_timing
+
+    @property
+    def action_status_complete(self):
+        return self.implementation_rag_rating is not None and (
+            self.implementation_rag_rating == RAGRating.GREEN or self.reason_for_delays
+        )
+
+    @property
+    def revised_timing_complete(self):
+        # there's no clear way to know if revised timing is needed;
+        # if it's been provided, then it was needed, but if it wasn't
+        # it still might have been needed.
+        # But other code assumes if it doesn't exist, it isn't needed.
+        # However, if it does exist, we do need a reason for it.
+        return (not self.has_revised_timing) or self.reason_for_completion_date_change
+
+    @property
+    def complete(self):
+        """
+        Tells us if all required information has been provided
+        """
+        return (
+            self.content_complete
+            and self.initial_timing_complete
+            and self.action_status_complete
+            and self.revised_timing_complete
+        )
 
     def __str__(self):
         return f"Update {self.slug} for {self.strategic_action}"

@@ -43,6 +43,7 @@ $govuk-image-url-function: frontend-image-url;
   background-color: $govuk-text-colour;
 }
 
-.moj-sub-navigation__link:link, .moj-sub-navigation__link:visited {
+span.moj-sub-navigation__link,
+span.moj-sub-navigation__link:hover {
   color: $govuk-secondary-text-colour;
 }
