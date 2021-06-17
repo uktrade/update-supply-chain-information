@@ -3,17 +3,17 @@ from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 
 import pytest
-from django.test import Client
 from django.urls import reverse
 
-from accounts.models import GovDepartment
-from accounts.test.factories import GovDepartmentFactory
-from supply_chains.forms import YesNoChoices, ApproximateTimings
-from supply_chains.models import StrategicAction, StrategicActionUpdate, RAGRating
+from supply_chains.models import (
+    StrategicAction,
+    StrategicActionUpdate,
+    RAGRating,
+    SupplyChain,
+)
 from supply_chains.test.factories import (
     StrategicActionUpdateFactory,
 )
-from supply_chains.models import SupplyChain
 from supply_chains.test.factories import StrategicActionFactory, SupplyChainFactory
 
 pytestmark = pytest.mark.django_db
@@ -22,31 +22,37 @@ pytestmark = pytest.mark.django_db
 
 
 @pytest.fixture
-def strategic_action_without_timing():
-    supply_chain = SupplyChainFactory()
+def strategic_action_without_timing(test_user):
+    supply_chain: SupplyChain = SupplyChainFactory()
     strategic_action: StrategicAction = StrategicActionFactory(
         supply_chain=supply_chain, target_completion_date=None, is_ongoing=False
     )
+    test_user.gov_department = supply_chain.gov_department
+    test_user.save()
     return strategic_action
 
 
 @pytest.fixture
-def strategic_action_with_completion_date():
-    supply_chain = SupplyChainFactory()
+def strategic_action_with_completion_date(test_user):
+    supply_chain: SupplyChain = SupplyChainFactory()
     strategic_action: StrategicAction = StrategicActionFactory(
         supply_chain=supply_chain,
         target_completion_date=date.today() + relativedelta(months=2),
         is_ongoing=False,
     )
+    test_user.gov_department = supply_chain.gov_department
+    test_user.save()
     return strategic_action
 
 
 @pytest.fixture
-def strategic_action_with_is_ongoing():
-    supply_chain = SupplyChainFactory()
+def strategic_action_with_is_ongoing(test_user):
+    supply_chain: SupplyChain = SupplyChainFactory()
     strategic_action: StrategicAction = StrategicActionFactory(
         supply_chain=supply_chain, target_completion_date=None, is_ongoing=True
     )
+    test_user.gov_department = supply_chain.gov_department
+    test_user.save()
     return strategic_action
 
 
@@ -270,13 +276,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_info_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_info_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_info_timing_status_incomplete)
         )
@@ -289,13 +289,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_timing_status_incomplete)
         )
@@ -308,13 +302,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_info_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_info_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_info_timing_status_incomplete)
         )
@@ -327,13 +315,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_status_incomplete_with_changed_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_status_incomplete_with_changed_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(
                 strategic_action_update_status_incomplete_with_changed_completion_date
@@ -348,13 +330,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_status_incomplete_with_changed_is_ongoing,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_status_incomplete_with_changed_is_ongoing.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(
                 strategic_action_update_status_incomplete_with_changed_is_ongoing
@@ -369,13 +345,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_status_incomplete_with_changed_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_status_incomplete_with_changed_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(
                 strategic_action_update_status_incomplete_with_changed_completion_date
@@ -390,13 +360,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_with_action_status_green,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_with_action_status_green.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_with_action_status_green)
         )
@@ -409,13 +373,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_with_action_status_amber,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_with_action_status_amber.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_with_action_status_amber)
         )
@@ -428,13 +386,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_with_action_status_red,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_with_action_status_red.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_with_action_status_red)
         )
@@ -447,13 +399,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_info_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_info_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_info_timing_status_incomplete)
         )
@@ -466,13 +412,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_timing_status_incomplete)
         )
@@ -485,13 +425,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_status_incomplete_with_changed_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_status_incomplete_with_changed_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(
                 strategic_action_update_status_incomplete_with_changed_completion_date
@@ -506,13 +440,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_status_incomplete_with_changed_is_ongoing,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_status_incomplete_with_changed_is_ongoing.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(
                 strategic_action_update_status_incomplete_with_changed_is_ongoing
@@ -527,13 +455,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_complete_with_changed_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_complete_with_changed_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_complete_with_changed_completion_date)
         )
@@ -546,13 +468,7 @@ class TestNoCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_complete_with_changed_is_ongoing,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_complete_with_changed_is_ongoing.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_complete_with_changed_is_ongoing)
         )
@@ -578,13 +494,7 @@ class TestNoCompletionDateTimingPageNavigationLinks:
         self,
         strategic_action_update_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.timing_url(strategic_action_update_timing_status_incomplete)
         )
@@ -597,13 +507,7 @@ class TestNoCompletionDateTimingPageNavigationLinks:
         self,
         strategic_action_update_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.timing_url(strategic_action_update_timing_status_incomplete)
         )
@@ -616,13 +520,7 @@ class TestNoCompletionDateTimingPageNavigationLinks:
         self,
         strategic_action_update_info_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_info_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.timing_url(strategic_action_update_info_timing_status_incomplete)
         )
@@ -648,13 +546,7 @@ class TestNoCompletionDateStatusPageNavigationLinks:
         self,
         strategic_action_update_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.status_url(strategic_action_update_timing_status_incomplete)
         )
@@ -667,13 +559,7 @@ class TestNoCompletionDateStatusPageNavigationLinks:
         self,
         strategic_action_update_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.status_url(strategic_action_update_timing_status_incomplete)
         )
@@ -686,13 +572,7 @@ class TestNoCompletionDateStatusPageNavigationLinks:
         self,
         strategic_action_update_info_timing_status_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_info_timing_status_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.status_url(strategic_action_update_info_timing_status_incomplete)
         )
@@ -718,13 +598,7 @@ class TestNoCompletionDateSummaryPageNavigationLinks:
         self,
         strategic_action_update_complete_with_changed_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_complete_with_changed_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.summary_url(
                 strategic_action_update_complete_with_changed_completion_date
@@ -739,13 +613,7 @@ class TestNoCompletionDateSummaryPageNavigationLinks:
         self,
         strategic_action_update_complete_with_changed_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_complete_with_changed_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.summary_url(
                 strategic_action_update_complete_with_changed_completion_date
@@ -773,13 +641,7 @@ class TestWithCompletionDateInfoPageNavigationLinks:
         self,
         strategic_action_update_complete_with_revised_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_complete_with_revised_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.info_url(strategic_action_update_complete_with_revised_completion_date)
         )
@@ -805,13 +667,7 @@ class TestWithCompletionDateTimingPageNavigationLinks:
         self,
         strategic_action_update_complete_with_revised_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_complete_with_revised_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.timing_url(
                 strategic_action_update_complete_with_revised_completion_date
@@ -839,13 +695,7 @@ class TestWithCompletionDateStatusPageNavigationLinks:
         self,
         strategic_action_update_complete_with_revised_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_complete_with_revised_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.status_url(
                 strategic_action_update_complete_with_revised_completion_date
@@ -873,13 +723,7 @@ class TestWithCompletionDateRevisedTimingPageNavigationLinks:
         self,
         strategic_action_update_complete_with_revised_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_complete_with_revised_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.revised_timing_url(
                 strategic_action_update_complete_with_revised_completion_date
@@ -894,13 +738,7 @@ class TestWithCompletionDateRevisedTimingPageNavigationLinks:
         self,
         strategic_action_update_revised_timing_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_revised_timing_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.revised_timing_url(strategic_action_update_revised_timing_incomplete)
         )
@@ -913,13 +751,7 @@ class TestWithCompletionDateRevisedTimingPageNavigationLinks:
         self,
         strategic_action_update_revised_timing_incomplete,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_revised_timing_incomplete.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.revised_timing_url(strategic_action_update_revised_timing_incomplete)
         )
@@ -932,13 +764,7 @@ class TestWithCompletionDateRevisedTimingPageNavigationLinks:
         self,
         strategic_action_update_complete_with_revised_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_complete_with_revised_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.revised_timing_url(
                 strategic_action_update_complete_with_revised_completion_date
@@ -966,13 +792,7 @@ class TestWithCompletionDateSummaryPageNavigationLinks:
         self,
         strategic_action_update_complete_with_revised_completion_date,
         logged_in_client,
-        test_user,
     ):
-        test_user.gov_department = (
-            strategic_action_update_complete_with_revised_completion_date.supply_chain.gov_department
-        )
-        test_user.save()
-
         response = logged_in_client.get(
             self.summary_url(
                 strategic_action_update_complete_with_revised_completion_date
