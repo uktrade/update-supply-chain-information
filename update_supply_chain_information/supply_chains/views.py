@@ -44,7 +44,10 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
     template_name = "index.html"
 
     def get_queryset(self):
-        return self.request.user.gov_department.supply_chains.annotate(
+        supply_chains = self.request.user.gov_department.supply_chains.filter(
+            is_archived=False
+        )
+        return supply_chains.annotate(
             strategic_action_count=Count("strategic_actions")
         ).order_by("name")
 
