@@ -153,25 +153,35 @@ class SCTaskListView(
             slug=supply_chain_slug, is_archived=False
         )
 
-        sa_qset = StrategicAction.objects.filter(supply_chain=self.supply_chain)
+        sa_qset = StrategicAction.objects.filter(
+            supply_chain=self.supply_chain, is_archived=False
+        )
         self.total_sa = sa_qset.count()
 
         self.sa_updates = self._get_sa_update_list(sa_qset)
 
-        self.ready_to_submit_updates = StrategicActionUpdate.objects.since(
-            self.last_deadline,
-            supply_chain=self.supply_chain,
-            status__in=[
-                StrategicActionUpdate.Status.READY_TO_SUBMIT,
-                StrategicActionUpdate.Status.SUBMITTED,
-            ],
-        ).count()
+        self.ready_to_submit_updates = (
+            StrategicActionUpdate.objects.since(
+                self.last_deadline,
+                supply_chain=self.supply_chain,
+                status__in=[
+                    StrategicActionUpdate.Status.READY_TO_SUBMIT,
+                    StrategicActionUpdate.Status.SUBMITTED,
+                ],
+            )
+            .filter(strategic_action__is_archived=False)
+            .count()
+        )
 
-        self.submitted_only_updates = StrategicActionUpdate.objects.since(
-            self.last_deadline,
-            supply_chain=self.supply_chain,
-            status=StrategicActionUpdate.Status.SUBMITTED,
-        ).count()
+        self.submitted_only_updates = (
+            StrategicActionUpdate.objects.since(
+                self.last_deadline,
+                supply_chain=self.supply_chain,
+                status=StrategicActionUpdate.Status.SUBMITTED,
+            )
+            .filter(strategic_action__is_archived=False)
+            .count()
+        )
 
         self.incomplete_updates = self.total_sa - self.ready_to_submit_updates
 
