@@ -369,7 +369,7 @@ class StrategicActionUpdate(models.Model):
         return self.has_no_target_completion_date and self.has_no_is_ongoing
 
     @property
-    def has_initial_timing(self):
+    def has_new_timing(self):
         return self.has_new_target_completion_date or self.has_new_is_ongoing
 
     @property
