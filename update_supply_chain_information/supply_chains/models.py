@@ -378,9 +378,7 @@ class StrategicActionUpdate(models.Model):
 
     @property
     def has_revised_timing(self):
-        return (
-            self.has_existing_target_completion_date or self.is_currently_ongoing
-        ) and (
+        return (self.has_existing_timing) and (
             self.changed_value_for_target_completion_date
             or self.changed_value_for_is_ongoing
         )
@@ -395,7 +393,7 @@ class StrategicActionUpdate(models.Model):
 
     @property
     def initial_timing_complete(self):
-        return self.has_existing_timing or self.has_initial_timing
+        return self.has_existing_timing or self.has_new_timing
 
     @property
     def action_status_complete(self):
