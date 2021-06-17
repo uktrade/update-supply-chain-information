@@ -126,7 +126,8 @@ class StrategicAction(models.Model):
     )
 
     supporting_organisations = ArrayField(
-        models.CharField(max_length=24, choices=SupportingOrgs.choices, blank=True)
+        models.CharField(max_length=24, choices=SupportingOrgs.choices, blank=True),
+        blank=True,
     )
 
     is_ongoing = models.BooleanField(default=False)
