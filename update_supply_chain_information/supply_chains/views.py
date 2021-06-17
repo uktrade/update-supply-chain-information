@@ -44,7 +44,10 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
     template_name = "index.html"
 
     def get_queryset(self):
-        return self.request.user.gov_department.supply_chains.annotate(
+        supply_chains = self.request.user.gov_department.supply_chains.filter(
+            is_archived=False
+        )
+        return supply_chains.annotate(
             strategic_action_count=Count("strategic_actions")
         ).order_by("name")
 
@@ -150,25 +153,35 @@ class SCTaskListView(
             slug=supply_chain_slug, is_archived=False
         )
 
-        sa_qset = StrategicAction.objects.filter(supply_chain=self.supply_chain)
+        sa_qset = StrategicAction.objects.filter(
+            supply_chain=self.supply_chain, is_archived=False
+        )
         self.total_sa = sa_qset.count()
 
         self.sa_updates = self._get_sa_update_list(sa_qset)
 
-        self.ready_to_submit_updates = StrategicActionUpdate.objects.since(
-            self.last_deadline,
-            supply_chain=self.supply_chain,
-            status__in=[
-                StrategicActionUpdate.Status.READY_TO_SUBMIT,
-                StrategicActionUpdate.Status.SUBMITTED,
-            ],
-        ).count()
+        self.ready_to_submit_updates = (
+            StrategicActionUpdate.objects.since(
+                self.last_deadline,
+                supply_chain=self.supply_chain,
+                status__in=[
+                    StrategicActionUpdate.Status.READY_TO_SUBMIT,
+                    StrategicActionUpdate.Status.SUBMITTED,
+                ],
+            )
+            .filter(strategic_action__is_archived=False)
+            .count()
+        )
 
-        self.submitted_only_updates = StrategicActionUpdate.objects.since(
-            self.last_deadline,
-            supply_chain=self.supply_chain,
-            status=StrategicActionUpdate.Status.SUBMITTED,
-        ).count()
+        self.submitted_only_updates = (
+            StrategicActionUpdate.objects.since(
+                self.last_deadline,
+                supply_chain=self.supply_chain,
+                status=StrategicActionUpdate.Status.SUBMITTED,
+            )
+            .filter(strategic_action__is_archived=False)
+            .count()
+        )
 
         self.incomplete_updates = self.total_sa - self.ready_to_submit_updates
 

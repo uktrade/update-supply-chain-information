@@ -108,6 +108,21 @@ def test_homepage_update_incomplete(logged_in_client, test_user):
     )
 
 
+def test_homepage_filters_out_archived_supply_chains(logged_in_client, test_user):
+    gov_department = test_user.gov_department
+    # Create archived supply chains
+    SupplyChainFactory.create_batch(
+        5, gov_department=gov_department, is_archived=True, archived_reason="Reason"
+    )
+    # Create non archived supply chains
+    SupplyChainFactory.create_batch(5, gov_department=gov_department)
+
+    num_unarchived_supply_chains = SupplyChain.objects.filter(is_archived=False).count()
+    response = logged_in_client.get(reverse("index"))
+
+    assert len(response.context["supply_chains"]) == num_unarchived_supply_chains
+
+
 def test_strat_action_summary_page_unauthenticated(test_supply_chain):
     """Test unauthenticated request is redirected."""
     client = Client()
