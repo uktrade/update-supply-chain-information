@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.template.defaultfilters import slugify
+from django.contrib.postgres.fields import ArrayField
 
 from accounts.models import GovDepartment
 from supply_chains.utils import get_last_working_day_of_previous_month
@@ -45,7 +46,7 @@ class SupplyChain(models.Model):
         max_length=settings.CHARFIELD_MAX_LENGTH, blank=True
     )
     vulnerability_status = models.CharField(
-        choices=StatusRating.choices,
+        choices=RAGRating.choices,
         max_length=6,
     )
     vulnerability_status_disagree_reason = models.TextField(blank=True)
@@ -123,9 +124,12 @@ class StrategicAction(models.Model):
         choices=GeographicScope.choices,
         max_length=12,
     )
-    supporting_organisations = models.CharField(
-        max_length=24, choices=SupportingOrgs.choices, blank=True
+
+    supporting_organisations = ArrayField(
+        models.CharField(max_length=24, choices=SupportingOrgs.choices, blank=True),
+        blank=True,
     )
+
     is_ongoing = models.BooleanField(default=False)
     target_completion_date = models.DateField(null=True, blank=True)
     is_archived = models.BooleanField(default=False)

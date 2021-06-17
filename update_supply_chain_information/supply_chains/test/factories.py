@@ -15,7 +15,7 @@ class SupplyChainFactory(factory.django.DjangoModelFactory):
     gov_department = factory.SubFactory(GovDepartmentFactory)
     contact_name = factory.Faker("name")
     contact_email = factory.Faker("email")
-    vulnerability_status = factory.fuzzy.FuzzyChoice(SupplyChain.StatusRating)
+    vulnerability_status = factory.fuzzy.FuzzyChoice(RAGRating)
     vulnerability_status_disagree_reason = factory.Faker("sentence")
     risk_severity_status = factory.fuzzy.FuzzyChoice(SupplyChain.StatusRating)
     risk_severity_status_disagree_reason = factory.Faker("sentence")
@@ -31,7 +31,7 @@ class StrategicActionFactory(factory.django.DjangoModelFactory):
     impact = factory.Faker("text")
     category = factory.fuzzy.FuzzyChoice(StrategicAction.Category)
     geographic_scope = factory.fuzzy.FuzzyChoice(StrategicAction.GeographicScope)
-    supporting_organisations = factory.fuzzy.FuzzyChoice(StrategicAction.SupportingOrgs)
+    supporting_organisations = ["DIT"]
     target_completion_date = factory.Faker("date_object")
     is_archived = False
     specific_related_products = factory.Faker("text")

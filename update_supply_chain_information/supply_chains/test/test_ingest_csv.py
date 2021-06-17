@@ -61,7 +61,7 @@ class TestDataLoader:
         # Assert
         assert re.match(f".*(Successfully) .* {sut.MODEL_SUPPLY_CHAIN}.*", res)
         assert SupplyChain.objects.count() == 3
-        assert SupplyChain.objects.filter(name__startswith="medic").count() == 2
+        assert SupplyChain.objects.filter(name__startswith="Medic").count() == 2
 
     def test_load_sc_data_twice(self):
         # Arrange
@@ -74,7 +74,7 @@ class TestDataLoader:
         # Assert
         assert re.match(f".*(Successfully) .* {sut.MODEL_SUPPLY_CHAIN}.*", res)
         assert SupplyChain.objects.count() == 3
-        assert SupplyChain.objects.filter(name__startswith="medic").count() == 2
+        assert SupplyChain.objects.filter(name__startswith="Medic").count() == 2
 
     def test_load_sc_inv_model(self):
         # Arrange

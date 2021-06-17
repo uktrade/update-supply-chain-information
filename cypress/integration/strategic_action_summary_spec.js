@@ -128,7 +128,7 @@ describe('The strategic action summary page', () => {
       tableElement,
       4,
       'Which other government departments are supporting this strategic action?',
-      'MoD'
+      'MOD'
     )
 
     cy.forms.checkSummaryTableContent(
