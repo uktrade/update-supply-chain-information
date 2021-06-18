@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 import pytest
 from reversion.models import Version
 from django.core.exceptions import ValidationError
+from django.template.defaultfilters import slugify
 
 from supply_chains.models import (
     StrategicAction,
@@ -66,3 +67,16 @@ def test_archived_date_set_save_strategic_action():
     """Test archived_date is set when archived strategic action saved."""
     sa = StrategicActionFactory(is_archived=True, archived_reason="A reason")
     assert sa.archived_date == date.today()
+
+
+def test_long_slug():
+    # Arrange
+    long_slug_75_chars = slugify(
+        "Strategic action 1: Incentives to pivot API sourcing abdcfe asdfadsf asdfs"
+    )
+
+    # Act
+    sc = SupplyChainFactory(slug=long_slug_75_chars)
+
+    # Assert
+    assert sc.slug == long_slug_75_chars
