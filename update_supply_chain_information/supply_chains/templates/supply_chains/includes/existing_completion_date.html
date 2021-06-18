@@ -1,20 +1,30 @@
-{% with strategic_action_update.strategic_action as sa %}
-    {% if sa.target_completion_date or sa.is_ongoing %}
-        <div class="govuk-inset-text">
-            <h2 class="govuk-heading-s">Current estimated date of completion</h2>
-            {% if sa.target_completion_date %}
-                <p>{{ sa.target_completion_date|date:"j F Y" }}</p>
-            {% else %}
-                <p>Ongoing</p>
-            {% endif %}
-        </div>
-    {% else %}
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-                <span class="govuk-warning-text__assistive">Warning</span>
-                There's no expected completion date for this action.
-            </strong>
-        </div>
-    {% endif %}
+{% with sau=strategic_action_update sa=strategic_action_update.strategic_action %}
+    {% with has_adjusted_timing=sau.value_for_timing has_current_timing=sa.value_for_timing %}
+        {% if has_adjusted_timing or has_current_timing %}
+            <div class="govuk-inset-text">
+                <h2 class="govuk-heading-s">{% if has_adjusted_timing %}Adjusted{% else %}Current{% endif %} estimated date of completion</h2>
+                {% if has_adjusted_timing %}
+                    {% if sau.changed_value_for_target_completion_date %}
+                        <p>{{ sau.changed_value_for_target_completion_date|date:"j F Y" }}</p>
+                    {% elif sau.changed_value_for_is_ongoing %}
+                        <p>Ongoing</p>
+                    {% endif %}
+                {% else %}
+                    {% if sa.target_completion_date %}
+                        <p>{{ sa.target_completion_date|date:"j F Y" }}</p>
+                    {% elif sa.is_ongoing %}
+                        <p>Ongoing</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-warning-text__assistive">Warning</span>
+                    There's no expected completion date for this action.
+                </strong>
+            </div>
+        {% endif %}
+    {% endwith %}
 {% endwith %}

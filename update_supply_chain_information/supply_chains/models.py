@@ -209,6 +209,9 @@ class StrategicAction(models.Model):
     def last_submitted_update(self):
         return self.monthly_updates.last_month()
 
+    def value_for_timing(self):
+        return self.target_completion_date or self.is_ongoing or False
+
     def __str__(self):
         return f"SA: {self.name}, {self.supply_chain.gov_department.name}, {self.get_geographic_scope_display()}, SC: {self.supply_chain.name}"
 
@@ -427,6 +430,13 @@ class StrategicActionUpdate(models.Model):
             and self.initial_timing_complete
             and self.action_status_complete
             and self.revised_timing_complete
+        )
+
+    def value_for_timing(self):
+        return (
+            self.changed_value_for_target_completion_date
+            or self.changed_value_for_is_ongoing
+            or False
         )
 
     def __str__(self):
