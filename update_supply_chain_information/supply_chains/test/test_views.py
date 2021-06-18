@@ -108,6 +108,21 @@ def test_homepage_update_incomplete(logged_in_client, test_user):
     )
 
 
+def test_homepage_filters_out_archived_supply_chains(logged_in_client, test_user):
+    gov_department = test_user.gov_department
+    # Create archived supply chains
+    SupplyChainFactory.create_batch(
+        5, gov_department=gov_department, is_archived=True, archived_reason="Reason"
+    )
+    # Create non archived supply chains
+    SupplyChainFactory.create_batch(5, gov_department=gov_department)
+
+    num_unarchived_supply_chains = SupplyChain.objects.filter(is_archived=False).count()
+    response = logged_in_client.get(reverse("index"))
+
+    assert len(response.context["supply_chains"]) == num_unarchived_supply_chains
+
+
 def test_strat_action_summary_page_unauthenticated(test_supply_chain):
     """Test unauthenticated request is redirected."""
     client = Client()
@@ -211,7 +226,7 @@ class TestMonthlyUpdateTimingPage:
             )
 
 
-class TestNoCompletionDateMonthlyUpdateNavigationLinks:
+class TestNoCompletionDateMonthlyUpdateNavigationItems:
     def setup_method(self, *args, **kwargs):
         self.supply_chain = SupplyChainFactory()
         self.strategic_action = StrategicActionFactory(supply_chain=self.supply_chain)
@@ -239,11 +254,12 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" not in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "is_current_page" in navigation_links["Info"]
+        assert "Timing" in navigation_links
+        assert "Status" in navigation_links
+        assert "RevisedTiming" not in navigation_links
+        assert "Summary" in navigation_links
 
     def test_timing_view_has_info_timing_status_summary_links(
         self, logged_in_client, test_user
@@ -264,11 +280,13 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" not in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "not_a_link" not in navigation_links["Info"]
+        assert "Timing" in navigation_links
+        assert "is_current_page" in navigation_links["Timing"]
+        assert "Status" in navigation_links
+        assert "RevisedTiming" not in navigation_links
+        assert "Summary" in navigation_links
 
     def test_status_view_has_info_timing_status_summary_links(
         self, logged_in_client, test_user
@@ -289,11 +307,14 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" not in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "not_a_link" not in navigation_links["Info"]
+        assert "Timing" in navigation_links
+        assert "not_a_link" not in navigation_links["Timing"]
+        assert "Status" in navigation_links
+        assert "is_current_page" in navigation_links["Status"]
+        assert "RevisedTiming" not in navigation_links
+        assert "Summary" in navigation_links
 
     def test_summary_view_has_info_timing_status_summary_links(
         self, logged_in_client, test_user
@@ -314,14 +335,18 @@ class TestNoCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" not in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "not_a_link" not in navigation_links["Info"]
+        assert "Timing" in navigation_links
+        assert "not_a_link" not in navigation_links["Timing"]
+        assert "Status" in navigation_links
+        assert "not_a_link" not in navigation_links["Status"]
+        assert "RevisedTiming" not in navigation_links
+        assert "Summary" in navigation_links
+        assert "is_current_page" in navigation_links["Summary"]
 
 
-class TestWithCompletionDateMonthlyUpdateNavigationLinks:
+class TestWithCompletionDateMonthlyUpdateNavigationItems:
     def setup_method(self):
         self.supply_chain = SupplyChainFactory()
         self.strategic_action = StrategicActionFactory(supply_chain=self.supply_chain)
@@ -346,11 +371,12 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" not in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" not in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "is_current_page" in navigation_links["Info"]
+        assert "Timing" not in navigation_links
+        assert "Status" in navigation_links
+        assert "RevisedTiming" not in navigation_links
+        assert "Summary" in navigation_links
 
     def test_info_view_has_info_status_revisedtiming_summary_links_if_completion_date_changed(
         self, logged_in_client, test_user
@@ -374,11 +400,12 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" not in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "is_current_page" in navigation_links["Info"]
+        assert "Timing" not in navigation_links
+        assert "Status" in navigation_links
+        assert "RevisedTiming" in navigation_links
+        assert "Summary" in navigation_links
 
     def test_info_view_has_info_status_revisedtiming_summary_links_if_is_ongoing_changed(
         self, logged_in_client, test_user
@@ -400,11 +427,12 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" not in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "is_current_page" in navigation_links["Info"]
+        assert "Timing" not in navigation_links
+        assert "Status" in navigation_links
+        assert "RevisedTiming" in navigation_links
+        assert "Summary" in navigation_links
 
     def test_status_view_has_info_status_summary_links_if_completion_date_unchanged(
         self, logged_in_client, test_user
@@ -422,11 +450,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" not in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" not in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "not_a_link" not in navigation_links["Info"]
+        assert "Timing" not in navigation_links
+        assert "Status" in navigation_links
+        assert "is_current_page" in navigation_links["Status"]
+        assert "RevisedTiming" not in navigation_links
+        assert "Summary" in navigation_links
 
     def test_status_view_has_info_status_revisedtiming_summary_links_if_completion_date_changed(
         self, logged_in_client, test_user
@@ -450,11 +480,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" not in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "not_a_link" not in navigation_links["Info"]
+        assert "Timing" not in navigation_links
+        assert "Status" in navigation_links
+        assert "is_current_page" in navigation_links["Status"]
+        assert "RevisedTiming" in navigation_links
+        assert "Summary" in navigation_links
 
     def test_status_view_has_info_status_revisedtiming_summary_links_if_is_ongoing_changed(
         self, logged_in_client, test_user
@@ -476,11 +508,13 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" not in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "not_a_link" not in navigation_links["Info"]
+        assert "Timing" not in navigation_links
+        assert "Status" in navigation_links
+        assert "is_current_page" in navigation_links["Status"]
+        assert "RevisedTiming" in navigation_links
+        assert "Summary" in navigation_links
 
     def test_revised_timing_view_has_info_status_revisedtiming_summary_links(
         self, logged_in_client, test_user
@@ -498,11 +532,14 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" not in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "not_a_link" not in navigation_links["Info"]
+        assert "Timing" not in navigation_links
+        assert "Status" in navigation_links
+        assert "not_a_link" not in navigation_links["Status"]
+        assert "RevisedTiming" in navigation_links
+        assert "is_current_page" in navigation_links["RevisedTiming"]
+        assert "Summary" in navigation_links
 
     def test_summary_view_has_info_status_summary_links_if_completion_date_unchanged(
         self, logged_in_client, test_user
@@ -520,11 +557,14 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" not in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" not in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "not_a_link" not in navigation_links["Info"]
+        assert "Timing" not in navigation_links
+        assert "Status" in navigation_links
+        assert "not_a_link" not in navigation_links["Status"]
+        assert "RevisedTiming" not in navigation_links
+        assert "Summary" in navigation_links
+        assert "is_current_page" in navigation_links["Summary"]
 
     def test_summary_view_has_info_status_revised_timing_summary_links_if_completion_date_changed(
         self, logged_in_client, test_user
@@ -548,11 +588,15 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" not in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "not_a_link" not in navigation_links["Info"]
+        assert "Timing" not in navigation_links
+        assert "Status" in navigation_links
+        assert "not_a_link" not in navigation_links["Status"]
+        assert "RevisedTiming" in navigation_links
+        assert "not_a_link" not in navigation_links["RevisedTiming"]
+        assert "Summary" in navigation_links
+        assert "is_current_page" in navigation_links["Summary"]
 
     def test_summary_view_has_info_status_revised_timing_summary_links_if_is_ongoing_changed(
         self, logged_in_client, test_user
@@ -574,11 +618,15 @@ class TestWithCompletionDateMonthlyUpdateNavigationLinks:
         response = logged_in_client.get(url)
 
         navigation_links = response.context_data["navigation_links"]
-        assert "Info" in navigation_links.keys()
-        assert "Timing" not in navigation_links.keys()
-        assert "Status" in navigation_links.keys()
-        assert "RevisedTiming" in navigation_links.keys()
-        assert "Summary" in navigation_links.keys()
+        assert "Info" in navigation_links
+        assert "not_a_link" not in navigation_links["Info"]
+        assert "Timing" not in navigation_links
+        assert "Status" in navigation_links
+        assert "not_a_link" not in navigation_links["Status"]
+        assert "RevisedTiming" in navigation_links
+        assert "not_a_link" not in navigation_links["RevisedTiming"]
+        assert "Summary" in navigation_links
+        assert "is_current_page" in navigation_links["Summary"]
 
 
 class TestMonthlyUpdateFormPagesPermissions:
