@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 import pytest
 from reversion.models import Version
 from django.core.exceptions import ValidationError
+from django.template.defaultfilters import slugify
 
 from supply_chains.models import (
     StrategicAction,
@@ -110,14 +111,28 @@ class TestStrategicActionUpdate:
     def test_slug_init_without_factory(self):
         # Arrange
         strategic_action = StrategicActionFactory()
+
         # Act
         sau = StrategicActionUpdate.objects.create(
             status=StrategicActionUpdate.Status.IN_PROGRESS,
             supply_chain=strategic_action.supply_chain,
             strategic_action=strategic_action,
         )
+
         # Assert
         assert date.today().strftime("%m-%Y") == sau.slug
+
+    def test_long_slug(self):
+        # Arrange
+        long_slug_75_chars = slugify(
+            "Strategic action 1: Incentives to pivot API sourcing abdcfe asdfadsf asdfs"
+        )
+
+        # Act
+        sc = SupplyChainFactory(slug=long_slug_75_chars)
+
+        # Assert
+        assert sc.slug == long_slug_75_chars
 
     def test_implementation_rag_rating_field_choices_are_green_amber_red(self):
         """

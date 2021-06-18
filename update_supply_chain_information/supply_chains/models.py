@@ -13,6 +13,9 @@ from accounts.models import GovDepartment
 from supply_chains.utils import get_last_working_day_of_previous_month
 
 
+MAX_SLUG_LENGTH = 75
+
+
 class RAGRating(models.TextChoices):
     RED = ("RED", "Red")
     AMBER = ("AMBER", "Amber")
@@ -55,7 +58,7 @@ class SupplyChain(models.Model):
         max_length=6,
     )
     risk_severity_status_disagree_reason = models.TextField(blank=True)
-    slug = models.SlugField(null=True, blank=True)
+    slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
     is_archived = models.BooleanField(default=False)
     archived_reason = models.TextField(blank=True)
     archived_date = models.DateField(null=True, blank=True)
@@ -147,7 +150,7 @@ class StrategicAction(models.Model):
         on_delete=models.PROTECT,
         related_name="strategic_actions",
     )
-    slug = models.SlugField(null=True, blank=True)
+    slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
@@ -274,7 +277,7 @@ class StrategicActionUpdate(models.Model):
         on_delete=models.PROTECT,
         related_name="monthly_updates",
     )
-    slug = models.SlugField(null=True, blank=True)
+    slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
 
     def save(self, *args, **kwargs):
         if self.status == StrategicActionUpdate.Status.SUBMITTED:
