@@ -1,5 +1,5 @@
 {% with sau=strategic_action_update sa=strategic_action_update.strategic_action %}
-    {% with has_adjusted_timing=sau.value_for_timing has_current_timing=sa.value_for_timing %}
+    {% with has_adjusted_timing=sau.has_timing_info has_current_timing=sa.has_timing_info %}
         {% if has_adjusted_timing or has_current_timing %}
             <div class="govuk-inset-text">
                 <h2 class="govuk-heading-s">{% if has_adjusted_timing %}Adjusted{% else %}Current{% endif %} estimated date of completion</h2>
