@@ -1,11 +1,11 @@
-from datetime import date, datetime
+from datetime import date
 from typing import List, Dict
 
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import date as date_filter
-from django.db.models import Count
+from django.db.models import Count, When, Case, Value
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -48,7 +48,9 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
             is_archived=False
         )
         return supply_chains.annotate(
-            strategic_action_count=Count("strategic_actions")
+            strategic_action_count=Count(
+                Case(When(strategic_actions__is_archived=False, then=Value(1)))
+            )
         ).order_by("name")
 
     def get_context_data(self, **kwargs):

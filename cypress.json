@@ -1,4 +1,7 @@
 {
+    "env": {
+        "FEEDBACK_GROUP_EMAIL": "feedback@email"
+    },
     "baseUrl": "http://localhost:8001",
     "defaultCommandTimeout": 2000,
     "videoUploadOnPasses": false,
