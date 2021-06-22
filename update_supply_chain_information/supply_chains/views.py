@@ -696,5 +696,5 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
         return context
 
 
-class PrivacyPolicyView(LoginRequiredMixin, TemplateView):
-    template_name = "privacy_policy.html"
+class PrivacyNoticeView(LoginRequiredMixin, TemplateView):
+    template_name = "privacy_notice.html"
