@@ -813,7 +813,7 @@ describe('Testing monthly update forms', () => {
                   })
                 })
                 context('Selecting a duration, providing a reason and submitting the form', function() {
-                  it('should go to the "Delivery status" page when saved', function() {
+                  it('should go to the "Check your Answers" page when saved', function() {
                     cy.mainForm().fieldLabelled('Reason for date change').type(valuesToEnter.revisedtiming.reason)
                     cy.get('@theNoOption').click()
                     cy.get('@theNoOption').invoke('attr', 'aria-controls').then(function(subjectID) {
@@ -828,6 +828,15 @@ describe('Testing monthly update forms', () => {
                   })
                 })
               })
+            })
+          })
+          context('Returning to the "Delivery Status" page', function() {
+            beforeEach(function() {
+              cy.visit(this.statusURL)
+            })
+            it ('shows the Adjusted completion date', function() {
+              cy.get('h1 ~ .govuk-inset-text > h2').contains("Adjusted estimated date of completion").should('exist')
+              cy.get('h1 ~ .govuk-inset-text > h2 + p').contains(targetCompletionDateRepresentation).should('exist')
             })
           })
         })
