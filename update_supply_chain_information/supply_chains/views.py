@@ -66,12 +66,18 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
         ).count()
         context["gov_department_name"] = self.request.user.gov_department.name
 
+        # Total supply chains are aways sum of supply chains with active SAs.
+        # Though SC with 0 active SA are listed, no action is required and hence not included
+        # for to be completed
+        total_sc_with_active_sa = self.object_list.filter(
+            strategic_actions__is_archived=False
+        ).count()
         context["update_complete"] = (
-            context["num_updated_supply_chains"] == self.object_list.count()
+            context["num_updated_supply_chains"] == total_sc_with_active_sa
         )
 
         context["num_in_prog_supply_chains"] = (
-            self.object_list.count() - context["num_updated_supply_chains"]
+            total_sc_with_active_sa - context["num_updated_supply_chains"]
         )
 
         return context
