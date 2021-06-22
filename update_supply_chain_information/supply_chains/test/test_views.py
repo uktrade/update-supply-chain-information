@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
 
 import pytest
+from django.db.models.query import QuerySet
 from django.test import Client
 from django.urls import reverse
 
@@ -56,10 +57,17 @@ def test_homepage_update_complete(logged_in_client, test_user):
     chains linked to the user's gov department have a last_submission date after
     last deadline.
     """
-    SupplyChainFactory.create_batch(
-        6, gov_department=test_user.gov_department, last_submission_date=date.today()
-    )
+    # Arrange
+    for _ in range(6):
+        sc = SupplyChainFactory(
+            gov_department=test_user.gov_department, last_submission_date=date.today()
+        )
+        StrategicActionFactory(supply_chain=sc)
+
+    # Act
     response = logged_in_client.get("/")
+
+    # Assert
     assert response.status_code == 200
     assert response.context["update_complete"]
     assert response.context["num_updated_supply_chains"] == 6
@@ -82,15 +90,23 @@ def test_homepage_update_incomplete(logged_in_client, test_user):
     supply chains linked to the user's gov department have a last_submission date
     after last deadline.
     """
-    SupplyChainFactory.create_batch(
-        3, gov_department=test_user.gov_department, last_submission_date=date.today()
-    )
-    SupplyChainFactory.create_batch(
-        3,
-        gov_department=test_user.gov_department,
-        last_submission_date=date.today() - timedelta(35),
-    )
+    # Arrange
+    for _ in range(3):
+        sc = SupplyChainFactory(
+            gov_department=test_user.gov_department, last_submission_date=date.today()
+        )
+        StrategicActionFactory(supply_chain=sc)
+
+        sc2 = SupplyChainFactory(
+            gov_department=test_user.gov_department,
+            last_submission_date=date.today() - timedelta(35),
+        )
+        StrategicActionFactory(supply_chain=sc2)
+
+    # Act
     response = logged_in_client.get("/")
+
+    # Assert
     assert response.status_code == 200
     assert not response.context["update_complete"]
     assert response.context["num_updated_supply_chains"] == 3
@@ -144,6 +160,63 @@ def test_homepage_filters_out_archived_SAs(logged_in_client, test_user):
     # Assert
     supply_chain = resp.context["supply_chains"].object_list[0]
     assert supply_chain.strategic_action_count == archived_count
+
+
+def test_homepage_summary_with_archived_SAs(logged_in_client, test_user):
+    # Arrange
+    active_sa = SupplyChainFactory(
+        name="Medical",
+        gov_department=test_user.gov_department,
+    )
+    sc = SupplyChainFactory(
+        name="carbon",
+        gov_department=test_user.gov_department,
+    )
+
+    StrategicActionFactory.create_batch(5, supply_chain=active_sa)
+    StrategicActionFactory.create_batch(
+        3, supply_chain=sc, is_archived=True, archived_reason="Reason"
+    )
+
+    # Act
+    resp = logged_in_client.get(reverse("index"))
+
+    # Assert
+    assert resp.context["update_complete"] == False
+    assert resp.context["num_in_prog_supply_chains"] == 1
+    assert len(resp.context["supply_chains"]) == 2
+
+
+def test_homepage_summary_complete_with_archived_SAs(logged_in_client, test_user):
+    # Arrange
+    active_sa = SupplyChainFactory(
+        name="Medical",
+        gov_department=test_user.gov_department,
+    )
+    sc = SupplyChainFactory(
+        name="carbon",
+        gov_department=test_user.gov_department,
+    )
+
+    sa = StrategicActionFactory(supply_chain=active_sa)
+    StrategicActionFactory.create_batch(
+        3, supply_chain=sc, is_archived=True, archived_reason="Reason"
+    )
+
+    StrategicActionUpdateFactory()
+    dummy_qs = QuerySet(model=StrategicActionUpdate)
+
+    # Act
+    with mock.patch(
+        "supply_chains.models.SupplyChainQuerySet.submitted_since",
+        return_value=dummy_qs,
+    ):
+        resp = logged_in_client.get(reverse("index"))
+
+    # Assert
+    assert resp.context["update_complete"]
+    assert resp.context["num_in_prog_supply_chains"] == 0
+    assert len(resp.context["supply_chains"]) == 2
 
 
 def test_strat_action_summary_page_unauthenticated(test_supply_chain):
