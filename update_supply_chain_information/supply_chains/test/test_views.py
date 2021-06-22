@@ -123,6 +123,29 @@ def test_homepage_filters_out_archived_supply_chains(logged_in_client, test_user
     assert len(response.context["supply_chains"]) == num_unarchived_supply_chains
 
 
+def test_homepage_filters_out_archived_SAs(logged_in_client, test_user):
+    # Arrange
+    sc = SupplyChainFactory(
+        name="Medical",
+        gov_department=test_user.gov_department,
+    )
+    archived_count = 0
+    sas = StrategicActionFactory.create_batch(10, supply_chain=sc)
+    for i in range(len(sas)):
+        if i % 2 == 0:
+            archived_count += 1
+            sas[i].is_archived = True
+            sas[i].archived_reason = "Reason"
+            sas[i].save()
+
+    # Act
+    resp = logged_in_client.get(reverse("index"))
+
+    # Assert
+    supply_chain = resp.context["supply_chains"].object_list[0]
+    assert supply_chain.strategic_action_count == archived_count
+
+
 def test_strat_action_summary_page_unauthenticated(test_supply_chain):
     """Test unauthenticated request is redirected."""
     client = Client()
