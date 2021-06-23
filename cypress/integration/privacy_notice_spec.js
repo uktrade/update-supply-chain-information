@@ -49,4 +49,7 @@ describe('Privacy notice Page', () => {
       'Back to top'
     )
   })
+  it('displays link to privacy notice in footer', () => {
+    cy.get('a').contains('Privacy').should('have.attr', 'href').and('eq', '/privacy-notice/')
+  })
 })
