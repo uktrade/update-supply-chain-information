@@ -18,6 +18,7 @@ cy.forms = {
 export function urlBuilder(supplyChain, strategicAction, strategicActionUpdate) {
     return {
         home: Cypress.config('baseUrl'),
+        privacy: `${Cypress.config('baseUrl')}/privacy-notice/`,
             supplyChain: {
         taskList: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/`,
             summary: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/summary/`,
