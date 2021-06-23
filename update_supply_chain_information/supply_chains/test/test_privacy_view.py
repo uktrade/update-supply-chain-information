@@ -9,35 +9,6 @@ from supply_chains.test.factories import (
 
 
 pytestmark = pytest.mark.django_db
-# Status = StrategicActionUpdate.Status
-
-
-# @pytest.fixture
-# def taskcomp_stub(test_user):
-#     sc_name = "Supply Chain 1"
-#     sc = SupplyChainFactory.create(
-#         name=sc_name,
-#         gov_department=test_user.gov_department,
-#         last_submission_date=date.today(),
-#     )
-#     scs = SupplyChainFactory.create_batch(
-#         2, name=sc_name + "00", gov_department=test_user.gov_department
-#     )
-#     sa = StrategicActionFactory.create(supply_chain=sc)
-#     StrategicActionUpdateFactory(
-#         status=Status.SUBMITTED,
-#         submission_date=date.today(),
-#         strategic_action=sa,
-#         supply_chain=sc,
-#     )
-
-#     yield {
-#         "sc_name": sc_name,
-#         "url": reverse(
-#             "supply-chain-update-complete",
-#             kwargs={"supply_chain_slug": slugify(sc_name)},
-#         ),
-#     }
 
 
 class TestPrivacyNoticeView:
