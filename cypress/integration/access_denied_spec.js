@@ -16,7 +16,7 @@ describe('The access denied page', () => {
       cy.get('h1').contains('Access denied')
       cy.get('p').contains('You do not have permission to access this page.')
       cy.get('p').contains('Please try one of the following:')
-      cy.get('ul').children().should('have.length', 4)
+      cy.get('#message-list').children().should('have.length', 4)
       cy.get('li').contains('If you typed the web address, check it is correct')
       cy.get('li').contains('If you pasted the web address, check you copied the entire address')
       cy.get('li').contains('Browse the homepage to find the information you need')
