@@ -634,8 +634,9 @@ describe('Testing monthly update forms', () => {
             it('has the correct page header', function() {
               cy.monthlyUpdatePageHeader(this.strategicAction.name).should('exist')
             })
-            it ('warns that there is no expected completion date', () => {
-              cy.get('body').get('h1 ~ .govuk-warning-text').contains("There's no expected completion date for this action.").should('exist')
+            it ('shows the "Adjusted" completion date just specified on the Timing page', function() {
+              cy.get('h1 ~ .govuk-inset-text > h2').contains("Adjusted estimated date of completion").should('exist')
+              cy.get('h1 ~ .govuk-inset-text > h2 + p').contains(targetCompletionDateRepresentation).should('exist')
             })
             it ('shows instructions', () => {
               cy.mainForm().find('legend + .govuk-body > p:first-of-type').contains('When considering if delivery of the strategic action is on track, consider:');
@@ -759,6 +760,18 @@ describe('Testing monthly update forms', () => {
               })
             })
           })
+          context('Returning to the "Timing" page and selecting Ongoing then coming back to "Delivery Status"', function() {
+            beforeEach(function() {
+              cy.visit(this.timingURL)
+              cy.mainForm().fieldLabelled('No').click()
+              cy.mainForm().fieldLabelled('Ongoing').click()
+              cy.mainForm().submitButton().click()
+            })
+            it ('shows the "Adjusted" timing as "Ongoing"', function() {
+              cy.get('h1 ~ .govuk-inset-text > h2').contains("Adjusted estimated date of completion").should('exist')
+              cy.get('h1 ~ .govuk-inset-text > h2 + p').contains('Ongoing').should('exist')
+            })
+          })
         })
         context('The Check Your Answers page', () => {
           beforeEach(() => {
@@ -873,7 +886,13 @@ describe('Testing monthly update forms', () => {
                 })
               })
               context('the Timing row', () => {
-                beforeEach(() => {
+                beforeEach(function() {
+                  // tidy up timing so the expected conditions are met
+                  cy.visit(this.timingURL)
+                  cy.mainForm().fieldLabelled('No').click()
+                  cy.mainForm().fieldLabelled('1 year').click()
+                  cy.mainForm().submitButton().click()
+                  cy.visit(this.confirmURL)
                   cy.govukMain().summaryLists().eq(1).as('summary')
                 })
                 it('labelled "Estimated date of completion"', () => {

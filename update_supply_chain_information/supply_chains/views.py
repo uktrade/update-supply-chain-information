@@ -1,11 +1,11 @@
-from datetime import date, datetime
+from datetime import date
 from typing import List, Dict
 
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import date as date_filter
-from django.db.models import Count
+from django.db.models import Count, When, Case, Value
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -48,7 +48,9 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
             is_archived=False
         )
         return supply_chains.annotate(
-            strategic_action_count=Count("strategic_actions")
+            strategic_action_count=Count(
+                Case(When(strategic_actions__is_archived=False, then=Value(1)))
+            )
         ).order_by("name")
 
     def get_context_data(self, **kwargs):
@@ -64,12 +66,18 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
         ).count()
         context["gov_department_name"] = self.request.user.gov_department.name
 
+        # Total supply chains are aways sum of supply chains with active SAs.
+        # Though SC with 0 active SA are listed, no action is required and hence not included
+        # for to be completed
+        total_sc_with_active_sa = self.object_list.filter(
+            strategic_actions__is_archived=False
+        ).count()
         context["update_complete"] = (
-            context["num_updated_supply_chains"] == self.object_list.count()
+            context["num_updated_supply_chains"] == total_sc_with_active_sa
         )
 
         context["num_in_prog_supply_chains"] = (
-            self.object_list.count() - context["num_updated_supply_chains"]
+            total_sc_with_active_sa - context["num_updated_supply_chains"]
         )
 
         return context

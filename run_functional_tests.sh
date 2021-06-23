@@ -10,9 +10,6 @@ docker-compose -f docker-compose.yaml -f docker-compose.override.yaml up -d
 # Run all cypress tests after a 5 second delay to allow the django server to be brought up
 export SET_HSTS_HEADERS='False'
 export DATABASE_URL=postgres://postgres:password@localhost:5432/test_supply_chain_info
-export FEEDBACK_GROUP_EMAIL=feedback@email
-# Accessible by Cypress.env()
-export CYPRESS_FEEDBACK_GROUP_EMAIL=feedback@email
 
 make create-test-db
 
