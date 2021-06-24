@@ -102,6 +102,7 @@ supply_chain_urlpatterns = [
         include(
             [
                 path("", SCTaskListView.as_view(), name="supply-chain-task-list"),
+                path("summary/", SCSummary.as_view(), name="supply-chain-summary"),
                 path(
                     "complete/",
                     SCCompleteView.as_view(),
