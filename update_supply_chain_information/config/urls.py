@@ -24,6 +24,7 @@ from supply_chains.views import (
     MonthlyUpdateStatusEditView,
     MonthlyUpdateRevisedTimingEditView,
     MonthlyUpdateSummaryView,
+    PrivacyNoticeView,
 )
 
 router = routers.DefaultRouter()
@@ -95,6 +96,7 @@ strategic_action_urlpatterns = [
 supply_chain_urlpatterns = [
     path("", HomePageView.as_view(), name="index"),
     path("summary/", SCSummary.as_view(), name="supply-chain-summary"),
+    path("privacy-notice/", PrivacyNoticeView.as_view(), name="privacy"),
     path(
         "<slug:supply_chain_slug>/",
         include(

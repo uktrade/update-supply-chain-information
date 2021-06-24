@@ -7,9 +7,13 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.template.defaultfilters import slugify
+from django.contrib.postgres.fields import ArrayField
 
 from accounts.models import GovDepartment
 from supply_chains.utils import get_last_working_day_of_previous_month
+
+
+MAX_SLUG_LENGTH = 75
 
 
 class RAGRating(models.TextChoices):
@@ -45,7 +49,7 @@ class SupplyChain(models.Model):
         max_length=settings.CHARFIELD_MAX_LENGTH, blank=True
     )
     vulnerability_status = models.CharField(
-        choices=StatusRating.choices,
+        choices=RAGRating.choices,
         max_length=6,
     )
     vulnerability_status_disagree_reason = models.TextField(blank=True)
@@ -54,7 +58,7 @@ class SupplyChain(models.Model):
         max_length=6,
     )
     risk_severity_status_disagree_reason = models.TextField(blank=True)
-    slug = models.SlugField(null=True, blank=True)
+    slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
     is_archived = models.BooleanField(default=False)
     archived_reason = models.TextField(blank=True)
     archived_date = models.DateField(null=True, blank=True)
@@ -123,9 +127,12 @@ class StrategicAction(models.Model):
         choices=GeographicScope.choices,
         max_length=12,
     )
-    supporting_organisations = models.CharField(
-        max_length=24, choices=SupportingOrgs.choices, blank=True
+
+    supporting_organisations = ArrayField(
+        models.CharField(max_length=24, choices=SupportingOrgs.choices, blank=True),
+        blank=True,
     )
+
     is_ongoing = models.BooleanField(default=False)
     target_completion_date = models.DateField(null=True, blank=True)
     is_archived = models.BooleanField(default=False)
@@ -144,7 +151,7 @@ class StrategicAction(models.Model):
         on_delete=models.PROTECT,
         related_name="strategic_actions",
     )
-    slug = models.SlugField(null=True, blank=True)
+    slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
@@ -202,8 +209,8 @@ class StrategicAction(models.Model):
     def last_submitted_update(self):
         return self.monthly_updates.last_month()
 
-    def __str__(self):
-        return f"SA: {self.name}, {self.supply_chain.gov_department.name}, {self.get_geographic_scope_display()}, SC: {self.supply_chain.name}"
+    def has_timing_info(self):
+        return self.target_completion_date or self.is_ongoing
 
     def __str__(self):
         return f"{self.name}, {self.supply_chain}"
@@ -271,7 +278,7 @@ class StrategicActionUpdate(models.Model):
         on_delete=models.PROTECT,
         related_name="monthly_updates",
     )
-    slug = models.SlugField(null=True, blank=True)
+    slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
 
     def save(self, *args, **kwargs):
         if self.status == StrategicActionUpdate.Status.SUBMITTED:
@@ -306,9 +313,6 @@ class StrategicActionUpdate(models.Model):
             except KeyError:
                 pass
             self.save(*args, **kwargs)
-
-    def __str__(self):
-        return f"SAU: {self.strategic_action.name}, {self.slug}, {self.get_status_display()}"
 
     @property
     def has_existing_target_completion_date(self):
@@ -370,6 +374,66 @@ class StrategicActionUpdate(models.Model):
     @property
     def has_no_timing_information(self):
         return self.has_no_target_completion_date and self.has_no_is_ongoing
+
+    @property
+    def has_new_timing(self):
+        return self.has_new_target_completion_date or self.has_new_is_ongoing
+
+    @property
+    def has_existing_timing(self):
+        return self.has_existing_target_completion_date or self.is_currently_ongoing
+
+    @property
+    def has_revised_timing(self):
+        return self.has_existing_timing and (
+            self.changed_value_for_target_completion_date
+            or self.changed_value_for_is_ongoing
+        )
+
+    @property
+    def needs_initial_timing(self):
+        return not self.has_existing_timing
+
+    @property
+    def content_complete(self):
+        return bool(self.content)
+
+    @property
+    def initial_timing_complete(self):
+        return self.has_existing_timing or self.has_new_timing
+
+    @property
+    def action_status_complete(self):
+        return self.implementation_rag_rating is not None and (
+            self.implementation_rag_rating == RAGRating.GREEN or self.reason_for_delays
+        )
+
+    @property
+    def revised_timing_complete(self):
+        # there's no clear way to know if revised timing is needed;
+        # if it's been provided, then it was needed, but if it wasn't
+        # it still might have been needed.
+        # But other code assumes if it doesn't exist, it isn't needed.
+        # However, if it does exist, we do need a reason for it.
+        return (not self.has_revised_timing) or self.reason_for_completion_date_change
+
+    @property
+    def complete(self):
+        """
+        Tells us if all required information has been provided
+        """
+        return (
+            self.content_complete
+            and self.initial_timing_complete
+            and self.action_status_complete
+            and self.revised_timing_complete
+        )
+
+    def has_timing_info(self):
+        return (
+            self.changed_value_for_target_completion_date
+            or self.changed_value_for_is_ongoing
+        )
 
     def __str__(self):
         return f"Update {self.slug} for {self.strategic_action}"

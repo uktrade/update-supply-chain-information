@@ -1,14 +1,13 @@
 import pytest
 from django.test import Client
 from django.urls import reverse
-from django.template.defaultfilters import slugify
 
 from supply_chains.test.factories import (
     SupplyChainFactory,
     GovDepartmentFactory,
     UserFactory,
 )
-from supply_chains.models import SupplyChain
+from supply_chains.models import SupplyChain, RAGRating
 
 
 pytestmark = pytest.mark.django_db
@@ -20,7 +19,7 @@ def sc_stub(test_user):
     sc_name = "Supply Chain 1"
     sc_con_name = "HelloWorld"
     sc_con_email = "hello@local"
-    sc_vul_status = Rating.LOW
+    sc_vul_status = RAGRating.GREEN
     sc_risk_status = Rating.MEDIUM
     sc = SupplyChainFactory.create(
         name=sc_name,

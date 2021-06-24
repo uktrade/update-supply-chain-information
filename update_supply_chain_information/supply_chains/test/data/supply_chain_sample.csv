@@ -1,4 +1,4 @@
-id,name,contact_name,contact_email,vulnerability_status,vulnerability_status_disagree_reason,risk_severity_status,risk_severity_status_disagree_reason,is_archived,archived_date,last_submission_date,gov_department
-fecad835-63f8-4a60-b408-b80c10f80bef,medicines,,,red,,,high,0,,4/30/21,07622ccf-ecc5-49bb-949a-0064ab996fa1
-4c3b8ef7-f36c-4280-9f59-ee74025b6751,medical devices and consumables,,,amber,,,high,0,,4/30/21,07622ccf-ecc5-49bb-949a-0064ab996fa1
-59a60a43-ac85-4113-9a39-35d6709a3a31,vaccines,,,red,,,high,0,,4/30/21,07622ccf-ecc5-49bb-949a-0064ab996fa1
+id,name,contact_name,contact_email,vulnerability_status,vulnerability_status_disagree_reason,risk_severity_status_disagree_reason,risk_severity_status,is_archived,archived_date,last_submission_date,gov_department
+fecad835-63f8-4a60-b408-b80c10f80bef,Medicines,,,red,,,high,0,,4/30/21,07622ccf-ecc5-49bb-949a-0064ab996fa1
+4c3b8ef7-f36c-4280-9f59-ee74025b6751,Medical devices and consumables,,,amber,,,high,0,,4/30/21,07622ccf-ecc5-49bb-949a-0064ab996fa1
+59a60a43-ac85-4113-9a39-35d6709a3a31,Vaccines,,,red,,,high,0,,4/30/21,07622ccf-ecc5-49bb-949a-0064ab996fa1
