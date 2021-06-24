@@ -5,7 +5,7 @@ from django.test import Client
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 
-from supply_chains.models import StrategicActionUpdate
+from supply_chains.models import StrategicActionUpdate, SupplyChain
 from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,
@@ -82,11 +82,29 @@ class TestTaskCompleteView:
         print(f'view: {resp.context["view"]}')
         assert resp.context["view"].supply_chain.name == taskcomp_stub["sc_name"]
 
-    def test_action_summary(self, logged_in_client, taskcomp_stub):
+    def test_SC_complete_summary(self, logged_in_client, taskcomp_stub):
         # Arrange
         # Act
         resp = logged_in_client.get(taskcomp_stub["url"])
 
         # Assert
+        assert resp.context["view"].sum_of_supply_chains == 3
+        assert resp.context["view"].num_updated_supply_chains == 1
+
+    def test_SC_complete_summary_with_archived(
+        self, logged_in_client, taskcomp_stub, test_user
+    ):
+        # Arrange
+        SupplyChainFactory.create(
+            is_archived=True,
+            archived_reason="reason",
+            gov_department=test_user.gov_department,
+        )
+
+        # Act
+        resp = logged_in_client.get(taskcomp_stub["url"])
+
+        # Assert
+        assert SupplyChain.objects.all().count() == 4
         assert resp.context["view"].sum_of_supply_chains == 3
         assert resp.context["view"].num_updated_supply_chains == 1
