@@ -19,9 +19,9 @@ export function urlBuilder(supplyChain, strategicAction, strategicActionUpdate) 
     return {
         home: Cypress.config('baseUrl'),
         privacy: `${Cypress.config('baseUrl')}/privacy-notice/`,
+        summary: `${Cypress.config('baseUrl')}/summary/`,
             supplyChain: {
         taskList: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/`,
-            summary: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/summary/`,
             strategicActions: {
             summary: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/strategic-actions/`,
                 update: {
