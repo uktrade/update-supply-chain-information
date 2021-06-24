@@ -267,7 +267,9 @@ class SCCompleteView(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
                 "supply-chain-task-list", supply_chain_slug=self.supply_chain.slug
             )
 
-        supply_chains = request.user.gov_department.supply_chains.order_by("name")
+        supply_chains = request.user.gov_department.supply_chains.filter(
+            is_archived=False
+        ).order_by("name")
 
         self.sum_of_supply_chains = supply_chains.count()
 
