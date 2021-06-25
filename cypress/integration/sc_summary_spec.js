@@ -8,7 +8,7 @@ const user = users[0].fields
 
 describe('Supply chain summary page', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + `/${supplyChain.fields.slug}/summary/`)
+    cy.visit(Cypress.config('baseUrl') + `/summary/`)
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -21,18 +21,11 @@ describe('Supply chain summary page', () => {
     )
   })
   it('displays breadcrumbs', () => {
+    cy.get('ol').children().should('have.length', 1)
     cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
-    cy.get('li')
-      .contains(`${supplyChain.fields.name}`)
-      .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.fields.slug}/`)
-    cy.get('li')
-      .contains(`Full details of ${supplyChain.fields.name}`)
-      .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.fields.slug}/summary/`)
   })
   it('displays the header', () => {
-    cy.get('h1').contains(`Summary of ${supplyChain.fields.name}`)
+    cy.get('h1').contains('Supply chain summary')
   })
 
   it('displays correct table values', () => {
@@ -77,10 +70,34 @@ describe('Supply chain summary page', () => {
     )
   })
   it('takes user to task list when button is clicked', () => {
-    cy.get('a').contains('Back to task list').click()
+    cy.get('a').contains('Back').click()
     cy.url().should(
       'eq',
-      Cypress.config('baseUrl') + `/${supplyChain.fields.slug}/`
+      Cypress.config('baseUrl') + '/'
     )
+  })
+})
+
+describe('Paginate Supply chains', () => {
+  it('successfully loads', () => {
+    cy.visit(Cypress.config('baseUrl') + '/summary/')
+  })
+  it('displays 5 supply chains in the table', () => {
+    cy.get('.govuk-accordion__section').should('have.length', 5)
+  })
+  it('displays correct items in pagination list', () => {
+    cy.get('.moj-pagination__list').find('li').should('have.length', 3)
+    cy.get('.moj-pagination__item--active').contains('1')
+    cy.get('.moj-pagination__item').contains('2')
+    cy.get('.moj-pagination__item').contains('Next')
+  })
+  it('displays second page of supply chains after clicking Next', () => {
+    cy.contains('Next').click()
+    cy.url().should('eq', Cypress.config('baseUrl') + `/summary/?page=2`)
+    cy.get('.govuk-accordion__section').should('have.length', 2)
+  })
+  it('displays first page of supply chain after clicking Previous', () => {
+    cy.contains('Previous').click()
+    cy.url().should('eq', Cypress.config('baseUrl') + `/summary/?page=1`)
   })
 })
