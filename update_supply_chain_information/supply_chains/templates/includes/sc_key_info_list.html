@@ -5,7 +5,7 @@
         The contact for<br> this supply chain
       </dt>
       <dd class="govuk-summary-list__value">
-        {{ supply_chain.contact_name }}
+        {{ sc.contact_name }}
       </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -13,17 +13,17 @@
         The email for the<br> supply chain contact
       </dt>
       <dd class="govuk-summary-list__value">
-        {{ supply_chain.contact_email }}
+        {{ sc.contact_email }}
       </dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
-        The current vulnerability status is '{{ supply_chain.vulnerability_status|title }}'. Is this accurate?
+        The current vulnerability status is '{{ sc.vulnerability_status|title }}'. Is this accurate?
       </dt>
       <dd class="govuk-summary-list__value">
-        {% if supply_chain.vulnerability_status_disagree_reason %}
+        {% if sc.vulnerability_status_disagree_reason %}
           No<br>
-          {{ supply_chain.vulnerability_status_disagree_reason }}
+          {{ sc.vulnerability_status_disagree_reason }}
         {% else %}
           Yes
         {% endif %}
@@ -31,12 +31,12 @@
     </div>
     <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
       <dt class="govuk-summary-list__key">
-        The current risk severity level is '{{ supply_chain.risk_severity_status|title }}'. Is this accurate?
+        The current risk severity level is '{{ sc.risk_severity_status|title }}'. Is this accurate?
       </dt>
       <dd class="govuk-summary-list__value">
-        {% if supply_chain.risk_severity_status_disagree_reason %}
+        {% if sc.risk_severity_status_disagree_reason %}
           No<br>
-          {{ supply_chain.risk_severity_status_disagree_reason }}
+          {{ sc.risk_severity_status_disagree_reason }}
         {% else %}
           Yes
         {% endif %}
