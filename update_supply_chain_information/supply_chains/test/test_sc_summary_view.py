@@ -59,6 +59,7 @@ class TestSCSummaryView:
         resp = logged_in_client.get(sc_stub["url"])
 
         # Assert
+        assert SupplyChain.objects.all().count() == 2
         assert resp.status_code == 200
         assert len(resp.context["supply_chains"]) == 1
         assert resp.context["supply_chains"][0].name == sc_stub["sc_name"]

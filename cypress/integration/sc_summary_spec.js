@@ -1,14 +1,16 @@
 import govDepartments from '../fixtures/govDepartment.json'
 import supplyChains from '../fixtures/supplyChains.json'
 import users from '../fixtures/user.json'
+import { urlBuilder } from "../support/utils.js"
 
+const urls = urlBuilder();
 const govDepartment = govDepartments[0].fields
 const supplyChain = supplyChains[0]
 const user = users[0].fields
 
 describe('Supply chain summary page', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + `/summary/`)
+    cy.visit(urls.summary)
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -73,14 +75,14 @@ describe('Supply chain summary page', () => {
     cy.get('a').contains('Back').click()
     cy.url().should(
       'eq',
-      Cypress.config('baseUrl') + '/'
+      urls.home + '/'
     )
   })
 })
 
 describe('Paginate Supply chains', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + '/summary/')
+    cy.visit(urls.summary)
   })
   it('displays 5 supply chains in the table', () => {
     cy.get('.govuk-accordion__section').should('have.length', 5)
@@ -93,11 +95,11 @@ describe('Paginate Supply chains', () => {
   })
   it('displays second page of supply chains after clicking Next', () => {
     cy.contains('Next').click()
-    cy.url().should('eq', Cypress.config('baseUrl') + `/summary/?page=2`)
+    cy.url().should('eq', urls.summary + '?page=2')
     cy.get('.govuk-accordion__section').should('have.length', 2)
   })
   it('displays first page of supply chain after clicking Previous', () => {
     cy.contains('Previous').click()
-    cy.url().should('eq', Cypress.config('baseUrl') + `/summary/?page=1`)
+    cy.url().should('eq', urls.summary + '?page=1')
   })
 })
