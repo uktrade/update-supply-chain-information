@@ -12,9 +12,10 @@ const urls = urlBuilder(supplyChain, strategicAction, strategicActionUpdate);
 
 const expectedTitles = {
     home: () => 'Update supply chain information',
+    privacy: () => `Privacy notice – ${expectedTitles.home()}`,
+    summary: () => `Summary – ${expectedTitles.home()}`,
     supplyChain: {
         taskList: () => `Update ${supplyChain.fields.name} – ${expectedTitles.home()}`,
-        summary: () => `Summary – ${supplyChain.fields.name} – ${expectedTitles.home()}`,
         strategicActions: {
             summary: () => `Strategic actions – ${supplyChain.fields.name} – ${expectedTitles.home()}`,
             update: {
@@ -47,8 +48,8 @@ describe('The Task List page', () => {
 
 describe('The Supply Chain Summary page', () => {
     it('has the correct title', () => {
-        cy.visit(urls.supplyChain.summary);
-        cy.title().should('equal', expectedTitles.supplyChain.summary())
+        cy.visit(urls.summary);
+        cy.title().should('equal', expectedTitles.summary())
     });
 });
 
@@ -107,5 +108,12 @@ describe('The Strategic Action Update Review page', () => {
         cy.visit(urls.supplyChain.taskList);
         cy.get(`#updates .govuk-link[href="${urls.supplyChain.strategicActions.update.review}"]`).click()
         cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.review())
+    });
+});
+
+describe('The Privacy notice page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.privacy);
+        cy.title().should('equal', expectedTitles.privacy())
     });
 });

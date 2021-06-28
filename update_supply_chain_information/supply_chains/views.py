@@ -1,11 +1,11 @@
-from datetime import date, datetime
+from datetime import date
 from typing import List, Dict
 
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import date as date_filter
-from django.db.models import Count
+from django.db.models import Count, When, Case, Value
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.views.generic import (
@@ -23,7 +23,7 @@ from supply_chains.forms import (
     MonthlyUpdateStatusForm,
     MonthlyUpdateTimingForm,
     MonthlyUpdateModifiedTimingForm,
-    StrategicActionEditForm
+    StrategicActionEditForm,
 )
 from supply_chains.models import (
     SupplyChain,
@@ -45,8 +45,13 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
     template_name = "index.html"
 
     def get_queryset(self):
-        return self.request.user.gov_department.supply_chains.annotate(
-            strategic_action_count=Count("strategic_actions")
+        supply_chains = self.request.user.gov_department.supply_chains.filter(
+            is_archived=False
+        )
+        return supply_chains.annotate(
+            strategic_action_count=Count(
+                Case(When(strategic_actions__is_archived=False, then=Value(1)))
+            )
         ).order_by("name")
 
     def get_context_data(self, **kwargs):
@@ -62,12 +67,18 @@ class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
         ).count()
         context["gov_department_name"] = self.request.user.gov_department.name
 
+        # Total supply chains are aways sum of supply chains with active SAs.
+        # Though SC with 0 active SA are listed, no action is required and hence not included
+        # for to be completed
+        total_sc_with_active_sa = self.object_list.filter(
+            strategic_actions__is_archived=False
+        ).count()
         context["update_complete"] = (
-            context["num_updated_supply_chains"] == self.object_list.count()
+            context["num_updated_supply_chains"] == total_sc_with_active_sa
         )
 
         context["num_in_prog_supply_chains"] = (
-            self.object_list.count() - context["num_updated_supply_chains"]
+            total_sc_with_active_sa - context["num_updated_supply_chains"]
         )
 
         return context
@@ -151,25 +162,35 @@ class SCTaskListView(
             slug=supply_chain_slug, is_archived=False
         )
 
-        sa_qset = StrategicAction.objects.filter(supply_chain=self.supply_chain)
+        sa_qset = StrategicAction.objects.filter(
+            supply_chain=self.supply_chain, is_archived=False
+        )
         self.total_sa = sa_qset.count()
 
         self.sa_updates = self._get_sa_update_list(sa_qset)
 
-        self.ready_to_submit_updates = StrategicActionUpdate.objects.since(
-            self.last_deadline,
-            supply_chain=self.supply_chain,
-            status__in=[
-                StrategicActionUpdate.Status.READY_TO_SUBMIT,
-                StrategicActionUpdate.Status.SUBMITTED,
-            ],
-        ).count()
+        self.ready_to_submit_updates = (
+            StrategicActionUpdate.objects.since(
+                self.last_deadline,
+                supply_chain=self.supply_chain,
+                status__in=[
+                    StrategicActionUpdate.Status.READY_TO_SUBMIT,
+                    StrategicActionUpdate.Status.SUBMITTED,
+                ],
+            )
+            .filter(strategic_action__is_archived=False)
+            .count()
+        )
 
-        self.submitted_only_updates = StrategicActionUpdate.objects.since(
-            self.last_deadline,
-            supply_chain=self.supply_chain,
-            status=StrategicActionUpdate.Status.SUBMITTED,
-        ).count()
+        self.submitted_only_updates = (
+            StrategicActionUpdate.objects.since(
+                self.last_deadline,
+                supply_chain=self.supply_chain,
+                status=StrategicActionUpdate.Status.SUBMITTED,
+            )
+            .filter(strategic_action__is_archived=False)
+            .count()
+        )
 
         self.incomplete_updates = self.total_sa - self.ready_to_submit_updates
 
@@ -247,7 +268,9 @@ class SCCompleteView(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
                 "supply-chain-task-list", supply_chain_slug=self.supply_chain.slug
             )
 
-        supply_chains = request.user.gov_department.supply_chains.order_by("name")
+        supply_chains = request.user.gov_department.supply_chains.filter(
+            is_archived=False
+        ).order_by("name")
 
         self.sum_of_supply_chains = supply_chains.count()
 
@@ -263,6 +286,7 @@ class MonthlyUpdateMixin:
     model = StrategicActionUpdate
     context_object_name = "strategic_action_update"
     slug_url_kwarg = "update_slug"
+    object: StrategicActionUpdate = None
 
     def get_queryset(self):
         supply_chain_slug = self.kwargs.get("supply_chain_slug")
@@ -302,16 +326,19 @@ class MonthlyUpdateMixin:
                 "label": "Update information",
                 "url": reverse_lazy("monthly-update-info-edit", kwargs=url_kwargs),
                 "view": MonthlyUpdateInfoEditView,
+                "complete": self.object.content_complete,
             },
             "Timing": {
                 "label": "Timing",
                 "url": reverse_lazy("monthly-update-timing-edit", kwargs=url_kwargs),
                 "view": MonthlyUpdateTimingEditView,
+                "complete": self.object.initial_timing_complete,
             },
             "Status": {
                 "label": "Action status",
                 "url": reverse_lazy("monthly-update-status-edit", kwargs=url_kwargs),
                 "view": MonthlyUpdateStatusEditView,
+                "complete": self.object.action_status_complete,
             },
             "RevisedTiming": {
                 "label": "Revised timing",
@@ -319,25 +346,39 @@ class MonthlyUpdateMixin:
                     "monthly-update-revised-timing-edit", kwargs=url_kwargs
                 ),
                 "view": MonthlyUpdateRevisedTimingEditView,
+                "complete": self.object.revised_timing_complete,
             },
             "Summary": {
                 "label": "Confirm",
                 "url": reverse_lazy("monthly-update-summary", kwargs=url_kwargs),
                 "view": MonthlyUpdateSummaryView,
+                "complete": self.object.complete,
             },
         }
         if self.object.has_existing_target_completion_date:
             navigation_links.pop("Timing")
-            if (
-                not self.object.has_changed_target_completion_date
-                and not isinstance(self, MonthlyUpdateRevisedTimingEditView)
-                and not self.object.is_becoming_ongoing
+            if not self.object.is_changing_target_completion_date and not isinstance(
+                self, MonthlyUpdateRevisedTimingEditView
             ):
                 navigation_links.pop("RevisedTiming")
         else:
             navigation_links.pop("RevisedTiming")
+        found_current_page = False
         for title, info in navigation_links.items():
-            info["is_current_page"] = isinstance(self, info["view"])
+            is_current_page = isinstance(self, info["view"])
+            if is_current_page:
+                found_current_page = True
+                info["is_current_page"] = True
+            if (found_current_page and not info["complete"]) or is_current_page:
+                info["not_a_link"] = True
+        # special case: there's nothing on the model to tell us that the user wants to change timing
+        # for an update with existing timing information, i.e. via the Revised Timing page
+        # so we have to rely on that page being the view for this case
+        if isinstance(self, MonthlyUpdateRevisedTimingEditView):
+            # on the Revised Timing page…
+            if not self.object.is_changing_target_completion_date:
+                # but no values for revised timing have been provided yet
+                navigation_links["Summary"]["not_a_link"] = True
         return navigation_links
 
     def get_context_data(self, **kwargs):
@@ -642,16 +683,19 @@ class SAEditView(LoginRequiredMixin, GovDepPermissionMixin, UpdateView):
         )
 
 
-class SCSummary(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
+class SCSummary(LoginRequiredMixin, PaginationMixin, TemplateView):
     template_name = "sc_summary.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
 
-        context["supply_chain"] = SupplyChain.objects.filter(
-            slug=supply_chain_slug, is_archived=False
-        )[0]
+        context["supply_chains"] = self.paginate(
+            SupplyChain.objects.filter(
+                is_archived=False, gov_department=self.request.user.gov_department
+            ).order_by("name"),
+            5,
+        )
+
         return context
 
 
@@ -688,3 +732,7 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
             )
 
         return context
+
+
+class PrivacyNoticeView(LoginRequiredMixin, TemplateView):
+    template_name = "privacy_notice.html"

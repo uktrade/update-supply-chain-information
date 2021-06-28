@@ -244,14 +244,36 @@ describe('Testing monthly update forms', () => {
                 })
               })
             })
-            context('The link marked as the current page should be', () => {
+            context('The breadcrumb marked as the current page should be', () => {
               beforeEach(() => {
                 cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
               })
               it('the "Update information" link', () => {
                 cy.get('@theBreadcrumbItems').eq(0).within(() => {
-                  cy.root().get('a').should('have.attr', 'aria-current', 'page')
+                  cy.root().find('span').should('have.attr', 'aria-current', 'page')
                 })
+              })
+            })
+            context('The breadcrumbs that are links should be', () => {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('none of them', () => {
+                cy.get('@theBreadcrumbItems').find('a[href]').should('not.exist')
+              })
+            })
+            context('The breadcrumbs that are not links should be', () => {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Update information" item', () => {
+                cy.get('@theBreadcrumbItems').eq(0).find('a[href]').should('not.exist')
+              })
+              it('the "Action status" item', () => {
+                cy.get('@theBreadcrumbItems').eq(1).find('a[href]').should('not.exist')
+              })
+              it('the "Confirm" item', () => {
+                cy.get('@theBreadcrumbItems').eq(2).find('a[href]').should('not.exist')
               })
             })
           })
@@ -342,14 +364,33 @@ describe('Testing monthly update forms', () => {
                 })
               })
             })
-            context('The link marked as the current page should be', () => {
+            context('The breadcrumb marked as the current page should be', () => {
               beforeEach(() => {
                 cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
               })
               it('the "Delivery status" link', () => {
                 cy.get('@theBreadcrumbItems').eq(1).within(() => {
-                  cy.root().get('a').should('have.attr', 'aria-current', 'page')
+                  cy.root().find('span').should('have.attr', 'aria-current', 'page')
                 })
+              })
+            })
+            context('The breadcrumbs that are links should be', () => {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Update information" item', () => {
+                cy.get('@theBreadcrumbItems').eq(0).find('a[href]').should('exist')
+              })
+            })
+            context('The breadcrumbs that are not links should be', () => {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Action status" item', () => {
+                cy.get('@theBreadcrumbItems').eq(1).find('a[href]').should('not.exist')
+              })
+              it('the "Confirm" item', () => {
+                cy.get('@theBreadcrumbItems').eq(2).find('a[href]').should('not.exist')
               })
             })
           })
@@ -597,14 +638,36 @@ describe('Testing monthly update forms', () => {
                 })
               })
             })
-            context('The link marked as the current page should be', () => {
+            context('The breadcrumb marked as the current page should be', () => {
               beforeEach(() => {
                 cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
               })
               it('the "Revised Timing" link', () => {
                 cy.get('@theBreadcrumbItems').eq(2).within(() => {
-                  cy.root().get('a').should('have.attr', 'aria-current', 'page')
+                  cy.root().find('span').should('have.attr', 'aria-current', 'page')
                 })
+              })
+            })
+            context('The breadcrumbs that are links should be', () => {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Update information" item', () => {
+                cy.get('@theBreadcrumbItems').eq(0).find('a[href]').should('exist')
+              })
+              it('the "Action status" item', () => {
+                cy.get('@theBreadcrumbItems').eq(1).find('a[href]').should('exist')
+              })
+            })
+            context('The breadcrumbs that are not links should be', () => {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Revised Timing" link', () => {
+                cy.get('@theBreadcrumbItems').eq(2).find('a[href]').should('not.exist')
+              })
+              it('the "Confirm" item', () => {
+                cy.get('@theBreadcrumbItems').eq(3).find('a[href]').should('not.exist')
               })
             })
           })
@@ -750,7 +813,7 @@ describe('Testing monthly update forms', () => {
                   })
                 })
                 context('Selecting a duration, providing a reason and submitting the form', function() {
-                  it('should go to the "Delivery status" page when saved', function() {
+                  it('should go to the "Check your Answers" page when saved', function() {
                     cy.mainForm().fieldLabelled('Reason for date change').type(valuesToEnter.revisedtiming.reason)
                     cy.get('@theNoOption').click()
                     cy.get('@theNoOption').invoke('attr', 'aria-controls').then(function(subjectID) {
@@ -767,6 +830,15 @@ describe('Testing monthly update forms', () => {
               })
             })
           })
+          context('Returning to the "Delivery Status" page', function() {
+            beforeEach(function() {
+              cy.visit(this.statusURL)
+            })
+            it ('shows the Adjusted completion date', function() {
+              cy.get('h1 ~ .govuk-inset-text > h2').contains("Adjusted estimated date of completion").should('exist')
+              cy.get('h1 ~ .govuk-inset-text > h2 + p').contains(targetCompletionDateRepresentation).should('exist')
+            })
+          })
         })
         context('The Check Your Answers page', function() {
           it('is there', function() {
@@ -776,7 +848,7 @@ describe('Testing monthly update forms', () => {
           it('has no accessibility issues', () => {
             cy.runA11y()
           })
-          context('The Update Info breadcrumbs', function() {
+          context('The Check Your Answers breadcrumbs', function() {
             beforeEach(() => {
               cy.get('nav.moj-sub-navigation').as('theBreadcrumbs')
             })
@@ -808,14 +880,36 @@ describe('Testing monthly update forms', () => {
                 })
               })
             })
-            context('The link marked as the current page should be', () => {
+            context('The breadcrumb marked as the current page should be', () => {
               beforeEach(() => {
                 cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
               })
               it('the "Confirm" link', () => {
                 cy.get('@theBreadcrumbItems').eq(3).within(() => {
-                  cy.root().get('a').should('have.attr', 'aria-current', 'page')
+                  cy.root().find('span').should('have.attr', 'aria-current', 'page')
                 })
+              })
+            })
+            context('The breadcrumbs that are links should be', () => {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Update information" item', () => {
+                cy.get('@theBreadcrumbItems').eq(0).find('a[href]').should('exist')
+              })
+              it('the "Action status" item', () => {
+                cy.get('@theBreadcrumbItems').eq(1).find('a[href]').should('exist')
+              })
+              it('the "Revised Timing" link', () => {
+                cy.get('@theBreadcrumbItems').eq(2).find('a[href]').should('exist')
+              })
+            })
+            context('The breadcrumbs that are not links should be', () => {
+              beforeEach(() => {
+                cy.get('nav.moj-sub-navigation ol.moj-sub-navigation__list li').as('theBreadcrumbItems')
+              })
+              it('the "Confirm" item', () => {
+                cy.get('@theBreadcrumbItems').eq(3).find('a[href]').should('not.exist')
               })
             })
           })

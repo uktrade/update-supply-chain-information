@@ -8,6 +8,9 @@ from django.core.management.commands import loaddata
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files.temp import NamedTemporaryFile
 
+from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
+from accounts.models import GovDepartment
+
 MODEL_GOV_DEPT = "accounts.govdepartment"
 MODEL_SUPPLY_CHAIN = "supply_chains.supplychain"
 MODEL_STRAT_ACTION = "supply_chains.strategicaction"
@@ -19,6 +22,8 @@ ALL_MODELS = [
     MODEL_STRAT_ACTION,
     MODEL_STRAT_ACTION_UPDATE,
 ]
+
+GENERIC_ARCHIVE_REASON = "Archived with generic reason"
 
 
 class Command(BaseCommand):
@@ -78,6 +83,24 @@ class Command(BaseCommand):
         for f in fields:
             row[f] = self._reformat_date(row[f])
 
+    def _update_archive_fields(self, row: Dict) -> Dict:
+        if row["fields"]["is_archived"] == "0":
+            row["fields"]["is_archived"] = False
+        elif row["fields"]["is_archived"] == "1":
+            row["fields"]["is_archived"] = True
+
+        if row["fields"]["is_archived"]:
+            # As archive for supply chain is added recently, historic data may not have all the properties
+            try:
+                row["fields"]["archived_reason"]
+            except KeyError:
+                row["fields"]["archived_reason"] = ""
+
+            if row["fields"]["archived_reason"] == "":
+                row["fields"]["archived_reason"] = GENERIC_ARCHIVE_REASON
+
+        return row
+
     def _format_per_model(self, rows: List) -> List:
 
         for row in rows:
@@ -85,6 +108,12 @@ class Command(BaseCommand):
                 self._update_date_fields(
                     row["fields"], "archived_date", "last_submission_date"
                 )
+
+                row["fields"]["vulnerability_status"] = row["fields"][
+                    "vulnerability_status"
+                ].upper()
+
+                row = self._update_archive_fields(row)
 
             elif row["model"] == MODEL_STRAT_ACTION:
                 self._update_date_fields(
@@ -95,6 +124,13 @@ class Command(BaseCommand):
                 )
 
                 row["fields"].pop("str( not required in database)", None)
+
+                orgs = row["fields"]["supporting_organisations"]
+                row["fields"]["supporting_organisations"] = [
+                    x.strip() for x in orgs.split(",")
+                ]
+
+                row = self._update_archive_fields(row)
 
             elif row["model"] == MODEL_STRAT_ACTION_UPDATE:
                 self._update_date_fields(
@@ -113,6 +149,34 @@ class Command(BaseCommand):
 
         return rows
 
+    def _save_objects(self, model: str) -> None:
+        """Save objects being ingested
+
+        :param str model: specify the model to which data will be imported
+
+        This method is necessary to trigger our save over-rides within models as exisitng
+        admin command loaddata doesn't invoke that.
+        """
+        if model == MODEL_GOV_DEPT:
+            ingested_model = GovDepartment
+
+        if model == MODEL_SUPPLY_CHAIN:
+            ingested_model = SupplyChain
+
+        if model == MODEL_STRAT_ACTION:
+            ingested_model = StrategicAction
+
+        if model == MODEL_STRAT_ACTION_UPDATE:
+            ingested_model = StrategicActionUpdate
+
+        try:
+            for obj in ingested_model.objects.all():
+                obj.save()
+        except Exception:
+            print(f"Deleting ingested data for {model}")
+            ingested_model.objects.all().delete()
+            raise
+
     def handle(self, **options):
         if options["model"] not in ALL_MODELS:
             raise CommandError(
@@ -126,6 +190,7 @@ class Command(BaseCommand):
             json.dump(json_obj, fp)
             fp.seek(0)
             management.call_command(loaddata.Command(), fp.name, format="json")
+            self._save_objects(options["model"])
             self.stdout.write(
                 self.style.SUCCESS(
                     f"Successfully ingested data into {options['model']}"

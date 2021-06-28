@@ -3,7 +3,7 @@ from django.test import Client
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 
-from supply_chains.models import StrategicActionUpdate
+from supply_chains.models import StrategicAction, StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,
@@ -149,6 +149,25 @@ class TestTaskListView:
         assert v.ready_to_submit_updates == 0
         assert v.incomplete_updates == 4
         assert v.supply_chain.name == tasklist_stub["sc_name"]
+
+    def test_archived_actions_dont_appear_in_task_list(
+        self, logged_in_client, tasklist_stub
+    ):
+        # Arrange
+        sc = tasklist_stub["sc"]
+        StrategicActionFactory.create_batch(
+            5, is_archived=True, archived_reason="Reason", supply_chain=sc
+        )
+
+        # Act
+        resp = logged_in_client.get(tasklist_stub["url"])
+
+        # Assert
+        num_unarchived_actions = StrategicAction.objects.filter(
+            supply_chain=sc, is_archived=False
+        ).count()
+        v = resp.context["view"]
+        assert v.total_sa == num_unarchived_actions
 
     def test_action_summary_progress(self, logged_in_client, tasklist_in_prog):
         # Arrange

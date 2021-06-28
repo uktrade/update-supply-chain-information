@@ -55,11 +55,9 @@ class SupplyChainAdmin(admin.ModelAdmin):
         "slug",
         "id",
     )
-    list_display = (
-        "name",
-        "gov_department",
-        "last_submission_date",
-    )
+    list_display = ("name", "gov_department", "last_submission_date", "is_archived")
+
+    list_filter = ("is_archived",)
 
 
 class StrategicActionAdmin(admin.ModelAdmin):
@@ -70,7 +68,19 @@ class StrategicActionAdmin(admin.ModelAdmin):
     list_display = (
         "name",
         "supply_chain",
+        "is_archived",
+        "gov_department",
     )
+
+    list_filter = (
+        "is_archived",
+        "supply_chain",
+        "supply_chain__gov_department",
+    )
+
+    @admin.display(ordering="supply_chain__gov_department")
+    def gov_department(self, obj):
+        return obj.supply_chain.gov_department
 
 
 class StrategicActionUpdateAdmin(admin.ModelAdmin):
@@ -78,11 +88,24 @@ class StrategicActionUpdateAdmin(admin.ModelAdmin):
         "slug",
         "id",
     )
+
     list_display = (
+        "date_created",
         "submission_date",
         "strategic_action",
         "supply_chain",
+        "status",
+        "gov_department",
     )
+
+    list_filter = (
+        "supply_chain",
+        "strategic_action",
+    )
+
+    @admin.display(ordering="supply_chain__gov_department")
+    def gov_department(self, obj):
+        return obj.supply_chain.gov_department
 
 
 admin_site.register(GovDepartment, GovDepartmentAdmin)
