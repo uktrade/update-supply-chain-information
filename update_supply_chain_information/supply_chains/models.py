@@ -75,7 +75,7 @@ class SupplyChain(models.Model):
         return super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"SC: {self.name}, {self.gov_department.name}"
+        return self.name
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
@@ -213,7 +213,10 @@ class StrategicAction(models.Model):
         return self.target_completion_date or self.is_ongoing
 
     def __str__(self):
-        return f"{self.name}, {self.supply_chain}"
+        if __debug__:
+            return f"{self.name}, {self.supply_chain}"
+        else:
+            return self.name
 
 
 class SAUQuerySet(models.QuerySet):
