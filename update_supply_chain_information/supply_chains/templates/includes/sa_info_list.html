@@ -6,6 +6,11 @@
       <dd class="govuk-summary-list__value">
         {{ action.description|default:"No information" }}
       </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> description</span>
+        </a>
+      </dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
@@ -16,6 +21,11 @@
       <dd class="govuk-summary-list__value">
         {{ action.impact|default:"No information" }}
       </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> impact</span>
+        </a>
+      </dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
@@ -23,6 +33,11 @@
       </dt>
       <dd class="govuk-summary-list__value">
         {{ action.get_category_display|default:"No information" }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> category</span>
+        </a>
       </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -32,6 +47,11 @@
       <dd class="govuk-summary-list__value">
         {{ action.get_geographic_scope_display|default:"No information" }}
       </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> geographic_scope</span>
+        </a>
+      </dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
@@ -39,6 +59,11 @@
       </dt>
       <dd class="govuk-summary-list__value">
         {{ action.supporting_organisations|join:", "|default:"No information" }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> supporting_organisations</span>
+        </a>
       </dd>
     </div>
     <div class="govuk-summary-list__row">
@@ -52,6 +77,11 @@
         {{ action.target_completion_date|date:"j F Y"|default:"No information" }}
         {% endif %}
       </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> target_date</span>
+        </a>
+      </dd>
     </div>
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
@@ -60,6 +90,11 @@
       <dd class="govuk-summary-list__value">
         {{ action.other_dependencies|default:"No information" }}
       </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> other_dependencies</span>
+        </a>
+      </dd>
     </div>
     <div class="govuk-summary-list__row govuk-summary-list--no-border">
       <dt class="govuk-summary-list__key">
@@ -67,6 +102,11 @@
       </dt>
       <dd class="govuk-summary-list__value">
         {{ action.specific_related_products|default:"No information" }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="#">
+          Change<span class="govuk-visually-hidden"> related_products</span>
+        </a>
       </dd>
     </div>
 </dl>

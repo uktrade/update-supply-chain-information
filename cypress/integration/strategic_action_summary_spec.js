@@ -94,7 +94,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       0,
       'What does the strategic action involve?',
-      actions[0].description
+      actions[0].description,
+      'Change'
     )
 
     cy.forms.checkSummaryTableContent(
@@ -102,7 +103,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       1,
       'What is the intended impact of the strategic action? How will the action be measured?',
-      actions[0].impact
+      actions[0].impact,
+      'Change'
     )
 
     cy.forms.checkSummaryTableContent(
@@ -110,7 +112,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       2,
       'Which category applies to this strategic action?',
-      'Diversify'
+      'Diversify',
+      'Change'
     )
 
     cy.forms.checkSummaryTableContent(
@@ -118,7 +121,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       3,
       'Does the strategic action apply UK-wide or in England only?',
-      'England only'
+      'England only',
+      'Change'
     )
 
     cy.forms.checkSummaryTableContent(
@@ -126,7 +130,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       4,
       'Which other government departments are supporting this strategic action?',
-      'MOD'
+      'MOD',
+      'Change'
     )
 
     cy.forms.checkSummaryTableContent(
@@ -134,7 +139,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       5,
       'What is the estimated date of completion?',
-      '8 February 2023'
+      '8 February 2023',
+      'Change'
     )
 
     cy.forms.checkSummaryTableContent(
@@ -142,7 +148,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       6,
       'Are there any other dependencies or requirements for applying this strategic action?',
-      actions[0].other_dependencies
+      actions[0].other_dependencies,
+      'Change'
     )
 
     cy.forms.checkSummaryTableContent(
@@ -150,7 +157,8 @@ describe('The strategic action summary page', () => {
       tableElement,
       7,
       'Does this action affect the whole supply chain or a section of supply chains?',
-      actions[0].specific_related_products
+      actions[0].specific_related_products,
+      'Change'
     )
   })
   it('closes a section with the - symbol is clicked', () => {
