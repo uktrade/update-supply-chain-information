@@ -2,20 +2,21 @@ import govDepartments from '../fixtures/govDepartment.json'
 import supplyChains from '../fixtures/supplyChains.json'
 import users from '../fixtures/user.json'
 import allActions from '../fixtures/strategicActions.json'
+import { urlBuilder } from "../support/utils.js"
+
 
 const govDepartment = govDepartments[0].fields
 const supplyChain = supplyChains[5] // Uses Supply Chain 6 fixture
+const urls = urlBuilder(supplyChain);
 const user = users[0].fields
 const actions = allActions
   .filter(action => action.fields.supply_chain === supplyChain.pk)
   .map(action => action.fields)
 
+
 describe('The strategic action summary page', () => {
   it('successfully loads', () => {
-    cy.visit(
-      Cypress.config('baseUrl') +
-        `/${supplyChain.fields.slug}/strategic-actions/`
-    )
+    cy.visit(urls.supplyChain.strategicActions.summary)
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -28,20 +29,17 @@ describe('The strategic action summary page', () => {
     )
   })
   it('displays breadcrumbs', () => {
+    cy.get('ol').children().should('have.length', 2)
     cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
     cy.get('li')
-      .contains(`${supplyChain.fields.name}`)
+      .contains('Strategic action summary')
       .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.fields.slug}/`)
-    cy.get('li')
-      .contains(`Strategic actions for ${supplyChain.fields.name}`)
-      .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.fields.slug}/strategic-actions/`)
+      .and('eq', '#')
   })
   it('displays the header and paragraph text', () => {
     cy.get('h1').contains(`Strategic actions for ${supplyChain.fields.name}`)
     cy.get('p').contains(
-      'Select a strategic action to view its details.'
+      'Select a strategic action to view and edit its details.'
     )
   })
   it('displays 5 accordian sections with a heading and summary', () => {
@@ -165,8 +163,8 @@ describe('The strategic action summary page', () => {
     cy.get('li').contains('Next').click()
     cy.url().should(
       'eq',
-      Cypress.config('baseUrl') +
-        `/${supplyChain.fields.slug}/strategic-actions/?page=2`
+      urls.supplyChain.strategicActions.summary +
+        `?page=2`
     )
     cy.get('.govuk-accordion__section').should('have.length', 1)
   })
@@ -174,15 +172,15 @@ describe('The strategic action summary page', () => {
     cy.get('li').contains('Previous').click()
     cy.url().should(
       'eq',
-      Cypress.config('baseUrl') +
-        `/${supplyChain.fields.slug}/strategic-actions/?page=1`
+      urls.supplyChain.strategicActions.summary +
+        `?page=1`
     )
   })
-  it('takes user to task list when button is clicked', () => {
-    cy.get('a').contains('Back to task list').click()
+  it('takes user back when button is clicked', () => {
+    cy.get('a').contains('Back').click()
     cy.url().should(
-      'eq',
-      Cypress.config('baseUrl') + `/${supplyChain.fields.slug}/`
+      'match',
+      /.*#/
     )
   })
 })

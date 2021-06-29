@@ -1,0 +1,72 @@
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        What does the strategic action involve?
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ action.description|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        What is the intended impact of the strategic action?
+        <br>
+        How will the action be measured?
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ action.impact|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Which category applies to this strategic action?
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ action.get_category_display|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Does the strategic action apply UK-wide or in England only?
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ action.get_geographic_scope_display|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Which other government departments are supporting this strategic action?
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ action.supporting_organisations|join:", "|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        What is the estimated date of completion?
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {% if action.is_ongoing %}
+        Ongoing
+        {% else %}
+        {{ action.target_completion_date|date:"j F Y"|default:"No information" }}
+        {% endif %}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Are there any other dependencies or requirements for applying this strategic action?
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ action.other_dependencies|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row govuk-summary-list--no-border">
+      <dt class="govuk-summary-list__key">
+        Does this action affect the whole supply chain or a section of supply chains?
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ action.specific_related_products|default:"No information" }}
+      </dd>
+    </div>
+</dl>
