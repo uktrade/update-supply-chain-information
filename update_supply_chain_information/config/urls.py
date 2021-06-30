@@ -80,7 +80,7 @@ strategic_action_urlpatterns = [
         name="strategic-action-summary",
     ),
     path(
-        "strategic-actions/<slug:strategic_action_slug>/edit",
+        "strategic-actions/<slug:action_slug>/edit/",
         SAEditView.as_view(),
         name="edit-strategic-action",
     ),

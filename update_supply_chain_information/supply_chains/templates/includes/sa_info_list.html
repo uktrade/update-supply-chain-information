@@ -7,7 +7,7 @@
         {{ action.description|default:"No information" }}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="#">
+        <a class="govuk-link" href={{editlink}}>
           Change<span class="govuk-visually-hidden"> description</span>
         </a>
       </dd>
@@ -22,7 +22,7 @@
         {{ action.impact|default:"No information" }}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="#">
+        <a class="govuk-link" href={{editlink}}>
           Change<span class="govuk-visually-hidden"> impact</span>
         </a>
       </dd>
@@ -35,7 +35,7 @@
         {{ action.get_category_display|default:"No information" }}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="#">
+        <a class="govuk-link" href={{editlink}}>
           Change<span class="govuk-visually-hidden"> category</span>
         </a>
       </dd>
@@ -48,7 +48,7 @@
         {{ action.get_geographic_scope_display|default:"No information" }}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="#">
+        <a class="govuk-link" href={{editlink}}>
           Change<span class="govuk-visually-hidden"> geographic_scope</span>
         </a>
       </dd>
@@ -61,7 +61,7 @@
         {{ action.supporting_organisations|join:", "|default:"No information" }}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="#">
+        <a class="govuk-link" href={{editlink}}>
           Change<span class="govuk-visually-hidden"> supporting_organisations</span>
         </a>
       </dd>
@@ -78,7 +78,7 @@
         {% endif %}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="#">
+        <a class="govuk-link" href={{editlink}}>
           Change<span class="govuk-visually-hidden"> target_date</span>
         </a>
       </dd>
@@ -91,7 +91,7 @@
         {{ action.other_dependencies|default:"No information" }}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="#">
+        <a class="govuk-link" href={{editlink}}>
           Change<span class="govuk-visually-hidden"> other_dependencies</span>
         </a>
       </dd>
@@ -104,7 +104,7 @@
         {{ action.specific_related_products|default:"No information" }}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="#">
+        <a class="govuk-link" href={{editlink}}>
           Change<span class="govuk-visually-hidden"> related_products</span>
         </a>
       </dd>

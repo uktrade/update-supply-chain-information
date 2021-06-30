@@ -36,6 +36,7 @@
       </div>
     </div>
     <div id="{{ content }}" class="govuk-accordion__section-content" aria-labelledby="{{ heading }}">
+      {% url 'edit-strategic-action' action.supply_chain.slug action.slug as editlink %}
       {% include "includes/sa_info_list.html" %}
     </div>
   </div>
