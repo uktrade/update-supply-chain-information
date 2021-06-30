@@ -7,12 +7,22 @@
     display: inline;
 }
 
+.description {
+  color: #505050;
+  margin-top: 3px;
+  word-wrap: break-word;
+}
+
 .tasklist-action-description {
-    color: #505050;
-    margin-top: 3px;
-    margin-bottom: 8px;
-    width: 420px;
-    word-wrap: break-word;
+  @extend .description;
+  width: 420px;
+  margin-bottom: 8px;
+}
+
+.summary-action-description {
+  @extend .description;
+  color: #696969;
+  width: 500px;
 }
 
 .tasklist-right-aligned-tag {
