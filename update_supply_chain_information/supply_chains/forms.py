@@ -1,5 +1,6 @@
 from datetime import date
 from dateutil.relativedelta import relativedelta
+import copy
 
 from django import forms
 from django.db.models import TextChoices
@@ -660,7 +661,70 @@ class MonthlyUpdateSubmissionForm:
         return errors
 
 
+TEXT_AREA_ATTR = {
+    "class": "govuk-textarea",
+    "novalidate": True,
+}
+
+
 class StrategicActionEditForm(forms.ModelForm):
+    SHORT_TEXT_AREA = copy.deepcopy(TEXT_AREA_ATTR)
+    SHORT_TEXT_AREA["rows"] = 5
+
+    description = forms.CharField(
+        required=True,
+        error_messages={
+            "required": "Describe strategic action",
+        },
+        widget=forms.Textarea(attrs=SHORT_TEXT_AREA),
+    )
+
+    impact = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs=SHORT_TEXT_AREA),
+    )
+
+    category = forms.ChoiceField(
+        required=True,
+        choices=StrategicAction.Category.choices,
+        widget=forms.RadioSelect(
+            attrs={
+                "class": "govuk-radios__input",
+                "novalidate": True,
+            }
+        ),
+        label="Which category applies to this strategic action?",
+    )
+
+    geographic_scope = forms.ChoiceField(
+        required=True,
+        choices=StrategicAction.GeographicScope.choices,
+        widget=forms.RadioSelect(
+            attrs={
+                "class": "govuk-radios__input",
+                "novalidate": True,
+            }
+        ),
+        label="Does the strategic action apply UK-wide or in England only?",
+    )
+
+    supporting_organisations = forms.MultipleChoiceField(
+        required=False,
+        choices=StrategicAction.SupportingOrgs.choices,
+        widget=forms.CheckboxSelectMultiple(
+            attrs={
+                "class": "govuk-checkboxes__input",
+                "novalidate": True,
+            }
+        ),
+        label="Which other departments are supporting this strategic action? (Optional)",
+    )
+
+    other_dependencies = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs=SHORT_TEXT_AREA),
+    )
+
     class Meta:
         model = StrategicAction
         fields = [
@@ -669,6 +733,6 @@ class StrategicActionEditForm(forms.ModelForm):
             "category",
             "geographic_scope",
             "supporting_organisations",
-            "specific_related_products",
             "other_dependencies",
+            # "specific_related_products",
         ]

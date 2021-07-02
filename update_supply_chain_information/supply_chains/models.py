@@ -117,7 +117,7 @@ class StrategicAction(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     start_date = models.DateField(null=True, blank=True)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     impact = models.TextField(blank=True)
     category = models.CharField(
         choices=Category.choices,

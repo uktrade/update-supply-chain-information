@@ -666,20 +666,27 @@ class SAEditView(LoginRequiredMixin, GovDepPermissionMixin, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        supply_chain = SupplyChain.objects.get(slug=kwargs.get("supply_chain_slug"))
+        supply_chain = SupplyChain.objects.get(
+            slug=self.kwargs.get("supply_chain_slug")
+        )
         strategic_action = StrategicAction.objects.get(
-            slug=kwargs.get("strategic_action_slug"),
+            slug=self.kwargs.get("action_slug"),
             supply_chain__slug=supply_chain.slug,
         )
         context["strategic_action"] = strategic_action
         context["supply_chain"] = supply_chain
         return context
 
-    def get(self, request, *args, **kwargs):
-        supply_chain = SupplyChain.objects.get(slug=kwargs.get("supply_chain_slug"))
-        self.object = StrategicAction.objects.get(
-            slug=kwargs.get("strategic_action_slug"),
-            supply_chain__slug=supply_chain.slug,
+    def get_object(self):
+        return StrategicAction.objects.get(
+            slug=self.kwargs.get("action_slug"),
+            supply_chain__slug=self.kwargs.get("supply_chain_slug"),
+        )
+
+    def get_success_url(self) -> str:
+        return reverse(
+            "strategic-action-summary",
+            kwargs={"supply_chain_slug": self.object.supply_chain.slug},
         )
 
 
