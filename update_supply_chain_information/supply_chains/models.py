@@ -138,6 +138,12 @@ class StrategicAction(models.Model):
     is_archived = models.BooleanField(default=False)
     archived_date = models.DateField(null=True, blank=True)
     archived_reason = models.TextField(blank=True)
+
+    # TODO: Custom save changes for these fields
+    related_to_whole_sc = models.BooleanField(
+        default=False,
+        help_text="Strategic action applies/affecting the whole supply chain",
+    )
     specific_related_products = models.TextField(
         help_text="Details of specific products within the supply chain which the action applies to, if applicable.",
         blank=True,
