@@ -120,5 +120,21 @@
   {{ form.other_dependencies }}
 </div><br>
 
+<div>
+  <fieldset class="govuk-fieldset">
+    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+        <h3 class="govuk-fieldset__heading ">
+            {{ form.related_to_whole_sc.label }}
+        </h3>
+    </legend>
+
+    <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+        {% for radio in form.related_to_whole_sc %}
+            {{ radio.tag }}
+        {% endfor %}
+    </div>
+  </fieldset>
+</div><br>
+
 
 {% endblock %}

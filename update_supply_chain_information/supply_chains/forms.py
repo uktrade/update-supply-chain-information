@@ -666,10 +666,31 @@ TEXT_AREA_ATTR = {
     "novalidate": True,
 }
 
+SHORT_TEXT_AREA = copy.deepcopy(TEXT_AREA_ATTR)
+SHORT_TEXT_AREA["rows"] = 5
 
-class StrategicActionEditForm(forms.ModelForm):
-    SHORT_TEXT_AREA = copy.deepcopy(TEXT_AREA_ATTR)
-    SHORT_TEXT_AREA["rows"] = 5
+
+class PartialRelationForm(MakeFieldsRequiredMixin, forms.ModelForm):
+    use_required_attribute = False
+    field_to_make_required = "specific_related_products"
+    specific_related_products = forms.CharField(
+        required=True,
+        label="Describe the subset of supply chain affected",
+        error_messages={
+            "required": "Enter details of affected supply chain",
+        },
+        widget=forms.Textarea(attrs=SHORT_TEXT_AREA),
+    )
+
+    class Meta:
+        model = StrategicAction
+        fields = ["specific_related_products"]
+
+
+class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
+    class RelationalChoices(TextChoices):
+        WHOLE = ("True", "Supply chain as a whole")
+        PARTIAL = ("False", "A subset of the supply chain")
 
     description = forms.CharField(
         required=True,
@@ -725,6 +746,29 @@ class StrategicActionEditForm(forms.ModelForm):
         widget=forms.Textarea(attrs=SHORT_TEXT_AREA),
     )
 
+    related_to_whole_sc = forms.ChoiceField(
+        required=True,
+        choices=RelationalChoices.choices,
+        label="Does this action affect the supply chain as a whole or a subset of the supply chain?",
+        widget=DetailRadioSelect(
+            attrs={
+                "class": "govuk-radios__input",
+                "data-aria-controls": "{id}-detail",
+                "novalidate": True,
+            },
+            details={
+                RelationalChoices.PARTIAL: {
+                    "template": "supply_chains/includes/partial_relation.html",
+                    "form_class": PartialRelationForm,
+                },
+            },
+        ),
+        error_messages={
+            "required": "Select an option for type of relation of strategic action with supply chain",
+            # "invalid_choice": "Select a valid option for the current delivery status",
+        },
+    )
+
     class Meta:
         model = StrategicAction
         fields = [
@@ -734,5 +778,5 @@ class StrategicActionEditForm(forms.ModelForm):
             "geographic_scope",
             "supporting_organisations",
             "other_dependencies",
-            # "specific_related_products",
+            "related_to_whole_sc",
         ]
