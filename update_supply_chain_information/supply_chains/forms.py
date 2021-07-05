@@ -687,10 +687,46 @@ class PartialRelationForm(MakeFieldsRequiredMixin, forms.ModelForm):
         fields = ["specific_related_products"]
 
 
+class SACompletionDateForm(MakeFieldsRequiredMixin, forms.ModelForm):
+    use_required_attribute = False
+    field_to_make_required = "target_completion_date"
+    target_completion_date = forms.DateField(
+        widget=DateMultiTextInputWidget(
+            attrs={
+                "novalidate": True,
+            },
+            labels={
+                "day": "Day",
+                "month": "Month",
+                "year": "Year",
+            },
+        ),
+        required=False,
+        # input_formats=["%Y-%m-%d"],
+        # error_messages={
+        #     "required": "Enter a date for intended completion",
+        #     "invalid": "Enter a date for intended completion in the correct format",
+        # },
+    )
+
+    # def save(self, commit=True):
+    #     if "changed_value_for_target_completion_date" in self.cleaned_data.keys():
+    #         self.instance.changed_value_for_is_ongoing = False
+    #     return super().save(commit)
+
+    class Meta:
+        model = StrategicAction
+        fields = ["target_completion_date"]
+
+
 class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
     class RelationalChoices(TextChoices):
         WHOLE = ("True", "Supply chain as a whole")
         PARTIAL = ("False", "A subset of the supply chain")
+
+    class CompletionChoices(TextChoices):
+        ESTIMATED_COMPLETION = ("False", "Date of estimated completion")
+        ONGOING = ("True", "Ongoing")
 
     description = forms.CharField(
         required=True,
@@ -769,6 +805,29 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
         },
     )
 
+    is_ongoing = forms.ChoiceField(
+        required=True,
+        choices=CompletionChoices.choices,
+        label="What is the estimated date of completion?",
+        widget=DetailRadioSelect(
+            attrs={
+                "class": "govuk-radios__input",
+                "data-aria-controls": "{id}-detail",
+                "novalidate": True,
+            },
+            details={
+                CompletionChoices.ESTIMATED_COMPLETION: {
+                    "template": "supply_chains/includes/sa_completion_date.html",
+                    "form_class": SACompletionDateForm,
+                },
+            },
+        ),
+        # error_messages={
+        #     "required": "Select an option for type of relation of strategic action with supply chain",
+        #     "invalid_choice": "Select a valid option for the current delivery status",
+        # },
+    )
+
     class Meta:
         model = StrategicAction
         fields = [
@@ -779,4 +838,5 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
             "supporting_organisations",
             "other_dependencies",
             "related_to_whole_sc",
+            "is_ongoing",
         ]
