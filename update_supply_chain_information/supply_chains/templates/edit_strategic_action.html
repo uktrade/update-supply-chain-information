@@ -62,7 +62,7 @@
   </div><br>
 
 
-  <div>
+  <div class="govuk-form-group{% if form.category.errors %} govuk-form-group--error{% endif %}">
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
         <h3 class="govuk-fieldset__heading">
@@ -71,6 +71,12 @@
       </legend>
       <div id="category-hint" class="govuk-hint">The categories are from the Global Supply Chains Directorate strategic
         framework</div>
+
+      {% for error in form.category.errors %}
+      <span class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+      </span>
+      {% endfor %}
 
       {% for radio in form.category %}
       <div class="govuk-radios">
@@ -84,13 +90,19 @@
     </fieldset>
   </div><br>
 
-  <div>
+  <div class="govuk-form-group{% if form.geographic_scope.errors %} govuk-form-group--error{% endif %}">
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
         <h3 class="govuk-fieldset__heading">
           {{ form.geographic_scope.label }}
         </h3>
       </legend>
+
+      {% for error in form.geographic_scope.errors %}
+      <span class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+      </span>
+      {% endfor %}
 
       {% for radio in form.geographic_scope %}
       <div class="govuk-radios">

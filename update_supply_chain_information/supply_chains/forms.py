@@ -702,6 +702,7 @@ class SACompletionDateForm(MakeFieldsRequiredMixin, forms.ModelForm):
             },
         ),
         required=True,
+        input_formats=["%Y-%m-%d"],
         error_messages={
             "required": "Enter a date for estimated completion",
             "invalid": "Enter a valid date for estimated completion",
@@ -749,6 +750,7 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
             }
         ),
         label="Which category applies to this strategic action?",
+        error_messages={"required": "Specify category of strategic action"},
     )
 
     geographic_scope = forms.ChoiceField(
@@ -761,6 +763,7 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
             }
         ),
         label="Does the strategic action apply UK-wide or in England only?",
+        error_messages={"required": "Specify geographic scope of strategic action"},
     )
 
     supporting_organisations = forms.MultipleChoiceField(
