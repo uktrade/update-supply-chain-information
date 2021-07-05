@@ -4,7 +4,7 @@
             For example, 14 9 2021
         </div>
         <div class="govuk-date-input" id="{{ id }}-container">
-            {% for error in form.changed_value_for_target_completion_date.errors %}
+            {% for error in form.target_completion_date.errors %}
                 <span class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span> {{ error }}
                 </span>

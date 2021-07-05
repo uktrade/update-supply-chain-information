@@ -23,134 +23,173 @@
 <h1 class="govuk-heading-xl">Update {{ strategic_action.name }}</h1>
 
 
-{% comment %}
-{% endcomment %}
-
-<div>
-  <h3 class="govuk-label-wrapper">
-    <label class="govuk-label govuk-label--s" for="description">
-      What does the strategic action involve?
-    </label>
-  </h3>
-  <div id="description-hint" class="govuk-hint">Explain</div>
-  {{ form.description }}
-</div><br>
-
-<div>
-  <h3 class="govuk-label-wrapper">
-    <label class="govuk-label govuk-label--s" for="impact">
-      What is the intended impact of the strategic action?<br>
-      How will the action be measured?
-    </label>
-  </h3>
-  <div id="impact-hint" class="govuk-hint">Explain</div>
-  {{ form.impact }}
-</div><br>
+{% include "supply_chains/includes/error_summary.html" %}
 
 
-<div>
-  <fieldset class="govuk-fieldset">
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-      <h3 class="govuk-fieldset__heading">
-        {{ form.category.label }}
-      </h3>
-    </legend>
-    <div id="category-hint" class="govuk-hint">The categories are from the Global Supply Chains Directorate strategic framework</div>
+<form method="post" action="">
+  {% csrf_token %}
 
-    {% for radio in form.category %}
-    <div class="govuk-radios">
-      <div class="govuk-radios__item">
-        {{ radio.tag }}
-        <label class="govuk-label govuk-radios__label" for="{{ radio.id_for_label }}">
-          {{ radio.choice_label }}
-        </label>
-    </div>
+  <div class="govuk-form-group{% if form.description.errors %} govuk-form-group--error{% endif %}">
+    <h3 class="govuk-label-wrapper">
+      <label class="govuk-label govuk-label--s" for="description">
+        What does the strategic action involve?
+      </label>
+    </h3>
+    <div id="description-hint" class="govuk-hint">Explain</div>
+    {% for error in form.description.errors %}
+    <span class="govuk-error-message">
+      <span class="govuk-visually-hidden">Error:</span> {{ error }}
+    </span>
     {% endfor %}
-  </fieldset>
-</div><br>
+    {{ form.description }}
+  </div><br>
 
-<div>
-  <fieldset class="govuk-fieldset">
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-      <h3 class="govuk-fieldset__heading">
-        {{ form.geographic_scope.label }}
-      </h3>
-    </legend>
 
-    {% for radio in form.geographic_scope %}
-    <div class="govuk-radios">
-      <div class="govuk-radios__item">
-        {{ radio.tag }}
-        <label class="govuk-label govuk-radios__label" for="{{ radio.id_for_label }}">
-          {{ radio.choice_label }}
-        </label>
-    </div>
+  <div class="govuk-form-group{% if form.impact.errors %} govuk-form-group--error{% endif %}">
+    <h3 class="govuk-label-wrapper">
+      <label class="govuk-label govuk-label--s" for="impact">
+        What is the intended impact of the strategic action?<br>
+        How will the action be measured?
+      </label>
+    </h3>
+    <div id="impact-hint" class="govuk-hint">Explain</div>
+    {% for error in form.impact.errors %}
+    <span class="govuk-error-message">
+      <span class="govuk-visually-hidden">Error:</span> {{ error }}
+    </span>
     {% endfor %}
-  </fieldset>
-</div><br>
+    {{ form.impact }}
+  </div><br>
 
-<div>
-  <fieldset class="govuk-fieldset">
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-      <h3 class="govuk-fieldset__heading">
-        {{ form.supporting_organisations.label }}
-      </h3>
-    </legend>
-    <div id="supporting_organisations-hint" class="govuk-hint">Select all that apply.</div>
 
-    {% for box in form.supporting_organisations %}
-    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-      <div class="govuk-checkboxes__item">
-        {{ box.tag }}
-        <label class="govuk-label govuk-checkboxes__label" for="{{ box.id_for_label }}">
-          {{ box.choice_label }}
-        </label>
-    </div>
-    {% endfor %}
-  </fieldset>
-</div><br>
-
-<div>
-  <fieldset class="govuk-fieldset">
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
-        <h3 class="govuk-fieldset__heading ">
-            {{ form.is_ongoing.label }}
+  <div>
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+        <h3 class="govuk-fieldset__heading">
+          {{ form.category.label }}
         </h3>
-    </legend>
+      </legend>
+      <div id="category-hint" class="govuk-hint">The categories are from the Global Supply Chains Directorate strategic
+        framework</div>
 
-    <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+      {% for radio in form.category %}
+      <div class="govuk-radios">
+        <div class="govuk-radios__item">
+          {{ radio.tag }}
+          <label class="govuk-label govuk-radios__label" for="{{ radio.id_for_label }}">
+            {{ radio.choice_label }}
+          </label>
+        </div>
+        {% endfor %}
+    </fieldset>
+  </div><br>
+
+  <div>
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+        <h3 class="govuk-fieldset__heading">
+          {{ form.geographic_scope.label }}
+        </h3>
+      </legend>
+
+      {% for radio in form.geographic_scope %}
+      <div class="govuk-radios">
+        <div class="govuk-radios__item">
+          {{ radio.tag }}
+          <label class="govuk-label govuk-radios__label" for="{{ radio.id_for_label }}">
+            {{ radio.choice_label }}
+          </label>
+        </div>
+        {% endfor %}
+    </fieldset>
+  </div><br>
+
+  <div>
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+        <h3 class="govuk-fieldset__heading">
+          {{ form.supporting_organisations.label }}
+        </h3>
+      </legend>
+      <div id="supporting_organisations-hint" class="govuk-hint">Select all that apply.</div>
+
+      {% for box in form.supporting_organisations %}
+      <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+        <div class="govuk-checkboxes__item">
+          {{ box.tag }}
+          <label class="govuk-label govuk-checkboxes__label" for="{{ box.id_for_label }}">
+            {{ box.choice_label }}
+          </label>
+        </div>
+        {% endfor %}
+    </fieldset>
+  </div><br>
+
+  <div class="govuk-form-group{% if form.is_ongoing.errors %} govuk-form-group--error{% endif %}">
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+        <h3 class="govuk-fieldset__heading ">
+          {{ form.is_ongoing.label }}
+        </h3>
+      </legend>
+
+      {% for error in form.is_ongoing.errors %}
+      <span class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+      </span>
+      {% endfor %}
+
+      <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
         {% for radio in form.is_ongoing %}
-            {{ radio.tag }}
+        {{ radio.tag }}
         {% endfor %}
-    </div>
-  </fieldset>
-</div><br>
+      </div>
+    </fieldset>
+  </div><br>
 
-<div>
-  <h3 class="govuk-label-wrapper">
-    <label class="govuk-label govuk-label--s" for="other_dependencies">
-      Are there any other dependencies or requirements for applying this strategic action? (Optional)
-    </label>
-  </h3>
-  <div id="other_dependencies-hint" class="govuk-hint">For example, funding requirements, changes to legislation or regulation, lifting of trade restrictions.</div>
-  {{ form.other_dependencies }}
-</div><br>
+  <div>
+    <h3 class="govuk-label-wrapper">
+      <label class="govuk-label govuk-label--s" for="other_dependencies">
+        Are there any other dependencies or requirements for applying this strategic action? (Optional)
+      </label>
+    </h3>
+    <div id="other_dependencies-hint" class="govuk-hint">For example, funding requirements, changes to legislation or
+      regulation, lifting of trade restrictions.</div>
+    {{ form.other_dependencies }}
+  </div><br>
 
-<div>
-  <fieldset class="govuk-fieldset">
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+  <div class="govuk-form-group{% if form.related_to_whole_sc.errors %} govuk-form-group--error{% endif %}">
+    <fieldset class="govuk-fieldset">
+      <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
         <h3 class="govuk-fieldset__heading ">
-            {{ form.related_to_whole_sc.label }}
+          {{ form.related_to_whole_sc.label }}
         </h3>
-    </legend>
+      </legend>
 
-    <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
+      {% for error in form.related_to_whole_sc.errors %}
+      <span class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+      </span>
+      {% endfor %}
+
+      <div class="govuk-radios govuk-radios--conditional" data-module="govuk-radios">
         {% for radio in form.related_to_whole_sc %}
-            {{ radio.tag }}
+        {{ radio.tag }}
         {% endfor %}
-    </div>
-  </fieldset>
-</div><br>
+      </div>
+    </fieldset>
+  </div><br>
 
+  <div class="govuk-button-group">
+    <button class="govuk-button" data-module="govuk-button" type="submit">
+      Save update
+    </button>
+
+    <a href="{% url 'strategic-action-summary' supply_chain.slug %}" class="govuk-button govuk-button--secondary"
+      data-module="govuk-button" type="button">
+      Cancel
+    </a>
+  </div>
+</form>
 
 {% endblock %}

@@ -2,5 +2,10 @@
     <label class="govuk-heading-s" for="{{ form.specific_related_products.id_for_label }}">
         {{ form.specific_related_products.label }}
     </label>
+    {% for error in form.specific_related_products.errors %}
+        <span class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span> {{ error }}
+        </span>
+    {% endfor %}
     {{ form.specific_related_products }}
 </div>

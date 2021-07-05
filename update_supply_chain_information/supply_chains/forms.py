@@ -701,18 +701,12 @@ class SACompletionDateForm(MakeFieldsRequiredMixin, forms.ModelForm):
                 "year": "Year",
             },
         ),
-        required=False,
-        # input_formats=["%Y-%m-%d"],
-        # error_messages={
-        #     "required": "Enter a date for intended completion",
-        #     "invalid": "Enter a date for intended completion in the correct format",
-        # },
+        required=True,
+        error_messages={
+            "required": "Enter a date for estimated completion",
+            "invalid": "Enter a valid date for estimated completion",
+        },
     )
-
-    # def save(self, commit=True):
-    #     if "changed_value_for_target_completion_date" in self.cleaned_data.keys():
-    #         self.instance.changed_value_for_is_ongoing = False
-    #     return super().save(commit)
 
     class Meta:
         model = StrategicAction
@@ -728,6 +722,7 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
         ESTIMATED_COMPLETION = ("False", "Date of estimated completion")
         ONGOING = ("True", "Ongoing")
 
+    use_required_attribute = False
     description = forms.CharField(
         required=True,
         error_messages={
@@ -737,7 +732,10 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
     )
 
     impact = forms.CharField(
-        required=False,
+        required=True,
+        error_messages={
+            "required": "Explain the impact of strategic action",
+        },
         widget=forms.Textarea(attrs=SHORT_TEXT_AREA),
     )
 
@@ -822,10 +820,10 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
                 },
             },
         ),
-        # error_messages={
-        #     "required": "Select an option for type of relation of strategic action with supply chain",
-        #     "invalid_choice": "Select a valid option for the current delivery status",
-        # },
+        error_messages={
+            "required": "Select an option for completion of strategic action",
+            "invalid_choice": "Select a valid option for completion of strategic action",
+        },
     )
 
     class Meta:
