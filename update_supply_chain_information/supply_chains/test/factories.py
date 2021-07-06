@@ -34,6 +34,7 @@ class StrategicActionFactory(factory.django.DjangoModelFactory):
     supporting_organisations = ["DIT"]
     target_completion_date = factory.Faker("date_object")
     is_archived = False
+    related_to_whole_sc = True
     specific_related_products = factory.Faker("text")
     other_dependencies = factory.Faker("text")
     supply_chain = factory.SubFactory(SupplyChainFactory)
