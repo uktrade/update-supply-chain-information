@@ -10,6 +10,7 @@ from django.template.defaultfilters import slugify
 from django.contrib.postgres.fields import ArrayField
 
 from accounts.models import GovDepartment
+from activity_stream.models import ActivityStreamQuerySetMixin
 from supply_chains.utils import get_last_working_day_of_previous_month
 
 
@@ -22,7 +23,7 @@ class RAGRating(models.TextChoices):
     GREEN = ("GREEN", "Green")
 
 
-class SupplyChainQuerySet(models.QuerySet):
+class SupplyChainQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     def submitted_since(self, deadline):
         return self.filter(last_submission_date__gt=deadline)
 
@@ -88,6 +89,10 @@ class SupplyChain(models.Model):
             )
 
 
+class StrategicActionQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
 @reversion.register()
 class StrategicAction(models.Model):
     class Category(models.TextChoices):
@@ -117,6 +122,7 @@ class StrategicAction(models.Model):
         )
         DFT = ("DFT", "DfT")
 
+    objects = StrategicActionQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     start_date = models.DateField(null=True, blank=True)
@@ -223,7 +229,7 @@ class StrategicAction(models.Model):
             return self.name
 
 
-class SAUQuerySet(models.QuerySet):
+class SAUQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     def since(self, deadline, *args, **kwargs):
         return self.filter(date_created__gt=deadline, *args, **kwargs)
 
@@ -447,6 +453,10 @@ class StrategicActionUpdate(models.Model):
         return f"Update {self.slug} for {self.strategic_action}"
 
 
+class MaturitySelfAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
 class MaturitySelfAssessment(models.Model):
     class RatingLevel(models.TextChoices):
         LEVEL_1 = ("level_1", "Level 1")
@@ -455,6 +465,7 @@ class MaturitySelfAssessment(models.Model):
         LEVEL_4 = ("level_4", "Level 4")
         LEVEL_5 = ("level_5", "Level 5")
 
+    objects = MaturitySelfAssessmentQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)
     maturity_rating_reason = models.TextField()
@@ -470,8 +481,12 @@ class MaturitySelfAssessment(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
 
-class VulnerabilityAssessment(models.Model):
+class VulnerabilityAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
 
+
+class VulnerabilityAssessment(models.Model):
+    objects = VulnerabilityAssessmentQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)
     supply_rag_rating = models.CharField(
@@ -522,8 +537,12 @@ class VulnerabilityAssessment(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
 
-class ScenarioAssessment(models.Model):
+class ScenarioAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
 
+
+class ScenarioAssessment(models.Model):
+    objects = ScenarioAssessmentQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)
     borders_closed_impact = models.TextField(

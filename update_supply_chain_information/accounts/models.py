@@ -5,7 +5,8 @@ from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.postgres.fields import ArrayField
-from django.utils import timezone
+
+from activity_stream.models import ActivityStreamQuerySetMixin
 
 
 def get_gov_department_id_from_user_email(email):
@@ -49,8 +50,12 @@ class UserManager(BaseUserManager):
         return user
 
 
+class ActivityStreamUserManager(ActivityStreamQuerySetMixin, UserManager):
+    pass
+
+
 class User(AbstractBaseUser, PermissionsMixin):
-    objects = UserManager()
+    objects = ActivityStreamUserManager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     sso_email_user_id = models.EmailField(
         unique=True,
@@ -89,7 +94,12 @@ class User(AbstractBaseUser, PermissionsMixin):
         return f"{self.first_name} {self.last_name}"
 
 
+class GovDepartmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
 class GovDepartment(models.Model):
+    objects = GovDepartmentQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     email_domains = ArrayField(models.CharField(max_length=100))
