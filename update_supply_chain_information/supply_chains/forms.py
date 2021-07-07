@@ -724,6 +724,7 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
         ONGOING = ("True", "Ongoing")
 
     use_required_attribute = False
+    SHORT_TEXT_AREA["id"] = "description"
     description = forms.CharField(
         required=True,
         error_messages={
@@ -732,6 +733,7 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
         widget=forms.Textarea(attrs=SHORT_TEXT_AREA),
     )
 
+    SHORT_TEXT_AREA["id"] = "impact"
     impact = forms.CharField(
         required=True,
         error_messages={
@@ -778,6 +780,7 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
         label="Which other departments are supporting this strategic action? (Optional)",
     )
 
+    SHORT_TEXT_AREA["id"] = "other_dependencies"
     other_dependencies = forms.CharField(
         required=False,
         widget=forms.Textarea(attrs=SHORT_TEXT_AREA),

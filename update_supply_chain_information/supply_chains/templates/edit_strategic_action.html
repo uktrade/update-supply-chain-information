@@ -29,12 +29,13 @@
 <form method="post" action="">
   {% csrf_token %}
 
-  <div class="govuk-form-group{% if form.description.errors %} govuk-form-group--error{% endif %}">
-    <h3 class="govuk-label-wrapper">
+  <div class="govuk-form-group{% if form.description.errors %} govuk-form-group--error{% endif %}"
+    id="description-field">
+    <h2 class="govuk-label-wrapper">
       <label class="govuk-label govuk-label--s" for="description">
         What does the strategic action involve?
       </label>
-    </h3>
+    </h2>
     <div id="description-hint" class="govuk-hint">Explain</div>
     {% for error in form.description.errors %}
     <span class="govuk-error-message">
@@ -45,13 +46,13 @@
   </div><br>
 
 
-  <div class="govuk-form-group{% if form.impact.errors %} govuk-form-group--error{% endif %}">
-    <h3 class="govuk-label-wrapper">
+  <div class="govuk-form-group{% if form.impact.errors %} govuk-form-group--error{% endif %}" id="impact-field">
+    <h2 class="govuk-label-wrapper">
       <label class="govuk-label govuk-label--s" for="impact">
         What is the intended impact of the strategic action?<br>
         How will the action be measured?
       </label>
-    </h3>
+    </h2>
     <div id="impact-hint" class="govuk-hint">Explain</div>
     {% for error in form.impact.errors %}
     <span class="govuk-error-message">
@@ -62,7 +63,7 @@
   </div><br>
 
 
-  <div class="govuk-form-group{% if form.category.errors %} govuk-form-group--error{% endif %}">
+  <div class="govuk-form-group{% if form.category.errors %} govuk-form-group--error{% endif %}" id="category-field">
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
         <h3 class="govuk-fieldset__heading">
@@ -78,8 +79,8 @@
       </span>
       {% endfor %}
 
-      {% for radio in form.category %}
       <div class="govuk-radios">
+        {% for radio in form.category %}
         <div class="govuk-radios__item">
           {{ radio.tag }}
           <label class="govuk-label govuk-radios__label" for="{{ radio.id_for_label }}">
@@ -90,7 +91,8 @@
     </fieldset>
   </div><br>
 
-  <div class="govuk-form-group{% if form.geographic_scope.errors %} govuk-form-group--error{% endif %}">
+  <div class="govuk-form-group{% if form.geographic_scope.errors %} govuk-form-group--error{% endif %}"
+    id="scope-field">
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
         <h3 class="govuk-fieldset__heading">
@@ -104,8 +106,8 @@
       </span>
       {% endfor %}
 
-      {% for radio in form.geographic_scope %}
       <div class="govuk-radios">
+        {% for radio in form.geographic_scope %}
         <div class="govuk-radios__item">
           {{ radio.tag }}
           <label class="govuk-label govuk-radios__label" for="{{ radio.id_for_label }}">
@@ -116,7 +118,7 @@
     </fieldset>
   </div><br>
 
-  <div>
+  <div id="sup-orgs-field">
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
         <h3 class="govuk-fieldset__heading">
@@ -137,7 +139,7 @@
     </fieldset>
   </div><br>
 
-  <div class="govuk-form-group{% if form.is_ongoing.errors %} govuk-form-group--error{% endif %}">
+  <div class="govuk-form-group{% if form.is_ongoing.errors %} govuk-form-group--error{% endif %}" id="on-going-field">
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
         <h3 class="govuk-fieldset__heading ">
@@ -159,18 +161,19 @@
     </fieldset>
   </div><br>
 
-  <div>
-    <h3 class="govuk-label-wrapper">
+  <div id="other-deps-field">
+    <h2 class="govuk-label-wrapper">
       <label class="govuk-label govuk-label--s" for="other_dependencies">
         Are there any other dependencies or requirements for applying this strategic action? (Optional)
       </label>
-    </h3>
+    </h2>
     <div id="other_dependencies-hint" class="govuk-hint">For example, funding requirements, changes to legislation or
       regulation, lifting of trade restrictions.</div>
     {{ form.other_dependencies }}
   </div><br>
 
-  <div class="govuk-form-group{% if form.related_to_whole_sc.errors %} govuk-form-group--error{% endif %}">
+  <div class="govuk-form-group{% if form.related_to_whole_sc.errors %} govuk-form-group--error{% endif %}"
+    id="related-field">
     <fieldset class="govuk-fieldset">
       <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
         <h3 class="govuk-fieldset__heading ">
