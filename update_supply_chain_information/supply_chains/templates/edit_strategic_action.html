@@ -127,8 +127,8 @@
       </legend>
       <div id="supporting_organisations-hint" class="govuk-hint">Select all that apply.</div>
 
-      {% for box in form.supporting_organisations %}
       <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+        {% for box in form.supporting_organisations %}
         <div class="govuk-checkboxes__item">
           {{ box.tag }}
           <label class="govuk-label govuk-checkboxes__label" for="{{ box.id_for_label }}">

@@ -53,6 +53,22 @@ class TestSACompletionDateForm:
                 "02-JAN-2021",
                 False,
             ),
+            (
+                "0-JAN-2021",
+                False,
+            ),
+            (
+                "32-JAN-2021",
+                False,
+            ),
+            (
+                "02-13-2021",
+                False,
+            ),
+            (
+                "02-0-2021",
+                False,
+            ),
         ),
     )
     def test_form_validity(self, date_str, validity):
