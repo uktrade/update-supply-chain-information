@@ -3,6 +3,7 @@ from unittest import mock
 
 import pytest
 from dateutil.relativedelta import relativedelta
+from django.db.models import QuerySet
 from pytz import UTC
 
 from accounts.models import GovDepartment
@@ -60,6 +61,11 @@ def strategic_action_queryset(last_modified_times) -> StrategicActionQuerySet:
     return StrategicAction.objects.all()
 
 
+@pytest.fixture()
+def empty_queryset() -> QuerySet:
+    return ActivityStreamQuerySetWrapper().none()
+
+
 @pytest.fixture(scope="session")
 def bit_of_everything_item_count():
     return 23
@@ -78,7 +84,7 @@ def bit_of_everything_last_modified_times(
 @pytest.fixture(scope="function")
 def bit_of_everything_queryset(
     bit_of_everything_item_count, bit_of_everything_last_modified_times
-):
+) -> QuerySet:
     """
     Generate a bunch of SCs, SA, and SAUs so we can be sure there's a good mix for the union queryset.
     Doing them this rather odd way helps check that the ordering works as expected
@@ -106,7 +112,7 @@ def bit_of_everything_queryset(
 
 
 @pytest.fixture(scope="function")
-def wrapped_union_queryset(bit_of_everything_queryset):
+def wrapped_union_queryset(bit_of_everything_queryset) -> QuerySet:
     # we don't directly use the queryset, but referencing it as a parameter ensures it exists
     # otherwise the union of all querysets would only contain a GovDepartment :-)
     return ActivityStreamQuerySetWrapper()
