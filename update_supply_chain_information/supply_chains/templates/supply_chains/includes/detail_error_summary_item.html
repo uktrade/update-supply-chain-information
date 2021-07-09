@@ -1,5 +1,5 @@
 {% for field in form %}
-    {% with form.prefix|add:"-"|add:field.name as prefixed_field_name %}
+    {% with form.prefix as prefixed_field_name %}
         {% if field.errors %}
             {% if field.name == field_name or prefixed_field_name == field_name %}
                 {% for error in field.errors %}

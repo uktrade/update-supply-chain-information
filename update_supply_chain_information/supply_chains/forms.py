@@ -61,12 +61,13 @@ class DetailFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._detail_forms_dict = {}
-        for _, key, config in self.detail_forms:
+        for field_name, choice_value, config in self.detail_forms:
             try:
                 form_class = config["form_class"]
-                kwargs["prefix"] = key
+                field_key = self.makeup_key(field_name, choice_value)
+                kwargs["prefix"] = field_key
                 config["form"] = form_class(*args, **kwargs)
-                self._detail_forms_dict[key] = config["form"]
+                self._detail_forms_dict[field_key] = config["form"]
             except KeyError:
                 pass
 
@@ -75,7 +76,8 @@ class DetailFormMixin:
             if self.detail_selection_field:
                 if self.detail_selection_field in self.cleaned_data.keys():
                     selected_value = self.cleaned_data[self.detail_selection_field]
-                    return self.detail_form_for_key(selected_value)
+                    key = self.makeup_key(self.detail_selection_field, selected_value)
+                    return self.detail_form_for_key(key)
         return None
 
     def detail_form_for_key(self, key):
@@ -83,6 +85,9 @@ class DetailFormMixin:
             return self._detail_forms_dict[key]
         except KeyError:
             return None
+
+    def makeup_key(self, field_name: str, choice_value: str) -> str:
+        return f"{field_name}-{choice_value}"
 
     def is_valid(self):
         # this should only be called for the option that's selected
@@ -286,7 +291,8 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
                     strategic_action_update.strategic_action.target_completion_date
                     is None
                 ):
-                    red_reason_for_delay_form = self.detail_form_for_key(RAGRating.RED)
+                    key = self.makeup_key("implementation_rag_rating", RAGRating.RED)
+                    red_reason_for_delay_form = self.detail_form_for_key(key)
                     if (
                         "will_completion_date_change"
                         in red_reason_for_delay_form.fields.keys()
@@ -300,8 +306,9 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
 
     def is_valid(self):
         if "implementation_rag_rating" in self.data.keys():
-            implementation_rag_rating = self.data["implementation_rag_rating"]
-            required_form = self.detail_form_for_key(implementation_rag_rating)
+            choice_value = self.data["implementation_rag_rating"]
+            key = self.makeup_key("implementation_rag_rating", choice_value)
+            required_form = self.detail_form_for_key(key)
             if required_form:
                 # we need the detail form field to be required for validation,
                 # but not on the client as then they can't change their minds…
@@ -327,7 +334,8 @@ class MonthlyUpdateStatusForm(DetailFormMixin, forms.ModelForm):
         instance: StrategicActionUpdate = self.instance
         if instance.implementation_rag_rating == RAGRating.RED:
             if instance.strategic_action.target_completion_date is not None:
-                red_form = self.detail_form_for_key(RAGRating.RED)
+                key = self.makeup_key("implementation_rag_rating", RAGRating.RED)
+                red_form = self.detail_form_for_key(key)
                 if (
                     red_form.cleaned_data["will_completion_date_change"]
                     == YesNoChoices.NO
@@ -472,7 +480,8 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
 
     def get_initial_for_field(self, field, field_name):
         if field_name == "is_completion_date_known":
-            detail_form = self.detail_form_for_key(YesNoChoices.NO)
+            key = self.makeup_key(field_name, YesNoChoices.NO)
+            detail_form = self.detail_form_for_key(key)
             if detail_form.instance.changed_value_for_is_ongoing:
                 return YesNoChoices.NO
             if (
@@ -485,8 +494,9 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
     def is_valid(self):
         # need to make one of the detail forms required, depending on our value
         if "is_completion_date_known" in self.data.keys():
-            is_completion_date_known = self.data["is_completion_date_known"]
-            required_form = self.detail_form_for_key(is_completion_date_known)
+            choice_value = self.data["is_completion_date_known"]
+            key = self.makeup_key("is_completion_date_known", choice_value)
+            required_form = self.detail_form_for_key(key)
             if required_form:
                 form_is_valid = super().is_valid()
                 # we need the detail form field to be required for validation,
@@ -499,7 +509,7 @@ class MonthlyUpdateTimingForm(DetailFormMixin, forms.ModelForm):
                     self._errors = ErrorDict()
                 if required_form.errors is not None:
                     for field, error in required_form.errors.items():
-                        self._errors[f"{required_form.prefix}-{field}"] = error
+                        self._errors[f"{required_form.prefix}"] = error
                 return all(
                     (
                         form_is_valid,
@@ -724,6 +734,8 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
         ONGOING = ("True", "Ongoing")
 
     use_required_attribute = False
+    detail_selection_field = "related_to_whole_sc"
+
     SHORT_TEXT_AREA["id"] = "description"
     description = forms.CharField(
         required=True,
@@ -831,6 +843,32 @@ class StrategicActionEditForm(DetailFormMixin, forms.ModelForm):
             "invalid_choice": "Select a valid option for completion of strategic action",
         },
     )
+
+    def is_valid(self):
+        # need to make one of the detail forms required, depending on our value
+        if "related_to_whole_sc" in self.data.keys():
+            choice_value = self.data["related_to_whole_sc"]
+            key = f"related_to_whole_sc-{choice_value}"
+            required_form = self.detail_form_for_key(key)
+            if required_form:
+                form_is_valid = super().is_valid()
+                required_form_is_valid = required_form.is_valid()
+
+                # now ensure that any errors on the contained forms are also on the containing form
+                if self._errors is None:
+                    self._errors = ErrorDict()
+                if required_form.errors is not None:
+                    for _, error in required_form.errors.items():
+                        self._errors[f"{required_form.prefix}"] = error
+                        # TODO: Why different treatments for keys?
+
+                return all(
+                    (
+                        form_is_valid,
+                        required_form_is_valid,
+                    )
+                )
+        return super().is_valid()
 
     class Meta:
         model = StrategicAction
