@@ -86,12 +86,15 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        # "hawkrest.HawkAuthentication",
+        "activity_stream.authentication.ActivityStreamHawkAuthentication",
+    ),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_PAGINATION_CLASS": "activity_stream.pagination.ActivityStreamCursorPagination",
+    "PAGE_SIZE": 100,
 }
 
 # Database
@@ -225,3 +228,21 @@ ELASTIC_APM = {
     "ENVIRONMENT": env("APM_ENVIRONMENT", default=""),
     "SERVER_TIMEOUT": env("APM_SERVER_TIMEOUT", default=""),
 }
+
+# Settings for Activity Stream
+
+ACTIVITY_STREAM_APPS = [
+    "accounts",
+    "supply_chains",
+]
+
+# Settings for Activity Stream authentication
+
+HAWK_CREDENTIALS = {
+    env.str("HAWK_ACCESS_KEY_ID"): {
+        "id": env.str("HAWK_ACCESS_KEY_ID"),
+        "key": env.str("HAWK_SECRET_ACCESS_KEY"),
+        "algorithm": "sha256",
+    },
+}
+HAWK_MESSAGE_EXPIRATION = 60  # seconds until a Hawk header is regarded as expired

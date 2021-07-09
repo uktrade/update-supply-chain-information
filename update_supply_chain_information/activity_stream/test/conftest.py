@@ -4,11 +4,13 @@ from unittest import mock
 import pytest
 from dateutil.relativedelta import relativedelta
 from django.db.models import QuerySet
+from django.urls import reverse
 from pytz import UTC
 
 from accounts.models import GovDepartment
 from accounts.test.factories import UserFactory
 from activity_stream.models import ActivityStreamQuerySetWrapper
+from activity_stream.test.util.hawk import get_hawk_header
 from supply_chains.models import StrategicAction, StrategicActionQuerySet
 from supply_chains.test.factories import (
     StrategicActionUpdateFactory,
@@ -112,7 +114,37 @@ def bit_of_everything_queryset(
 
 
 @pytest.fixture(scope="function")
-def wrapped_union_queryset(bit_of_everything_queryset) -> QuerySet:
+def wrapped_union_queryset(bit_of_everything_queryset) -> ActivityStreamQuerySetWrapper:
     # we don't directly use the queryset, but referencing it as a parameter ensures it exists
     # otherwise the union of all querysets would only contain a GovDepartment :-)
     return ActivityStreamQuerySetWrapper()
+
+
+@pytest.fixture(scope="session")
+def hawk_credentials_setting():
+    return {
+        "testsettings": {
+            "id": "testsettings",
+            "key": "A secret key",
+            "algorithm": "sha256",
+        },
+    }
+
+
+@pytest.fixture(scope="session")
+def endpoint():
+    return f'{reverse("activity-stream-list")}?a=c'
+
+
+@pytest.fixture()
+def hawk_authentication_header(hawk_credentials_setting, endpoint):
+    return get_hawk_header(
+        access_key_id=hawk_credentials_setting["testsettings"]["id"],
+        secret_access_key=hawk_credentials_setting["testsettings"]["key"],
+        method="GET",
+        host="testserver",
+        port="80",
+        path=endpoint,
+        content_type=b"",
+        content=b"",
+    )
