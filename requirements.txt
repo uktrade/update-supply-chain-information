@@ -32,6 +32,7 @@ gevent==21.1.2
 geventhttpclient==1.4.4
 greenlet==1.1.0
 gunicorn==20.1.0
+hawkrest==1.0.1
 hijri-converter==2.1.1
 holidays==0.10.5.2
 identify==1.5.13
@@ -47,6 +48,7 @@ locust==1.5.3
 MarkupPy==1.14
 MarkupSafe==2.0.1
 marshmallow==3.6.1
+mohawk==1.1.0
 msgpack==1.0.2
 mypy-extensions==0.4.3
 nodeenv==1.5.0
