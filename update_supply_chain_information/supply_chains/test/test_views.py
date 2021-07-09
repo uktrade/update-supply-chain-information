@@ -134,7 +134,7 @@ def test_homepage_filters_out_archived_supply_chains(logged_in_client, test_user
     SupplyChainFactory.create_batch(5, gov_department=gov_department)
 
     num_unarchived_supply_chains = SupplyChain.objects.filter(is_archived=False).count()
-    response = logged_in_client.get(reverse("index"))
+    response = logged_in_client.get(reverse("sc-home"))
 
     assert len(response.context["supply_chains"]) == num_unarchived_supply_chains
 
@@ -155,7 +155,7 @@ def test_homepage_filters_out_archived_SAs(logged_in_client, test_user):
             sas[i].save()
 
     # Act
-    resp = logged_in_client.get(reverse("index"))
+    resp = logged_in_client.get(reverse("sc-home"))
 
     # Assert
     supply_chain = resp.context["supply_chains"].object_list[0]
@@ -179,7 +179,7 @@ def test_homepage_summary_with_archived_SAs(logged_in_client, test_user):
     )
 
     # Act
-    resp = logged_in_client.get(reverse("index"))
+    resp = logged_in_client.get(reverse("sc-home"))
 
     # Assert
     assert resp.context["update_complete"] == False
@@ -211,7 +211,7 @@ def test_homepage_summary_complete_with_archived_SAs(logged_in_client, test_user
         "supply_chains.models.SupplyChainQuerySet.submitted_since",
         return_value=dummy_qs,
     ):
-        resp = logged_in_client.get(reverse("index"))
+        resp = logged_in_client.get(reverse("sc-home"))
 
     # Assert
     assert resp.context["update_complete"]

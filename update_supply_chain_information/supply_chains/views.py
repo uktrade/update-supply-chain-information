@@ -38,10 +38,10 @@ from supply_chains.utils import (
 from supply_chains.mixins import PaginationMixin, GovDepPermissionMixin
 
 
-class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
+class SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView):
     model = SupplyChain
     context_object_name = "supply_chains"
-    template_name = "index.html"
+    template_name = "sc_home.html"
 
     def get_queryset(self):
         supply_chains = self.request.user.gov_department.supply_chains.filter(
