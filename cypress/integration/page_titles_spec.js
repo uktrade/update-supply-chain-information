@@ -113,7 +113,7 @@ describe('The Strategic Action Update Complete page', () => {
 describe('The Strategic Action Update Review page', () => {
     it('has the correct title', () => {
         cy.visit(urls.supplyChain.taskList);
-        cy.get(`#updates .govuk-link[href="${urls.supplyChain.strategicActions.update.review}"]`).click()
+        cy.get(`#updates .govuk-link[href="/supply-chains${urls.supplyChain.strategicActions.update.review}"]`).click()
         cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.review())
     });
 });
