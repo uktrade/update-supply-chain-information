@@ -30,7 +30,7 @@ describe('The strategic action summary page', () => {
   })
   it('displays breadcrumbs', () => {
     cy.get('ol').children().should('have.length', 2)
-    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
+    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/supply-chains/')
     cy.get('li')
       .contains('Strategic action summary')
       .should('have.attr', 'href')
