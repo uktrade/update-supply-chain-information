@@ -14,7 +14,7 @@ jobs:
       - name: Setup python
         uses: actions/setup-python@v2
         with:
-          python-version: '3.8.9'
+          python-version: '3.8.11'
       - name: Install python packages
         run: pip install -r requirements.txt
       - name: Setup node
