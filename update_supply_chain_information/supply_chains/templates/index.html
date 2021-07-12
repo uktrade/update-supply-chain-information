@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1 class="govuk-heading-xl" style="margin-bottom: 15px;">UK supply chain<br>resilience tool</h1>
+<p class="govuk-body-l">
+    Use this tool to help manage critical supply chain resilience across the UK.
+</p><br>
+
+
+<h2 class="govuk-heading-l" style="margin-bottom: 15px;">Supply chain information</h2>
+<p class="govuk-body-l">
+    Keep your wider information up to date<br>and provide your monthly update here.
+</p>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href={% url 'sc-home' %} class="services-heading govuk-link govuk-!-font-weight-bold">Monthly
+                    update</a>
+
+                <p class="home-services-para">
+                    Keep your department's monthly action plan up to date.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+
+<h2 class="govuk-heading-l" style="margin-bottom: 15px;">Reporting summary</h2>
+<p class="govuk-body-l">
+    Information on how to strengthen<br> future supply chain resilience.
+</p>
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a class="services-heading govuk-link govuk-!-font-weight-bold" href="#">Strategic action progress</a>
+                <p class="home-services-para">
+                    Explore the latest status on departmental strategic actions across the critical supply chain.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

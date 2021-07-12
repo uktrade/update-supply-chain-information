@@ -12,6 +12,7 @@ from supply_chains.api_views import (
     SupplyChainViewset,
 )
 from supply_chains.views import (
+    HomePageView,
     SCHomePageView,
     SCTaskListView,
     SCCompleteView,
@@ -127,5 +128,6 @@ urlpatterns = [
     path("admin/", admin_site.urls),
     path("api/", include(router.urls)),
     path("", include(healthcheck_urlpatterns)),
-    path("", include(supply_chain_urlpatterns)),
+    path("supply-chains/", include(supply_chain_urlpatterns)),
+    path("", HomePageView.as_view(), name="index"),
 ]

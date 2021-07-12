@@ -711,3 +711,7 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
 
 class PrivacyNoticeView(LoginRequiredMixin, TemplateView):
     template_name = "privacy_notice.html"
+
+
+class HomePageView(LoginRequiredMixin, TemplateView):
+    template_name = "index.html"
