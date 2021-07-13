@@ -1,50 +1,51 @@
 {% extends "base.html" %}
 
 {% block body %}
-    <h1 class="govuk-heading-xl">Update supply chain information</h1>
-    <p class="govuk-body">
-        It's important to keep your departmental action plan records up to date. This is so we can work towards constantly improving the UK's supply chain resilience.
-    </p>
-    {% if update_complete %}
-        <h2 class="govuk-heading-l">Your monthly update is complete</h2>
-        <p class="govuk-body">
-            All supply chains have been completed for this month.
-        </p>
-    {% else %}
-        <h2 class="govuk-heading-l">Complete your monthly update</h2>
-        <ul class="govuk-list govuk-list--bullet">
+<h1 class="govuk-heading-xl" style="margin-bottom: 15px;">UK supply chain<br>resilience tool</h1>
+<p class="govuk-body-l">
+    Use this tool to help manage critical supply chain resilience across the UK.
+</p><br>
+
+
+<h2 class="govuk-heading-l" style="margin-bottom: 15px;">Supply chain information</h2>
+<p class="govuk-body-l">
+    Keep your wider information up to date<br>and provide your monthly update here.
+</p>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
             <li>
-                You need to complete your monthly update. Complete <strong>{{ num_in_prog_supply_chains }} supply chain{{ num_in_prog_supply_chains|pluralize }}</strong> by
-                <span class="govuk-body govuk-!-font-weight-bold">{{ deadline|date:"l jS F Y" }}</span>.
-            </li>
-            <li>
-                Select a supply chain to provide your regular monthly update.
+                <a href={% url 'sc-home' %} class="services-heading govuk-link govuk-!-font-weight-bold">Monthly
+                    update</a>
+
+                <p class="home-services-para">
+                    Keep your department's monthly action plan up to date.
+                </p>
             </li>
         </ul>
-    {% endif %}
+    </div>
+</div>
 
-    <table class="govuk-table">
-        <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header">Supply chain</th>
-                <th scope="col" class="govuk-table__header">No. strategic<br> actions</th>
-                <th scope="col" class="govuk-table__header govuk-table__header--numeric">Last updated</th>
-            </tr>
-        </thead>
-        <tbody class="govuk-table__body">
-            {% for supplychain in supply_chains %}
-                <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header">
-                        <a href={% url 'supply-chain-task-list' supply_chain_slug=supplychain.slug %}  class="govuk-link">{{ supplychain.name }}</a>
-                    </th>
-                    <td class="govuk-table__cell">{{supplychain.strategic_action_count}}</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">{{supplychain.last_submission_date|date:"j M Y"}}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% if supply_chains.has_other_pages %}
-        {% include 'includes/pagination.html' with objects=supply_chains objects_name="supply chains" %}
-    {% endif %}
+
+
+<h2 class="govuk-heading-l" style="margin-bottom: 15px;">Reporting summary</h2>
+<p class="govuk-body-l">
+    Information on how to strengthen<br> future supply chain resilience.
+</p>
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a class="services-heading govuk-link govuk-!-font-weight-bold" href="#">Strategic action progress</a>
+                <p class="home-services-para">
+                    Explore the latest status on departmental strategic actions across the critical supply chain.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
 
 {% endblock %}

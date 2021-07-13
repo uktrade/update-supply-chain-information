@@ -6,7 +6,7 @@
 <nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
     <ol class="govuk-breadcrumbs__list">
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
+            <a class="govuk-breadcrumbs__link" href="{% url 'sc-home' %}">Home</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
             <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' view.supply_chain.slug %}">{{ view.supply_chain.name }}</a>
@@ -49,7 +49,7 @@
     <p class="govuk-body">
         <span>
             You can go back and
-            <a id="home" href={% url 'index' %} class="govuk-link">give an update for another supply chain.</a>
+            <a id="home" href={% url 'sc-home' %} class="govuk-link">give an update for another supply chain.</a>
         </span>
 
     </p>

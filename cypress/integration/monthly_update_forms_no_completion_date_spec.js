@@ -2,7 +2,7 @@ import supplyChains from '../fixtures/supplyChains.json'
 import strategicActions from '../fixtures/strategicActions.json'
 import strategicActionUpdates from '../fixtures/strategicActionUpdates.json'
 
-const baseUrl = Cypress.config('baseUrl')
+const baseUrlSC = Cypress.config('baseUrlSC')
 
 const updatesByStrategicActionPK = strategicActionUpdates.reduce((accumulator, update) => {
   accumulator[update.fields.strategic_action] = update;
@@ -160,22 +160,22 @@ const valuesToEnter = {
 
 const urls = {
   'start': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/start/`
+    return `${baseUrlSC}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/start/`
   },
   'info': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/info/`
+    return `${baseUrlSC}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/info/`
   },
   'timing': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/timing/`
+    return `${baseUrlSC}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/timing/`
   },
   'status': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/delivery-status/`
+    return `${baseUrlSC}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/delivery-status/`
   },
   'revisedtiming': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/revised-timing/`
+    return `${baseUrlSC}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/revised-timing/`
   },
   'confirm': function(strategicAction) {
-    return `${baseUrl}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/confirm/`
+    return `${baseUrlSC}/${strategicAction.supplyChainSlug}/${strategicAction.strategicActionSlug}/updates/${todaySlug}/confirm/`
   },
 }
 
@@ -302,7 +302,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
+              cy.get('@theForm').hasCancelLink(`supply-chains/${this.strategicAction.supplyChainSlug}/`)
             })
             context('When submitted with the content field filled out', function() {
               before(() => {
@@ -420,7 +420,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
+              cy.get('@theForm').hasCancelLink(`supply-chains/${this.strategicAction.supplyChainSlug}/`)
             })
             it ('should have a fieldset with legend asking if there is a completion date', () => {
               cy.get('@theForm').get('fieldset legend h2').contains('Is there an expected completion date?').should('exist')
@@ -663,7 +663,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton()
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
+              cy.get('@theForm').hasCancelLink(`supply-chains/${this.strategicAction.supplyChainSlug}/`)
             })
             context('the radio buttons asking for the current delivery status', function() {
               beforeEach(() => {
@@ -951,7 +951,7 @@ describe('Testing monthly update forms', () => {
               cy.get('@theForm').hasSubmitButton('Confirm')
             })
             it('should have a cancel link saying "Cancel" going back to the supply chain page', function() {
-              cy.get('@theForm').hasCancelLink(`${this.strategicAction.supplyChainSlug}/`)
+              cy.get('@theForm').hasCancelLink(`supply-chains/${this.strategicAction.supplyChainSlug}/`)
             })
           })
           context('Following the Timing row "Change" link and changing the selection to "Ongoing"', () => {
