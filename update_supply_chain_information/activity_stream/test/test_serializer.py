@@ -1,3 +1,5 @@
+from uuid import UUID
+
 import pytest
 
 from activity_stream.serializers import ActivityStreamSerializer
@@ -24,7 +26,8 @@ class TestActivityStreamSerializer:
             strategic_action_for_serialisation
         )
 
-        assert representation["object"]["supply_chain"] == expected_supply_chain_key
+        assert representation["object"]["es_supply_chain"] == expected_supply_chain_key
+        assert UUID(representation["object"]["supply_chain"]) == supply_chain_id
 
     def test_announcement_id_in_serialisation(self, supply_chain):
         serializer = ActivityStreamSerializer()
