@@ -49,18 +49,21 @@ class ActivityStreamSerializer(serializers.ModelSerializer):
         return representation
 
     def update_foreign_keys(self, foreign_keys, object_representation):
+        # As the Activity Stream format uses a specific format for ID fields
+        # we duplicate foreign keys in that format
+        # to make searching for related itewms in ElasticSearch easier
         for foreign_key, related_object_type in foreign_keys:
             related_item = object_representation[foreign_key]
             if related_item:
                 # there is one, or more
                 if isinstance(related_item, str):
                     # ForeignKey and OneToOne relationships just have a single key
-                    object_representation[foreign_key] = self.build_item_id(
+                    object_representation[f"es_{foreign_key}"] = self.build_item_id(
                         related_item, related_object_type
                     )
                 else:
                     # reverse ForeignKey and ManyToMany relationships have multiple keys
-                    object_representation[foreign_key] = [
+                    object_representation[f"es_{foreign_key}"] = [
                         self.build_item_id(related_item, related_object_type)
                         for related_item in related_item
                     ]

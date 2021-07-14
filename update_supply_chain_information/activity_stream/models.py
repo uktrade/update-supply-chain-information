@@ -28,6 +28,9 @@ class ActivityStreamQuerySetMixin:
         # `JSONObject` expects a dict of JSON names mapped to field names;
         # we just want all fields to have the same name in JSON as they do in the DB.
         json_object_kwargs = dict(zip(field_names, field_names))
+        # Add the raw ID value for use in Data Flow,
+        # as we modify it when serialising to match Activity Stream's definition of ID
+        json_object_kwargs["pk"] = json_object_kwargs["id"]
         return (
             self
             # Get the DB to serialise all non-foreign-key fields to JSON;
