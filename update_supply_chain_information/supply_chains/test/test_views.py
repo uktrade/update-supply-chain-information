@@ -76,6 +76,7 @@ def test_sc_homepage_update_complete(logged_in_client, test_user):
     assert response.context["update_complete"]
     assert response.context["num_updated_supply_chains"] == 6
     assert "Your monthly update is complete" not in response.rendered_content
+    assert 'class="govuk-notification-banner"' in response.rendered_content
     assert (
         "All supply chains have been completed for this month"
         in response.rendered_content
