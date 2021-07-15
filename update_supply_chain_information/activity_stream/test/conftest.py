@@ -58,8 +58,9 @@ def last_modified_times(start_time, time_delta, item_count):
 
 
 @pytest.fixture(scope="function")
-def strategic_action_queryset(last_modified_times) -> StrategicActionQuerySet:
-    supply_chain = SupplyChainFactory()
+def strategic_action_queryset(
+    supply_chain, last_modified_times
+) -> StrategicActionQuerySet:
     with mock.patch("django.utils.timezone.now") as mock_now:
         for last_modified in last_modified_times:
             mock_now.return_value = last_modified
@@ -109,22 +110,24 @@ def bit_of_everything_queryset(
     To get an idea of what comes out, run the following at the console:
     ['sc' if i % 8 == 0 else 'sa' if i % 4 == 1 else 'sau' for i in range(0, 23)]
     """
-    supply_chain = None
-    strategic_action = None
+    supply_chain_in_use = None
+    strategic_action_in_use = None
     gov_department: GovDepartment = GovDepartment.objects.first()
     user = UserFactory(gov_department=gov_department)
     with mock.patch("django.utils.timezone.now") as mock_now:
         for i, last_modified in enumerate(bit_of_everything_last_modified_times):
             mock_now.return_value = last_modified
             if i % 8 == 0:
-                supply_chain = SupplyChainFactory(gov_department=gov_department)
+                supply_chain_in_use = SupplyChainFactory(gov_department=gov_department)
                 continue
             if i % 5 == 1:
-                strategic_action = StrategicActionFactory(supply_chain=supply_chain)
+                strategic_action_in_use = StrategicActionFactory(
+                    supply_chain=supply_chain_in_use
+                )
                 continue
             StrategicActionUpdateFactory(
-                supply_chain=supply_chain,
-                strategic_action=strategic_action,
+                supply_chain=supply_chain_in_use,
+                strategic_action=strategic_action_in_use,
                 user=user,
                 status=StrategicActionUpdate.Status.SUBMITTED,
             )

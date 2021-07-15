@@ -47,16 +47,20 @@ class TestActivityStreamCursorPagination:
             pagination.paginate_queryset(wrapped_union_queryset, drf_request)
             # Change a supply chain so its last_modified date is later
             # than the last_modified date of the last item on the page we've just built
-            supply_chain = SupplyChain.objects.order_by("last_modified").first()
+            supply_chain_being_modified = SupplyChain.objects.order_by(
+                "last_modified"
+            ).first()
             expected_end_of_name = " modified"
-            supply_chain.name = supply_chain.name + expected_end_of_name
+            supply_chain_being_modified.name = (
+                supply_chain_being_modified.name + expected_end_of_name
+            )
             # Get a last_modified datetime later than the end of the existing queryset
             latest_timestamp = bit_of_everything_last_modified_times[-1]
             offset = relativedelta(months=1)
             new_timestamp = latest_timestamp + offset
             with mock.patch("django.utils.timezone.now") as mock_now:
                 mock_now.return_value = new_timestamp
-                supply_chain.save()
+                supply_chain_being_modified.save()
             # Ensure we have an updated queryset
             updated_queryset = ActivityStreamQuerySetWrapper()
             next_link = pagination.get_next_link()
