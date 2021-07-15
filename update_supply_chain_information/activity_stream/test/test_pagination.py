@@ -21,7 +21,7 @@ class TestActivityStreamCursorPagination:
         page_length = wrapped_union_queryset.count()
         with mock.patch(
             "activity_stream.pagination.ActivityStreamCursorPagination.get_page_size",
-            return_value=int(page_length),
+            return_value=page_length,
         ):
             request = rf.get(reverse("activity-stream-list"))
             drf_request = Request(request)
@@ -39,7 +39,7 @@ class TestActivityStreamCursorPagination:
         page_length = wrapped_union_queryset.count()
         with mock.patch(
             "activity_stream.pagination.ActivityStreamCursorPagination.get_page_size",
-            return_value=int(page_length),
+            return_value=page_length,
         ):
             request = rf.get(reverse("activity-stream-list"))
             drf_request = Request(request)
@@ -88,7 +88,7 @@ class TestActivityStreamCursorPagination:
         page_length = wrapped_union_queryset.count()
         with mock.patch(
             "activity_stream.pagination.ActivityStreamCursorPagination.get_page_size",
-            return_value=int(page_length),
+            return_value=page_length,
         ):
             request = rf.get(reverse("activity-stream-list"))
             drf_request = Request(request)
@@ -116,7 +116,7 @@ class TestActivityStreamCursorPagination:
         page_length = 100
         with mock.patch(
             "activity_stream.pagination.ActivityStreamCursorPagination.get_page_size",
-            return_value=int(page_length),
+            return_value=page_length,
         ):
             request = rf.get(reverse("activity-stream-list"))
             drf_request = Request(request)
@@ -131,7 +131,7 @@ class TestActivityStreamCursorPagination:
         page_length = wrapped_union_queryset.count()
         with mock.patch(
             "activity_stream.pagination.ActivityStreamCursorPagination.get_page_size",
-            return_value=int(page_length),
+            return_value=page_length,
         ):
             request = rf.get(reverse("activity-stream-list"))
             drf_request = Request(request)
@@ -146,7 +146,7 @@ class TestActivityStreamCursorPagination:
         page_length = 100
         with mock.patch(
             "activity_stream.pagination.ActivityStreamCursorPagination.get_page_size",
-            return_value=int(page_length),
+            return_value=page_length,
         ):
             request = rf.get(reverse("activity-stream-list"))
             drf_request = Request(request)

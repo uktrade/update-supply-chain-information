@@ -251,14 +251,14 @@ structure required by W3C AS, with the payload in the `object` property then bei
 representation created by the database. This is the step that allows instances of any model to be serialized
 without the serializer being aware of its type.
 
-#### update_foreign_keys()
+#### _update_foreign_keys()
 
 Adds a version of any foreign keys in the model in Activity Stream ID format, to support
 cross-referencing of object instances in ElasticSearch queries, as outlined under
 `ActivityStreamQuerySetMixin.for_activity_stream()`. The original values are retained
 within the serialisation for use in Data Flow and thereby in Data Workspace.
 
-#### build_item_id(instance_id, object_type)
+#### _build_item_id(instance_id, object_type)
 
 Returns an ID value in the form required by Activity Stream.
 

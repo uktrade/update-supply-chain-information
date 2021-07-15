@@ -39,7 +39,7 @@ def halfway_item_index(item_count):
 
 
 @pytest.fixture(scope="session")
-def start_time(item_count):
+def start_time():
     return datetime.datetime(year=2022, month=12, day=25, hour=11, tzinfo=UTC)
 
 
@@ -101,7 +101,7 @@ def bit_of_everything_last_modified_times(
 @pytest.fixture(scope="function")
 def bit_of_everything_queryset(
     bit_of_everything_item_count, bit_of_everything_last_modified_times
-) -> QuerySet:
+):
     """
     Generate a bunch of SCs, SA, and SAUs so we can be sure there's a good mix for the union queryset.
     Doing them this rather odd way helps check that the ordering works as expected

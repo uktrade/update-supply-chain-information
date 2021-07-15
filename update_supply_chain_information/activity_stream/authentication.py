@@ -62,7 +62,7 @@ class ActivityStreamHawkAuthentication(HawkAuthentication):
                 ),
             )
         except HawkFail as e:
-            etype, val, tb = sys.exc_info()
+            etype, val, _ = sys.exc_info()
             log.debug(traceback.format_exc())
             log.warning(
                 "access denied: {etype.__name__}: {val}".format(etype=etype, val=val)

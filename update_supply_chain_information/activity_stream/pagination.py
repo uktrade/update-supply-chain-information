@@ -54,14 +54,6 @@ class ActivityStreamCursorPagination(CursorPagination):
     def _get_url(self):
         return self.encode_cursor(self.cursor) if self.cursor else self.base_url
 
-    def _get_summary(self):
-        if self.summary is None:
-            raise ImproperlyConfigured(
-                f"{self.__class__.__name__} requires definition of `summary` attribute "
-                "or a `_get_summary()` method",
-            )
-        return self.summary
-
     def get_paginated_response(self, data):
         """
         Overriding this function to re-format the response according to
@@ -70,7 +62,7 @@ class ActivityStreamCursorPagination(CursorPagination):
         response = {
             "@context": "https://www.w3.org/ns/activitystreams",
             "name": "dit:UpdateSupplyChainInformation",
-            "summary": self._get_summary(),
+            "summary": self.summary,
             "type": "OrderedCollectionPage",
             "id": self._get_url(),
             "partOf": self.base_url,

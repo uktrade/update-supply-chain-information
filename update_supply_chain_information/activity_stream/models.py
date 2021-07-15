@@ -3,7 +3,7 @@ from functools import wraps
 
 from django.apps import apps
 from django.conf import settings
-from django.db.models import Value, Model, QuerySet
+from django.db.models import Value, QuerySet
 from django.db.models.functions import JSONObject
 
 
@@ -20,7 +20,7 @@ class ActivityStreamQuerySetMixin:
             for field in fields
             if field.is_relation and field.many_to_one
         ]
-        # TODO: check other relations, such as ManyToMany, just in case any show up in future models.
+        # NOTE: check other relations, such as ManyToMany, just in case any show up in future models.
         # Get all non-foreign-key field names so they can be serialised by the database.
         field_names = [
             field.name for field in fields if not field.is_relation or field.many_to_one
@@ -104,8 +104,6 @@ class ActivityStreamQuerySetWrapper:
     @property
     def _all_querysets(self):
         return [model.objects.for_activity_stream() for model in self._models]
-        # for model in self.models:
-        #     yield model.objects.for_activity_stream()
 
     def __getattr__(self, item):
         """
