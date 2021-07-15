@@ -11,7 +11,11 @@ from accounts.models import GovDepartment
 from accounts.test.factories import UserFactory
 from activity_stream.models import ActivityStreamQuerySetWrapper
 from activity_stream.test.util.hawk import get_hawk_header
-from supply_chains.models import StrategicAction, StrategicActionQuerySet
+from supply_chains.models import (
+    StrategicAction,
+    StrategicActionQuerySet,
+    StrategicActionUpdate,
+)
 from supply_chains.test.factories import (
     StrategicActionUpdateFactory,
     SupplyChainFactory,
@@ -64,6 +68,16 @@ def strategic_action_queryset(last_modified_times) -> StrategicActionQuerySet:
 
 
 @pytest.fixture()
+def strategic_action_update_queryset(strategic_action_queryset, last_modified_times):
+    for strategic_action in strategic_action_queryset:
+        StrategicActionUpdateFactory(
+            strategic_action=strategic_action,
+            supply_chain=strategic_action.supply_chain,
+        )
+    return StrategicActionUpdate.objects.all()
+
+
+@pytest.fixture()
 def empty_queryset() -> QuerySet:
     return ActivityStreamQuerySetWrapper().none()
 
@@ -109,7 +123,10 @@ def bit_of_everything_queryset(
                 strategic_action = StrategicActionFactory(supply_chain=supply_chain)
                 continue
             StrategicActionUpdateFactory(
-                supply_chain=supply_chain, strategic_action=strategic_action, user=user
+                supply_chain=supply_chain,
+                strategic_action=strategic_action,
+                user=user,
+                status=StrategicActionUpdate.Status.SUBMITTED,
             )
 
 
