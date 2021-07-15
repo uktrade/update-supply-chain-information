@@ -7,12 +7,6 @@ class ActivityStreamSerializer(serializers.ModelSerializer):
     app_key_prefix = f"{department_prefix}:{app_name}"
     name = ""
 
-    def _get_user(self, user):
-        pass
-
-    def _get_gov_department(self, gov_department):
-        pass
-
     def _get_generator(self):
         """
         Get a serialized representation of the generator.
