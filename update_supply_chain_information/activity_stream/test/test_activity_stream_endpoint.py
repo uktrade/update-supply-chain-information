@@ -28,6 +28,7 @@ class TestActivityStreamEndpoint:
                 response = logged_in_client.get(
                     endpoint, HTTP_AUTHORIZATION=hawk_authentication_header
                 )
+            assert response.status_code == 200
             json = response.json()
             assert "next" in json
 
@@ -50,6 +51,7 @@ class TestActivityStreamEndpoint:
                 response = logged_in_client.get(
                     endpoint, HTTP_AUTHORIZATION=hawk_authentication_header
                 )
+            assert response.status_code == 200
             json = response.json()
             assert len(json["orderedItems"]) == page_length
 
@@ -74,19 +76,24 @@ class TestActivityStreamEndpoint:
                 )
                 json = response.json()
                 next_page_link = json["next"]
+                url_parts = urlparse(next_page_link)
+                next_page_path = url_parts.path
+                if url_parts.query:
+                    next_page_path = f"{next_page_path}?{url_parts.query}"
                 hawk_authentication_header = get_hawk_header(
                     access_key_id=hawk_credentials_setting["testsettings"]["id"],
                     secret_access_key=hawk_credentials_setting["testsettings"]["key"],
                     method="GET",
                     host="testserver",
                     port="80",
-                    path=next_page_link,
+                    path=next_page_path,
                     content_type=b"",
                     content=b"",
                 )
                 response = logged_in_client.get(
                     next_page_link, HTTP_AUTHORIZATION=hawk_authentication_header
                 )
+                assert response.status_code == 200
                 json = response.json()
                 assert "next" not in json
 
@@ -128,6 +135,7 @@ class TestActivityStreamEndpoint:
                 response = logged_in_client.get(
                     next_page_link, HTTP_AUTHORIZATION=hawk_authentication_header
                 )
+                assert response.status_code == 200
                 json = response.json()
                 assert len(json["orderedItems"]) == 0
 
@@ -169,6 +177,7 @@ class TestActivityStreamEndpoint:
                     response = logged_in_client.get(
                         endpoint, HTTP_AUTHORIZATION=hawk_authentication_header
                     )
+                    assert response.status_code == 200
                     json = response.json()
                     items = json["orderedItems"]
                     results += [
