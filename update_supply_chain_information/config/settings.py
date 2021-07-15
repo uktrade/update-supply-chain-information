@@ -237,6 +237,10 @@ ACTIVITY_STREAM_APPS = [
 
 # Settings for Activity Stream authentication
 
+# These credentials are provided to consumers of the AS feed to authenticate themselves,
+# and used by activity_stream.authentication.ActivityStreamHawkAuthentication to validate authenticate headers
+# via the Hawkrest and Mohawk libraries.
+
 HAWK_CREDENTIALS = {
     "usci_activitystream": {
         "id": env.str("HAWK_UNIQUE_ID"),
