@@ -114,7 +114,7 @@ describe('Allowed to view submitted Supply chain', () => {
   })
   it('displays button to go back', () => {
     cy.get('a')
-      .contains('Back to home')
+      .contains('Back')
       .should('have.attr', 'href')
       .and('equal', '/supply-chains/')
     cy.get('form').should('not.exist')
