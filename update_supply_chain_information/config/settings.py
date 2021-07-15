@@ -87,7 +87,6 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        # "hawkrest.HawkAuthentication",
         "activity_stream.authentication.ActivityStreamHawkAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": [
@@ -239,8 +238,8 @@ ACTIVITY_STREAM_APPS = [
 # Settings for Activity Stream authentication
 
 HAWK_CREDENTIALS = {
-    env.str("HAWK_ACCESS_KEY_ID"): {
-        "id": env.str("HAWK_ACCESS_KEY_ID"),
+    "usci_activitystream": {
+        "id": env.str("HAWK_UNIQUE_ID"),
         "key": env.str("HAWK_SECRET_ACCESS_KEY"),
         "algorithm": "sha256",
     },
