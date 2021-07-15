@@ -1,6 +1,7 @@
 import pytest
 
 from activity_stream.models import ActivityStreamQuerySetWrapper
+from supply_chains.models import StrategicActionUpdate
 
 pytestmark = pytest.mark.django_db
 
@@ -77,6 +78,22 @@ class TestActivityStreamQuerySetMixin:
             halfway_last_modified
         )
         assert queryset_modified_after.count() == count - halfway
+
+    def test_strategic_action_update_activity_stream_queryset_includes_only_submitted(
+        self, strategic_action_update_queryset
+    ):
+        submitted_count = 0
+        update: StrategicActionUpdate
+        for index, update in enumerate(strategic_action_update_queryset):
+            if index % 3:
+                update.status = StrategicActionUpdate.Status.SUBMITTED
+                submitted_count += 1
+            else:
+                update.status = StrategicActionUpdate.Status.IN_PROGRESS
+            update.save()
+
+        updates_for_feed = StrategicActionUpdate.objects.for_activity_stream()
+        assert updates_for_feed.count() == submitted_count
 
 
 class TestActivityStreamQuerySetWrapper:

@@ -243,6 +243,13 @@ class SAUQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
             .first()
         )
 
+    def for_activity_stream(self):
+        return (
+            super()
+            .for_activity_stream()
+            .filter(status=StrategicActionUpdate.Status.SUBMITTED)
+        )
+
 
 class StrategicActionUpdate(models.Model):
     class Status(models.TextChoices):
