@@ -75,7 +75,8 @@ def test_sc_homepage_update_complete(logged_in_client, test_user):
     assert response.status_code == 200
     assert response.context["update_complete"]
     assert response.context["num_updated_supply_chains"] == 6
-    assert "Your monthly update is complete" in response.rendered_content
+    assert "Your monthly update is complete" not in response.rendered_content
+    assert 'class="govuk-notification-banner"' in response.rendered_content
     assert (
         "All supply chains have been completed for this month"
         in response.rendered_content
@@ -115,7 +116,7 @@ def test_sc_homepage_update_incomplete(logged_in_client, test_user):
     assert not response.context["update_complete"]
     assert response.context["num_updated_supply_chains"] == 3
     assert response.context["num_in_prog_supply_chains"] == 3
-    assert "Complete your monthly update" in response.rendered_content
+    assert "Complete your monthly update" not in response.rendered_content
     assert (
         "Select a supply chain to provide your regular monthly update"
         in response.rendered_content

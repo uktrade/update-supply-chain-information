@@ -97,7 +97,6 @@ strategic_action_urlpatterns = [
 supply_chain_urlpatterns = [
     path("", SCHomePageView.as_view(), name="sc-home"),
     path("summary/", SCSummary.as_view(), name="supply-chain-summary"),
-    path("privacy-notice/", PrivacyNoticeView.as_view(), name="privacy"),
     path(
         "<slug:supply_chain_slug>/",
         include(
@@ -129,5 +128,6 @@ urlpatterns = [
     path("api/", include(router.urls)),
     path("", include(healthcheck_urlpatterns)),
     path("supply-chains/", include(supply_chain_urlpatterns)),
+    path("privacy-notice/", PrivacyNoticeView.as_view(), name="privacy"),
     path("", HomePageView.as_view(), name="index"),
 ]

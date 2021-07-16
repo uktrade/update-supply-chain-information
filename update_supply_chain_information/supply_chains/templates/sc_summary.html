@@ -6,7 +6,7 @@
 <nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
     <ol class="govuk-breadcrumbs__list">
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="{% url 'sc-home' %}">Home</a>
+            <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
         </li>
     </ol>
 </nav>
@@ -45,6 +45,6 @@
 {% endif %}
 
 
-<a href={% url 'sc-home' %} class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back</a>
+<a href={% url 'index' %} class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back</a>
 
 {% endblock %}
