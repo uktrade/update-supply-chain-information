@@ -2,15 +2,9 @@ from django.urls import path, include
 from django.utils.decorators import decorator_from_middleware
 from rest_framework import routers
 
-from accounts.api_views import UserViewSet
 from healthcheck.middleware import StatsMiddleware
 from healthcheck.views import HealthCheckView
 from supply_chains.admin import admin_site
-from supply_chains.api_views import (
-    StrategicActionViewset,
-    StrategicActionUpdateViewset,
-    SupplyChainViewset,
-)
 from supply_chains.views import (
     HomePageView,
     SCHomePageView,
@@ -28,17 +22,12 @@ from supply_chains.views import (
     PrivacyNoticeView,
 )
 
+from activity_stream.viewsets import (
+    ActivityStreamViewSet,
+)
+
 router = routers.DefaultRouter()
-router.register(r"users", UserViewSet, basename="user")
-router.register(
-    r"strategic-actions", StrategicActionViewset, basename="strategic-action"
-)
-router.register(r"supply-chains", SupplyChainViewset, basename="supply-chain")
-router.register(
-    r"strategic-action-updates",
-    StrategicActionUpdateViewset,
-    basename="strategic-action-update",
-)
+router.register(r"activity-stream", ActivityStreamViewSet, basename="activity-stream")
 
 monthly_update_urlpatterns = [
     path(

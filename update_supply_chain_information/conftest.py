@@ -4,7 +4,6 @@ from django.test import Client
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APIClient
 
-from accounts.models import User
 from accounts.test.factories import UserFactory
 from supply_chains.models import StrategicActionUpdate
 from supply_chains.test.factories import (

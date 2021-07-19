@@ -7,6 +7,8 @@ jobs:
       DATABASE_URL: postgres://postgres:password@localhost:5432/supply_chain_info
       OAUTHLIB_INSECURE_TRANSPORT: 1
       RUNNING_LOCALLY: 0
+      HAWK_UNIQUE_ID: 'activitystream_uniqueid'
+      HAWK_SECRET_ACCESS_KEY: 'activitystream_secret'
     steps:
       - uses: actions/checkout@v2
       - name: Setup python
