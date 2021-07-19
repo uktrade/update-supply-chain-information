@@ -184,6 +184,14 @@ class Command(BaseCommand):
             )
 
         obj = json.loads(self._get_json_object(options["csvfile"]))
+        # As an `auto_now` field cannot be null, but `loaddata` (which is used by this command)
+        # bypasses both `Model.save()` and 'QuerySet.update()` by going directly to the database,
+        # data ingestion causes an IntegrityError unless the `last_modified` field's value is explicitly set.
+        # The value used is `datetime.now()` to replicate the normal behaviour
+        # when an object with an `auto_now` field is created.
+        for row in obj:
+            if "last_modified" not in row:
+                row["last_modified"] = datetime.now().strftime(r"%Y-%m-%dT%H:%M:%S.%f")
         json_obj = self._format_to_django_object(options["model"], obj)
 
         with NamedTemporaryFile(suffix=".json", mode="w") as fp:

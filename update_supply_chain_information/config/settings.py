@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "supply_chains",
     "accounts",
     "healthcheck",
+    "activity_stream",
     "rest_framework",
     "rest_framework.authtoken",
     "reversion",
@@ -85,12 +86,14 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "activity_stream.authentication.ActivityStreamHawkAuthentication",
+    ),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_PAGINATION_CLASS": "activity_stream.pagination.ActivityStreamCursorPagination",
+    "PAGE_SIZE": 100,
 }
 
 # Database
@@ -151,7 +154,7 @@ if not DEBUG:
     }
 
 # App name for django_log_formatter_ecs
-DLFE_APP_NAME="update-supply-chain-information"
+DLFE_APP_NAME = "update-supply-chain-information"
 
 LOGIN_URL = reverse_lazy("authbroker_client:login")
 LOGIN_REDIRECT_URL = reverse_lazy("index")
@@ -211,16 +214,38 @@ if SET_HSTS_HEADERS:
     SECURE_SSL_REDIRECT = True
 
 # Settings for CSRF and Session cookies
-CSRF_COOKIE_SECURE = env('CSRF_COOKIE_SECURE', default=True)
-CSRF_COOKIE_HTTPONLY = env('CSRF_COOKIE_HTTPONLY', default=True)
-SESSION_COOKIE_SECURE = env('SESSION_COOKIE_SECURE', default=True)
-SESSION_COOKIE_AGE = env('SESSION_COOKIE_AGE', default=60 * 60 * 10)
+CSRF_COOKIE_SECURE = env("CSRF_COOKIE_SECURE", default=True)
+CSRF_COOKIE_HTTPONLY = env("CSRF_COOKIE_HTTPONLY", default=True)
+SESSION_COOKIE_SECURE = env("SESSION_COOKIE_SECURE", default=True)
+SESSION_COOKIE_AGE = env("SESSION_COOKIE_AGE", default=60 * 60 * 10)
 
 # Settings for application performance monitoring
 ELASTIC_APM = {
-  "SERVICE_NAME": "update-supply-chain-information",
-  "SECRET_TOKEN": env("APM_SECRET_TOKEN", default=""),
-  "SERVER_URL" : "https://apm.elk.uktrade.digital",
-  "ENVIRONMENT": env("APM_ENVIRONMENT", default=""),
-  "SERVER_TIMEOUT": env("APM_SERVER_TIMEOUT", default=""),
+    "SERVICE_NAME": "update-supply-chain-information",
+    "SECRET_TOKEN": env("APM_SECRET_TOKEN", default=""),
+    "SERVER_URL": "https://apm.elk.uktrade.digital",
+    "ENVIRONMENT": env("APM_ENVIRONMENT", default=""),
+    "SERVER_TIMEOUT": env("APM_SERVER_TIMEOUT", default=""),
 }
+
+# Settings for Activity Stream
+
+ACTIVITY_STREAM_APPS = [
+    "accounts",
+    "supply_chains",
+]
+
+# Settings for Activity Stream authentication
+
+# These credentials are provided to consumers of the AS feed to authenticate themselves,
+# and used by activity_stream.authentication.ActivityStreamHawkAuthentication to validate authenticate headers
+# via the Hawkrest and Mohawk libraries.
+
+HAWK_CREDENTIALS = {
+    "usci_activitystream": {
+        "id": env.str("HAWK_UNIQUE_ID"),
+        "key": env.str("HAWK_SECRET_ACCESS_KEY"),
+        "algorithm": "sha256",
+    },
+}
+HAWK_MESSAGE_EXPIRATION = 60  # seconds until a Hawk header is regarded as expired

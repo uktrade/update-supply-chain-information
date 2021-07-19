@@ -26,9 +26,7 @@ def taskcomp_stub(test_user):
         gov_department=test_user.gov_department,
         last_submission_date=date.today(),
     )
-    scs = SupplyChainFactory.create_batch(
-        2, name=sc_name + "00", gov_department=test_user.gov_department
-    )
+    scs = SupplyChainFactory.create_batch(2, gov_department=test_user.gov_department)
     sa = StrategicActionFactory.create(supply_chain=sc)
     StrategicActionUpdateFactory(
         status=Status.SUBMITTED,
