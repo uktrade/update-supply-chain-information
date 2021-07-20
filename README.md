@@ -109,7 +109,7 @@ For additional support in configuring integration, including being given access 
 #### Data Flow
 
 Once the project data has been made available in Activity Stream's Elasticsearch, it can be extracted
-by the DIT's Data Flow aplication which stores it in Data Workspace. Once in Data Workspace, it can be used by 
+by the DIT's Data Flow application which stores it in Data Workspace. Once in Data Workspace, it can be used by 
 the Supply Chains Visualisations application.
 
 This integration is achieved by the creation of multiple DAGs (Python classes based on Airflow DAGs),
@@ -117,7 +117,7 @@ with each DAG corresponding to one of the models serialised by `activity_stream`
 in accordance with the general process described in [How to get data into a table in Data Workspace](https://readme.trade.gov.uk/docs/howtos/data-workspace-pipeline.html).
 
 
-The DAGS implemented for this project follow the pattern set by other DAGs that consume Activity Stream data in the Data Flow application,
+The DAGS implemented for this project follow the pattern set by other DAGs in the Data Flow application that consume Activity Stream data,
 which can be found [in Data Flow's GitHub repository](https://github.com/uktrade/data-flow/blob/master/dataflow/dags/activity_stream_pipelines.py).
 Each DAG stores the data it retrieves in a Data Workspace table corresponding to the type of the model retrieved.
 
