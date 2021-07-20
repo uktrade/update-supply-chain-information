@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 class ActivityStreamSerializer(serializers.ModelSerializer):
     department_prefix = "dit"
-    app_name = "UpdateSupplyChainInformation"
+    app_name = "ResilienceTool"
     app_key_prefix = f"{department_prefix}:{app_name}"
 
     def _get_generator(self):
