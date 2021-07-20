@@ -1,9 +1,9 @@
-name,email_domains
-dhsc,dhsc.gov.uk
-dcms,dcms.gov.uk
-defra,defra.gov.uk
-mod,mod.gov.uk
-ho,homeoffice.gov.uk
-beis,beis.gov.uk
-dft,dft.gov.uk
+name,email_domains,last_modified
+dhsc,dhsc.gov.uk,2021-05-31T23:00:00Z
+dcms,dcms.gov.uk,2021-05-31T23:00:00Z
+defra,defra.gov.uk,2021-05-31T23:00:00Z
+mod,mod.gov.uk,2021-05-31T23:00:00Z
+ho,homeoffice.gov.uk,2021-05-31T23:00:00Z
+beis,beis.gov.uk,2021-05-31T23:00:00Z
+dft,dft.gov.uk,2021-05-31T23:00:00Z
 
