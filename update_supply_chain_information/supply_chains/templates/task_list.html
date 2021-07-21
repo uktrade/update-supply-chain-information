@@ -77,7 +77,7 @@
             <tr class="govuk-table__row tasklist-top-border">
                 <td class="govuk-table__cell govuk-!-width-one-half">
                     <a href={{ update.route }} class="govuk-link">Update {{ update.name }}</a>
-                    <p class="tasklist-action-description"> {{ update.description|truncatewords:10 }} </p>
+                    <p class="tasklist-action-description"> {{ update.description|truncatewords:30 }} </p>
                 </td>
                 <td class="govuk-table__cell">
                     {% if update.status.label == "Not started" %}

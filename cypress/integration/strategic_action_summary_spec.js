@@ -48,8 +48,8 @@ describe('The strategic action summary page', () => {
         .eq(index)
         .within(() => {
           cy.get('.govuk-accordion__section-heading').contains(object.name)
-          cy.get('.govuk-accordion__section-summary').contains(
-            object.description
+          cy.get('.govuk-accordion__section-summary').debug().contains(
+            object.description.split(" ").slice(0, 30).join(" ")
           )
         })
     }
