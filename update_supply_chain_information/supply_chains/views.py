@@ -38,10 +38,10 @@ from supply_chains.utils import (
 from supply_chains.mixins import PaginationMixin, GovDepPermissionMixin
 
 
-class SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView):
+class HomePageView(LoginRequiredMixin, PaginationMixin, ListView):
     model = SupplyChain
     context_object_name = "supply_chains"
-    template_name = "sc_home.html"
+    template_name = "index.html"
 
     def get_queryset(self):
         supply_chains = self.request.user.gov_department.supply_chains.filter(
@@ -711,7 +711,3 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
 
 class PrivacyNoticeView(LoginRequiredMixin, TemplateView):
     template_name = "privacy_notice.html"
-
-
-class HomePageView(LoginRequiredMixin, TemplateView):
-    template_name = "index.html"

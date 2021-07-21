@@ -3,7 +3,6 @@
         "FEEDBACK_GROUP_EMAIL": "feedback@email"
     },
     "baseUrl": "http://localhost:8001",
-    "baseUrlSC": "http://localhost:8001/supply-chains",
     "defaultCommandTimeout": 2000,
     "videoUploadOnPasses": false,
     "integrationFolder": "cypress/integration",

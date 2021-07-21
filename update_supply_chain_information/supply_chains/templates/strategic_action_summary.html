@@ -8,6 +8,9 @@
     <li class="govuk-breadcrumbs__list-item">
       <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
     </li>
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="#">Strategic action summary</a>
+    </li>
   </ol>
 </nav>
 {% endblock %}
@@ -29,7 +32,7 @@
         </span>
       </h2>
       <div class="govuk-accordion__section-summary govuk-body summary-action-description" id="{{ summary }}">
-        {{ action.description|truncatechars:150 }}
+        {{ action.description|truncatewords:30 }}
       </div>
     </div>
     <div id="{{ content }}" class="govuk-accordion__section-content" aria-labelledby="{{ heading }}">

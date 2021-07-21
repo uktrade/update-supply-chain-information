@@ -8,7 +8,7 @@ const supplyChain = supplyChains[4].fields
 
 describe('The Supply Chain TaskComplete Page', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrlSC') + `/${supplyChain.slug}/complete/`)
+    cy.visit(Cypress.config('baseUrl') + `/${supplyChain.slug}/complete/`)
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -21,13 +21,15 @@ describe('The Supply Chain TaskComplete Page', () => {
     )
   })
   it('displays breadcrumbs', () => {
-    cy.get('ol').children().should('have.length', 3)
     cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
-    cy.get('li').contains('Monthly update').should('have.attr', 'href').and('eq', '/supply-chains/')
     cy.get('li')
       .contains(supplyChain.name)
       .should('have.attr', 'href')
-      .and('eq', `/supply-chains/${supplyChain.slug}/`)
+      .and('eq', `/${supplyChain.slug}/`)
+    cy.get('li')
+      .contains('Update complete')
+      .should('have.attr', 'href')
+      .and('eq', `/${supplyChain.slug}/complete/`)
   })
   it('displays the correct text', () => {
     cy.get('h1').contains('Update complete')
@@ -43,7 +45,7 @@ describe('The Supply Chain TaskComplete Page', () => {
       'You can go back and give an update for another supply chain.'
     )
 
-    cy.get('#home').should('have.attr', 'href').and('equal', '/supply-chains/')
+    cy.get('#home').should('have.attr', 'href').and('equal', '/')
   })
 })
 
@@ -51,12 +53,14 @@ const completedSC = supplyChains[1].fields
 
 describe('Validate complete view for manual access', () => {
   it('successfully loads ready_to_submit Supply chain, by redirecting to tasklist page', () => {
-    cy.visit(Cypress.config('baseUrlSC') + `/${completedSC.slug}/complete/`)
+    cy.visit(Cypress.config('baseUrl') + `/${completedSC.slug}/complete/`)
   })
   it('displays breadcrumbs', () => {
-    cy.get('ol').children().should('have.length', 2)
-    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
-    cy.get('li').contains('Monthly update').should('have.attr', 'href').and('eq', '/supply-chains/')
+    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', `/`)
+    cy.get('li')
+      .contains(completedSC.name)
+      .should('have.attr', 'href')
+      .and('eq', `/${completedSC.slug}/`)
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
