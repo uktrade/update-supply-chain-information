@@ -19,26 +19,25 @@ export function urlBuilder(supplyChain, strategicAction, strategicActionUpdate) 
 
     let urls = {
         home: Cypress.config('baseUrl'),
-        scHome: Cypress.config('baseUrlSC'),
-        privacy: `${Cypress.config('baseUrlSC')}/privacy-notice/`,
-        summary: `${Cypress.config('baseUrlSC')}/summary/`,
+        privacy: `${Cypress.config('baseUrl')}/privacy-notice/`,
+        summary: `${Cypress.config('baseUrl')}/summary/`,
     }
 
     if (supplyChain) {
         urls.supplyChain = {
-            taskList: `${Cypress.config('baseUrlSC')}/${supplyChain.fields.slug}/`,
+            taskList: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/`,
         }
         urls.supplyChain.strategicActions = {
-            summary: `${Cypress.config('baseUrlSC')}/${supplyChain.fields.slug}/strategic-actions/`,
+            summary: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/strategic-actions/`,
         }
 
         if (strategicAction && strategicActionUpdate) {
             urls.supplyChain.strategicActions.update = {
-                info: `${Cypress.config('baseUrlSC')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/info/`,
-                timing: `${Cypress.config('baseUrlSC')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/timing/`,
-                status: `${Cypress.config('baseUrlSC')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/delivery-status/`,
-                revisedTiming: `${Cypress.config('baseUrlSC')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/revised-timing/`,
-                confirm: `${Cypress.config('baseUrlSC')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/confirm/`,
+                info: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/info/`,
+                timing: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/timing/`,
+                status: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/delivery-status/`,
+                revisedTiming: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/revised-timing/`,
+                confirm: `${Cypress.config('baseUrl')}/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/confirm/`,
                 review: `/${supplyChain.fields.slug}/${strategicAction.fields.slug}/updates/${strategicActionUpdate.fields.slug}/review/`,
             }
         }

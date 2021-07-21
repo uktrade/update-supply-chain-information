@@ -12,7 +12,6 @@ const urls = urlBuilder(supplyChain, strategicAction, strategicActionUpdate);
 
 const expectedTitles = {
     home: () => 'Update supply chain information',
-    scHome: () => `Supply chains – ${expectedTitles.home()}`,
     privacy: () => `Privacy notice – ${expectedTitles.home()}`,
     summary: () => `Summary – ${expectedTitles.home()}`,
     supplyChain: {
@@ -32,17 +31,11 @@ const expectedTitles = {
     }
 };
 
+
 describe('The Home Page', () => {
     it('has the correct title', () => {
         cy.visit(urls.home);
         cy.title().should('equal', expectedTitles.home());
-    });
-});
-
-describe('The SC Home Page', () => {
-    it('has the correct title', () => {
-        cy.visit(urls.scHome);
-        cy.title().should('equal', expectedTitles.scHome());
     });
 });
 
@@ -113,7 +106,7 @@ describe('The Strategic Action Update Complete page', () => {
 describe('The Strategic Action Update Review page', () => {
     it('has the correct title', () => {
         cy.visit(urls.supplyChain.taskList);
-        cy.get(`#updates .govuk-link[href="/supply-chains${urls.supplyChain.strategicActions.update.review}"]`).click()
+        cy.get(`#updates .govuk-link[href="${urls.supplyChain.strategicActions.update.review}"]`).click()
         cy.title().should('equal', expectedTitles.supplyChain.strategicActions.update.review())
     });
 });

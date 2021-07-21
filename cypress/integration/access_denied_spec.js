@@ -6,7 +6,7 @@ const adminUser = users[1].fields
 
 describe('The access denied page', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrlSC') + `/${supplyChain.slug}/`, {failOnStatusCode: false})
+    cy.visit(Cypress.config('baseUrl') + `/${supplyChain.slug}/`, {failOnStatusCode: false})
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -23,7 +23,7 @@ describe('The access denied page', () => {
       cy.get('li').contains('Contact the Resilience Tool team if you think you do have permission to access this page.')
   })
   it('Displays correct links', () => {
-      cy.get('a').contains('homepage').should('have.attr', 'href').and('eq', '/supply-chains/')
+      cy.get('a').contains('homepage').should('have.attr', 'href').and('eq', '/')
       cy.get('a').contains('Contact the Resilience Tool team').should('have.attr', 'href').and('eq', `mailto:${Cypress.env('FEEDBACK_GROUP_EMAIL')}?bcc=${adminUser.email}`)
   })
 })
