@@ -6,10 +6,10 @@
 <nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
     <ol class="govuk-breadcrumbs__list">
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'sc-home' %}">Home</a>
       </li>
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'sc-home' %}">Monthly update</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' view.supply_chain.slug %}" aria-current="page">{{ view.supply_chain.name }}</a>
       </li>
     </ol>
 </nav>
@@ -115,7 +115,7 @@
             </button>
         </form>
     {% else %}
-        <a href={% url 'sc-home' %} class="govuk-button govuk-button--secondary">Back</a>
+        <a href={% url 'sc-home' %} class="govuk-button govuk-button--secondary">Back to home</a>
     {% endif %}
 
 {% endblock %}

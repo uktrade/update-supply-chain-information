@@ -19,8 +19,8 @@ export function urlBuilder(supplyChain, strategicAction, strategicActionUpdate) 
 
     let urls = {
         home: Cypress.config('baseUrl'),
-        privacy: `${Cypress.config('baseUrl')}/privacy-notice/`,
         scHome: Cypress.config('baseUrlSC'),
+        privacy: `${Cypress.config('baseUrlSC')}/privacy-notice/`,
         summary: `${Cypress.config('baseUrlSC')}/summary/`,
     }
 

@@ -21,9 +21,11 @@ describe('The Supply Chain Tasklist Page', () => {
     )
   })
   it('displays breadcrumbs', () => {
-    cy.get('ol').children().should('have.length', 2)
-    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', `/`)
-    cy.get('li').contains('Monthly update').should('have.attr', 'href').and('eq', `/supply-chains/`)
+    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', `/supply-chains/`)
+    cy.get('li')
+      .contains(`${supplyChain.name}`)
+      .should('have.attr', 'href')
+      .and('eq', `/supply-chains/${supplyChain.slug}/`)
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${supplyChain.name}`)
@@ -112,7 +114,7 @@ describe('Allowed to view submitted Supply chain', () => {
   })
   it('displays button to go back', () => {
     cy.get('a')
-      .contains('Back')
+      .contains('Back to home')
       .should('have.attr', 'href')
       .and('equal', '/supply-chains/')
     cy.get('form').should('not.exist')

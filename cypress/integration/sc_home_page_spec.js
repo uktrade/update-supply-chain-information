@@ -25,17 +25,13 @@ describe('The Supply Chain Home Page', () => {
     bannerContents.get('.govuk-phase-banner__text').contains('This is a new service – your feedback will help us to improve it.')
     bannerContents.get('a').contains('feedback').should('have.attr', 'href').and('eq', `mailto:${Cypress.env('FEEDBACK_GROUP_EMAIL')}?bcc=${adminUser.email}`)
   })
-  it('displays breadcrumbs', () => {
-    cy.get('ol').children().should('have.length', 1)
-    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', `/`)
-  })
   it('displays the correct text', () => {
     cy.get('h1').contains(
-      'Monthly update'
+      'Update supply chain information'
     )
-    cy.get('p').contains("Keep your monthly action plan up to date so we can work towards constantly improving the UK's supply chain resilience.")
-    cy.contains('Complete your monthly update').should('not.exist')
-    cy.contains('Your monthly update is complete').should('not.exist')
+    cy.get('p').contains("It's important to keep your departmental action plan records up to date. This is so we can work towards constantly improving the UK's supply chain resilience.")
+    cy.get('h2').contains('Complete your monthly update')
+    cy.get('h2').contains('Your monthly update is complete').should('not.exist')
     cy.get('li').invoke('text').should('match', /You need to complete your monthly update. Complete \d+ supply chains/)
     cy.lastWorkingDay().then(deadline => {
       cy.get('li:first-of-type').invoke('text').should('match', new RegExp(`\\s*You need to complete your monthly update. Complete \\d+ supply chains by\\s*${deadline}\\s*`))
@@ -71,11 +67,5 @@ describe('The Supply Chain Home Page', () => {
   it('displays first page of supply chains after clicking Previous', () => {
     cy.contains('Previous').click()
     cy.url().should('eq', Cypress.config('baseUrlSC') + '/?page=1')
-  })
-  it('displays button to go back', () => {
-    cy.get('a')
-      .contains('Back')
-      .should('have.attr', 'href')
-      .and('equal', '/')
   })
 })

@@ -21,13 +21,15 @@ describe('The Supply Chain TaskComplete Page', () => {
     )
   })
   it('displays breadcrumbs', () => {
-    cy.get('ol').children().should('have.length', 3)
-    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
-    cy.get('li').contains('Monthly update').should('have.attr', 'href').and('eq', '/supply-chains/')
+    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/supply-chains/')
     cy.get('li')
       .contains(supplyChain.name)
       .should('have.attr', 'href')
       .and('eq', `/supply-chains/${supplyChain.slug}/`)
+    cy.get('li')
+      .contains('Update complete')
+      .should('have.attr', 'href')
+      .and('eq', `/supply-chains/${supplyChain.slug}/complete/`)
   })
   it('displays the correct text', () => {
     cy.get('h1').contains('Update complete')
@@ -54,9 +56,11 @@ describe('Validate complete view for manual access', () => {
     cy.visit(Cypress.config('baseUrlSC') + `/${completedSC.slug}/complete/`)
   })
   it('displays breadcrumbs', () => {
-    cy.get('ol').children().should('have.length', 2)
-    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
-    cy.get('li').contains('Monthly update').should('have.attr', 'href').and('eq', '/supply-chains/')
+    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', `/supply-chains/`)
+    cy.get('li')
+      .contains(completedSC.name)
+      .should('have.attr', 'href')
+      .and('eq', `/supply-chains/${completedSC.slug}/`)
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
