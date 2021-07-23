@@ -211,7 +211,8 @@ SET_HSTS_HEADERS = env("SET_HSTS_HEADERS", default=True)
 if SET_HSTS_HEADERS:
     SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
-    # SECURE_SSL_REDIRECT = True
+    # The `SECURE_SSL_REDIRECT = True` setting isn't required as PaaS ensures external requests are redirected
+    # but including it prevents internal clients such as Activity Stream from using HTTP over internal networking.
 
 # Settings for CSRF and Session cookies
 CSRF_COOKIE_SECURE = env("CSRF_COOKIE_SECURE", default=True)
