@@ -854,3 +854,23 @@ class TestMonthlyUpdateFormPagesPermissions:
         )
         response = client.get(url)
         assert response.status_code == 403
+
+
+class TestMonthlyUpdateInfoCreateView:
+    def test_new_strategic_action_has_user_set(self, logged_in_client, test_user):
+        supply_chain = SupplyChainFactory()
+        strategic_action = StrategicActionFactory(supply_chain=supply_chain)
+        url = reverse(
+            "monthly-update-create",
+            kwargs={
+                "supply_chain_slug": supply_chain.slug,
+                "action_slug": strategic_action.slug,
+            },
+        )
+        test_user.gov_department = supply_chain.gov_department
+        test_user.save()
+        logged_in_client.get(url)
+        strategic_action_update = strategic_action.monthly_updates.order_by(
+            "-last_modified"
+        ).first()
+        assert strategic_action_update.user == test_user
