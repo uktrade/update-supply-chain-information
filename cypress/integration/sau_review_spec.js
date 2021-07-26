@@ -13,7 +13,7 @@ const update = updates[3].fields
 describe('Strategic action update review page', () => {
   const route = `/${supplyChain.slug}/${strategicAction.slug}/updates/${update.slug}/review/`
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrlSC') + route)
+    cy.visit(Cypress.config('baseUrl') + route)
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -26,13 +26,15 @@ describe('Strategic action update review page', () => {
     )
   })
   it('displays breadcrumbs', () => {
-    cy.get('ol').children().should('have.length', 3)
     cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
-    cy.get('li').contains('Monthly update').should('have.attr', 'href').and('eq', '/supply-chains/')
     cy.get('li')
       .contains(supplyChain.name)
       .should('have.attr', 'href')
-      .and('eq', `/supply-chains/${supplyChain.slug}/`)
+      .and('eq', `/${supplyChain.slug}/`)
+    cy.get('li')
+      .contains(`Current monthly update for ${strategicAction.name}`)
+      .should('have.attr', 'href')
+      .and('eq', route)
   })
   it('displays the correct text', () => {
     cy.get('h1').contains(`Current monthly update for ${strategicAction.name}`)
@@ -77,7 +79,7 @@ describe('Strategic action update review page', () => {
     cy.get('a').contains('Back').click()
     cy.url().should(
       'eq',
-      Cypress.config('baseUrlSC') + `/${supplyChain.slug}/`
+      Cypress.config('baseUrl') + `/${supplyChain.slug}/`
     )
   })
 })

@@ -26,23 +26,46 @@ describe('The Home Page', () => {
     bannerContents.get('a').contains('feedback').should('have.attr', 'href').and('eq', `mailto:${Cypress.env('FEEDBACK_GROUP_EMAIL')}?bcc=${adminUser.email}`)
   })
   it('displays the correct text', () => {
-    cy.get('h1').contains('UK supply chain')
-    cy.get('h1').invoke('text').should('eq', 'UK supply chainresilience tool')
+    cy.get('h1').contains(
+      'Update supply chain information'
+    )
+    cy.get('p').contains("It's important to keep your departmental action plan records up to date. This is so we can work towards constantly improving the UK's supply chain resilience.")
+    cy.get('h2').contains('Complete your monthly update')
+    cy.get('h2').contains('Your monthly update is complete').should('not.exist')
+    cy.get('li').invoke('text').should('match', /You need to complete your monthly update. Complete \d+ supply chains/)
+    cy.lastWorkingDay().then(deadline => {
+      cy.get('li:first-of-type').invoke('text').should('match', new RegExp(`\\s*You need to complete your monthly update. Complete \\d+ supply chains by\\s*${deadline}\\s*`))
+    })
+    cy.get('li').contains(
+      'Select a supply chain to provide your regular monthly update.'
+    )
+    cy.get('p').contains(
+      'All supply chains have been completed for this month'
+    ).should('not.exist')
 
-    cy.get('p').contains("Use this tool to help manage critical supply chain resilience across the UK.")
-
-    cy.get('h2').contains('Supply chain information')
-
-    cy.get('.govuk-grid-row > .govuk-grid-column-one-half > .govuk-list').children().should('have.length', 2)
-
-    cy.get('a')
-    .contains('Monthly update')
-    .should('have.attr', 'href')
-    .and('eq', `/supply-chains/`)
-
-    cy.get('a')
-    .contains('Strategic action progress')
-    .should('have.attr', 'href')
-    .and('eq', `#`)
+  })
+  it('displays correct table headers', () => {
+    cy.get('thead').find('th').should('have.length', 3)
+    cy.get('th').contains('Supply chain')
+    cy.get('th').contains('No. strategic actions')
+    cy.get('th').contains('Last updated')
+  })
+  it('displays 5 supply chains in the table', () => {
+    cy.get('tbody').find('tr').should('have.length', 5)
+  })
+  it('displays correct items in pagination list', () => {
+    cy.get('.moj-pagination__list').find('li').should('have.length', 3)
+    cy.get('.moj-pagination__item--active').contains('1')
+    cy.get('.moj-pagination__item').contains('2')
+    cy.get('.moj-pagination__item').contains('Next')
+  })
+  it('displays second page of supply chains after clicking Next', () => {
+    cy.contains('Next').click()
+    cy.url().should('eq', Cypress.config('baseUrl') + '/?page=2')
+    cy.get('tbody').find('tr').should('have.length', 2)
+  })
+  it('displays first page of supply chains after clicking Previous', () => {
+    cy.contains('Previous').click()
+    cy.url().should('eq', Cypress.config('baseUrl') + '/?page=1')
   })
 })
