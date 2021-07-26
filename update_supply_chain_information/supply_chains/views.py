@@ -405,6 +405,7 @@ class MonthlyUpdateInfoCreateView(
                 strategic_action.monthly_updates.create(
                     status=StrategicActionUpdate.Status.IN_PROGRESS,
                     supply_chain=strategic_action.supply_chain,
+                    user=request.user,
                 )
             )
         update_url = reverse(
