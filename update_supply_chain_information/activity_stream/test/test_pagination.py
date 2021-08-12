@@ -203,3 +203,44 @@ class TestActivityStreamCursorPagination:
             second_page_items = pagination.paginate_queryset(queryset, drf_request)
             for item in second_page_items:
                 assert item["json"]["id"] not in first_page_item_ids
+
+    @mock.patch(
+        "django.utils.timezone.now",
+        mock.MagicMock(
+            return_value=datetime.datetime(
+                year=2021, month=6, day=21, hour=3, minute=32, second=17
+            )
+        ),
+    )
+    def test_paginated_response_includes_all_items(self, supply_chain, rf):
+        """
+        When the data spans more than one page, those models which have more than `page_size` instances
+        for which `last_modified` has the same value
+        are not having all instances included, as they are replaced by duplicate occurrences of other instances.
+        This was due to the pagination only ordering by `last_modified`.
+        https://uktrade.atlassian.net/browse/RT-434?atlOrigin=eyJpIjoiZDVjMTM2NDQ0M2UwNGVmZjkwZjg3NDc5MGM1MGQxNmUiLCJwIjoiaiJ9
+        """
+        page_length = 10
+        with mock.patch(
+            "activity_stream.pagination.ActivityStreamCursorPagination.get_page_size",
+            return_value=page_length,
+        ):
+            StrategicActionFactory.create_batch(
+                page_length * 2, supply_chain=supply_chain
+            )
+            all_item_ids = {item.id for item in StrategicAction.objects.all()}
+            request = rf.get(reverse("activity-stream-list"))
+            drf_request = Request(request)
+            queryset = ActivityStreamQuerySetWrapper()
+            pagination = ActivityStreamCursorPagination()
+            first_page_items = pagination.paginate_queryset(queryset, drf_request)
+            page_item_ids = {item["json"]["id"] for item in first_page_items}
+            next_link = pagination.get_next_link()
+            while next_link:
+                request = rf.get(next_link)
+                drf_request = Request(request)
+                next_page_items = pagination.paginate_queryset(queryset, drf_request)
+                next_page_item_ids = {item["json"]["id"] for item in next_page_items}
+                page_item_ids = page_item_ids | next_page_item_ids
+                next_link = pagination.get_next_link()
+            assert all_item_ids.issubset(next_page_item_ids)
