@@ -228,7 +228,7 @@ class TestActivityStreamCursorPagination:
             StrategicActionFactory.create_batch(
                 page_length * 2, supply_chain=supply_chain
             )
-            all_item_ids = {item.id for item in StrategicAction.objects.all()}
+            all_item_ids = {str(item.id) for item in StrategicAction.objects.all()}
             request = rf.get(reverse("activity-stream-list"))
             drf_request = Request(request)
             queryset = ActivityStreamQuerySetWrapper()
@@ -243,4 +243,4 @@ class TestActivityStreamCursorPagination:
                 next_page_item_ids = {item["json"]["id"] for item in next_page_items}
                 page_item_ids = page_item_ids | next_page_item_ids
                 next_link = pagination.get_next_link()
-            assert all_item_ids.issubset(next_page_item_ids)
+            assert all_item_ids.issubset(page_item_ids)
