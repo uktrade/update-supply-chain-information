@@ -269,7 +269,7 @@ class StrategicActionUpdate(models.Model):
  The 'submitted' status refers to when a user can no longer edit an update.""",
     )
     submission_date = models.DateField(null=True, blank=True)
-    date_created = models.DateField(auto_now_add=True)
+    date_created = models.DateField(null=True, blank=True)
     content = models.TextField(blank=True)
     implementation_rag_rating = models.CharField(
         max_length=5,
