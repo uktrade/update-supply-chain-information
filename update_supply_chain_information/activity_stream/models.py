@@ -46,7 +46,7 @@ class ActivityStreamQuerySetMixin:
             # which in turn is necessary for delivering a feed containing all objects
             # ordered by their `last_modified` timestamps
             # without pulling everything into memory and processing it all there.
-            .values("last_modified", "json", "foreign_keys", "object_type")
+            .values("id", "last_modified", "json", "foreign_keys", "object_type")
         )
 
     def modified_after(self, datetime=datetime.datetime(year=1, month=1, day=1)):
