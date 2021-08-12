@@ -1,3 +1,4 @@
+import datetime
 from unittest import mock
 
 import pytest
@@ -7,7 +8,8 @@ from rest_framework.request import Request
 
 from activity_stream.models import ActivityStreamQuerySetWrapper
 from activity_stream.pagination import ActivityStreamCursorPagination
-from supply_chains.models import SupplyChain
+from supply_chains.models import SupplyChain, StrategicAction
+from supply_chains.test.factories import StrategicActionFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -154,3 +156,50 @@ class TestActivityStreamCursorPagination:
             data = pagination.paginate_queryset(empty_queryset, drf_request)
             paginated_response = pagination.get_paginated_response(data)
             assert "next" not in paginated_response.data
+
+    @mock.patch(
+        "django.utils.timezone.now",
+        mock.MagicMock(
+            return_value=datetime.datetime(
+                year=2021, month=6, day=21, hour=3, minute=32, second=17
+            )
+        ),
+    )
+    def test_paginated_response_has_no_duplicate_items(self, supply_chain, rf):
+        """
+        When the data spans more than one page, those models which have more than `page_size` instances
+        for which `last_modified` has the same value
+        are not having all instances included, as they are replaced by duplicate occurrences of other instances.
+        This was due to the pagination only ordering by `last_modified`.
+        https://uktrade.atlassian.net/browse/RT-434?atlOrigin=eyJpIjoiZDVjMTM2NDQ0M2UwNGVmZjkwZjg3NDc5MGM1MGQxNmUiLCJwIjoiaiJ9
+        """
+        page_length = 10
+        with mock.patch(
+            "activity_stream.pagination.ActivityStreamCursorPagination.get_page_size",
+            return_value=page_length,
+        ):
+            StrategicActionFactory.create_batch(
+                page_length * 2, supply_chain=supply_chain
+            )
+            all_last_modified = [
+                strategic_action.last_modified
+                for strategic_action in StrategicAction.objects.all()
+            ]
+            all_last_modified_set = {
+                strategic_action.last_modified
+                for strategic_action in StrategicAction.objects.all()
+            }
+            assert len(all_last_modified) == page_length * 2
+            assert len(all_last_modified_set) == 1
+            request = rf.get(reverse("activity-stream-list"))
+            drf_request = Request(request)
+            queryset = ActivityStreamQuerySetWrapper()
+            pagination = ActivityStreamCursorPagination()
+            first_page_items = pagination.paginate_queryset(queryset, drf_request)
+            first_page_item_ids = {item["json"]["id"] for item in first_page_items}
+            next_link = pagination.get_next_link()
+            request = rf.get(next_link)
+            drf_request = Request(request)
+            second_page_items = pagination.paginate_queryset(queryset, drf_request)
+            for item in second_page_items:
+                assert item["json"]["id"] not in first_page_item_ids
