@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "reversion",
     "webpack_loader",
     "django.forms",
+    "action_progress",
 ]
 
 # Elastic APM middleware automatically added to trace django requests
