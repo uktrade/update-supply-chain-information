@@ -20,7 +20,7 @@
     "sass": "^1.37.5",
 >>>>>>> 174e05f (Merge pull request #183 from uktrade/dependabot/npm_and_yarn/mini-css-extract-plugin-2.2.0)
     "sass-loader": "^12.1.0",
-    "webpack": "^5.45.1",
+    "webpack": "^5.50.0",
     "webpack-bundle-tracker": "^1.2.0",
     "webpack-cli": "^4.7.2"
   },
