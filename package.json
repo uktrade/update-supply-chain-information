@@ -12,16 +12,8 @@
     "extract-loader": "^5.1.0",
     "file-loader": "^6.2.0",
     "govuk-frontend": "^3.13.0",
-<<<<<<< HEAD
-<<<<<<< HEAD
-    "mini-css-extract-plugin": "^2.1.0",
-    "sass": "^1.35.2",
-=======
-=======
->>>>>>> 174e05f (Merge pull request #183 from uktrade/dependabot/npm_and_yarn/mini-css-extract-plugin-2.2.0)
     "mini-css-extract-plugin": "^2.2.0",
     "sass": "^1.37.5",
->>>>>>> 174e05f (Merge pull request #183 from uktrade/dependabot/npm_and_yarn/mini-css-extract-plugin-2.2.0)
     "sass-loader": "^12.1.0",
     "webpack": "^5.50.0",
     "webpack-bundle-tracker": "^1.2.0",
