@@ -26,7 +26,10 @@ class ActivityStreamCursorPagination(CursorPagination):
     """
 
     summary = "Update Supply Chain Information"
-    ordering = ("last_modified",)
+    ordering = (
+        "last_modified",
+        "id",
+    )
 
     def paginate_queryset(self, queryset, request, view=None):
         """
