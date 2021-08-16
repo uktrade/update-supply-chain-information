@@ -17,7 +17,37 @@
 
 {% endblock page_header %}
 
+<br>
+<form method="post" action="">
+  {% csrf_token %}
+  <div class="govuk-form-group">
+    <label class="govuk-label govuk-!-font-weight-bold" for="department">
+      Department
+    </label>
+    {{ form.department }}
+  </div>
+
+  <div class="govuk-form-group">
+    <label class="govuk-label govuk-!-font-weight-bold" for="supply_chain">
+      Supply chain
+    </label>
+    {{ form.supply_chain }}
+  </div>
+
+  <button class="govuk-button" data-module="govuk-button" type="submit">
+    Apply filters
+  </button>
+  <a href={% url 'action-progress' %} class="govuk-link"
+    style="padding-top: 8px;padding-left: 20px;display: inline-block">Remove filters</a>
+
+
+</form>
+
+
 {% block page_content %}
+
+
+
 {% endblock page_content %}
 
 
