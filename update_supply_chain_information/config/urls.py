@@ -115,7 +115,7 @@ action_progress_urlpatterns = [
     path("", ActionProgressView.as_view(), name="action-progress"),
     path("<str:dept>/", ActionProgressView.as_view(), name="action-progress"),
     path(
-        "<str:dept>/<slug:supply_chain_slug>",
+        "<str:dept>/<slug:supply_chain_slug>/",
         ActionProgressView.as_view(),
         name="action-progress",
     ),

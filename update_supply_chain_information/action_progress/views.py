@@ -1,6 +1,5 @@
 from django.shortcuts import redirect
 from django.views.generic import FormView
-from django.http import HttpResponse
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 
