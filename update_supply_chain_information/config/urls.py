@@ -24,7 +24,11 @@ from supply_chains.views import (
 from activity_stream.viewsets import (
     ActivityStreamViewSet,
 )
-from action_progress.views import ActionProgressView
+from action_progress.views import (
+    ActionProgressView,
+    ActionProgressDeptView,
+    ActionProgressSCView,
+)
 
 router = routers.DefaultRouter()
 router.register(r"activity-stream", ActivityStreamViewSet, basename="activity-stream")
@@ -113,11 +117,15 @@ healthcheck_urlpatterns = [
 
 action_progress_urlpatterns = [
     path("", ActionProgressView.as_view(), name="action-progress"),
-    path("<str:dept>/", ActionProgressView.as_view(), name="action-progress"),
+    path(
+        "<str:dept>/",
+        ActionProgressDeptView.as_view(),
+        name="action-progress-department",
+    ),
     path(
         "<str:dept>/<slug:supply_chain_slug>/",
-        ActionProgressView.as_view(),
-        name="action-progress",
+        ActionProgressSCView.as_view(),
+        name="action-progress-supply-chain",
     ),
 ]
 

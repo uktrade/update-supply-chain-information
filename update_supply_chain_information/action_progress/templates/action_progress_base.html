@@ -17,20 +17,33 @@
 
 {% endblock page_header %}
 
+{% include "supply_chains/includes/error_summary.html" %}
+
+
 <br>
-<form method="post" action="">
+<form method="post" action="" novalidate>
   {% csrf_token %}
-  <div class="govuk-form-group">
+  <div class="govuk-form-group{% if form.department.errors %} govuk-form-group--error{% endif %}">
     <label class="govuk-label govuk-!-font-weight-bold" for="department">
       Department
     </label>
+    {% for error in form.department.errors %}
+    <span class="govuk-error-message">
+      <span class="govuk-visually-hidden">Error:</span> {{ error }}
+    </span>
+    {% endfor %}
     {{ form.department }}
   </div>
 
-  <div class="govuk-form-group">
+  <div class="govuk-form-group{% if form.supply_chain.errors %} govuk-form-group--error{% endif %}">
     <label class="govuk-label govuk-!-font-weight-bold" for="supply_chain">
       Supply chain
     </label>
+    {% for error in form.supply_chain.errors %}
+    <span class="govuk-error-message">
+      <span class="govuk-visually-hidden">Error:</span> {{ error }}
+    </span>
+    {% endfor %}
     {{ form.supply_chain }}
   </div>
 

@@ -2,6 +2,7 @@ from django.shortcuts import redirect
 from django.views.generic import FormView
 from django.urls import reverse
 from django.template.defaultfilters import slugify
+from django.shortcuts import get_object_or_404
 
 from accounts.models import GovDepartment
 from action_progress.forms import SAPForm
@@ -13,21 +14,36 @@ class ActionProgressView(FormView):
     form_class = SAPForm
 
     def get_initial(self):
-        print("++++++ GET INIT +++++++++")
+        """Base implementation of form initialisation"""
         form_value = self.initial.copy()
         dept = self.kwargs.get("dept", None)
         sc_slug = self.kwargs.get("supply_chain_slug", None)
 
         if dept:
-            form_value["department"] = GovDepartment.objects.get(name=dept)
+            form_value["department"] = get_object_or_404(GovDepartment, name=dept)
 
         if sc_slug:
-            form_value["supply_chain"] = SupplyChain.objects.get(slug=sc_slug)
+            form_value["supply_chain"] = get_object_or_404(SupplyChain, slug=sc_slug)
 
         return form_value
 
+    def get_success_url(self):
+
+        form = self.get_form()
+        form.is_valid()
+
+        return reverse(
+            "action-progress-department",
+            kwargs={
+                "dept": form.cleaned_data["department"],
+            },
+        )
+
+
+class ActionProgressDeptView(ActionProgressView):
+    template_name = "action_progress_dept.html"
+
     def get_form_kwargs(self):
-        print("++++++ GET KWARGS +++++++++")
         kwargs = super().get_form_kwargs()
 
         if kwargs["initial"]:
@@ -37,42 +53,24 @@ class ActionProgressView(FormView):
                     gov_department__name=dept_name
                 )
 
+        kwargs["supply_chain_required"] = True
+
         return kwargs
 
     def get_success_url(self):
-        print("++++++ GET SUCCESS URL +++++++++")
 
         form = self.get_form()
         valid = form.is_valid()
         print(f"Form: {valid}")
 
         return reverse(
-            "action-progress",
+            "action-progress-supply-chain",
             kwargs={
                 "dept": form.cleaned_data["department"],
                 "supply_chain_slug": slugify(form.cleaned_data["supply_chain"]),
             },
         )
 
-    def post(self, request, dept: str = None):
-        print("++++++ POST +++++++++")
-        form = self.get_form()
-        form_valid = form.is_valid()
-        print(f"Form: {form_valid}")
 
-        if not form_valid:
-            # Try to read the form's value
-            form_dept = request.POST.get("department", None)
-            print(f"DEPT: {form_dept}")
-
-        if form_valid:
-            return self.form_valid(form)
-        elif form_dept:
-            return redirect(
-                reverse(
-                    "action-progress",
-                    kwargs={"dept": GovDepartment.objects.get(id=form_dept).name},
-                )
-            )
-        else:
-            return self.form_invalid(form)
+class ActionProgressSCView(ActionProgressDeptView):
+    template_name = "action_progress_sc.html"

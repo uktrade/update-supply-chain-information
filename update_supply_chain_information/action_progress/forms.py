@@ -15,6 +15,9 @@ class SAPForm(forms.Form):
             }
         ),
         required=True,
+        error_messages={
+            "required": "Choose required department",
+        },
     )
 
     supply_chain = forms.ModelChoiceField(
@@ -25,11 +28,19 @@ class SAPForm(forms.Form):
                 "class": "govuk-select",
             }
         ),
-        required=True,
+        required=False,
+        error_messages={
+            "required": "Choose required supply chain",
+        },
     )
 
     def __init__(self, *args, **kwargs) -> None:
         qs = kwargs.pop("supply_chain_qs", None)
+        sc_filter = kwargs.pop("supply_chain_required", None)
         super().__init__(*args, **kwargs)
+
         if qs:
             self.fields["supply_chain"].queryset = qs
+
+        if sc_filter:
+            self.fields["supply_chain"].required = True
