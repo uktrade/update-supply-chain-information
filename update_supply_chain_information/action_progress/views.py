@@ -1,3 +1,6 @@
+from typing import List
+
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView
 from django.urls import reverse
 from django.template.defaultfilters import slugify
@@ -8,7 +11,7 @@ from action_progress.forms import SAPForm
 from supply_chains.models import SupplyChain
 
 
-class ActionProgressView(FormView):
+class ActionProgressView(LoginRequiredMixin, FormView):
     template_name = "action_progress_base.html"
     form_class = SAPForm
 
@@ -38,6 +41,34 @@ class ActionProgressView(FormView):
             },
         )
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["dept"] = self.kwargs.get("dept", None)
+        context["sc_slug"] = self.kwargs.get("supply_chain_slug", None)
+
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+
+        # As this class only deal with department filter.
+        kwargs["supply_chain_required"] = False
+        return kwargs
+
+    # def post(self, request, *args, **kwargs):
+    #     print('++++++++ POST +++++++')
+    #     form = self.get_form()
+    #     form.is_valid()
+    #     print(f'Form DEPT: { form.cleaned_data["department"]}')
+    #     print(f'Validity: { form.is_valid()}')
+    #     if form.is_valid():
+
+    #         return self.form_valid(form)
+    #     else:
+    #         print(form.errors)
+    #         return self.form_invalid(form)
+
 
 class ActionProgressDeptView(ActionProgressView):
     template_name = "action_progress_dept.html"
@@ -45,6 +76,20 @@ class ActionProgressDeptView(ActionProgressView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
 
+        # With form having 2 post routes, chosen supply chain would come through but not department.
+        # To validate the form, inject department from url.
+        if "data" in kwargs:
+            dept_id = str(
+                GovDepartment.objects.get(name=self.kwargs.get("dept", None)).id
+            )
+            d = {"department": dept_id}
+            d.update(kwargs["data"])
+            if isinstance(d["supply_chain"], List):
+                d["supply_chain"] = d["supply_chain"][0]
+
+            kwargs["data"] = d
+
+        # Pull those supply chains from chosen department
         if kwargs["initial"]:
             dept_name = kwargs["initial"]["department"]
             if dept_name:
@@ -67,6 +112,20 @@ class ActionProgressDeptView(ActionProgressView):
                 "supply_chain_slug": slugify(form.cleaned_data["supply_chain"]),
             },
         )
+
+    # def post(self, request, *args, **kwargs):
+    #     print('++++++++ POST +++++++')
+    #     form = self.get_form()
+    #     form.is_valid()
+    #     # print(f'Form DEPT: { form.cleaned_data["department"]}')
+    #     # print(f'Form SC: { form.cleaned_data["supply_chain"]}')
+    #     print(f'Validity: { form.is_valid()}')
+    #     if form.is_valid():
+
+    #         return self.form_valid(form)
+    #     else:
+    #         print(form.errors)
+    #         return self.form_invalid(form)
 
 
 class ActionProgressSCView(ActionProgressDeptView):

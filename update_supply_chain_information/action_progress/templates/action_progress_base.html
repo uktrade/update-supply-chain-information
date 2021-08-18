@@ -21,11 +21,16 @@
 
 
 <br>
-<form method="post" action="" novalidate>
+{% comment %}
+Note that below 2 form fields though belong to the same form will post to different routes as
+they are handled within different sub classes
+{% endcomment %}
+<form method="post" action={% url 'action-progress' %} novalidate>
   {% csrf_token %}
 
 
-  <div class="govuk-form-group{% if form.department.errors %} govuk-form-group--error{% endif %}" {%if not request.user.is_admin %}hidden{%endif%}>
+  <div class="govuk-form-group{% if form.department.errors %} govuk-form-group--error{% endif %}"
+  {%if not request.user.is_admin %}hidden{%endif%}>
     <label class="govuk-label govuk-!-font-weight-bold" for="department">
       Department
     </label>
@@ -36,8 +41,10 @@
     {% endfor %}
     {{ form.department }}
   </div>
+</form>
 
-
+  <form method="post" action={% url 'action-progress-department' dept %} novalidate>
+    {% csrf_token %}
   <div class="govuk-form-group{% if form.supply_chain.errors %} govuk-form-group--error{% endif %}">
     <label class="govuk-label govuk-!-font-weight-bold" for="supply_chain">
       Supply chain

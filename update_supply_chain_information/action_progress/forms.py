@@ -36,11 +36,10 @@ class SAPForm(forms.Form):
 
     def __init__(self, *args, **kwargs) -> None:
         qs = kwargs.pop("supply_chain_qs", None)
-        sc_filter = kwargs.pop("supply_chain_required", None)
+        sc_filter_status = kwargs.pop("supply_chain_required", False)
         super().__init__(*args, **kwargs)
+
+        self.fields["supply_chain"].required = sc_filter_status
 
         if qs:
             self.fields["supply_chain"].queryset = qs
-
-        if sc_filter:
-            self.fields["supply_chain"].required = True
