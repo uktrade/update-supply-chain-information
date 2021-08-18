@@ -1,4 +1,3 @@
-from django.shortcuts import redirect
 from django.views.generic import FormView
 from django.urls import reverse
 from django.template.defaultfilters import slugify
@@ -54,14 +53,12 @@ class ActionProgressDeptView(ActionProgressView):
                 )
 
         kwargs["supply_chain_required"] = True
-
         return kwargs
 
     def get_success_url(self):
 
         form = self.get_form()
-        valid = form.is_valid()
-        print(f"Form: {valid}")
+        form.is_valid()
 
         return reverse(
             "action-progress-supply-chain",

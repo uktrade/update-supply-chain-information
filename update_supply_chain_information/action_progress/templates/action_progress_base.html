@@ -24,8 +24,8 @@
 <form method="post" action="" novalidate>
   {% csrf_token %}
 
-  {% if request.user.is_admin %}
-  <div class="govuk-form-group{% if form.department.errors %} govuk-form-group--error{% endif %}">
+
+  <div class="govuk-form-group{% if form.department.errors %} govuk-form-group--error{% endif %}" {%if not request.user.is_admin %}hidden{%endif%}>
     <label class="govuk-label govuk-!-font-weight-bold" for="department">
       Department
     </label>
@@ -36,7 +36,7 @@
     {% endfor %}
     {{ form.department }}
   </div>
-  {% endif %}
+
 
   <div class="govuk-form-group{% if form.supply_chain.errors %} govuk-form-group--error{% endif %}">
     <label class="govuk-label govuk-!-font-weight-bold" for="supply_chain">
