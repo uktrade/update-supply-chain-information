@@ -4,11 +4,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView
 from django.urls import reverse
 from django.template.defaultfilters import slugify
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 
 from accounts.models import GovDepartment
 from action_progress.forms import SAPForm
 from supply_chains.models import SupplyChain
+from supply_chains.templatetags.supply_chain_tags import get_action_progress_route
 
 
 class ActionProgressView(LoginRequiredMixin, FormView):
@@ -112,6 +113,18 @@ class ActionProgressDeptView(ActionProgressView):
                 "supply_chain_slug": slugify(form.cleaned_data["supply_chain"]),
             },
         )
+
+    def get(self, request, *args, **kwargs):
+        # Validate the department, if non-admin user manually forcing entry into other departments
+        if not request.user.is_admin:
+            actual_dept = request.user.gov_department.name
+
+            if self.kwargs["dept"] != actual_dept:
+                return redirect(get_action_progress_route(request.user))
+            else:
+                return render(
+                    request, self.template_name, context=self.get_context_data()
+                )
 
     # def post(self, request, *args, **kwargs):
     #     print('++++++++ POST +++++++')
