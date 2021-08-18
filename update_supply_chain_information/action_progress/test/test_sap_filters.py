@@ -1,106 +1,11 @@
 import pytest
 from django.test import Client
 from django.urls import reverse
-from django.template.defaultfilters import slugify
 
-from supply_chains.models import StrategicAction, StrategicActionUpdate
-from supply_chains.test.factories import (
-    SupplyChainFactory,
-    StrategicActionFactory,
-    StrategicActionUpdateFactory,
-    GovDepartmentFactory,
-)
+from supply_chains.test.factories import SupplyChainFactory
+
 
 pytestmark = pytest.mark.django_db
-Status = StrategicActionUpdate.Status
-
-# TODO: Move this to test class constructor. Somehow django_db marking is not being
-# applied to initialisation(non test* functions) code
-@pytest.fixture
-def tasklist_stub(test_user):
-    sc_name = "Supply Chain 1"
-    sa_description = "1234567890qweertyuiodfsfgfgggsf"
-    sa_name = "SA 00"
-    sc = SupplyChainFactory(name=sc_name, gov_department=test_user.gov_department)
-    sa = StrategicActionFactory.create_batch(
-        4, name=sa_name, description=sa_description, supply_chain=sc
-    )
-    yield {
-        "sc_name": sc_name,
-        "sa_description": sa_description,
-        "sa_name": sa_name,
-        "url": reverse(
-            "supply-chain-task-list", kwargs={"supply_chain_slug": slugify(sc_name)}
-        ),
-        "sc": sc,
-        "sa": sa,
-    }
-
-
-@pytest.fixture
-def tasklist_in_prog(tasklist_stub):
-    StrategicActionUpdateFactory(
-        status=Status.IN_PROGRESS,
-        strategic_action=tasklist_stub["sa"][0],
-        supply_chain=tasklist_stub["sc"],
-    )
-
-    yield {
-        "url": reverse(
-            "supply-chain-task-list",
-            kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])},
-        ),
-    }
-
-
-@pytest.fixture
-def tasklist_part_comp(tasklist_stub):
-    StrategicActionUpdateFactory(
-        status=Status.READY_TO_SUBMIT,
-        strategic_action=tasklist_stub["sa"][0],
-        supply_chain=tasklist_stub["sc"],
-    )
-
-    yield {
-        "url": reverse(
-            "supply-chain-task-list",
-            kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])},
-        ),
-    }
-
-
-@pytest.fixture
-def tasklist_completed(tasklist_stub):
-    for sa_index in range(4):
-        StrategicActionUpdateFactory(
-            status=Status.READY_TO_SUBMIT,
-            strategic_action=tasklist_stub["sa"][sa_index],
-            supply_chain=tasklist_stub["sc"],
-        )
-
-    yield {
-        "url": reverse(
-            "supply-chain-task-list",
-            kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])},
-        ),
-    }
-
-
-@pytest.fixture
-def tasklist_submitted(tasklist_stub):
-    for sa_index in range(4):
-        StrategicActionUpdateFactory(
-            status=Status.SUBMITTED,
-            strategic_action=tasklist_stub["sa"][sa_index],
-            supply_chain=tasklist_stub["sc"],
-        )
-
-    yield {
-        "url": reverse(
-            "supply-chain-task-list",
-            kwargs={"supply_chain_slug": slugify(tasklist_stub["sc_name"])},
-        ),
-    }
 
 
 class TestSAPFilters:
@@ -112,190 +17,56 @@ class TestSAPFilters:
         # Assert
         assert resp.status_code == 302
 
-    # def test_auth_no_perm(self, logged_in_client):
-    #     # Arrange
-    #     sc_name = "ceramics"
-    #     dep = GovDepartmentFactory()
-    #     sc = SupplyChainFactory(gov_department=dep, name=sc_name)
+    def test_auth_no_perm(self, logged_in_client):
+        # Arrange
+        other_dept = "mod"
 
-    #     # Act
-    #     resp = logged_in_client.get(
-    #         reverse(
-    #             "supply-chain-task-list", kwargs={"supply_chain_slug": slugify(sc_name)}
-    #         )
-    #     )
+        # Act
+        resp = logged_in_client.get(
+            reverse("action-progress-department", kwargs={"dept": other_dept})
+        )
 
-    #     # Assert
-    #     assert resp.status_code == 403
+        # Assert
+        assert resp.status_code == 302
+        assert "/action-progress/GovDepartment" in resp.url
 
-    # def test_auth_logged_in(self, tasklist_stub, logged_in_client):
-    #     # Arrange
-    #     # Act
-    #     resp = logged_in_client.get(tasklist_stub["url"])
+    def test_auth_invalid_sc(self, logged_in_client, test_user):
+        # Arrange
+        dept = test_user.gov_department
+        inv_sc_slug = "unknown"
 
-    #     # Assert
-    #     v = resp.context["view"]
-    #     assert resp.status_code == 200
-    #     assert v.supply_chain.name == tasklist_stub["sc_name"]
+        # Act
+        resp = logged_in_client.get(
+            reverse(
+                "action-progress-supply-chain",
+                kwargs={"dept": dept, "supply_chain_slug": inv_sc_slug},
+            )
+        )
 
-    # def test_action_summary(self, logged_in_client, tasklist_stub):
-    #     # Arrange
-    #     # Act
-    #     resp = logged_in_client.get(tasklist_stub["url"])
+        # Assert
+        assert resp.status_code == 404
 
-    #     # Assert
-    #     v = resp.context["view"]
-    #     assert v.total_sa == 4
-    #     assert v.ready_to_submit_updates == 0
-    #     assert v.incomplete_updates == 4
-    #     assert v.supply_chain.name == tasklist_stub["sc_name"]
+    def test_auth_logged_in(self, logged_in_client):
+        # Arrange
+        # Act
+        resp = logged_in_client.get(reverse("action-progress"))
 
-    # def test_archived_actions_dont_appear_in_task_list(
-    #     self, logged_in_client, tasklist_stub
-    # ):
-    #     # Arrange
-    #     sc = tasklist_stub["sc"]
-    #     StrategicActionFactory.create_batch(
-    #         5, is_archived=True, archived_reason="Reason", supply_chain=sc
-    #     )
+        # Assert
+        assert resp.status_code == 200
 
-    #     # Act
-    #     resp = logged_in_client.get(tasklist_stub["url"])
+    def test_sc_filter(self, logged_in_client, test_user):
+        # Arrange
+        dept = test_user.gov_department
+        sc_name = "ceramics"
+        SupplyChainFactory(name=sc_name)
 
-    #     # Assert
-    #     num_unarchived_actions = StrategicAction.objects.filter(
-    #         supply_chain=sc, is_archived=False
-    #     ).count()
-    #     v = resp.context["view"]
-    #     assert v.total_sa == num_unarchived_actions
+        # Act
+        resp = logged_in_client.get(
+            reverse(
+                "action-progress-supply-chain",
+                kwargs={"dept": dept, "supply_chain_slug": sc_name},
+            )
+        )
 
-    # def test_action_summary_progress(self, logged_in_client, tasklist_in_prog):
-    #     # Arrange
-    #     # Act
-    #     resp = logged_in_client.get(tasklist_in_prog["url"])
-
-    #     # Assert
-    #     v = resp.context["view"]
-    #     status_set = set([x["status"] for x in v.sa_updates])
-
-    #     assert v.total_sa == 4
-    #     assert v.ready_to_submit_updates == 0
-    #     assert v.incomplete_updates == 4
-    #     assert status_set == {Status.NOT_STARTED, Status.IN_PROGRESS}
-
-    # def test_action_summary_part_complete(self, logged_in_client, tasklist_part_comp):
-    #     # Arrange
-    #     # Act
-    #     resp = logged_in_client.get(tasklist_part_comp["url"])
-
-    #     # Assert
-    #     v = resp.context["view"]
-    #     status_set = set([x["status"] for x in v.sa_updates])
-
-    #     assert v.total_sa == 4
-    #     assert v.ready_to_submit_updates == 1
-    #     assert v.incomplete_updates == 3
-    #     assert status_set == {Status.NOT_STARTED, Status.READY_TO_SUBMIT}
-
-    # def test_action_summary_complete(self, logged_in_client, tasklist_completed):
-    #     # Arrange
-    #     # Act
-    #     resp = logged_in_client.get(tasklist_completed["url"])
-
-    #     # Assert
-    #     v = resp.context["view"]
-    #     status_set = set([x["status"] for x in v.sa_updates])
-
-    #     assert v.total_sa == 4
-    #     assert v.ready_to_submit_updates == 4
-    #     assert v.incomplete_updates == 0
-    #     assert status_set == {Status.READY_TO_SUBMIT}
-
-    # def test_action_summary_submitted(self, logged_in_client, tasklist_submitted):
-    #     # Arrange
-    #     # Act
-    #     resp = logged_in_client.get(tasklist_submitted["url"])
-
-    #     # Assert
-    #     v = resp.context["view"]
-    #     status_set = set([x["status"] for x in v.sa_updates])
-
-    #     assert v.total_sa == 4
-    #     assert v.ready_to_submit_updates == 4
-    #     assert v.incomplete_updates == 0
-    #     assert status_set == {Status.SUBMITTED}
-
-    # def test_action_list(self, logged_in_client, tasklist_stub):
-    #     # Arrange
-    #     # Act
-    #     resp = logged_in_client.get(tasklist_stub["url"])
-
-    #     # Assert
-    #     v = resp.context["view"]
-    #     status_set = set([x["status"] for x in v.sa_updates])
-    #     des_set = set([x["description"] for x in v.sa_updates])
-    #     route_set = set([x["route"] for x in v.sa_updates])
-
-    #     assert len(v.sa_updates) == 4
-    #     assert status_set == {Status.NOT_STARTED}
-    #     assert len(des_set) == 1 and tasklist_stub["sa_description"] == next(
-    #         iter(des_set)
-    #     )
-    #     assert route_set == {
-    #         reverse(
-    #             "monthly-update-create",
-    #             kwargs={
-    #                 "supply_chain_slug": slugify(tasklist_stub["sc_name"]),
-    #                 "action_slug": slugify(tasklist_stub["sa_name"]),
-    #             },
-    #         )
-    #     }
-
-    # @pytest.mark.parametrize(
-    #     "sc_name, num_sas, url, actions_returned",
-    #     (
-    #         (
-    #             "sc 1",
-    #             4,
-    #             reverse("supply-chain-task-list", kwargs={"supply_chain_slug": "sc-1"}),
-    #             4,
-    #         ),
-    #         (
-    #             "sc 1",
-    #             7,
-    #             reverse("supply-chain-task-list", kwargs={"supply_chain_slug": "sc-1"}),
-    #             5,
-    #         ),
-    #         (
-    #             "sc 1",
-    #             7,
-    #             reverse("supply-chain-task-list", kwargs={"supply_chain_slug": "sc-1"})
-    #             + "?page=2",
-    #             2,
-    #         ),
-    #         (
-    #             "sc 1",
-    #             7,
-    #             reverse("supply-chain-task-list", kwargs={"supply_chain_slug": "sc-1"})
-    #             + "?page=300",
-    #             2,
-    #         ),
-    #     ),
-    # )
-    # def test_pagination(
-    #     self, logged_in_client, test_user, sc_name, num_sas, url, actions_returned
-    # ):
-    #     # Arrange
-    #     sc = SupplyChainFactory(name=sc_name, gov_department=test_user.gov_department)
-    #     StrategicActionFactory.create_batch(
-    #         num_sas, name=f"{sc_name} 00", supply_chain=sc
-    #     )
-
-    #     # Act
-    #     resp = logged_in_client.get(url)
-
-    #     # Assert
-    #     p = resp.context["view"].sa_updates
-
-    #     assert resp.status_code == 200
-    #     assert len(p.object_list) == actions_returned
+        # Assert
+        assert resp.status_code == 200
