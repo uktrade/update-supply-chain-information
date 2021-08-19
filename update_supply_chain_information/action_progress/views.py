@@ -49,8 +49,6 @@ class ActionProgressView(LoginRequiredMixin, FormView):
         context["sc_slug"] = self.kwargs.get("supply_chain_slug", None)
         context["is_admin"] = self.request.user.is_admin
 
-        print(context["is_admin"])
-
         return context
 
     def get_form_kwargs(self):
@@ -59,19 +57,6 @@ class ActionProgressView(LoginRequiredMixin, FormView):
         # As this class only deal with department filter.
         kwargs["supply_chain_required"] = False
         return kwargs
-
-    def post(self, request, *args, **kwargs):
-        print("++++++++ POST +++++++")
-        form = self.get_form()
-        form.is_valid()
-
-        if form.is_valid():
-            print(f'Form DEPT: { form.cleaned_data["department"]}')
-            print(f"Validity: { form.is_valid()}")
-            return self.form_valid(form)
-        else:
-            print(form.errors)
-            return self.form_invalid(form)
 
 
 class ActionProgressDeptView(UserPassesTestMixin, ActionProgressView):
@@ -123,20 +108,6 @@ class ActionProgressDeptView(UserPassesTestMixin, ActionProgressView):
                 "supply_chain_slug": slugify(form.cleaned_data["supply_chain"]),
             },
         )
-
-    # def post(self, request, *args, **kwargs):
-    #     print('++++++++ POST +++++++')
-    #     form = self.get_form()
-    #     form.is_valid()
-    #     # print(f'Form DEPT: { form.cleaned_data["department"]}')
-    #     # print(f'Form SC: { form.cleaned_data["supply_chain"]}')
-    #     print(f'Validity: { form.is_valid()}')
-    #     if form.is_valid():
-
-    #         return self.form_valid(form)
-    #     else:
-    #         print(form.errors)
-    #         return self.form_invalid(form)
 
 
 class ActionProgressSCView(ActionProgressDeptView):
