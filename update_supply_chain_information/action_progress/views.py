@@ -4,14 +4,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView
 from django.urls import reverse
 from django.template.defaultfilters import slugify
-from django.shortcuts import get_object_or_404, redirect, render
-from django.core.exceptions import PermissionDenied
-from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404
+from django.contrib.auth.mixins import UserPassesTestMixin
 
-from accounts.models import GovDepartment, User
+from accounts.models import GovDepartment
 from action_progress.forms import SAPForm
 from supply_chains.models import SupplyChain
-from supply_chains.templatetags.supply_chain_tags import get_action_progress_route
 
 
 class ActionProgressView(LoginRequiredMixin, FormView):
@@ -62,21 +60,21 @@ class ActionProgressView(LoginRequiredMixin, FormView):
         kwargs["supply_chain_required"] = False
         return kwargs
 
-    # def post(self, request, *args, **kwargs):
-    #     print('++++++++ POST +++++++')
-    #     form = self.get_form()
-    #     form.is_valid()
-    #     print(f'Form DEPT: { form.cleaned_data["department"]}')
-    #     print(f'Validity: { form.is_valid()}')
-    #     if form.is_valid():
+    def post(self, request, *args, **kwargs):
+        print("++++++++ POST +++++++")
+        form = self.get_form()
+        form.is_valid()
 
-    #         return self.form_valid(form)
-    #     else:
-    #         print(form.errors)
-    #         return self.form_invalid(form)
+        if form.is_valid():
+            print(f'Form DEPT: { form.cleaned_data["department"]}')
+            print(f"Validity: { form.is_valid()}")
+            return self.form_valid(form)
+        else:
+            print(form.errors)
+            return self.form_invalid(form)
 
 
-class ActionProgressDeptView(ActionProgressView):
+class ActionProgressDeptView(UserPassesTestMixin, ActionProgressView):
     template_name = "action_progress_dept.html"
 
     def get_form_kwargs(self):
@@ -106,6 +104,13 @@ class ActionProgressDeptView(ActionProgressView):
         kwargs["supply_chain_required"] = True
         return kwargs
 
+    def test_func(self):
+        claimed_dept = self.kwargs.get("dept", None)
+        return (
+            self.request.user.is_admin
+            or self.request.user.gov_department.name == claimed_dept
+        )
+
     def get_success_url(self):
 
         form = self.get_form()
@@ -118,15 +123,6 @@ class ActionProgressDeptView(ActionProgressView):
                 "supply_chain_slug": slugify(form.cleaned_data["supply_chain"]),
             },
         )
-
-    # def get(self, request, *args, **kwargs):
-    #     # Validate the department, if non-admin user manually forcing entry into other departments
-    #     user_obj = User.objects.get(email=request.user.email)
-    #     if not user_obj.is_admin:
-    #         actual_dept = user_obj.gov_department.name
-
-    #         if self.kwargs["dept"] != actual_dept:
-    #             return HttpResponseForbidden()
 
     # def post(self, request, *args, **kwargs):
     #     print('++++++++ POST +++++++')
