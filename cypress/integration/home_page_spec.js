@@ -43,6 +43,6 @@ describe('The Home Page', () => {
     cy.get('a')
     .contains('Strategic action progress')
     .should('have.attr', 'href')
-    .and('eq', `/action-progress/DIT/`)
+    .and('eq', `/action-progress/`)
   })
 })
