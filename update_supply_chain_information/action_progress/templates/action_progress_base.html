@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load sap_tags %}
 
 {% block page_title %} Strategic action progress - {{ block.super }} {% endblock %}
 
@@ -43,7 +43,8 @@ they are handled within different sub classes
   </div>
 </form>
 
-  <form method="post" action={% url 'action-progress-department' dept %} novalidate>
+  {% get_sap_filter_route dept as route %}
+  <form method="post" action={{ route }} novalidate>
     {% csrf_token %}
   <div class="govuk-form-group{% if form.supply_chain.errors %} govuk-form-group--error{% endif %}">
     <label class="govuk-label govuk-!-font-weight-bold" for="supply_chain">
