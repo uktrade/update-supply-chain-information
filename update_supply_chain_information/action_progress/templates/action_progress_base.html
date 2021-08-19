@@ -30,7 +30,7 @@ they are handled within different sub classes
 
 
   <div class="govuk-form-group{% if form.department.errors %} govuk-form-group--error{% endif %}"
-  {%if not request.user.is_admin %}hidden{%endif%}>
+  {%if not is_admin %}hidden{%endif%}>
     <label class="govuk-label govuk-!-font-weight-bold" for="department">
       Department
     </label>

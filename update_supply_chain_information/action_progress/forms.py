@@ -11,6 +11,7 @@ class SAPForm(forms.Form):
         widget=forms.Select(
             attrs={
                 "class": "govuk-select",
+                "aria-label": "department",
                 "onchange": "form.submit();",
             }
         ),
@@ -26,6 +27,7 @@ class SAPForm(forms.Form):
         widget=forms.Select(
             attrs={
                 "class": "govuk-select",
+                "aria-label": "supply_chain",
             }
         ),
         required=False,

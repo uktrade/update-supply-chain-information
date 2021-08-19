@@ -5,8 +5,10 @@ from django.views.generic import FormView
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 from django.shortcuts import get_object_or_404, redirect, render
+from django.core.exceptions import PermissionDenied
+from django.http import HttpResponseForbidden
 
-from accounts.models import GovDepartment
+from accounts.models import GovDepartment, User
 from action_progress.forms import SAPForm
 from supply_chains.models import SupplyChain
 from supply_chains.templatetags.supply_chain_tags import get_action_progress_route
@@ -47,6 +49,9 @@ class ActionProgressView(LoginRequiredMixin, FormView):
 
         context["dept"] = self.kwargs.get("dept", None)
         context["sc_slug"] = self.kwargs.get("supply_chain_slug", None)
+        context["is_admin"] = self.request.user.is_admin
+
+        print(context["is_admin"])
 
         return context
 
@@ -114,17 +119,14 @@ class ActionProgressDeptView(ActionProgressView):
             },
         )
 
-    def get(self, request, *args, **kwargs):
-        # Validate the department, if non-admin user manually forcing entry into other departments
-        if not request.user.is_admin:
-            actual_dept = request.user.gov_department.name
+    # def get(self, request, *args, **kwargs):
+    #     # Validate the department, if non-admin user manually forcing entry into other departments
+    #     user_obj = User.objects.get(email=request.user.email)
+    #     if not user_obj.is_admin:
+    #         actual_dept = user_obj.gov_department.name
 
-            if self.kwargs["dept"] != actual_dept:
-                return redirect(get_action_progress_route(request.user))
-            else:
-                return render(
-                    request, self.template_name, context=self.get_context_data()
-                )
+    #         if self.kwargs["dept"] != actual_dept:
+    #             return HttpResponseForbidden()
 
     # def post(self, request, *args, **kwargs):
     #     print('++++++++ POST +++++++')
