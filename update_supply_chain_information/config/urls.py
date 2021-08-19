@@ -21,9 +21,13 @@ from supply_chains.views import (
     MonthlyUpdateSummaryView,
     PrivacyNoticeView,
 )
-
 from activity_stream.viewsets import (
     ActivityStreamViewSet,
+)
+from action_progress.views import (
+    ActionProgressView,
+    ActionProgressDeptView,
+    ActionProgressSCView,
 )
 
 router = routers.DefaultRouter()
@@ -111,6 +115,20 @@ healthcheck_urlpatterns = [
     )
 ]
 
+action_progress_urlpatterns = [
+    path("", ActionProgressView.as_view(), name="action-progress"),
+    path(
+        "<str:dept>/",
+        ActionProgressDeptView.as_view(),
+        name="action-progress-department",
+    ),
+    path(
+        "<str:dept>/<slug:supply_chain_slug>/",
+        ActionProgressSCView.as_view(),
+        name="action-progress-supply-chain",
+    ),
+]
+
 urlpatterns = [
     path("auth/", include("authbroker_client.urls")),
     path("admin/", admin_site.urls),
@@ -119,4 +137,5 @@ urlpatterns = [
     path("supply-chains/", include(supply_chain_urlpatterns)),
     path("privacy-notice/", PrivacyNoticeView.as_view(), name="privacy"),
     path("", HomePageView.as_view(), name="index"),
+    path("action-progress/", include(action_progress_urlpatterns)),
 ]
