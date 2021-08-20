@@ -19,6 +19,12 @@
   margin-bottom: 8px;
 }
 
+.sap-action-description {
+  @extend .description;
+  color: #696969;
+  margin-bottom: 3px;
+}
+
 .summary-action-description {
   @extend .description;
   color: #696969;
