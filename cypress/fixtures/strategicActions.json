@@ -169,6 +169,27 @@
   },
   {
     "model": "supply_chains.strategicaction",
+    "pk": "f12777b8-c2f7-4f1e-ae52-acf79809b123",
+    "fields": {
+      "name": "SA 007",
+      "start_date": "2009-03-01",
+      "description": "12743974321 9327414 123874183746 1238741238476192374 9713294 13284 1783246183746 132487 976987168",
+      "impact": "",
+      "category": "",
+      "geographic_scope": "",
+      "supporting_organisations": [],
+      "is_ongoing": false,
+      "target_completion_date": null,
+      "is_archived": true,
+      "specific_related_products": "",
+      "other_dependencies": "",
+      "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+      "slug": "sa-007",
+      "last_modified": "2021-06-01 00:00:00.000000+01:00"
+    }
+  },
+  {
+    "model": "supply_chains.strategicaction",
     "pk": "fa87e1d4-baaa-4317-89b6-fcade510b015",
     "fields": {
       "name": "SA 20",
