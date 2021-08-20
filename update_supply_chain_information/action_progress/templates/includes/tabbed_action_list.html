@@ -1,0 +1,54 @@
+<div class="govuk-tabs" data-module="govuk-tabs">
+    <h2 class="govuk-tabs__title">
+      Contents
+    </h2>
+    <ul class="govuk-tabs__list">
+      <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+        <a class="govuk-tabs__tab" href="#active-actions">
+          Active strategic actions
+        </a>
+      </li>
+      <li class="govuk-tabs__list-item">
+        <a class="govuk-tabs__tab" href="#inactive-actions">
+          Inactive strategic actions
+        </a>
+    </ul>
+    <div class="govuk-tabs__panel" id="active-actions">
+      <h3 class="govuk-heading-m">Active strategic actions</h3>
+      <table class="govuk-table">
+        <tbody class="govuk-table__body">
+          {% for action in active_actions %}
+          <tr class="govuk-table__row tasklist-top-border">
+              <td class="govuk-table__cell govuk-!-width-one-half">
+                  <a href="#" class="govuk-link govuk-!-font-weight-bold">{{ action.name }}</a>
+                  <p class="sap-action-description"> {{ action.description|truncatewords:30 }} </p>
+              </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if active_actions.has_other_pages %}
+      {% include 'includes/pagination.html' with objects=active_actions objects_name="strategic actions" %}
+      {% endif %}
+
+    </div>
+    <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="inactive-actions">
+      <h3 class="govuk-heading-m">Inactive strategic actions</h3>
+      <table class="govuk-table">
+        <tbody class="govuk-table__body">
+          {% for action in inactive_actions %}
+          <tr class="govuk-table__row tasklist-top-border">
+              <td class="govuk-table__cell govuk-!-width-one-half">
+                  <a href="#" class="govuk-link govuk-!-font-weight-bold">{{ action.name }}</a>
+                  <p class="sap-action-description"> {{ action.description|truncatewords:30 }} </p>
+              </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% if inactive_actions.has_other_pages %}
+      {% include 'includes/pagination.html' with objects=inactive_actions objects_name="strategic actions" %}
+      {% endif %}
+
+    </div>
+  </div>

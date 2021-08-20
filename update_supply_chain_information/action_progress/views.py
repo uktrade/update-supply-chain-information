@@ -9,7 +9,8 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 
 from accounts.models import GovDepartment
 from action_progress.forms import SAPForm
-from supply_chains.models import SupplyChain
+from supply_chains.models import StrategicAction, SupplyChain
+from supply_chains.mixins import PaginationMixin
 
 
 class ActionProgressView(LoginRequiredMixin, FormView):
@@ -90,8 +91,13 @@ class ActionProgressDeptView(UserPassesTestMixin, ActionProgressView):
         return kwargs
 
     def test_func(self):
+        """Custom auth for the resource.
+
+        Note: As UserPassesTestMixin has been used in this base class which over-rides
+        LoginRequiredMixin(by the looks of it). Hence condition also include user login.
+        """
         claimed_dept = self.kwargs.get("dept", None)
-        return (
+        return self.request.user.is_authenticated and (
             self.request.user.is_admin
             or self.request.user.gov_department.name == claimed_dept
         )
@@ -102,7 +108,7 @@ class ActionProgressDeptView(UserPassesTestMixin, ActionProgressView):
         form.is_valid()
 
         return reverse(
-            "action-progress-supply-chain",
+            "action-progress-list",
             kwargs={
                 "dept": form.cleaned_data["department"],
                 "supply_chain_slug": slugify(form.cleaned_data["supply_chain"]),
@@ -110,5 +116,32 @@ class ActionProgressDeptView(UserPassesTestMixin, ActionProgressView):
         )
 
 
-class ActionProgressSCView(ActionProgressDeptView):
-    template_name = "action_progress_sc.html"
+class ActionProgressListView(PaginationMixin, ActionProgressDeptView):
+    template_name = "action_progress_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        all_actions = StrategicAction.objects.filter(
+            supply_chain__slug=context["sc_slug"]
+        )
+        context["active_actions"] = self.paginate(
+            (
+                all_actions.filter(is_archived=False)
+                .order_by("name")
+                .values("name", "description")
+            ),
+            5,
+        )
+
+        context["inactive_actions"] = self.paginate(
+            (
+                all_actions.filter(is_archived=True)
+                .order_by("name")
+                .values("name", "description")
+            ),
+            5,
+        )
+
+        context["supply_chain_name"] = SupplyChain.objects.get(slug=context["sc_slug"])
+        return context
