@@ -9,7 +9,7 @@ const supplyChain = supplyChains[0]
 const urls = urlBuilder(supplyChain);
 
 
-describe.skip('The SAP listing page', () => {
+describe('The SAP listing page', () => {
   it('successfully loads', () => {
     cy.visit(urls.sap)
     cy.injectAxe()
