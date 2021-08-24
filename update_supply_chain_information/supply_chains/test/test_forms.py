@@ -45,7 +45,7 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data=form_data)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
 
     def test_form_acccepts_YYYY_0M_0D_date(self):
@@ -56,7 +56,7 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data=form_data)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
 
     def test_form_acccepts_YYYY_M_0D_date(self):
@@ -67,7 +67,7 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data=form_data)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
 
     def test_form_acccepts_YYYY_0M_D_date(self):
@@ -78,7 +78,7 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data=form_data)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
 
     def test_form_accepts_YYYY_MM_DD_date(self):
@@ -89,7 +89,7 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data=form_data)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
 
     def test_form_rejects_malformed_date(self):
@@ -101,7 +101,8 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
         form = CompletionDateForm(
-            data={"changed_value_for_target_completion_date": form_data}
+            data={"changed_value_for_target_completion_date": form_data},
+            instance=self.strategic_action_update,
         )
         assert not form.is_valid()
 
@@ -113,12 +114,13 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        strategic_action_update: StrategicActionUpdate = StrategicActionUpdate(
-            strategic_action=self.strategic_action,
-            supply_chain=self.strategic_action.supply_chain,
+
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        assert (
+            self.strategic_action_update.changed_value_for_target_completion_date
+            is None
         )
-        assert strategic_action_update.changed_value_for_target_completion_date is None
-        form = CompletionDateForm(data=form_data, instance=strategic_action_update)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
         saved_instance: StrategicActionUpdate = form.save()
         assert saved_instance.pk is not None

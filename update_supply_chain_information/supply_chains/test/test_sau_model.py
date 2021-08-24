@@ -24,6 +24,7 @@ Content: Final = "content"
 RagRating: Final = "implementation_rag_rating"
 RagReason: Final = "reason_for_delays"
 CompletionDateChangeReason: Final = "reason_for_completion_date_change"
+ObjectLevelError: Final = "__all__"
 
 ERROR_MSGS = {
     SubDate: ["Missing submission_date."],
@@ -31,6 +32,7 @@ ERROR_MSGS = {
     RagRating: ["Missing implementation_rag_rating."],
     RagReason: ["Missing reason_for_delays."],
     CompletionDateChangeReason: ["Missing reason_for_completion_date_change."],
+    ObjectLevelError: [""],
 }
 
 
@@ -193,4 +195,129 @@ class TestSAUModel:
         # Assert
         self.validate(
             sau, {CompletionDateChangeReason: ERROR_MSGS[CompletionDateChangeReason]}
+        )
+
+    def test_back_dating_update(self, sau_stub):
+        # Arrange
+        # Act
+        sau = StrategicActionUpdateFactory.build(
+            user=sau_stub["user"],
+            strategic_action=sau_stub["sa"],
+            supply_chain=sau_stub["sc"],
+            status=Staus.SUBMITTED,
+            implementation_rag_rating=RAGRating.GREEN,
+            reason_for_delays="some text",
+            date_created=date.today() - relativedelta(months=3),
+            submission_date=date.today() - relativedelta(months=3),
+        )
+
+        # Assert
+        self.validate(sau, {}, objects_saved=1)
+        assert (
+            StrategicActionUpdate.objects.given_month(
+                date.today() - relativedelta(months=3)
+            ).count()
+            == 1
+        )
+
+    def test_back_dating_update_in_gap(self, sau_stub):
+        # Arrange
+        StrategicActionUpdateFactory.create(
+            user=sau_stub["user"],
+            strategic_action=sau_stub["sa"],
+            supply_chain=sau_stub["sc"],
+            status=Staus.SUBMITTED,
+            implementation_rag_rating=RAGRating.GREEN,
+            reason_for_delays="some text",
+            date_created=date.today() - relativedelta(months=4),
+            submission_date=date.today() - relativedelta(months=4),
+        )
+
+        StrategicActionUpdateFactory.create(
+            user=sau_stub["user"],
+            strategic_action=sau_stub["sa"],
+            supply_chain=sau_stub["sc"],
+            status=Staus.SUBMITTED,
+            implementation_rag_rating=RAGRating.GREEN,
+            reason_for_delays="some text",
+            date_created=date.today() - relativedelta(months=2),
+            submission_date=date.today() - relativedelta(months=2),
+        )
+
+        # Act
+        sau = StrategicActionUpdateFactory.build(
+            user=sau_stub["user"],
+            strategic_action=sau_stub["sa"],
+            supply_chain=sau_stub["sc"],
+            status=Staus.SUBMITTED,
+            implementation_rag_rating=RAGRating.GREEN,
+            reason_for_delays="some text",
+            date_created=date.today() - relativedelta(months=3),
+            submission_date=date.today() - relativedelta(months=3),
+        )
+
+        # Assert
+        self.validate(sau, {}, objects_saved=3)
+        assert (
+            StrategicActionUpdate.objects.given_month(
+                date.today() - relativedelta(months=3)
+            ).count()
+            == 1
+        )
+
+    def test_back_dating_fail(self, sau_stub):
+        # Arrange
+        sau1 = StrategicActionUpdateFactory.create(
+            user=sau_stub["user"],
+            strategic_action=sau_stub["sa"],
+            supply_chain=sau_stub["sc"],
+            status=Staus.SUBMITTED,
+            implementation_rag_rating=RAGRating.GREEN,
+            reason_for_delays="some text",
+            date_created=date.today() - relativedelta(months=3),
+            submission_date=date.today() - relativedelta(months=3),
+        )
+
+        # Act
+        new = StrategicActionUpdateFactory.build(
+            user=sau_stub["user"],
+            strategic_action=sau_stub["sa"],
+            supply_chain=sau_stub["sc"],
+            status=Staus.IN_PROGRESS,
+            date_created=date.today() - relativedelta(months=3),
+        )
+
+        # Assert
+        self.validate(new, {ObjectLevelError: ""}, objects_saved=1)
+        assert (
+            StrategicActionUpdate.objects.given_month(
+                date.today() - relativedelta(months=3)
+            ).count()
+            == 1
+        )
+
+    def test_back_dating_change_state(self, sau_stub):
+        # Arrange
+        StrategicActionUpdateFactory.create(
+            user=sau_stub["user"],
+            strategic_action=sau_stub["sa"],
+            supply_chain=sau_stub["sc"],
+            status=Staus.IN_PROGRESS,
+            implementation_rag_rating=RAGRating.GREEN,
+            date_created=date.today() - relativedelta(months=3),
+        )
+        StrategicActionUpdateFactory.create_batch(10)
+
+        # Act
+        sau = StrategicActionUpdate.objects.get(strategic_action=sau_stub["sa"])
+        sau.status = Staus.SUBMITTED
+        sau.submission_date = date.today() - relativedelta(months=3)
+        sau.save()
+
+        # Assert
+        assert (
+            StrategicActionUpdate.objects.given_month(
+                date.today() - relativedelta(months=3)
+            ).count()
+            == 1
         )

@@ -1,4 +1,4 @@
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import uuid
 
 import reversion
@@ -12,7 +12,10 @@ from django.utils.translation import gettext_lazy as _
 
 from accounts.models import GovDepartment
 from activity_stream.models import ActivityStreamQuerySetMixin
-from supply_chains.utils import get_last_working_day_of_previous_month
+from supply_chains.utils import (
+    get_last_working_day_of_previous_month,
+    get_last_working_day_of_a_month,
+)
 
 
 MAX_SLUG_LENGTH = 75
@@ -251,6 +254,18 @@ class SAUQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
             .filter(status=StrategicActionUpdate.Status.SUBMITTED)
         )
 
+    def given_month(self, month: date, *args, **kwargs):
+        given_deadline = get_last_working_day_of_a_month(month)
+        last_day_of_previous_month = month.replace(day=1) - timedelta(1)
+        last_deadline = get_last_working_day_of_a_month(last_day_of_previous_month)
+
+        return self.filter(
+            date_created__gt=last_deadline,
+            date_created__lte=given_deadline,
+            *args,
+            **kwargs,
+        ).order_by("date_created")
+
 
 class StrategicActionUpdate(models.Model):
     class Status(models.TextChoices):
@@ -301,6 +316,20 @@ class StrategicActionUpdate(models.Model):
     )
     slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
     last_modified = models.DateTimeField(auto_now=True)
+
+    def validate_unique(self, exclude=None):
+        print("+++++++ VALIDATE ++++++")
+        # we want to allow just one update for a period, on a strategic action
+        given_updates = StrategicActionUpdate.objects.given_month(
+            self.date_created, strategic_action=self.strategic_action
+        )
+
+        if given_updates and self != given_updates[0]:
+            raise ValidationError(
+                f"Monthly update already exist for the period: {given_updates[0]}"
+            )
+
+        super().validate_unique(exclude=exclude)
 
     def clean(self) -> None:
         print("+++++++ CLEAN ++++++")
