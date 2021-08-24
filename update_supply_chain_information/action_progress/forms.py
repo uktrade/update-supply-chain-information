@@ -17,7 +17,7 @@ class SAPForm(forms.Form):
         ),
         required=True,
         error_messages={
-            "required": "Choose required department",
+            "required": "You must select a department to continue",
         },
     )
 
@@ -32,7 +32,7 @@ class SAPForm(forms.Form):
         ),
         required=False,
         error_messages={
-            "required": "Choose required supply chain",
+            "required": "You must select a supply chain to continue",
         },
     )
 

@@ -12,7 +12,7 @@
 
 
 <p class="govuk-body">
-  Use the filter to see strategic action progress.
+  Apply filters to see strategic action progress
 </p>
 
 {% endblock page_header %}
@@ -34,11 +34,11 @@ they are handled within different sub classes
     <label class="govuk-label govuk-!-font-weight-bold" for="department">
       Department
     </label>
-    {% for error in form.department.errors %}
+    {% if form.department.errors %}
     <span class="govuk-error-message">
-      <span class="govuk-visually-hidden">Error:</span> {{ error }}
+      <span class="govuk-visually-hidden">Error:</span>
     </span>
-    {% endfor %}
+    {% endif %}
     {{ form.department }}
   </div>
 </form>
@@ -50,11 +50,11 @@ they are handled within different sub classes
     <label class="govuk-label govuk-!-font-weight-bold" for="supply_chain">
       Supply chain
     </label>
-    {% for error in form.supply_chain.errors %}
+    {% if form.supply_chain.errors %}
     <span class="govuk-error-message">
-      <span class="govuk-visually-hidden">Error:</span> {{ error }}
+      <span class="govuk-visually-hidden">Error:</span>
     </span>
-    {% endfor %}
+    {% endif %}
     {{ form.supply_chain }}
   </div>
 
