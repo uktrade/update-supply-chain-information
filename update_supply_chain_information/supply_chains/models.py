@@ -318,8 +318,9 @@ class StrategicActionUpdate(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     def validate_unique(self, exclude=None):
-        print("+++++++ VALIDATE ++++++")
         # we want to allow just one update for a period, on a strategic action
+        # At times this could be too ridig condition to have, say during testing, which can be
+        # refactored, when required
         given_updates = StrategicActionUpdate.objects.given_month(
             self.date_created, strategic_action=self.strategic_action
         )
@@ -332,7 +333,6 @@ class StrategicActionUpdate(models.Model):
         super().validate_unique(exclude=exclude)
 
     def clean(self) -> None:
-        print("+++++++ CLEAN ++++++")
         error_dict = {}
         if self.status == StrategicActionUpdate.Status.SUBMITTED:
             if not self.submission_date:
@@ -390,7 +390,6 @@ class StrategicActionUpdate(models.Model):
                 raise ValidationError(error_dict)
 
     def save(self, *args, **kwargs):
-        print("+++++++ SAVE ++++++")
 
         if self.status == StrategicActionUpdate.Status.SUBMITTED:
             """
