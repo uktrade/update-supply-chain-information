@@ -19,8 +19,9 @@ from supply_chains.forms import (
 from supply_chains.models import StrategicAction, StrategicActionUpdate, RAGRating
 from supply_chains.test.factories import StrategicActionFactory, SupplyChainFactory
 
+pytestmark = pytest.mark.django_db
 
-@pytest.mark.django_db()
+
 class TestCompletionDateForm:
     current_completion_date = date(year=2021, month=12, day=25)
 
@@ -44,7 +45,7 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data=form_data)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
 
     def test_form_acccepts_YYYY_0M_0D_date(self):
@@ -55,7 +56,7 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data=form_data)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
 
     def test_form_acccepts_YYYY_M_0D_date(self):
@@ -66,7 +67,7 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data=form_data)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
 
     def test_form_acccepts_YYYY_0M_D_date(self):
@@ -77,7 +78,7 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data=form_data)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
 
     def test_form_accepts_YYYY_MM_DD_date(self):
@@ -88,7 +89,7 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        form = CompletionDateForm(data=form_data)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
 
     def test_form_rejects_malformed_date(self):
@@ -100,7 +101,8 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
         form = CompletionDateForm(
-            data={"changed_value_for_target_completion_date": form_data}
+            data={"changed_value_for_target_completion_date": form_data},
+            instance=self.strategic_action_update,
         )
         assert not form.is_valid()
 
@@ -112,12 +114,13 @@ class TestCompletionDateForm:
             "changed_value_for_target_completion_date_month": date_parts[1],
             "changed_value_for_target_completion_date_day": date_parts[2],
         }
-        strategic_action_update: StrategicActionUpdate = StrategicActionUpdate(
-            strategic_action=self.strategic_action,
-            supply_chain=self.strategic_action.supply_chain,
+
+        self.strategic_action_update.changed_value_for_target_completion_date = None
+        assert (
+            self.strategic_action_update.changed_value_for_target_completion_date
+            is None
         )
-        assert strategic_action_update.changed_value_for_target_completion_date is None
-        form = CompletionDateForm(data=form_data, instance=strategic_action_update)
+        form = CompletionDateForm(data=form_data, instance=self.strategic_action_update)
         assert form.is_valid()
         saved_instance: StrategicActionUpdate = form.save()
         assert saved_instance.pk is not None
@@ -170,7 +173,6 @@ class TestCompletionDateForm:
         )
 
 
-@pytest.mark.django_db()
 class TestMonthlyUpdateInfoForm:
     def test_form_saves_the_content(self):
         supply_chain = SupplyChainFactory()
@@ -187,7 +189,6 @@ class TestMonthlyUpdateInfoForm:
         assert saved_instance.content == form_data["content"]
 
 
-@pytest.mark.django_db()
 class TestMonthlyUpdateStatusForm:
     def setup_method(self):
         supply_chain = SupplyChainFactory()
@@ -504,7 +505,6 @@ class TestMonthlyUpdateStatusForm:
         assert "reason_for_delays" in detail_form.errors.keys()
 
 
-@pytest.mark.django_db()
 class TestRedReasonForDelayForm:
     """Check that will_completion_date_change only requested when date known."""
 
@@ -569,7 +569,6 @@ class TestRedReasonForDelayForm:
         assert "will_completion_date_change" not in form.fields.keys()
 
 
-@pytest.mark.django_db()
 class TestApproximateTimingForm:
     """Should calculate and save the date, or set is_ongoing"""
 
@@ -682,7 +681,6 @@ class TestApproximateTimingForm:
         assert "surrogate_is_ongoing" in form.errors.keys()
 
 
-@pytest.mark.django_db()
 class TestMonthlyUpdateTimingForm:
     """Should either save the date, or calculate the date, or set is_ongoing."""
 
@@ -766,7 +764,6 @@ class TestMonthlyUpdateTimingForm:
         )
 
 
-@pytest.mark.django_db()
 class TestMonthlyUpdateModifiedTimingForm:
     """Should log the reason for changing the date in reversion."""
 
@@ -790,7 +787,6 @@ class TestMonthlyUpdateModifiedTimingForm:
         assert "reason_for_completion_date_change" in form.errors.keys()
 
 
-@pytest.mark.django_db()
 class TestMonthlyUpdateSubmissionFormGeneration:
     """Test that the correct form classes are included in the final submission process."""
 
@@ -911,7 +907,6 @@ class TestMonthlyUpdateSubmissionFormGeneration:
             assert unexpected_class.__name__ not in actual_classes
 
 
-@pytest.mark.django_db()
 class TestMonthlyUpdateSubmissionForm:
     """Test the pseudo-form used to submit the ready_to_submit update."""
 
