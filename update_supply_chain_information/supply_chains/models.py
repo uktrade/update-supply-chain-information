@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 from django.contrib.postgres.fields import ArrayField
+from django.utils.translation import gettext_lazy as _
 
 from accounts.models import GovDepartment
 from activity_stream.models import ActivityStreamQuerySetMixin
@@ -301,7 +302,67 @@ class StrategicActionUpdate(models.Model):
     slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
     last_modified = models.DateTimeField(auto_now=True)
 
+    def clean(self) -> None:
+        print("+++++++ CLEAN ++++++")
+        error_dict = {}
+        if self.status == StrategicActionUpdate.Status.SUBMITTED:
+            if not self.submission_date:
+                error_dict.update(
+                    {
+                        "submission_date": ValidationError(
+                            _("Missing submission_date."), code="required"
+                        ),
+                    }
+                )
+
+            if not self.content:
+                error_dict.update(
+                    {
+                        "content": ValidationError(
+                            _("Missing content."), code="required"
+                        ),
+                    }
+                )
+
+            if not self.implementation_rag_rating:
+                error_dict.update(
+                    {
+                        "implementation_rag_rating": ValidationError(
+                            _("Missing implementation_rag_rating."), code="required"
+                        ),
+                    }
+                )
+            else:
+                if self.implementation_rag_rating != RAGRating.GREEN:
+                    if not self.reason_for_delays:
+                        error_dict.update(
+                            {
+                                "reason_for_delays": ValidationError(
+                                    _("Missing reason_for_delays."), code="required"
+                                ),
+                            }
+                        )
+
+                    if (
+                        self.implementation_rag_rating == RAGRating.RED
+                        and self.changed_value_for_target_completion_date
+                    ):
+                        if not self.reason_for_completion_date_change:
+                            error_dict.update(
+                                {
+                                    "reason_for_completion_date_change": ValidationError(
+                                        _("Missing reason_for_completion_date_change."),
+                                        code="required",
+                                    ),
+                                }
+                            )
+
+            if error_dict:
+                raise ValidationError(error_dict)
+
     def save(self, *args, **kwargs):
+        print("+++++++ SAVE ++++++")
+
         if self.status == StrategicActionUpdate.Status.SUBMITTED:
             """
             To finalise the update we must:
