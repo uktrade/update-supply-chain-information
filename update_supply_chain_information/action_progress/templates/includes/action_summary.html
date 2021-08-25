@@ -2,37 +2,37 @@
     <div class="govuk-summary-list__row">
       <dd class="govuk-summary-list__value">
         <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Department</h3>
-        Sarah Philips
+        {{ dept }}
       </dd>
     </div>
     <div class="govuk-summary-list__row">
       <dd class="govuk-summary-list__value">
         <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Supply chain</h3>
-        5 January 1978
+        {{ action.supply_chain.name }}
       </dd>
     </div>
     <div class="govuk-summary-list__row">
       <dd class="govuk-summary-list__value">
         <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Strategic action status</h3>
-        72 Guild Street
+        {{ action.is_archived|yesno:"Inactive, Active" }}
       </dd>
     </div>
     <div class="govuk-summary-list__row">
       <dd class="govuk-summary-list__value">
         <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Strategic action description</h3>
-        5 January 1978
+        {{ action.description }}
       </dd>
     </div>
     <div class="govuk-summary-list__row">
         <dd class="govuk-summary-list__value">
           <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Start date</h3>
-          5 January 1978
+          {{ action.start_date|date:"d M Y" }}
         </dd>
       </div>
       <div class="govuk-summary-list__row--no-border">
         <dd class="govuk-summary-list__value">
           <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Estimated date of completion</h3>
-          5 January 1978
+          {% get_action_completion action.slug %}
         </dd>
       </div>
 </dl>

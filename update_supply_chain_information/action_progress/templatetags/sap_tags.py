@@ -1,5 +1,9 @@
 from django.template.defaulttags import register
 from django.urls import reverse
+from django.shortcuts import get_object_or_404
+from django.template.defaultfilters import date as date_tag
+
+from supply_chains.models import StrategicAction
 
 
 @register.simple_tag
@@ -11,3 +15,21 @@ def get_sap_filter_route(dept) -> str:
         route = reverse("action-progress")
 
     return route
+
+
+@register.simple_tag
+def get_action_completion(action_slug: str) -> str:
+    """Return either completion date or Ongoing in string format"""
+    completion = ""
+
+    if action_slug:
+        sa = get_object_or_404(StrategicAction, slug=action_slug)
+
+        if sa.is_ongoing:
+            completion = "Ongoing"
+        else:
+            completion = (
+                date_tag(sa.target_completion_date, "d M Y") or "No information"
+            )
+
+    return completion

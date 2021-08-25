@@ -150,3 +150,16 @@ class ActionProgressListView(PaginationMixin, ActionProgressDeptView):
 
 class ActionProgressDetailView(LoginRequiredMixin, TemplateView):
     template_name = "action_progress_details.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["dept"] = self.kwargs.get("dept", None)
+        context["sc_slug"] = self.kwargs.get("supply_chain_slug", None)
+        context["sa_slug"] = self.kwargs.get("action_slug", None)
+
+        context["action"] = StrategicAction.objects.get(
+            slug=context["sa_slug"], supply_chain__slug=context["sc_slug"]
+        )
+
+        return context
