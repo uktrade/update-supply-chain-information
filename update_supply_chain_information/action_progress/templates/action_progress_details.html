@@ -1,0 +1,38 @@
+{% extends "action_progress_base.html" %}
+
+
+{% block page_header %}
+
+<a href="#" class="govuk-back-link">Back</a>
+
+<h1 class="govuk-heading-xl">Strategic action progress</h1>
+
+<p class="govuk-body">
+    Strategic action progress details and information
+</p>
+
+{% endblock page_header %}
+
+{% block page_content %}
+
+
+<h2 class="govuk-heading-l">SA Name</h2>
+
+{% include "includes/action_summary.html" %}
+
+{% include "includes/monthly_update_summary.html" %}
+{% include "includes/action_details.html" %}
+
+<br>
+<br>
+<div class="app-back-to-top" data-module="app-back-to-top">
+    <a class="govuk-link govuk-link--no-visited-state app-back-to-top__link" href="#top">
+      <svg role="presentation" focusable="false" class="app-back-to-top__icon" xmlns="http://www.w3.org/2000/svg" width="19" height="17" viewBox="0 0 19 17">
+        <path fill="currentColor" d="M6.5 0L0 6.5 1.4 8l4-4v12.7h2V4l4.3 4L13 6.4z"></path>
+      </svg>Back to top
+    </a>
+  </div>
+
+{% endblock page_content %}
+
+

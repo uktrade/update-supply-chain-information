@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.template.defaultfilters import slugify
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.views.generic.base import TemplateView
 
 from accounts.models import GovDepartment
 from action_progress.forms import SAPForm
@@ -145,3 +146,7 @@ class ActionProgressListView(PaginationMixin, ActionProgressDeptView):
 
         context["supply_chain_name"] = SupplyChain.objects.get(slug=context["sc_slug"])
         return context
+
+
+class ActionProgressDetailView(LoginRequiredMixin, TemplateView):
+    template_name = "action_progress_details.html"

@@ -28,6 +28,7 @@ from action_progress.views import (
     ActionProgressView,
     ActionProgressDeptView,
     ActionProgressListView,
+    ActionProgressDetailView,
 )
 
 router = routers.DefaultRouter()
@@ -126,6 +127,11 @@ action_progress_urlpatterns = [
         "<str:dept>/<slug:supply_chain_slug>/",
         ActionProgressListView.as_view(),
         name="action-progress-list",
+    ),
+    path(
+        "<str:dept>/<slug:supply_chain_slug>/<slug:action_slug>/detail/",
+        ActionProgressDetailView.as_view(),
+        name="action-progress-detail",
     ),
 ]
 
