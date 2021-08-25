@@ -13,6 +13,7 @@ class SAPForm(forms.Form):
                 "class": "govuk-select",
                 "aria-label": "department",
                 "onchange": "form.submit();",
+                "style": "width: 250px",
             }
         ),
         required=True,
@@ -28,6 +29,7 @@ class SAPForm(forms.Form):
             attrs={
                 "class": "govuk-select",
                 "aria-label": "supply_chain",
+                "style": "width: 250px",
             }
         ),
         required=False,
