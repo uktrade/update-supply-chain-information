@@ -25,7 +25,7 @@ describe('The SAP filters page for admin user', () => {
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Strategic action progress`)
-    cy.get('p').contains(`Use the filter to see strategic action progress.`)
+    cy.get('p').contains(`Apply filters to see strategic action progress`)
   })
   it('displays drop down for department and supply chains', () => {
     cy.get('div > label').contains('Department')
@@ -75,7 +75,7 @@ describe('Error handling of SAP filter page', () => {
     cy.get('#error-summary-title').contains('There is a problem')
     cy.get('li')
       .find('a')
-      .contains('Choose required department')
+      .contains('You must select a department to continue')
       .should('have.attr', 'href')
       .and('equal', '#id_department')
   })
@@ -88,7 +88,7 @@ describe('Error handling of SAP filter page', () => {
     cy.get('#error-summary-title').contains('There is a problem')
     cy.get('li')
       .find('a')
-      .contains('Choose required supply chain')
+      .contains('You must select a supply chain to continue')
       .should('have.attr', 'href')
       .and('equal', '#id_supply_chain')
   })

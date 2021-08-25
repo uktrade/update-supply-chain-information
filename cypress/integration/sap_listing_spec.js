@@ -25,7 +25,7 @@ describe('The SAP listing page', () => {
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Strategic action progress`)
-    cy.get('p').contains(`Use the filter to see strategic action progress.`)
+    cy.get('p').contains(`Apply filters to see strategic action progress`)
   })
   it('can select department, supply chain and submit', () => {
     const successUrl = urls.sap + `${govDepartment.name}/` + `${supplyChain.fields.slug}/`
@@ -38,6 +38,7 @@ describe('The SAP listing page', () => {
   it('expect sections within filtered results', () => {
     cy.get('h3').contains(`${govDepartment.name}`)
     cy.get('h2').contains(`${supplyChain.fields.name}`)
+    cy.get('p').contains('Select a strategic action to view progress details and information')
     cy.get('a').contains(
       'Back to top'
     )

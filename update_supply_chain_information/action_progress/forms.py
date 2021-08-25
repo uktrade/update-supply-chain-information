@@ -13,11 +13,12 @@ class SAPForm(forms.Form):
                 "class": "govuk-select",
                 "aria-label": "department",
                 "onchange": "form.submit();",
+                "style": "width: 250px",
             }
         ),
         required=True,
         error_messages={
-            "required": "Choose required department",
+            "required": "You must select a department to continue",
         },
     )
 
@@ -28,11 +29,12 @@ class SAPForm(forms.Form):
             attrs={
                 "class": "govuk-select",
                 "aria-label": "supply_chain",
+                "style": "width: 250px",
             }
         ),
         required=False,
         error_messages={
-            "required": "Choose required supply chain",
+            "required": "You must select a supply chain to continue",
         },
     )
 

@@ -319,7 +319,7 @@ class StrategicActionUpdate(models.Model):
 
     def validate_unique(self, exclude=None):
         # we want to allow just one update for a period, on a strategic action
-        # At times this could be too ridig condition to have, say during testing, which can be
+        # At times this could be too rigid condition to have, say during testing, which can be
         # refactored, when required
         given_updates = StrategicActionUpdate.objects.given_month(
             self.date_created, strategic_action=self.strategic_action
