@@ -1,0 +1,66 @@
+<dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+          <h3 class="govuk-heading-s" style="padding-bottom: 10px;">What's involved in the strategic action?</h3>
+        {{ action.description|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <h3 class="govuk-heading-s" style="padding-bottom: 10px;">What's the intended impact of the strategic action?
+            How will the action be measured?</h3>
+        {{ action.impact|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Which category applies to this strategic action?</h3>
+        {{ action.get_category_display|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Does the strategic action apply UK-wide or in England only?</h3>
+        {{ action.get_geographic_scope_display|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Which other departments are supporting this strategic action? (Optional)</h3>
+        {{ action.supporting_organisations|join:", "|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Are there any other dependencies or requirements for applying this strategic action? (Optional)</h3>
+        {{ action.other_dependencies|default:"No information" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Does this action affect the supply chain as a whole or a subset of the supply chain?</h3>
+        {% if action.specific_related_products %}
+        <div>
+            A subset of the supply chain.
+            <details class="govuk-details" data-module="govuk-details">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+                        See more
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    {{ action.specific_related_products }}
+                </div>
+            </details>
+        </div>
+        {% else %}
+        Supply chain as a whole.
+        {% endif %}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row--no-border">
+        <dd class="govuk-summary-list__value">
+            Last updated on XYZ by GSC
+        </dd>
+    </div>
+</dl>

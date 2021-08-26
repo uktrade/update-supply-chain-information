@@ -29,7 +29,7 @@ def get_action_completion(action_slug: str) -> str:
             completion = "Ongoing"
         else:
             completion = (
-                date_tag(sa.target_completion_date, "d M Y") or "No information"
+                date_tag(sa.target_completion_date, "j M Y") or "No information"
             )
 
     return completion
