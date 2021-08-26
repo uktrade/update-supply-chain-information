@@ -5,11 +5,11 @@ from django.views.generic import FormView
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.mixins import UserPassesTestMixin
 from django.views.generic.base import TemplateView
 
 from accounts.models import GovDepartment
 from action_progress.forms import SAPForm
+from action_progress.mixins import DeptAuthRequiredMixin
 from supply_chains.models import StrategicAction, StrategicActionUpdate, SupplyChain
 from supply_chains.mixins import PaginationMixin
 
@@ -61,7 +61,7 @@ class ActionProgressView(LoginRequiredMixin, FormView):
         return kwargs
 
 
-class ActionProgressDeptView(UserPassesTestMixin, ActionProgressView):
+class ActionProgressDeptView(DeptAuthRequiredMixin, ActionProgressView):
     template_name = "action_progress_dept.html"
 
     def get_form_kwargs(self):
@@ -90,18 +90,6 @@ class ActionProgressDeptView(UserPassesTestMixin, ActionProgressView):
 
         kwargs["supply_chain_required"] = True
         return kwargs
-
-    def test_func(self):
-        """Custom auth for the resource.
-
-        Note: As UserPassesTestMixin has been used in this base class which over-rides
-        LoginRequiredMixin(by the looks of it). Hence condition also include user login.
-        """
-        claimed_dept = self.kwargs.get("dept", None)
-        return self.request.user.is_authenticated and (
-            self.request.user.is_admin
-            or self.request.user.gov_department.name == claimed_dept
-        )
 
     def get_success_url(self):
 
@@ -148,7 +136,7 @@ class ActionProgressListView(PaginationMixin, ActionProgressDeptView):
         return context
 
 
-class ActionProgressDetailView(LoginRequiredMixin, TemplateView):
+class ActionProgressDetailView(DeptAuthRequiredMixin, TemplateView):
     template_name = "action_progress_details.html"
 
     def get_context_data(self, **kwargs):
@@ -158,8 +146,10 @@ class ActionProgressDetailView(LoginRequiredMixin, TemplateView):
         context["sc_slug"] = self.kwargs.get("supply_chain_slug", None)
         context["sa_slug"] = self.kwargs.get("action_slug", None)
 
-        context["action"] = StrategicAction.objects.get(
-            slug=context["sa_slug"], supply_chain__slug=context["sc_slug"]
+        context["action"] = get_object_or_404(
+            StrategicAction,
+            slug=context["sa_slug"],
+            supply_chain__slug=context["sc_slug"],
         )
 
         context["update"] = StrategicActionUpdate.objects.filter(
@@ -167,5 +157,4 @@ class ActionProgressDetailView(LoginRequiredMixin, TemplateView):
             strategic_action__slug=context["sa_slug"],
         ).last_month()
 
-        print(context["update"])
         return context
