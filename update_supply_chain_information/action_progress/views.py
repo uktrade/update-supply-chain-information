@@ -10,7 +10,7 @@ from django.views.generic.base import TemplateView
 
 from accounts.models import GovDepartment
 from action_progress.forms import SAPForm
-from supply_chains.models import StrategicAction, SupplyChain
+from supply_chains.models import StrategicAction, StrategicActionUpdate, SupplyChain
 from supply_chains.mixins import PaginationMixin
 
 
@@ -162,4 +162,10 @@ class ActionProgressDetailView(LoginRequiredMixin, TemplateView):
             slug=context["sa_slug"], supply_chain__slug=context["sc_slug"]
         )
 
+        context["update"] = StrategicActionUpdate.objects.filter(
+            supply_chain__slug=context["sc_slug"],
+            strategic_action__slug=context["sa_slug"],
+        ).last_month()
+
+        print(context["update"])
         return context
