@@ -60,7 +60,7 @@
     </div>
     <div class="govuk-summary-list__row--no-border">
         <dd class="govuk-summary-list__value">
-            Last updated on XYZ by GSC
+            {{ action.gsc_notes|default:"No recordings from GSC" }}
         </dd>
     </div>
 </dl>

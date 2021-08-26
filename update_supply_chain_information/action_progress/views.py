@@ -130,7 +130,7 @@ class ActionProgressListView(PaginationMixin, ActionProgressDeptView):
             (
                 all_actions.filter(is_archived=False)
                 .order_by("name")
-                .values("name", "description")
+                .values("name", "description", "slug")
             ),
             5,
         )
@@ -139,7 +139,7 @@ class ActionProgressListView(PaginationMixin, ActionProgressDeptView):
             (
                 all_actions.filter(is_archived=True)
                 .order_by("name")
-                .values("name", "description")
+                .values("name", "description", "slug")
             ),
             5,
         )

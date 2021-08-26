@@ -18,9 +18,10 @@
       <table class="govuk-table">
         <tbody class="govuk-table__body">
           {% for action in active_actions %}
+          {% url 'action-progress-detail' dept sc_slug action.slug as active_link %}
           <tr class="govuk-table__row tasklist-top-border">
               <td class="govuk-table__cell govuk-!-width-one-half">
-                  <a href="#" class="govuk-link govuk-!-font-weight-bold">{{ action.name }}</a>
+                  <a href="{{ active_link }}" class="govuk-link govuk-!-font-weight-bold">{{ action.name }}</a>
                   <p class="sap-action-description"> {{ action.description|truncatewords:30 }} </p>
               </td>
           </tr>
@@ -37,9 +38,10 @@
       <table class="govuk-table">
         <tbody class="govuk-table__body">
           {% for action in inactive_actions %}
+          {% url 'action-progress-detail' dept sc_slug action.slug as inactive_link %}
           <tr class="govuk-table__row tasklist-top-border">
               <td class="govuk-table__cell govuk-!-width-one-half">
-                  <a href="#" class="govuk-link govuk-!-font-weight-bold">{{ action.name }}</a>
+                  <a href="{{ inactive_link }}" class="govuk-link govuk-!-font-weight-bold">{{ action.name }}</a>
                   <p class="sap-action-description"> {{ action.description|truncatewords:30 }} </p>
               </td>
           </tr>
