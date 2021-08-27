@@ -1,10 +1,9 @@
 import pytest
 from django.test import Client
 from django.urls import reverse
-from supply_chains.models import SupplyChain
 
 from supply_chains.test.factories import StrategicActionFactory, SupplyChainFactory
-from accounts.test.factories import GovDepartmentFactory, UserFactory
+from accounts.test.factories import GovDepartmentFactory
 
 
 pytestmark = pytest.mark.django_db
