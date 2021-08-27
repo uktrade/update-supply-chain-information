@@ -137,5 +137,25 @@
       "slug": "05-2021",
       "last_modified": "2021-06-01 00:00:00.000000+01:00"
     }
+  },
+  {
+    "model": "supply_chains.strategicactionupdate",
+    "pk": "2c30b0a2-9bfa-4e9b-8763-efbc4f177bf6",
+    "fields": {
+      "status": "submitted",
+      "submission_date": "2021-07-15",
+      "date_created": "2021-07-15",
+      "content": "Retro fit last submissions",
+      "implementation_rag_rating": "AMBER",
+      "reason_for_delays": "Too busy",
+      "changed_value_for_target_completion_date": null,
+      "reason_for_completion_date_change": "",
+      "changed_value_for_is_ongoing": false,
+      "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
+      "strategic_action": "35f39db6-fa71-4f82-b86a-238e8398b753",
+      "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+      "slug": "07-2021",
+      "last_modified": "2021-08-27T10:11:19.760Z"
+    }
   }
 ]

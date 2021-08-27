@@ -7,7 +7,7 @@ import { urlBuilder } from "../support/utils.js"
 const adminUser = users[0].fields
 const govDepartment = govDepartments[0].fields
 const supplyChain = supplyChains[0]
-const action = actions[0]
+const action = actions[1]
 const urls = urlBuilder(supplyChain);
 
 urls.sapDetail = urls.sap + `${govDepartment.name}/` + `${supplyChain.fields.slug}/` + `${action.fields.slug}/detail/`
@@ -73,14 +73,24 @@ describe('The SAP details page', () => {
     cy.get('#monthly-update div.govuk-details__text dl.govuk-summary-list div dd.govuk-summary-list__value')
       .should('have.length', 3)
       .each(($el, index) => {
-        if(index == 2) {
+        if (index == 2) {
           cy.wrap($el).contains(updateHeaders[index])
         } else {
           cy.wrap($el).find('h3.govuk-heading-s').contains(updateHeaders[index])
         }
       })
+
+    cy.get('#monthly-update div.govuk-details__text dl.govuk-summary-list div dd.govuk-summary-list__value')
+      .children(1).as('DeliveryStatus')
+    cy.get('@DeliveryStatus').contains('Amber')
+    cy.get('@DeliveryStatus')
+      .find('details.govuk-details')
+      .then(($ragDetail) => {
+        cy.wrap($ragDetail).should('exist').should('not.have.attr', 'open')
+        cy.wrap($ragDetail).find('summary.govuk-details__summary span.govuk-details__summary-text').contains('See more')
+      })
   })
-  it('display monthly update', () => {
+  it('display strategic action details', () => {
     cy.get('#action-details').should('exist').should('not.have.attr', 'open')
     cy.get('#action-details summary.govuk-details__summary span.govuk-details__summary-text').contains('Strategic action details')
     cy.get('#action-details div.govuk-details__text dl.govuk-summary-list').should('have.length', 1)
