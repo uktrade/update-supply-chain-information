@@ -80,15 +80,16 @@ describe('The SAP details page', () => {
         }
       })
 
-    cy.get('#monthly-update div.govuk-details__text dl.govuk-summary-list div dd.govuk-summary-list__value')
-      .children(1).as('DeliveryStatus')
-    cy.get('@DeliveryStatus').contains('Amber')
-    cy.get('@DeliveryStatus')
-      .find('details.govuk-details')
-      .then(($ragDetail) => {
-        cy.wrap($ragDetail).should('exist').should('not.have.attr', 'open')
-        cy.wrap($ragDetail).find('summary.govuk-details__summary span.govuk-details__summary-text').contains('See more')
-      })
+    // NOTE: Commented due to GH #207
+    // cy.get('#monthly-update div.govuk-details__text dl.govuk-summary-list div dd.govuk-summary-list__value')
+    //   .children(1).as('DeliveryStatus')
+    // cy.get('@DeliveryStatus').contains('Amber')
+    // cy.get('@DeliveryStatus')
+    //   .find('details.govuk-details')
+    //   .then(($ragDetail) => {
+    //     cy.wrap($ragDetail).should('exist').should('not.have.attr', 'open')
+    //     cy.wrap($ragDetail).find('summary.govuk-details__summary span.govuk-details__summary-text').contains('See more')
+    //   })
   })
   it('display strategic action details', () => {
     cy.get('#action-details').should('exist').should('not.have.attr', 'open')
