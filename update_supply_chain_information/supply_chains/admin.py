@@ -70,6 +70,7 @@ class StrategicActionAdmin(admin.ModelAdmin):
         "supply_chain",
         "is_archived",
         "gov_department",
+        "gsc_notes",
     )
 
     list_filter = (

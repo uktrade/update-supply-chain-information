@@ -159,6 +159,11 @@ class StrategicAction(models.Model):
         help_text="Any other dependencies or requirements for completing the action.",
         blank=True,
     )
+    gsc_notes = models.TextField(
+        help_text="Free text area to record observations, notes by admin/gsc",
+        blank=True,
+        null=True,
+    )
     supply_chain = models.ForeignKey(
         SupplyChain,
         on_delete=models.PROTECT,
