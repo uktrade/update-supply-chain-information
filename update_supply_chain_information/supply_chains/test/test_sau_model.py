@@ -187,7 +187,7 @@ class TestSAUModel:
             status=Staus.SUBMITTED,
             implementation_rag_rating=RAGRating.RED,
             reason_for_delays="some text",
-            changed_value_for_target_completion_date=date.today()
+            changed_value_for_target_completion_date=date.today().replace(day=20)
             + relativedelta(years=1, months=1),
             reason_for_completion_date_change=None,
         )
@@ -207,15 +207,15 @@ class TestSAUModel:
             status=Staus.SUBMITTED,
             implementation_rag_rating=RAGRating.GREEN,
             reason_for_delays="some text",
-            date_created=date.today() - relativedelta(months=3),
-            submission_date=date.today() - relativedelta(months=3),
+            date_created=date.today().replace(day=20) - relativedelta(months=3),
+            submission_date=date.today().replace(day=20) - relativedelta(months=3),
         )
 
         # Assert
         self.validate(sau, {}, objects_saved=1)
         assert (
             StrategicActionUpdate.objects.given_month(
-                date.today() - relativedelta(months=3)
+                date.today().replace(day=20) - relativedelta(months=3)
             ).count()
             == 1
         )
@@ -229,8 +229,8 @@ class TestSAUModel:
             status=Staus.SUBMITTED,
             implementation_rag_rating=RAGRating.GREEN,
             reason_for_delays="some text",
-            date_created=date.today() - relativedelta(months=4),
-            submission_date=date.today() - relativedelta(months=4),
+            date_created=date.today().replace(day=20) - relativedelta(months=4),
+            submission_date=date.today().replace(day=20) - relativedelta(months=4),
         )
 
         StrategicActionUpdateFactory.create(
@@ -240,8 +240,8 @@ class TestSAUModel:
             status=Staus.SUBMITTED,
             implementation_rag_rating=RAGRating.GREEN,
             reason_for_delays="some text",
-            date_created=date.today() - relativedelta(months=2),
-            submission_date=date.today() - relativedelta(months=2),
+            date_created=date.today().replace(day=20) - relativedelta(months=2),
+            submission_date=date.today().replace(day=20) - relativedelta(months=2),
         )
 
         # Act
@@ -252,15 +252,15 @@ class TestSAUModel:
             status=Staus.SUBMITTED,
             implementation_rag_rating=RAGRating.GREEN,
             reason_for_delays="some text",
-            date_created=date.today() - relativedelta(months=3),
-            submission_date=date.today() - relativedelta(months=3),
+            date_created=date.today().replace(day=20) - relativedelta(months=3),
+            submission_date=date.today().replace(day=20) - relativedelta(months=3),
         )
 
         # Assert
         self.validate(sau, {}, objects_saved=3)
         assert (
             StrategicActionUpdate.objects.given_month(
-                date.today() - relativedelta(months=3)
+                date.today().replace(day=20) - relativedelta(months=3)
             ).count()
             == 1
         )
@@ -274,8 +274,8 @@ class TestSAUModel:
             status=Staus.SUBMITTED,
             implementation_rag_rating=RAGRating.GREEN,
             reason_for_delays="some text",
-            date_created=date.today() - relativedelta(months=3),
-            submission_date=date.today() - relativedelta(months=3),
+            date_created=date.today().replace(day=20) - relativedelta(months=3),
+            submission_date=date.today().replace(day=20) - relativedelta(months=3),
         )
 
         # Act
@@ -284,14 +284,14 @@ class TestSAUModel:
             strategic_action=sau_stub["sa"],
             supply_chain=sau_stub["sc"],
             status=Staus.IN_PROGRESS,
-            date_created=date.today() - relativedelta(months=3),
+            date_created=date.today().replace(day=20) - relativedelta(months=3),
         )
 
         # Assert
         self.validate(new, {ObjectLevelError: ""}, objects_saved=1)
         assert (
             StrategicActionUpdate.objects.given_month(
-                date.today() - relativedelta(months=3)
+                date.today().replace(day=20) - relativedelta(months=3)
             ).count()
             == 1
         )
@@ -304,20 +304,55 @@ class TestSAUModel:
             supply_chain=sau_stub["sc"],
             status=Staus.IN_PROGRESS,
             implementation_rag_rating=RAGRating.GREEN,
-            date_created=date.today() - relativedelta(months=3),
+            date_created=date.today().replace(day=20) - relativedelta(months=3),
         )
         StrategicActionUpdateFactory.create_batch(10)
 
         # Act
         sau = StrategicActionUpdate.objects.get(strategic_action=sau_stub["sa"])
         sau.status = Staus.SUBMITTED
-        sau.submission_date = date.today() - relativedelta(months=3)
+        sau.submission_date = date.today().replace(day=20) - relativedelta(months=3)
         sau.save()
 
         # Assert
         assert (
             StrategicActionUpdate.objects.given_month(
-                date.today() - relativedelta(months=3)
+                date.today().replace(day=20) - relativedelta(months=3)
+            ).count()
+            == 1
+        )
+
+    def test_back_dating_update_with_earlier_days(self, sau_stub):
+        """For RT-489, specifically"""
+        # Arrange
+        StrategicActionUpdateFactory.create(
+            user=sau_stub["user"],
+            strategic_action=sau_stub["sa"],
+            supply_chain=sau_stub["sc"],
+            status=Staus.SUBMITTED,
+            implementation_rag_rating=RAGRating.GREEN,
+            reason_for_delays="some text",
+            date_created=date.today().replace(day=10) - relativedelta(months=3),
+            submission_date=date.today().replace(day=10) - relativedelta(months=3),
+        )
+        # Act
+        sau = StrategicActionUpdateFactory.build(
+            user=sau_stub["user"],
+            strategic_action=sau_stub["sa"],
+            supply_chain=sau_stub["sc"],
+            status=Staus.SUBMITTED,
+            implementation_rag_rating=RAGRating.GREEN,
+            reason_for_delays="some text",
+            date_created=date.today().replace(day=20) - relativedelta(months=3),
+            submission_date=date.today().replace(day=20) - relativedelta(months=3),
+        )
+
+        # Assert
+        self.validate(sau, {ObjectLevelError: ""}, objects_saved=1)
+
+        assert (
+            StrategicActionUpdate.objects.given_month(
+                date.today().replace(day=20) - relativedelta(months=3)
             ).count()
             == 1
         )

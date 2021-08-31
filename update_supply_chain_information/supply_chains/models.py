@@ -1,4 +1,5 @@
 from datetime import datetime, date, timedelta
+from dateutil.relativedelta import relativedelta
 import uuid
 
 import reversion
@@ -260,7 +261,9 @@ class SAUQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
         )
 
     def given_month(self, month: date, *args, **kwargs):
-        given_deadline = get_last_working_day_of_a_month(month)
+        # RT-489: current month should include the whole period and not upto given day.
+        lastday = month.replace(day=1) + relativedelta(months=1) - timedelta(days=1)
+        given_deadline = get_last_working_day_of_a_month(lastday)
         last_day_of_previous_month = month.replace(day=1) - timedelta(1)
         last_deadline = get_last_working_day_of_a_month(last_day_of_previous_month)
 
