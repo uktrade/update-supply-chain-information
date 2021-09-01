@@ -20,7 +20,7 @@
 </div>
 
 <br>
-<nav>
+<nav aria-labelledby="navigation">
     {% get_active_menu as active_menu %}
     <ul id="navigation" class="govuk-header__navigation " aria-label="Navigation menu">
         <li class="govuk-header__navigation-item {% if active_menu == 'home' %} govuk-header__navigation-item--active{% endif %}">
