@@ -38,9 +38,9 @@
                 Strategic action progress
             </a>
         </li>
-        <li class="govuk-header__navigation-item">
-            <a class="govuk-header__link" href="#">
-                Supply chain profile
+        <li class="govuk-header__navigation-item {% if active_menu == 'scd' %} govuk-header__navigation-item--active{% endif %}">
+            <a class="govuk-header__link" href={% url 'chain-details' %}>
+                Supply chain details
             </a>
         </li>
     </ul>
