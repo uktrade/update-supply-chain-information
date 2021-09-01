@@ -30,6 +30,8 @@ from action_progress.views import (
     ActionProgressListView,
     ActionProgressDetailView,
 )
+from chain_details.views import ChainDetailsView
+
 
 router = routers.DefaultRouter()
 router.register(r"activity-stream", ActivityStreamViewSet, basename="activity-stream")
@@ -135,6 +137,10 @@ action_progress_urlpatterns = [
     ),
 ]
 
+chain_details_urlpatterns = [
+    path("", ChainDetailsView.as_view(), name="chain-details"),
+]
+
 urlpatterns = [
     path("auth/", include("authbroker_client.urls")),
     path("admin/", admin_site.urls),
@@ -144,4 +150,5 @@ urlpatterns = [
     path("privacy-notice/", PrivacyNoticeView.as_view(), name="privacy"),
     path("", HomePageView.as_view(), name="index"),
     path("action-progress/", include(action_progress_urlpatterns)),
+    path("chain-details/", include(chain_details_urlpatterns)),
 ]

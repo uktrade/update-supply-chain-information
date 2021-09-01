@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block page_title %} Supply chain details - {{ block.super }} {% endblock %}
+
+{% block body %}
+
+
+{% block page_header %}
+
+<h1 class="govuk-heading-xl">Supply chain details</h1>
+
+
+<p class="govuk-body">
+  Filter supply chains by department
+</p>
+
+
+{% include "supply_chains/includes/error_summary.html" %}
+
+
+{% comment %}
+<br>
+<form method="post" action="" novalidate>
+  {% csrf_token %}
+
+  <div class="govuk-form-group{% if form.department.errors %} govuk-form-group--error{% endif %}"
+  {%if not is_admin %}hidden{%endif%}>
+    <label class="govuk-label govuk-!-font-weight-bold" for="department">
+      Department
+    </label>
+    {% if form.department.errors %}
+    <span class="govuk-error-message">
+      <span class="govuk-visually-hidden">Error:</span>
+    </span>
+    {% endif %}
+    {{ form.department }}
+  </div>
+</form>
+{% endcomment %}
+
+{% endblock page_header %}
+
+{% block page_content %}
+
+
+
+{% endblock page_content %}
+
+
+{% endblock body %}
