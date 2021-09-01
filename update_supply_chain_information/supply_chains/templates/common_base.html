@@ -47,9 +47,6 @@ This template will contain common base components to be used across Forms and Vi
             <div class="govuk-header__container govuk-width-container">
                 {% block menu_header %}
                 {% endblock menu_header %}
-                <span class="app-header-span">
-                    <p class="app-header-item">{{ request.user }} - {{ request.user.gov_department.name }}</p>
-                </span>
             </div>
         </div>
         <div class="govuk-phase-banner govuk-width-container">
