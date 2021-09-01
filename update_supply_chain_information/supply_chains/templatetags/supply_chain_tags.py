@@ -24,3 +24,17 @@ def get_action_progress_route(user) -> str:
         )
 
     return route
+
+
+@register.simple_tag(takes_context=True)
+def get_active_menu(context):
+    menu = None
+    view_name = context["request"].resolver_match.url_name
+    if view_name in {"index"}:
+        menu = "home"
+    if view_name == "sc-home":
+        menu = "updates"
+    if view_name == "action-progress":
+        menu = "sap"
+
+    return menu

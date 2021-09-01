@@ -3,22 +3,56 @@
 {% load supply_chain_filters %}
 {% load supply_chain_tags %}
 
-{% block page_title %}
-    Update supply chain information
-{% endblock page_title %}
+{% block page_title %}Update supply chain information{% endblock page_title %}
 
 {% block menu_header %}
-    <a href="/" class="govuk-header__link govuk-header__link--service-name">
-        UK supply chain resilience tool
-    </a>
-{% endblock menu_header %}
+<div class="service-banner-grid">
+    <div>
+        <a href="/" class="govuk-header__link govuk-!-font-size-24">
+            UK supply chain resilience tool
+        </a>
+    </div>
+    <div>
+        <span class="app-header-span">
+            <p class="app-header-item">{{ request.user }} - {{ request.user.gov_department.name }}</p>
+        </span>
+    </div>
+</div>
 
-{% block footer_links %}
-    <ul class="govuk-footer__inline-list">
-        <li class="govuk-footer__inline-list-item">
-            <a target="_blank" class="govuk-footer__link" href={% url 'privacy' %}>
-                Privacy
+<br>
+<nav aria-labelledby="navigation">
+    {% get_active_menu as active_menu %}
+    <ul id="navigation" class="govuk-header__navigation " aria-label="Navigation menu">
+        <li class="govuk-header__navigation-item {% if active_menu == 'home' %} govuk-header__navigation-item--active{% endif %}">
+            <a class="govuk-header__link" href="/">
+                Home
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item {% if active_menu == 'updates' %} govuk-header__navigation-item--active{% endif %}">
+            <a class="govuk-header__link" href={% url 'sc-home' %}>
+                Monthly update
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item {% if active_menu == 'sap' %} govuk-header__navigation-item--active{% endif %}">
+            <a class="govuk-header__link" href={% url 'action-progress' %}>
+                Strategic action progress
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item">
+            <a class="govuk-header__link" href="#">
+                Supply chain profile
             </a>
         </li>
     </ul>
+</nav>
+{% endblock menu_header %}
+
+{% block footer_links %}
+<ul class="govuk-footer__inline-list">
+    <li class="govuk-footer__inline-list-item">
+        <a target="_blank" class="govuk-footer__link" href={% url 'privacy' %}>
+            Privacy
+        </a>
+    </li>
+</ul>
 {% endblock footer_links %}
