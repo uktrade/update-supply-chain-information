@@ -30,7 +30,7 @@ from action_progress.views import (
     ActionProgressListView,
     ActionProgressDetailView,
 )
-from chain_details.views import ChainDetailsView
+from chain_details.views import ChainDetailsView, ChainDetailsListView
 
 
 router = routers.DefaultRouter()
@@ -139,6 +139,11 @@ action_progress_urlpatterns = [
 
 chain_details_urlpatterns = [
     path("", ChainDetailsView.as_view(), name="chain-details"),
+    path(
+        "<str:dept>/",
+        ChainDetailsListView.as_view(),
+        name="chain-details-list",
+    ),
 ]
 
 urlpatterns = [

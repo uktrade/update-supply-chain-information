@@ -18,13 +18,11 @@
 {% include "supply_chains/includes/error_summary.html" %}
 
 
-{% comment %}
 <br>
 <form method="post" action="" novalidate>
   {% csrf_token %}
 
-  <div class="govuk-form-group{% if form.department.errors %} govuk-form-group--error{% endif %}"
-  {%if not is_admin %}hidden{%endif%}>
+  <div class="govuk-form-group{% if form.department.errors %} govuk-form-group--error{% endif %}">
     <label class="govuk-label govuk-!-font-weight-bold" for="department">
       Department
     </label>
@@ -35,8 +33,16 @@
     {% endif %}
     {{ form.department }}
   </div>
+
+  <button class="govuk-button" data-module="govuk-button" type="submit">
+    Apply filters
+  </button>
+
+  <a href={% url 'chain-details' %} class="govuk-link"
+    style="padding-top: 8px;padding-left: 20px;display: inline-block">Remove filters</a>
+
 </form>
-{% endcomment %}
+
 
 {% endblock page_header %}
 
