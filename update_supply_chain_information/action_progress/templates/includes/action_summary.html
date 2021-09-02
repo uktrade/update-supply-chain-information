@@ -32,7 +32,7 @@
       <div class="govuk-summary-list__row--no-border">
         <dd class="govuk-summary-list__value">
           <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Estimated date of completion</h3>
-          {% get_action_completion action.slug %}
+          {% get_action_completion action.slug action.supply_chain %}
         </dd>
       </div>
 </dl>
