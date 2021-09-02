@@ -21,6 +21,7 @@ export function urlBuilder(supplyChain, strategicAction, strategicActionUpdate) 
         home: Cypress.config('baseUrl'),
         privacy: `${Cypress.config('baseUrl')}/privacy-notice/`,
         sap: `${Cypress.config('baseUrl')}/action-progress/`,
+        scd: `${Cypress.config('baseUrl')}/chain-details/`,
         scHome: Cypress.config('baseUrlSC'),
         summary: `${Cypress.config('baseUrlSC')}/summary/`,
     }

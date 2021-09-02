@@ -36,5 +36,7 @@ def get_active_menu(context):
         menu = "updates"
     if view_name == "action-progress":
         menu = "sap"
+    if view_name == "chain-details":
+        menu = "scd"
 
     return menu

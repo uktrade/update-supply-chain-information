@@ -40,9 +40,22 @@
         <ul class="govuk-list">
             <li>
                 {% get_action_progress_route request.user as route %}
-                <a class="services-heading govuk-link govuk-!-font-weight-bold" href={{ route }}>Strategic action progress</a>
+                <a class="services-heading govuk-link govuk-!-font-weight-bold" href={{ route }}>Strategic action
+                    progress</a>
                 <p class="home-services-para">
                     Explore the latest status on departmental strategic actions across the critical supply chain.
+                </p>
+            </li>
+        </ul>
+    </div>
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href={% url 'chain-details' %} class="services-heading govuk-link govuk-!-font-weight-bold">Supply
+                    chain details</a>
+
+                <p class="home-services-para">
+                    Explore supply chain information in detail, including country dependency.
                 </p>
             </li>
         </ul>
