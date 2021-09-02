@@ -16,6 +16,7 @@ const expectedTitles = {
     privacy: () => `Privacy notice – ${expectedTitles.home()}`,
     summary: () => `Summary – ${expectedTitles.home()}`,
     sap: () => `Strategic action progress - ${expectedTitles.home()}`,
+    scd: () => `Supply chain details - ${expectedTitles.home()}`,
     supplyChain: {
         taskList: () => `Update ${supplyChain.fields.name} – ${expectedTitles.home()}`,
         strategicActions: {
@@ -130,5 +131,12 @@ describe('The SAP page', () => {
     it('has the correct title', () => {
         cy.visit(urls.sap);
         cy.title().should('equal', expectedTitles.sap())
+    });
+});
+
+describe('The SCD page', () => {
+    it('has the correct title', () => {
+        cy.visit(urls.scd);
+        cy.title().should('equal', expectedTitles.scd())
     });
 });
