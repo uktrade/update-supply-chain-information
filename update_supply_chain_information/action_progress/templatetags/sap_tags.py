@@ -18,12 +18,14 @@ def get_sap_filter_route(dept) -> str:
 
 
 @register.simple_tag
-def get_action_completion(action_slug: str) -> str:
+def get_action_completion(action_slug: str, supply_chain: object) -> str:
     """Return either completion date or Ongoing in string format"""
     completion = ""
 
     if action_slug:
-        sa = get_object_or_404(StrategicAction, slug=action_slug)
+        sa = get_object_or_404(
+            StrategicAction, slug=action_slug, supply_chain=supply_chain
+        )
 
         if sa.is_ongoing:
             completion = "Ongoing"
