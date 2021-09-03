@@ -54,17 +54,19 @@ describe('The SAP listing page', () => {
       .each(($el) => {
         cy.wrap($el).find('h3').should('exist').contains(/[A, Ina]ctive strategic actions/)
         cy.wrap($el).find('table.govuk-table tbody.govuk-table__body tr.govuk-table__row')
-        .should('exist')
-        .then(($row) => {
-          cy.wrap($row).find('td.govuk-table__cell').should('exist')
-          .each(($data) => {
-            cy.wrap($data).find('a.govuk-link')
-            .should('exist')
-            .should('have.attr', 'href')
-            cy.wrap($data).find('p.sap-action-description').should('exist')
+          .should('exist')
+          .then(($row) => {
+            cy.wrap($row).find('td.govuk-table__cell').should('exist')
+              .each(($data) => {
+                cy.wrap($data).find('a.govuk-link')
+                  .should('exist')
+                  .should('have.attr', 'href')
+                cy.wrap($data).find('p.sap-action-description').should('exist')
+              })
           })
-        })
       })
+    cy.get('#active-actions').find('p.govuk-body').should('not.exist')
+    cy.get('#inactive-actions').find('p.govuk-body').should('not.exist')
   })
 })
 
