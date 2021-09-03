@@ -97,3 +97,25 @@ describe('Pagination of SAP list', () => {
     cy.url().should('eq', successUrl + `?page=1`)
   })
 })
+
+const emptySC = supplyChains[2]
+const emptyListUrl = urls.sap + `${govDepartment.name}/` + `${emptySC.fields.slug}/`
+
+describe('Describe suply chain with no strategic actions', () => {
+  it('successfully loads', () => {
+    cy.visit(emptyListUrl)
+  })
+  it('display correct content header', () => {
+    cy.get('h3').contains(`${govDepartment.name}`)
+    cy.get('h2').contains(`${emptySC.fields.name}`)
+    cy.get('p').contains('Select a strategic action to view progress details and information')
+  })
+  it('displays empty actions message', () => {
+    cy.get('#active-actions').find('h3.govuk-heading-m').should('not.exist')
+    cy.get('#active-actions').find('p.govuk-body').should('exist').contains('No active strategic actions found.')
+
+    cy.get('#inactive-actions').find('h3.govuk-heading-m').should('not.exist')
+    cy.get('#inactive-actions').find('p.govuk-body').should('exist').contains('No inactive strategic actions found.')
+  })
+
+})
