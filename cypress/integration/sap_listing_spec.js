@@ -54,17 +54,19 @@ describe('The SAP listing page', () => {
       .each(($el) => {
         cy.wrap($el).find('h3').should('exist').contains(/[A, Ina]ctive strategic actions/)
         cy.wrap($el).find('table.govuk-table tbody.govuk-table__body tr.govuk-table__row')
-        .should('exist')
-        .then(($row) => {
-          cy.wrap($row).find('td.govuk-table__cell').should('exist')
-          .each(($data) => {
-            cy.wrap($data).find('a.govuk-link')
-            .should('exist')
-            .should('have.attr', 'href')
-            cy.wrap($data).find('p.sap-action-description').should('exist')
+          .should('exist')
+          .then(($row) => {
+            cy.wrap($row).find('td.govuk-table__cell').should('exist')
+              .each(($data) => {
+                cy.wrap($data).find('a.govuk-link')
+                  .should('exist')
+                  .should('have.attr', 'href')
+                cy.wrap($data).find('p.sap-action-description').should('exist')
+              })
           })
-        })
       })
+    cy.get('#active-actions').find('p.govuk-body').should('not.exist')
+    cy.get('#inactive-actions').find('p.govuk-body').should('not.exist')
   })
 })
 
@@ -96,4 +98,26 @@ describe('Pagination of SAP list', () => {
     cy.contains('Previous').click()
     cy.url().should('eq', successUrl + `?page=1`)
   })
+})
+
+const emptySC = supplyChains[2]
+const emptyListUrl = urls.sap + `${govDepartment.name}/` + `${emptySC.fields.slug}/`
+
+describe('Describe suply chain with no strategic actions', () => {
+  it('successfully loads', () => {
+    cy.visit(emptyListUrl)
+  })
+  it('display correct content header', () => {
+    cy.get('h3').contains(`${govDepartment.name}`)
+    cy.get('h2').contains(`${emptySC.fields.name}`)
+    cy.get('p').contains('Select a strategic action to view progress details and information')
+  })
+  it('displays empty actions message', () => {
+    cy.get('#active-actions').find('h3.govuk-heading-m').should('not.exist')
+    cy.get('#active-actions').find('p.govuk-body').should('exist').contains('No active strategic actions found.')
+
+    cy.get('#inactive-actions').find('h3.govuk-heading-m').should('not.exist')
+    cy.get('#inactive-actions').find('p.govuk-body').should('exist').contains('No inactive strategic actions found.')
+  })
+
 })

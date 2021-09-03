@@ -14,6 +14,7 @@
         </a>
     </ul>
     <div class="govuk-tabs__panel" id="active-actions">
+      {% if active_actions %}
       <h3 class="govuk-heading-m">Active strategic actions</h3>
       <table class="govuk-table">
         <tbody class="govuk-table__body">
@@ -31,9 +32,13 @@
       {% if active_actions.has_other_pages %}
       {% include 'includes/pagination.html' with objects=active_actions objects_name="strategic actions" %}
       {% endif %}
+      {% else %}
+      <p class="govuk-body">No active strategic actions found.</p>
+      {% endif %}
 
     </div>
     <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="inactive-actions">
+      {% if inactive_actions %}
       <h3 class="govuk-heading-m">Inactive strategic actions</h3>
       <table class="govuk-table">
         <tbody class="govuk-table__body">
@@ -50,6 +55,9 @@
       </table>
       {% if inactive_actions.has_other_pages %}
       {% include 'includes/pagination.html' with objects=inactive_actions objects_name="strategic actions" %}
+      {% endif %}
+      {% else %}
+      <p class="govuk-body">No inactive strategic actions found.</p>
       {% endif %}
 
     </div>
