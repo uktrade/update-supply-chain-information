@@ -29,14 +29,16 @@ def get_action_progress_route(user) -> str:
 @register.simple_tag(takes_context=True)
 def get_active_menu(context):
     menu = None
-    view_name = context["request"].resolver_match.url_name
-    if view_name in {"index"}:
-        menu = "home"
-    if view_name == "sc-home":
+    resolver = context["request"].resolver_match
+    view_name, route = resolver.view_name, resolver.route
+
+    if route.startswith("supply-chains/"):
         menu = "updates"
-    if view_name == "action-progress":
+    if route.startswith("action-progress/"):
         menu = "sap"
-    if view_name == "chain-details":
+    if route.startswith("chain-details/"):
         menu = "scd"
+    if route == "" and view_name == "index":
+        menu = "home"
 
     return menu
