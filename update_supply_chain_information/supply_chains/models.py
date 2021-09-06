@@ -110,23 +110,6 @@ class StrategicAction(models.Model):
         UK_WIDE = ("uk_wide", "UK-wide")
         ENGLAND_ONLY = ("england_only", "England only")
 
-    class SupportingOrgs(models.TextChoices):
-        HMT = ("HMT", "Treasury")
-        DHSC = ("DHSC", "DHSC")
-        BEIS = ("BEIS", "BEIS")
-        DCMS = ("DCMS", "DCMS")
-        DIT = ("DIT", "DIT")
-        DEFRA = ("DEFRA", "DEFRA")
-        CABINET_OFFICE = ("CABINET_OFFICE", "Cabinet Office")
-        MOD = ("MOD", "MoD")
-        HOME_OFFICE = ("HOME_OFFICE", "Home Office")
-        FCDO = ("FCDO", "FCDO")
-        DEVOLVED_ADMINISTRATIONS = (
-            "DEVOLVED_ADMINISTRATIONS",
-            "Devolved administrations",
-        )
-        DFT = ("DFT", "DfT")
-
     objects = StrategicActionQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
@@ -142,9 +125,8 @@ class StrategicAction(models.Model):
         max_length=12,
     )
 
-    supporting_organisations = ArrayField(
-        models.CharField(max_length=24, choices=SupportingOrgs.choices, blank=True),
-        blank=True,
+    supporting_organisations = models.CharField(
+        max_length=settings.CHARFIELD_MAX_LENGTH, blank=True, null=True
     )
 
     is_ongoing = models.BooleanField(default=False)
