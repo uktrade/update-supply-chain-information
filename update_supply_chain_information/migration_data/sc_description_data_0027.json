@@ -1,0 +1,142 @@
+{
+    "7b3e8319-b24e-4e4c-9c75-29e067401d4c": {
+        "name": "Aircraft de-icing fluid",
+        "description": "Aircraft key components  aircraft de-icing fluid due to its criticality for the overall air traffic in severe winter conditions given recent stockouts"
+    },
+    "76e93137-057d-4017-a1ee-1bf388bf7e85": {
+        "name": "Biological materials",
+        "description": ""
+    },
+    "ecd0f87e-cf37-4907-b7ba-d84f89ad4248": {
+        "name": "Broadband network equipment",
+        "description": "Broadband network equipment traffic increased 35-60% in UK2 during working hours with use of home connectivity for remote-working, e-learning and social applications; network built for peak hour (9pm) so increased capacity during day is ok; supply of spare parts, low spec equipment3 & technicians is key"
+    },
+    "1d44fe58-a0cc-46bf-97dc-e278775f8109": {
+        "name": "Broadband optical fibre distribution",
+        "description": "Broadband optical fibre reliance on home connectivity has increased importance of building out fixed line infrastructure improvements, no shortage\/disruption of cables expected and UK has some manufacturing\n"
+    },
+    "fb68ff0d-f0d4-4706-902f-b31fa3c4a1c9": {
+        "name": "CBRN carbon for masks",
+        "description": ""
+    },
+    "39f89b69-c24e-4cbd-8c10-09c26d423590": {
+        "name": "CBRN carbon for protective equipment",
+        "description": ""
+    },
+    "9abbf528-0a92-4df9-a3e8-3cc995911be9": {
+        "name": "Carbon dioxide",
+        "description": "Nuclear  Consumables (e.g. chemicals, gasses, oils) critical to maintain UK nuclear power generation and prevent impact to public confidence. CO2 used as coolant in AGR stations"
+    },
+    "c919c6e8-33df-4db7-8556-534c8c77dd73": {
+        "name": "Cell and gene therapy",
+        "description": ""
+    },
+    "2133eebc-ccc0-4469-a380-4b959ee2ed58": {
+        "name": "Ceramics",
+        "description": ""
+    },
+    "c28d9494-77b6-4926-87c8-cc63f451b518": {
+        "name": "Clinical trials",
+        "description": "Non-COVID-19 related clinical trials are an important component of the global development of new medicines and vaccines and can have an immediate impact on sustaining lives (e.g. end of life cancer treatments); non-COVID-19 trials have been paused to support the frontline response to COVID-19 (NIHR CRN data shows that 88% of non commercial studies and 46% of commercial studies were paused due to COVID-19; The Association of Medical Research Charities says >50% of members have had to stop, pause or delay most of their trials, impacting 126k patients), however these will begin to restart as pressure on the NHS eases\n"
+    },
+    "b8639f64-dea4-4b4f-9aae-a2f99190f286": {
+        "name": "Clinical waste",
+        "description": "Clinical waste (e.g. containers, waste disposal) operations are crucial to protecting the UK public from infection. Demand spikes from CV-19 and resumption elective surgery are a threat. "
+    },
+    "ddb02343-79e1-4ce6-998a-d78715459926": {
+        "name": "Conducted energy devices",
+        "description": ""
+    },
+    "4806c3a3-c763-45c6-9f45-4c0d54ee9f64": {
+        "name": "Critical spare parts for thermal generation",
+        "description": "Thermal  Critical spare parts (gas turbines) needed for operation to prevent impact to public confidence. Operators hold inventory of parts"
+    },
+    "d4c130a5-8307-4886-b0ff-dbae9ca43efa": {
+        "name": "Data centres",
+        "description": "Data centres cloud usage has increased (+57% vs planned)4, adding pressure to data centre capacity. Limited risk in public cloud data centres (more commonly used) due to open standards\/load balancing between countries, higher risk in private cloud (used by banks\/gov for security) as they do not load balance"
+    },
+    "d5ce65ce-88b3-4d35-8b60-aee8e2190eae": {
+        "name": "FCC catalysts",
+        "description": "Refinery catalysts crucial for chemical processes in refinement and therefore critical to supply of fuel products. FCC catalyst is most critical as others are fixed-bed and will last for >1 year"
+    },
+    "485b2ad2-13c2-422b-a82d-fc81c87d9ed5": {
+        "name": "Fuel additives",
+        "description": "Additives: added to create final fuel product and therefore are important in ensuring a domestic supply of petroleum products that are critical for both economic recovery and to maintain public confidence. There's greater criticality for diesel and jet fuel additives to support the military. Some additives are mandatory in aviation fuel specifications e.g. anti-static where only one chemical type (Stadis 450) is approved for UK aviation fuel. Other additives are required to comply with emissions regulations and product specifications; if fuel is used without additives this could provide longer term damage to motor vehicles"
+    },
+    "45fed63d-561a-4dc0-a40e-018d96b6bc70": {
+        "name": "HVMV transformers",
+        "description": "T&D  Transformers & circuit breakers critical to maintaining UK grid, preventing failures and impact on public confidence. Potential supply gap with largely international supply chain for high KV2 with significant lead time to resolve. Mechanical & electrical installation also requires specialist foreign vehicles and contractors (testing \/ transport)"
+    },
+    "2ea8f254-d404-4ad1-9d33-7cc873a9bbaf": {
+        "name": "Hydrazine",
+        "description": "Thermal  Consumables (e.g. chemicals, gasses, oils) critical to maintain UK thermal power generation and prevent impact to public confidence. Hydrazine used as oxygen scavenger in boiler"
+    },
+    "932a05f2-03c6-48af-88cb-55c7bbdef20f": {
+        "name": "Hydrofluoric acid",
+        "description": "Refinery chemicals: hydrofluoric acid and sodium hydroxide critical for multiple stages in refinery. Priority for chemicals continuously injected and\/or limitations in stockpiling some products due to health and safety requirements (e.g. HF acid) therefore a continuous supply is essential"
+    },
+    "486c509d-1cd4-4c86-a44a-79ed248542c4": {
+        "name": "Interconnectors",
+        "description": "T&D  Interconnectors identified as priority due to UK economic recovery potential by providing; Increased electricity system flexibility, decarbonisation of supply, increased security of supply and reduction in electricity prices; as well as high region-specific reliance on interconnectors e.g. Moyle"
+    },
+    "4c3b8ef7-f36c-4280-9f59-ee74025b6751": {
+        "name": "Medical devices and consumables",
+        "description": "Diabetes and home care(e.g.insulin pumps, oximeters)are critical for sustaining the lives ofmany patients, especially for managing vulnerable groups. Risk of shortages exists"
+    },
+    "fecad835-63f8-4a60-b408-b80c10f80bef": {
+        "name": "Medicines",
+        "description": "ICU medications and RRT & other fluids critical for treatment of COVID-19 patients with severe symptoms to reduce deaths, with an immediate impact and significant damage to public confidence should supply be disrupted. Some local supply\/demand gaps reported"
+    },
+    "7da65842-6af5-4658-954b-776aacba74b3": {
+        "name": "Mobile network equipment",
+        "description": "Mobile network equipment cellular expansion paused during Covid; expect higher data usage\/traffic shift from broadband to mobile when UK re-opens; higher use of mobile for commute (new transport conditions); mobile network (and increased capacity of the network) is critical for current\/future national health and security uses"
+    },
+    "008e3ec6-230e-4e64-bb3a-f77d63982ebb": {
+        "name": "North sea rotating parts",
+        "description": "North Sea pipeline rotating equipment repair parts critical for gas distribution. Priority for repair\/ maintenance of older equipment at key platforms due to need for legacy spares; fewer suppliers of legacy spares so requires sourcing and repair expertise from OEM"
+    },
+    "16733d19-6082-4926-9f2d-68b15fc31f38": {
+        "name": "Pipeline chemicals",
+        "description": "Pipeline chemicals critical for north sea gas distribution greater priority for antifreezes to prevent hydrate formation in offshore pipelines and a continuous pipeline injection is needed vs maintenance consumables like lubricants\n"
+    },
+    "7f5c226f-2fa4-484c-9ee7-1594cebe1265": {
+        "name": "Pipeline instrumentation and control parts",
+        "description": "North Sea pipeline instrumentation and control system repair parts critical for gas distribution. Typically legacy systems with need for proprietary parts and expertise from OEM, greater criticality for offshore terminal over receiving terminal"
+    },
+    "796a1088-f3e5-4665-9d04-1edfac4f0a6f": {
+        "name": "Police body armour",
+        "description": "Police   Body armour (general purpose & ballistic) identified as priority as it involves running a tendering process based on local force requirements and an accreditation testing process"
+    },
+    "9f5b315c-f56c-4c0c-96b7-ed5c20e4ebaf": {
+        "name": "Rolling stock brake pads",
+        "description": "Rail  rolling stock brake pads due to higher frequency of replacement, highly consolidated market, and barriers to supplier and geographical optionality potentially impacting wider range of economic activities and public confidence in case of supply chain disruption"
+    },
+    "a1328ac1-095e-4e32-adc2-9ffd0b3c8681": {
+        "name": "Sodium hydroxide",
+        "description": "Refinery chemicals: hydrofluoric acid and sodium hydroxide critical for multiple stages in refinery. Priority for chemicals continuously injected and\/or limitations in stockpiling some products due to health and safety requirements (e.g. HF acid) therefore a continuous supply is essential"
+    },
+    "cfa78fcf-f8b9-4e6d-8066-aba4478f8326": {
+        "name": "Specialist civil works aggregates",
+        "description": "Specialist equipment & aggregates for micro trenching reliance has increased with renewed 2025 broadband targets for long-lasting economic growth and productivity\n"
+    },
+    "0068e51f-5b65-40ab-a5e4-ea09eb39300c": {
+        "name": "Specialist civil works equipment",
+        "description": "Specialist equipment & aggregates for micro trenching reliance has increased with renewed 2025 broadband targets for long-lasting economic growth and productivity\n"
+    },
+    "59a60a43-ac85-4113-9a39-35d6709a3a31": {
+        "name": "Vaccines",
+        "description": "\tInfluenza vaccines critical for reduction of Influenza deaths, especially vulnerable groups (e.g. elderly) with immediate impact if disrupted; any disruption to have significant impact on public confidence and with significant lead time to resolve (preparation of specific strains)"
+    },
+    "615ac78b-fbd5-40a2-b07f-1a98dcdb39f1": {
+        "name": "Veterinary medicines",
+        "description": "Production animal medicines are critical for treating acute, prevalent and otherwise lethal conditions which could have a severe impact on UK protein supply. Demand for meat in the UK is met primarily by domestic supply of the 9.6m livestock. ~80% of beef sold in the UK is sourced domestically. Key Vet Med products generate immunity, fight infection and parasites.\nMedicines to treat\/prevent zoonotic diseases are crucial to preventing and minimising the risk of an outbreak of transmissible diseases between humans and animals (e.g. salmonella.) The most threatening zoonotic diseases are often highly infectious, can be lethal and are a high profile concern for the wider UK public. "
+    },
+    "61528b39-f268-4257-b1dd-a7792167d2f9": {
+        "name": "Water treatment chemicals",
+        "description": "Water\/Wastewater Treatment Consumables critical for the production of clean, safe water for human consumption and medical\/industrial processes and for treating post-use water. This has broad implications for human health and safety and disease prevention. Consumables are, by definition, consumed by their use and thus will be constantly depleted."
+    },
+    "c6b3d1b9-ff36-4db5-9baf-b3757be98962": {
+        "name": "Water treatment parts",
+        "description": "Water and Wastewater Treatment Plant Parts are important to plants that maintain the supply and volume of safe, clean water in the UK for drinking and industrial use. Parts supply disruptions have the potential to impact health and safety due to the closed-network design and single-point-of-failure nature of water plants."
+    }
+}
