@@ -45,7 +45,7 @@ class ChainDetailsListView(PaginationMixin, ChainDetailsView):
         context["chains"] = self.paginate(
             SupplyChain.objects.filter(gov_department__name=context["dept"])
             .order_by("name")
-            .values("name", "slug"),
+            .values("name", "slug", "description"),
             5,
         )
 
