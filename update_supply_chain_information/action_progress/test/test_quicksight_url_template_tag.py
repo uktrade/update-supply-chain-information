@@ -70,6 +70,25 @@ class TestQuickSightURLTemplateTag:
         parsed_rendered_url = urlparse(rendered_url)
         parsed_querystring = parse_qs(parsed_rendered_url.query)
         assert "back" in parsed_querystring
-        parsed_back_url = urlparse(parsed_querystring["back"][0])
+        back_url = parsed_querystring["back"][0]
+        parsed_back_url = urlparse(
+            f"http://{back_url}"
+        )  # add scheme back at start as QS doesn't like it being there
         assert parsed_back_url.hostname == dummy_from_domain
         assert parsed_back_url.path == dummy_from_path
+
+    def test_quicksight_url_has_schemeless_url_in_querystring(self, dit_user_request):
+        context = Context(
+            {
+                "request": dit_user_request,
+            }
+        )
+
+        rendered_template = template_to_render.render(context)
+
+        rendered_link_components = re.match(expected_output_re, rendered_template)
+        rendered_url = rendered_link_components.group("url")
+        parsed_rendered_url = urlparse(rendered_url)
+        parsed_querystring = parse_qs(parsed_rendered_url.query)
+        back_url = parsed_querystring["back"][0]
+        assert not back_url.startswith("http")
