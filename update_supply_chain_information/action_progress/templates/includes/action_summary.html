@@ -29,10 +29,32 @@
           {{ action.start_date|date:"j M Y" }}
         </dd>
       </div>
+
+      {% if action.is_archived %}
+      <div class="govuk-summary-list__row">
+        <dd class="govuk-summary-list__value">
+          <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Estimated date of completion</h3>
+          {% get_action_completion action.slug action.supply_chain %}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dd class="govuk-summary-list__value">
+          <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Archive date</h3>
+          {{ action.archived_date|date:"j M Y" }}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row--no-border">
+        <dd class="govuk-summary-list__value">
+          <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Reason for archiving</h3>
+          {{ action.archived_reason|truncatewords:30 }}
+        </dd>
+      </div>
+      {% else %}
       <div class="govuk-summary-list__row--no-border">
         <dd class="govuk-summary-list__value">
           <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Estimated date of completion</h3>
           {% get_action_completion action.slug action.supply_chain %}
         </dd>
       </div>
+      {% endif %}
 </dl>
