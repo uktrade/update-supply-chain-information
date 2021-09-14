@@ -2,6 +2,7 @@ from unittest import mock
 
 import pytest
 
+from accounts.models import GovDepartment
 from accounts.test.factories import GovDepartmentFactory
 from accounts.auth import (
     CustomAuthbrokerBackend,
@@ -63,3 +64,49 @@ def test_backend_create_user_creates_user_with_valid_data():
     assert new_profile.sso_email_user_id == mock_profile["email_user_id"]
     assert new_profile.first_name == mock_profile["first_name"]
     assert new_profile.last_name == mock_profile["last_name"]
+
+
+@pytest.mark.django_db()
+@pytest.mark.xfail
+def test_two_departments_with_same_email_domain_does_not_prevent_login():
+    preferred_department_name = "Good"
+    disavowed_department_name = "Bad"
+    shared_email_domain = "email.gov.uk"
+    GovDepartmentFactory(
+        name=preferred_department_name, email_domains=[shared_email_domain]
+    )
+    GovDepartmentFactory(
+        name=disavowed_department_name, email_domains=[shared_email_domain]
+    )
+    mock_profile = {
+        "email": "mr.test@email.gov.uk",
+        "email_user_id": "mr.test-1234@email.gov.uk",
+        "first_name": "Mr",
+        "last_name": "Test",
+    }
+    auth_backend = CustomAuthbrokerBackend()
+    new_profile = auth_backend.create_user(mock_profile)
+    assert new_profile is not None
+    assert new_profile.gov_department.name == preferred_department_name
+
+
+@pytest.mark.django_db()
+def test_two_departments_with_same_email_domain_prevents_login():
+    preferred_department_name = "Good"
+    disavowed_department_name = "Bad"
+    shared_email_domain = "email.gov.uk"
+    GovDepartmentFactory(
+        name=preferred_department_name, email_domains=[shared_email_domain]
+    )
+    GovDepartmentFactory(
+        name=disavowed_department_name, email_domains=[shared_email_domain]
+    )
+    mock_profile = {
+        "email": "mr.test@email.gov.uk",
+        "email_user_id": "mr.test-1234@email.gov.uk",
+        "first_name": "Mr",
+        "last_name": "Test",
+    }
+    auth_backend = CustomAuthbrokerBackend()
+    with pytest.raises(GovDepartment.MultipleObjectsReturned):
+        new_profile = auth_backend.create_user(mock_profile)
