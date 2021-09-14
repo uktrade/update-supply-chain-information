@@ -62,6 +62,8 @@ class SupplyChain(models.Model):
     risk_severity_status = models.CharField(
         choices=StatusRating.choices,
         max_length=6,
+        blank=True,
+        default="",
     )
     risk_severity_status_disagree_reason = models.TextField(blank=True)
     slug = models.SlugField(
@@ -126,7 +128,7 @@ class StrategicAction(models.Model):
     )
 
     supporting_organisations = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH, blank=True, null=True
+        max_length=settings.CHARFIELD_MAX_LENGTH, blank=True, default=""
     )
 
     is_ongoing = models.BooleanField(default=False)
@@ -145,7 +147,7 @@ class StrategicAction(models.Model):
     gsc_notes = models.TextField(
         help_text="Free text area to record observations, notes by admin/gsc",
         blank=True,
-        null=True,
+        default="",
     )
     supply_chain = models.ForeignKey(
         SupplyChain,

@@ -17,7 +17,6 @@ class SupplyChainFactory(factory.django.DjangoModelFactory):
     contact_email = factory.Faker("email")
     vulnerability_status = factory.fuzzy.FuzzyChoice(RAGRating)
     vulnerability_status_disagree_reason = factory.Faker("sentence")
-    risk_severity_status = factory.fuzzy.FuzzyChoice(SupplyChain.StatusRating)
     risk_severity_status_disagree_reason = factory.Faker("sentence")
 
     class Meta:
