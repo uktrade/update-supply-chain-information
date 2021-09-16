@@ -1,6 +1,7 @@
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 import uuid
+from django.db.models import constraints
 
 import reversion
 from django.db import models
@@ -743,7 +744,15 @@ class SupplyChainStage(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = [["supply_chain", "name"]]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["supply_chain", "order"], name="unique order per supply chain"
+            ),
+            models.UniqueConstraint(
+                fields=["supply_chain", "name"],
+                name="unique stage name per supply chain",
+            ),
+        ]
 
     def __str__(self):
         return self.get_name_display()
