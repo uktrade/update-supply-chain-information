@@ -29,6 +29,13 @@ class RAGRating(models.TextChoices):
     GREEN = ("GREEN", "Green")
 
 
+class NullableRAGRating(models.TextChoices):
+    RED = ("RED", "Red")
+    AMBER = ("AMBER", "Amber")
+    GREEN = ("GREEN", "Green")
+    NONE = (None, "—")
+
+
 class SupplyChainQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     def submitted_since(self, deadline):
         return self.filter(last_submission_date__gt=deadline)
