@@ -689,6 +689,10 @@ class ScenarioAssessment(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
 
+class SupplyChainStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
 class SupplyChainStage(models.Model):
     class StageName(models.TextChoices):
         DEMAND_REQ = ("demand_requirements", "Demand Requirements")
@@ -721,6 +725,7 @@ class SupplyChainStage(models.Model):
         MAINTENANCE = ("maintenance", "Maintenance")
         OTHER = ("other", "Other - Please Describe")
 
+    objects = SupplyChainStageQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(
         max_length=50,
@@ -735,12 +740,17 @@ class SupplyChainStage(models.Model):
     order = models.PositiveSmallIntegerField(
         help_text="Order number of this stage", default=""
     )
+    last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = [["supply_chain", "name"]]
 
     def __str__(self):
         return self.get_name_display()
+
+
+class SupplyChainStageSectionQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
 
 
 class SupplyChainStageSection(models.Model):
@@ -755,6 +765,7 @@ class SupplyChainStageSection(models.Model):
         KEYSECTORS = ("key_sectors", "Key Sectors")
         KEYOTHINFO = ("other_info", "Other Relevant Information")
 
+    objects = SupplyChainStageSectionQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(
         max_length=50,
@@ -767,6 +778,7 @@ class SupplyChainStageSection(models.Model):
         on_delete=models.PROTECT,
         related_name="stage_sections",
     )
+    last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = [["chain_stage", "name"]]
