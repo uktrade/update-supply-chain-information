@@ -673,7 +673,12 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     borders_closed_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    borders_closed_is_critical = models.BooleanField(default=False)
+    borders_closed_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the lack of storage facilities become critical.""",
     )
     storage_full_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
@@ -681,7 +686,12 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     storage_full_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    storage_full_is_critical = models.BooleanField(default=False)
+    storage_full_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the lack of storage facilities become critical.""",
     )
     ports_blocked_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
@@ -689,7 +699,12 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     ports_blocked_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    ports_blocked_is_critical = models.BooleanField(default=False)
+    ports_blocked_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the port blockages become critical.""",
     )
     raw_material_shortage_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
@@ -697,7 +712,12 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     raw_material_shortage_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    raw_material_shortage_is_critical = models.BooleanField(default=False)
+    raw_material_shortage_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the raw materials shortage become critical.""",
     )
     labour_shortage_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
@@ -705,7 +725,12 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     labour_shortage_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    labour_shortage_is_critical = models.BooleanField(default=False)
+    labour_shortage_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the labour shortages become critical.""",
     )
     demand_spike_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
@@ -713,14 +738,23 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     demand_spike_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
     )
+    demand_spike_is_critical = models.BooleanField(default=False)
+    demand_spike_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the demand spike become critical.""",
+    )
+    start_date = models.DateField(null=True, blank=True)
     supply_chain = models.ForeignKey(
         SupplyChain,
         on_delete=models.PROTECT,
         related_name="scenario_assessment",
     )
     last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.supply_chain.name} scenario assessment"
 
 
 class SupplyChainStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
