@@ -790,7 +790,11 @@ class SupplyChainStageSection(models.Model):
     last_modified = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_together = [["chain_stage", "name"]]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["chain_stage", "name"], name="Unique section within a stage"
+            )
+        ]
 
     def __str__(self):
         return f"{self.get_name_display()}, {self.chain_stage.name}"
