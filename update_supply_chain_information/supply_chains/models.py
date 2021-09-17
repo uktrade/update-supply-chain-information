@@ -541,11 +541,28 @@ class StrategicActionUpdate(models.Model):
         return f"Update {self.slug} for {self.strategic_action}"
 
 
+class GSCUpdateModel(models.Model):
+    gsc_last_changed_by = models.TextField(
+        blank=True,
+        default="",
+        help_text="The entity responsible for the most recent change",
+    )
+    gsc_updated_on = models.DateField(
+        null=True, help_text="The date of the most recent change"
+    )
+    gsc_review_on = models.DateField(
+        null=True, help_text="The fdate when a review should be carried out"
+    )
+
+    class Meta:
+        abstract = True
+
+
 class MaturitySelfAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     pass
 
 
-class MaturitySelfAssessment(models.Model):
+class MaturitySelfAssessment(GSCUpdateModel):
     class RatingLevel(models.TextChoices):
         LEVEL_1 = ("level_1", "Level 1")
         LEVEL_2 = ("level_2", "Level 2")
@@ -573,7 +590,7 @@ class VulnerabilityAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QueryS
     pass
 
 
-class VulnerabilityAssessment(models.Model):
+class VulnerabilityAssessment(GSCUpdateModel):
     objects = VulnerabilityAssessmentQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)
@@ -629,7 +646,7 @@ class ScenarioAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     pass
 
 
-class ScenarioAssessment(models.Model):
+class ScenarioAssessment(GSCUpdateModel):
     objects = ScenarioAssessmentQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)
