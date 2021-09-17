@@ -63,7 +63,7 @@ class TestGSCNotesTemplateTag:
         rendered_template: str = template.render(context)
         assert (
             rendered_template.strip()
-            == '<p class="govuk-body">To be reviewed on 2021-09-17</p>'
+            == '<p class="govuk-body">To be reviewed on Friday 17 Sep 2021</p>'
         )
 
     def test_gsc_updated_on_returns_only_that(self, gsc_updated_on, template):
@@ -79,7 +79,7 @@ class TestGSCNotesTemplateTag:
         rendered_template: str = template.render(context)
         assert (
             rendered_template.strip()
-            == '<p class="govuk-body">Last updated on 2021-09-17</p>'
+            == '<p class="govuk-body">Last updated on Friday 17 Sep 2021</p>'
         )
 
     def test_gsc_updated_on_with_gsc_last_changed_by_returns_only_those(
@@ -97,7 +97,7 @@ class TestGSCNotesTemplateTag:
         rendered_template: str = template.render(context)
         assert (
             rendered_template.strip()
-            == '<p class="govuk-body">Last updated by test on 2021-09-17</p>'
+            == '<p class="govuk-body">Last updated by test on Friday 17 Sep 2021</p>'
         )
 
     def test_gsc_last_changed_by_returns_only_that(self, gsc_last_changed_by, template):
