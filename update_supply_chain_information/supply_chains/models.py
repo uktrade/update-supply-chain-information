@@ -548,10 +548,10 @@ class GSCUpdateModel(models.Model):
         help_text="The entity responsible for the most recent change",
     )
     gsc_updated_on = models.DateField(
-        null=True, help_text="The date of the most recent change"
+        null=True, blank=True, help_text="The date of the most recent change"
     )
     gsc_review_on = models.DateField(
-        null=True, help_text="The date when a review should be carried out"
+        null=True, blank=True, help_text="The date when a review should be carried out"
     )
 
     class Meta:
