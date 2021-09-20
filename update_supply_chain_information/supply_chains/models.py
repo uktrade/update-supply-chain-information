@@ -542,16 +542,24 @@ class StrategicActionUpdate(models.Model):
 
 
 class GSCUpdateModel(models.Model):
-    gsc_last_changed_by = models.TextField(
+    gsc_last_changed_by = models.CharField(
+        max_length=64,
         blank=True,
         default="",
+        verbose_name="last updated by",
         help_text="The entity responsible for the most recent change",
     )
     gsc_updated_on = models.DateField(
-        null=True, blank=True, help_text="The date of the most recent change"
+        null=True,
+        blank=True,
+        verbose_name="last updated",
+        help_text="The date of the most recent change",
     )
     gsc_review_on = models.DateField(
-        null=True, blank=True, help_text="The date when a review should be carried out"
+        null=True,
+        blank=True,
+        verbose_name="review on",
+        help_text="The date when a review should be carried out",
     )
 
     class Meta:
