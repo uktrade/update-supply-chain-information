@@ -551,7 +551,7 @@ class GSCUpdateModel(models.Model):
         null=True, help_text="The date of the most recent change"
     )
     gsc_review_on = models.DateField(
-        null=True, help_text="The fdate when a review should be carried out"
+        null=True, help_text="The date when a review should be carried out"
     )
 
     class Meta:
