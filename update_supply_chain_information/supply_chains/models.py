@@ -779,7 +779,7 @@ class SupplyChainStageSectionQuerySet(ActivityStreamQuerySetMixin, models.QueryS
     pass
 
 
-class SupplyChainStageSection(GSCUpdateModel):
+class SupplyChainStageSection(models.Model):
     class SectionName(models.TextChoices):
         OVERVIEW = ("overview", "Overview")
         KEYPRODUCTS = ("key_products", "Key Products")

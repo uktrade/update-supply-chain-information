@@ -121,6 +121,14 @@ class SCStageSectionInline(admin.StackedInline):
 
 
 class SupplyChainStageAdmin(admin.ModelAdmin):
+    fields = (
+        "name",
+        "supply_chain",
+        "order",
+        "gsc_last_changed_by",
+        "gsc_updated_on",
+        "gsc_review_on",
+    )
     inlines = [
         SCStageSectionInline,
     ]
