@@ -1,6 +1,7 @@
 from datetime import datetime, date, timedelta
 from dateutil.relativedelta import relativedelta
 import uuid
+from django.db.models import constraints
 
 import reversion
 from django.db import models
@@ -704,3 +705,113 @@ class ScenarioAssessment(GSCUpdateModel):
         related_name="scenario_assessment",
     )
     last_modified = models.DateTimeField(auto_now=True)
+
+
+class SupplyChainStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class SupplyChainStage(GSCUpdateModel):
+    class StageName(models.TextChoices):
+        DEMAND_REQ = ("demand_requirements", "Demand Requirements")
+        RAW_MATERIAL_EXT = ("raw_material_ext", "Raw Materials Extraction/Mining")
+        REFINING = ("refining", "Refining")
+        RAW_MATERIAL_PROC = ("raw_material_proc", "Raw Materials Processing/Refining")
+        CHEMICAL_PROC = ("chemical_processing", "Chemical Processing")
+        OTH_MATERIAL_PROC = ("other_material_proc", "Other Material-Conversion Process")
+        RAW_MATERIAL_SUP = ("raw_material_sup", "Raw Materials Suppliers")
+        INT_GOODS = ("intermediate_goods", "Intermediate Goods/Capital")
+        INBOUND_LOG = ("inbound_log", "Inbound Logistics")
+        DELIVERY = ("delivery", "Delivery/Shipping ")
+        MANUFACTURING = ("manufacturing", "Manufacturing")
+        COMP_SUP = ("comp_sup", "Component Suppliers")
+        FINISHED_GOODS_SUP = ("finished_goods_sup", "Finished Goods Supplier")
+        ASSEMBLY = ("assembly", "Assembly")
+        TESTING = ("testing_verif", "Testing/Verification/Approval/Release")
+        FINISHED_PRODUCT = ("finished_product", "Finished Product")
+        PACKAGING = ("packaging", "Packaging/Repackaging")
+        OUTBOUND_LOG = ("outbound_log", "Outbound Logistics")
+        STORAGE = ("storage", "Storage/Store")
+        DISTRIBUTORS = ("distributors", "Distributors")
+        ENDPOINT = ("endpoint", "End Point (Retailer, Hospital, Grid, etc)")
+        ENDUSE = ("end_use", "End Use/Consumer")
+        SERVICE_PROVIDER = ("service_provider", "Service Provider")
+        INSTALLATION = ("installation", "Installation")
+        DECOMMISSION = ("decommission", "Decommission  Assets")
+        RECYCLING = ("recycling", "Recycling")
+        WASTE_DISPOSAL = ("waste_disposal", "Waste Disposal/Asset Disposal")
+        MAINTENANCE = ("maintenance", "Maintenance")
+        OTHER = ("other", "Other - Please Describe")
+
+    objects = SupplyChainStageQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(
+        max_length=50,
+        choices=StageName.choices,
+        default="",
+    )
+    supply_chain = models.ForeignKey(
+        SupplyChain,
+        on_delete=models.PROTECT,
+        related_name="chain_stages",
+    )
+    order = models.PositiveSmallIntegerField(
+        help_text="Order number of this stage", default=""
+    )
+    last_modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["supply_chain", "order"], name="unique order per supply chain"
+            ),
+            models.UniqueConstraint(
+                fields=["supply_chain", "name"],
+                name="unique stage name per supply chain",
+            ),
+        ]
+
+    def __str__(self):
+        return self.get_name_display()
+
+
+class SupplyChainStageSectionQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class SupplyChainStageSection(models.Model):
+    class SectionName(models.TextChoices):
+        OVERVIEW = ("overview", "Overview")
+        KEYPRODUCTS = ("key_products", "Key Products")
+        KEYSERVICES = ("key_services", "Key Services")
+        KEYACTIVITIES = ("key_activities", "Key Activities")
+        KEYCOUNTRIES = ("key_countries", "Key Countries")
+        KEYTRANSLINKS = ("key_transport_links", "Key Transport Links")
+        KEYCOMPANIES = ("key_companies", "Key Companies")
+        KEYSECTORS = ("key_sectors", "Key Sectors")
+        KEYOTHINFO = ("other_info", "Other Relevant Information")
+
+    objects = SupplyChainStageSectionQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(
+        max_length=50,
+        choices=SectionName.choices,
+        default="",
+    )
+    description = models.TextField(default="")
+    chain_stage = models.ForeignKey(
+        SupplyChainStage,
+        on_delete=models.PROTECT,
+        related_name="stage_sections",
+    )
+    last_modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["chain_stage", "name"], name="Unique section within a stage"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.get_name_display()}, {self.chain_stage.name}"

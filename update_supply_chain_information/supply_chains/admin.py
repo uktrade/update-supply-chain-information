@@ -6,7 +6,13 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from accounts.models import GovDepartment, User
-from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
+from supply_chains.models import (
+    SupplyChain,
+    StrategicAction,
+    StrategicActionUpdate,
+    SupplyChainStage,
+    SupplyChainStageSection,
+)
 
 
 class CustomAdminSite(AdminSite):
@@ -109,8 +115,39 @@ class StrategicActionUpdateAdmin(admin.ModelAdmin):
         return obj.supply_chain.gov_department
 
 
+class SCStageSectionInline(admin.StackedInline):
+    model = SupplyChainStageSection
+    extra = 2
+
+
+class SupplyChainStageAdmin(admin.ModelAdmin):
+    fields = (
+        "name",
+        "supply_chain",
+        "order",
+        "gsc_last_changed_by",
+        "gsc_updated_on",
+        "gsc_review_on",
+    )
+    inlines = [
+        SCStageSectionInline,
+    ]
+
+    ordering = [
+        "supply_chain",
+    ]
+    list_display = (
+        "name",
+        "order",
+        "supply_chain",
+    )
+
+    list_filter = ("supply_chain__name",)
+
+
 admin_site.register(GovDepartment, GovDepartmentAdmin)
 admin_site.register(User, UserAdmin)
 admin_site.register(SupplyChain, SupplyChainAdmin)
 admin_site.register(StrategicAction, StrategicActionAdmin)
 admin_site.register(StrategicActionUpdate, StrategicActionUpdateAdmin)
+admin_site.register(SupplyChainStage, SupplyChainStageAdmin)
