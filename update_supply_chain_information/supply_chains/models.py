@@ -43,7 +43,7 @@ class SupplyChain(models.Model):
     objects = SupplyChainQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, default="")
     last_submission_date = models.DateField(null=True, blank=True)
     gov_department = models.ForeignKey(
         GovDepartment,
