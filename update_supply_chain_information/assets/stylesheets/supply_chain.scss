@@ -25,6 +25,11 @@
   margin-bottom: 3px;
 }
 
+.scd-description {
+  @extend .sap-action-description;
+  padding-top: 5px;
+}
+
 .summary-action-description {
   @extend .description;
   color: #696969;

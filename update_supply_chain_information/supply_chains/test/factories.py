@@ -13,6 +13,7 @@ from supply_chains.models import (
 
 class SupplyChainFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Product {n}")
+    description = factory.Faker("paragraph", nb_sentences=6)
     last_submission_date = factory.Faker("date_object")
     gov_department = factory.SubFactory(GovDepartmentFactory)
     contact_name = factory.Faker("name")
@@ -28,7 +29,7 @@ class SupplyChainFactory(factory.django.DjangoModelFactory):
 class StrategicActionFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Strategic action {n}")
     start_date = factory.Faker("date_object")
-    description = factory.Faker("text")
+    description = factory.Faker("paragraph", nb_sentences=6)
     impact = factory.Faker("text")
     category = factory.fuzzy.FuzzyChoice(StrategicAction.Category)
     geographic_scope = factory.fuzzy.FuzzyChoice(StrategicAction.GeographicScope)

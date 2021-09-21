@@ -2,19 +2,31 @@
 
 {% block page_content %}
 
-<h2>Listing</h2>
-{% comment %}
 
 <br>
-<h3 class="govuk-heading-m" style="color: #797575;margin-bottom: 3px;">{{ dept }}</h3>
-<h2 class="govuk-heading-l govuk-!-font-weight-bold">{{ supply_chain_name }}</h2>
+<h2 class="govuk-heading-l govuk-!-font-weight-bold">{{ dept }}</h2>
 
 <p class="govuk-body">
-  Select a strategic action to view progress details and information
+  Select a profile to view supply chain information
 </p>
 
 <br>
-{% include "includes/tabbed_action_list.html" %}
+<dl class="govuk-summary-list">
+    <div class="tasklist-top-border"></div>
+    {% for sc in chains %}
+    <div class="govuk-summary-list__row">
+        <dd class="govuk-summary-list__value">
+            <a href="#" class="govuk-link govuk-!-font-weight-bold">{{ sc.name }}</a>
+            <p class="scd-description govuk-!-font-size-16"> {{ sc.description|truncatewords:30 }} </p>
+        </dd>
+    </div>
+
+    {% endfor %}
+</dl>
+{% if chains.has_other_pages %}
+{% include 'includes/pagination.html' with objects=chains objects_name="supply chains" %}
+{% endif %}
+
 <br>
 
 <div class="app-back-to-top" data-module="app-back-to-top">
@@ -25,7 +37,6 @@
     </a>
   </div>
 
-{% endcomment %}
 
 {% endblock page_content %}
 

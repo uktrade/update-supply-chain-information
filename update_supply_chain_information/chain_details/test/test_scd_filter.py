@@ -17,6 +17,22 @@ class TestSCDFilter:
         # Assert
         assert resp.status_code == 302
 
+    def test_auth_on_dept(self):
+        # Arrange
+        dept_name = "other_dep"
+        dept = GovDepartmentFactory(name=dept_name)
+
+        # Act
+        resp = Client().get(
+            reverse(
+                "chain-details-list",
+                kwargs={"dept": dept_name},
+            )
+        )
+
+        # Assert
+        assert resp.status_code == 302
+
     def test_auth_success(self, logged_in_client):
         # Arrange
         # Act
@@ -51,3 +67,16 @@ class TestSCDFilter:
 
         # Assert
         assert resp.status_code == 200
+
+    def test_unknown_dept(self, logged_in_client):
+        # Arrange
+        # Act
+        resp = logged_in_client.get(
+            reverse(
+                "chain-details-list",
+                kwargs={"dept": "unknown"},
+            )
+        )
+
+        # Assert
+        assert resp.status_code == 404
