@@ -29,7 +29,7 @@ class TestCustomMiddleware:
         """
         headers = {"HTTP_CONTENT_TYPE": "text/html", "HTTP_ACCEPT": "text/html"}
         client = Client()
-        response = client.get(reverse("sc-home"), **headers)
+        response = client.get(reverse("index"), **headers)
         assert (
             response["Cache-Control"]
             == "max-age=0, no-cache, no-store, must-revalidate, private"

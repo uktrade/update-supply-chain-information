@@ -24,7 +24,7 @@ describe('Supply chain summary page', () => {
   })
   it('displays breadcrumbs', () => {
     cy.get('ol').children().should('have.length', 1)
-    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/supply-chains/')
+    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
   })
   it('displays the header', () => {
     cy.get('h1').contains('Supply chain summary')
@@ -75,7 +75,7 @@ describe('Supply chain summary page', () => {
     cy.get('a').contains('Back').click()
     cy.url().should(
       'eq',
-      urls.scHome + '/'
+      urls.home + '/'
     )
   })
 })
