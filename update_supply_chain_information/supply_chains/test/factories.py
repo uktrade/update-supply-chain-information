@@ -6,6 +6,8 @@ from supply_chains.models import (
     StrategicAction,
     RAGRating,
     SupplyChain,
+    SupplyChainStage,
+    SupplyChainStageSection,
 )
 
 
@@ -18,7 +20,6 @@ class SupplyChainFactory(factory.django.DjangoModelFactory):
     contact_email = factory.Faker("email")
     vulnerability_status = factory.fuzzy.FuzzyChoice(RAGRating)
     vulnerability_status_disagree_reason = factory.Faker("sentence")
-    risk_severity_status = factory.fuzzy.FuzzyChoice(SupplyChain.StatusRating)
     risk_severity_status_disagree_reason = factory.Faker("sentence")
 
     class Meta:
@@ -56,3 +57,25 @@ class StrategicActionUpdateFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = "supply_chains.StrategicActionUpdate"
+
+
+class SupplyChainStageFactory(factory.django.DjangoModelFactory):
+    name = factory.fuzzy.FuzzyChoice(
+        SupplyChainStage.StageName,
+    )
+    supply_chain = factory.SubFactory(SupplyChainFactory)
+    order = factory.Faker("pyint", min_value=0, max_value=50)
+
+    class Meta:
+        model = "supply_chains.SupplyChainStage"
+
+
+class SupplyChainStageSectionFactory(factory.django.DjangoModelFactory):
+    name = factory.fuzzy.FuzzyChoice(
+        SupplyChainStageSection.SectionName,
+    )
+    chain_stage = factory.SubFactory(SupplyChainStageFactory)
+    description = factory.Faker("sentence")
+
+    class Meta:
+        model = "supply_chains.SupplyChainStageSection"
