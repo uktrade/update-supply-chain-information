@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("supply_chains", "0026_data_mig_on_0025"),
+        ("supply_chains", "0031_del_gsc_notes_from_stage_sections"),
     ]
 
     operations = [
