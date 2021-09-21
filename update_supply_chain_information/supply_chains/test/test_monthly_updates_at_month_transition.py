@@ -1,9 +1,8 @@
 from datetime import date
 from unittest import mock
+from django.urls.base import reverse
 
 import pytest
-from django.http import HttpRequest
-from django.template.response import TemplateResponse
 
 from supply_chains.models import (
     StrategicAction,
@@ -11,21 +10,8 @@ from supply_chains.models import (
     StrategicActionUpdate,
     RAGRating,
 )
-from accounts.models import User, GovDepartment
-from supply_chains.views import SCTaskListView
 
 pytestmark = pytest.mark.django_db
-
-
-@pytest.fixture
-def user():
-    dit: GovDepartment = GovDepartment.objects.get(name="DIT")
-    user: User
-    created: bool
-    user, created = User.objects.get_or_create(
-        gov_department=dit, email=["foo@digital.dit.gov.uk"]
-    )
-    return user
 
 
 @pytest.fixture
@@ -38,7 +24,7 @@ mock_correct_last_month_deadline = date(year=2021, month=5, day=28)
 
 
 @pytest.fixture
-def supply_chain(submission_date: date) -> SupplyChain:
+def supply_chain(submission_date: date, test_user) -> SupplyChain:
     supply_chain: SupplyChain
     created: bool
     supply_chain, created = SupplyChain.objects.get_or_create(
@@ -46,7 +32,7 @@ def supply_chain(submission_date: date) -> SupplyChain:
         last_submission_date=submission_date,
         contact_name="Mr. Banana",
         contact_email="banana.email",
-        gov_department=GovDepartment.objects.first(),
+        gov_department=test_user.gov_department,
         vulnerability_status=RAGRating.GREEN,
         vulnerability_status_disagree_reason="",
         risk_severity_status=SupplyChain.StatusRating.LOW,
@@ -94,42 +80,34 @@ def supply_chain(submission_date: date) -> SupplyChain:
     return supply_chain
 
 
-@pytest.fixture
-def http_request(user) -> HttpRequest:
-    request = HttpRequest()
-    request.method = "GET"
-    request.user = user
-    return request
-
-
 class TestMonthlyUpdateAtMonthTransition:
     @mock.patch(
         "supply_chains.views.get_last_working_day_of_previous_month",
         return_value=mock_wrong_last_month_deadline,
     )
     def test_task_list_view_shows_update_submitted_with_wrong_deadline(
-        self,
-        mocked_deadline,
-        supply_chain: SupplyChain,
-        http_request,
+        self, mocked_deadline, supply_chain: SupplyChain, logged_in_client
     ):
-        view_kwargs = {"supply_chain_slug": supply_chain.slug}
+        # Arrange
+        url = reverse(
+            "supply-chain-task-list", kwargs={"supply_chain_slug": supply_chain.slug}
+        )
 
-        view = SCTaskListView.as_view()
-        response: TemplateResponse = view(http_request, **view_kwargs)
-        context = response.context_data
-        responding_view = context["view"]
+        # Act
+        resp = logged_in_client.get(url)
+        responding_view = resp.context["view"]
 
+        # Assert
         mocked_deadline.assert_called_once()
         assert responding_view is not None
         assert responding_view.update_submitted is True
         assert (
             "You have already submitted the monthly update for this supply chain"
-            in response.rendered_content
+            in resp.rendered_content
         )
         assert (
             "1 out of 1 actions are not ready to be submitted."
-            not in response.rendered_content
+            not in resp.rendered_content
         )
 
     @mock.patch(
@@ -140,23 +118,25 @@ class TestMonthlyUpdateAtMonthTransition:
         self,
         mocked_deadline,
         supply_chain: SupplyChain,
-        http_request,
+        logged_in_client,
     ):
-        view_kwargs = {"supply_chain_slug": supply_chain.slug}
+        # Arrange
+        url = reverse(
+            "supply-chain-task-list", kwargs={"supply_chain_slug": supply_chain.slug}
+        )
 
-        view = SCTaskListView.as_view()
-        response: TemplateResponse = view(http_request, **view_kwargs)
-        context = response.context_data
-        responding_view = context["view"]
+        # Act
+        resp = logged_in_client.get(url)
+        responding_view = resp.context["view"]
 
+        # Assert
         mocked_deadline.assert_called_once()
         assert responding_view is not None
         assert responding_view.update_submitted is False
         assert (
             "You have already submitted the monthly update for this supply chain"
-            not in response.rendered_content
+            not in resp.rendered_content
         )
         assert (
-            "1 out of 1 actions are not ready to be submitted."
-            in response.rendered_content
+            "1 out of 1 actions are not ready to be submitted." in resp.rendered_content
         )

@@ -80,3 +80,15 @@ def test_long_slug():
 
     # Assert
     assert sc.slug == long_slug_75_chars
+
+
+def test_sc_risk_status():
+    # Arrange
+    sc_name = "optional"
+
+    # Act
+    sc = SupplyChainFactory.create(name=sc_name)
+
+    # Assert
+    assert SupplyChain.objects.count() == 1
+    assert SupplyChain.objects.get(name=sc_name).risk_severity_status == ""

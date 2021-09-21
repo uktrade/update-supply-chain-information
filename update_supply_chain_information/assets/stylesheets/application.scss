@@ -53,3 +53,9 @@ span.moj-sub-navigation__link:hover {
   font: 16px;
   font-family: sans-serif;
 }
+
+.service-banner-grid {
+  display: grid;
+  grid-template-columns: auto auto;
+  grid-gap: 10px;
+}

@@ -93,6 +93,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+    @property
+    def is_admin(self) -> bool:
+        return self.is_staff
+
 
 class GovDepartmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     pass

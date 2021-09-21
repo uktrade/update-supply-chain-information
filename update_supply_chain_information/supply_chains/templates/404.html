@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block body %}
+<h1 class="govuk-heading-xl">Not found</h1>
+<p class="govuk-body">Page you are trying to access is not found.</p>
+<p class="govuk-body">
+    Please try one of the following:
+    <ul class="govuk-list govuk-list--bullet" id="message-list">
+        <li>If you typed the web address, check it is correct</li>
+        <li>If you pasted the web address, check you copied the entire address</li>
+        <li>
+            Browse the <a class="govuk-link" href="{% url 'index' %}">homepage</a>
+             to find the information you need</li>
+        {% get_feedback_emails_as_string as feedback_emails %}
+        <li>
+            <a class="govuk-link" href="mailto:{{ 'FEEDBACK_GROUP_EMAIL'|env }}?bcc={{ feedback_emails }}">Contact the Resilience Tool team</a>
+             if you expect this page to exist.
+        </li>
+    </ul>
+</p>
+
+{% endblock %}

@@ -6,7 +6,15 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from accounts.models import GovDepartment, User
-from supply_chains.models import SupplyChain, StrategicAction, StrategicActionUpdate
+from supply_chains.models import (
+    SupplyChain,
+    StrategicAction,
+    StrategicActionUpdate,
+    Country,
+    CountryDependency,
+    SupplyChainStage,
+    SupplyChainStageSection,
+)
 
 
 class CustomAdminSite(AdminSite):
@@ -70,6 +78,7 @@ class StrategicActionAdmin(admin.ModelAdmin):
         "supply_chain",
         "is_archived",
         "gov_department",
+        "gsc_notes",
     )
 
     list_filter = (
@@ -108,8 +117,76 @@ class StrategicActionUpdateAdmin(admin.ModelAdmin):
         return obj.supply_chain.gov_department
 
 
+class SCStageSectionInline(admin.StackedInline):
+    model = SupplyChainStageSection
+    extra = 2
+
+
+class SupplyChainStageAdmin(admin.ModelAdmin):
+    fields = (
+        "name",
+        "supply_chain",
+        "order",
+        "gsc_last_changed_by",
+        "gsc_updated_on",
+        "gsc_review_on",
+    )
+    inlines = [
+        SCStageSectionInline,
+    ]
+
+    ordering = [
+        "supply_chain",
+    ]
+    list_display = (
+        "name",
+        "order",
+        "supply_chain",
+    )
+
+    list_filter = ("supply_chain__name",)
+
+
 admin_site.register(GovDepartment, GovDepartmentAdmin)
 admin_site.register(User, UserAdmin)
 admin_site.register(SupplyChain, SupplyChainAdmin)
 admin_site.register(StrategicAction, StrategicActionAdmin)
 admin_site.register(StrategicActionUpdate, StrategicActionUpdateAdmin)
+admin_site.register(SupplyChainStage, SupplyChainStageAdmin)
+
+
+class CountryDependencyAdmin(admin.ModelAdmin):
+    readonly_fields = (
+        "id",
+        "supply_chain",
+        "country",
+    )
+
+    list_display = (
+        "supply_chain",
+        "country",
+        "dependency_level",
+    )
+
+    list_filter = (
+        "supply_chain",
+        "country",
+        "dependency_level",
+    )
+
+    list_editable = ("dependency_level",)
+
+    list_select_related = (
+        "supply_chain",
+        "country",
+    )
+
+    ordering = (
+        "supply_chain",
+        "country",
+    )
+    radio_fields = {"dependency_level": admin.HORIZONTAL}
+
+
+admin_site.register(Country)
+admin_site.register(CountryDependency, CountryDependencyAdmin)

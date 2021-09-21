@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load sap_tags %}
+
+{% block page_title %} Strategic action progress - {{ block.super }} {% endblock %}
+
+{% block body %}
+
+
+{% block page_header %}
+
+<h1 class="govuk-heading-xl">Strategic action progress</h1>
+
+
+<p class="govuk-body">
+  Apply filters to see strategic action progress
+</p>
+
+
+{% include "supply_chains/includes/error_summary.html" %}
+
+
+<br>
+{% comment %}
+Note that below 2 form fields though belong to the same form will post to different routes as
+they are handled within different sub classes
+{% endcomment %}
+<form method="post" action={% url 'action-progress' %} novalidate>
+  {% csrf_token %}
+
+
+  <div class="govuk-form-group{% if form.department.errors %} govuk-form-group--error{% endif %}"
+  {%if not is_admin %}hidden{%endif%}>
+    <label class="govuk-label govuk-!-font-weight-bold" for="department">
+      Department
+    </label>
+    {% if form.department.errors %}
+    <span class="govuk-error-message">
+      <span class="govuk-visually-hidden">Error:</span>
+    </span>
+    {% endif %}
+    {{ form.department }}
+  </div>
+</form>
+
+  {% get_sap_filter_route dept as route %}
+  <form method="post" action={{ route }} novalidate>
+    {% csrf_token %}
+  <div class="govuk-form-group{% if form.supply_chain.errors %} govuk-form-group--error{% endif %}">
+    <label class="govuk-label govuk-!-font-weight-bold" for="supply_chain">
+      Supply chain
+    </label>
+    {% if form.supply_chain.errors %}
+    <span class="govuk-error-message">
+      <span class="govuk-visually-hidden">Error:</span>
+    </span>
+    {% endif %}
+    {{ form.supply_chain }}
+  </div>
+
+  <button class="govuk-button" data-module="govuk-button" type="submit">
+    Apply filters
+  </button>
+  {% get_action_progress_route request.user as route %}
+  <a href={{ route }} class="govuk-link"
+    style="padding-top: 8px;padding-left: 20px;display: inline-block">Remove filters</a>
+
+
+</form>
+
+{% endblock page_header %}
+
+{% block page_content %}
+
+
+
+{% endblock page_content %}
+
+
+{% endblock body %}

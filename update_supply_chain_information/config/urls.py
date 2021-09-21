@@ -21,10 +21,17 @@ from supply_chains.views import (
     MonthlyUpdateSummaryView,
     PrivacyNoticeView,
 )
-
 from activity_stream.viewsets import (
     ActivityStreamViewSet,
 )
+from action_progress.views import (
+    ActionProgressView,
+    ActionProgressDeptView,
+    ActionProgressListView,
+    ActionProgressDetailView,
+)
+from chain_details.views import ChainDetailsView, ChainDetailsListView
+
 
 router = routers.DefaultRouter()
 router.register(r"activity-stream", ActivityStreamViewSet, basename="activity-stream")
@@ -111,6 +118,34 @@ healthcheck_urlpatterns = [
     )
 ]
 
+action_progress_urlpatterns = [
+    path("", ActionProgressView.as_view(), name="action-progress"),
+    path(
+        "<str:dept>/",
+        ActionProgressDeptView.as_view(),
+        name="action-progress-department",
+    ),
+    path(
+        "<str:dept>/<slug:supply_chain_slug>/",
+        ActionProgressListView.as_view(),
+        name="action-progress-list",
+    ),
+    path(
+        "<str:dept>/<slug:supply_chain_slug>/<slug:action_slug>/detail/",
+        ActionProgressDetailView.as_view(),
+        name="action-progress-detail",
+    ),
+]
+
+chain_details_urlpatterns = [
+    path("", ChainDetailsView.as_view(), name="chain-details"),
+    path(
+        "<str:dept>/",
+        ChainDetailsListView.as_view(),
+        name="chain-details-list",
+    ),
+]
+
 urlpatterns = [
     path("auth/", include("authbroker_client.urls")),
     path("admin/", admin_site.urls),
@@ -119,4 +154,6 @@ urlpatterns = [
     path("supply-chains/", include(supply_chain_urlpatterns)),
     path("privacy-notice/", PrivacyNoticeView.as_view(), name="privacy"),
     path("", HomePageView.as_view(), name="index"),
+    path("action-progress/", include(action_progress_urlpatterns)),
+    path("chain-details/", include(chain_details_urlpatterns)),
 ]

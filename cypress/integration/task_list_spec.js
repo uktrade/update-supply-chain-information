@@ -28,7 +28,7 @@ describe('The Supply Chain Tasklist Page', () => {
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${supplyChain.name}`)
     cy.get('div').contains(`Update incomplete`)
-    cy.get('div').contains('6 out of 7 actions are not ready to be submitted.')
+    cy.get('div').contains('5 out of 7 actions are not ready to be submitted.')
   })
   it('displays the correct table caption', () => {
     cy.get('caption').contains('Monthly strategic actions updates')

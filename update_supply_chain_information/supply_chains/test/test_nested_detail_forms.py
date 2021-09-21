@@ -8,6 +8,8 @@ from supply_chains.models import (
 )
 from supply_chains.test.factories import (
     StrategicActionUpdateFactory,
+    SupplyChainFactory,
+    StrategicActionFactory,
 )
 from supply_chains import forms as our_forms
 from supply_chains.widgets import DetailRadioSelect
@@ -74,6 +76,17 @@ class OuterTestDetailInvalidForm(our_forms.DetailFormMixin, forms.ModelForm):
 
 @pytest.mark.django_db()
 class TestDetailForms:
+    def setup_method(self):
+        supply_chain = SupplyChainFactory()
+        self.strategic_action = StrategicActionFactory(
+            supply_chain=supply_chain,
+        )
+        self.strategic_action_update: StrategicActionUpdate = (
+            StrategicActionUpdate.objects.create(
+                supply_chain=supply_chain, strategic_action=self.strategic_action
+            )
+        )
+
     def test_detail_form_exposes_inner_form(self):
         outer_form = OuterTestDetailForm()
         assert hasattr(outer_form, "detail_forms")
@@ -131,7 +144,9 @@ class TestDetailForms:
             "RED-reason_for_delays": expected_inner_form_field_value,
             "AMBER-reason_for_delays": not_expected_inner_form_field_value,
         }
-        outer_form = OuterTestDetailForm(data=form_data)
+        outer_form = OuterTestDetailForm(
+            data=form_data, instance=self.strategic_action_update
+        )
         assert outer_form.is_valid()
         for field_name, key, config in outer_form.detail_forms:
             inner_form = config["form"]
@@ -156,7 +171,9 @@ class TestDetailForms:
             "RED-reason_for_delays": expected_inner_form_field_value,
             "AMBER-reason_for_delays": not_expected_inner_form_field_value,
         }
-        outer_form = OuterTestDetailInvalidForm(data=form_data)
+        outer_form = OuterTestDetailInvalidForm(
+            data=form_data, instance=self.strategic_action_update
+        )
         assert not outer_form.is_valid()
         for field_name, key, config in outer_form.detail_forms:
             inner_form = config["form"]

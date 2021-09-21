@@ -1,0 +1,60 @@
+<dl class="govuk-summary-list" id="action-summary">
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Department</h3>
+        {{ dept }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Supply chain</h3>
+        {{ action.supply_chain.name }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Strategic action status</h3>
+        {{ action.is_archived|yesno:"Inactive, Active" }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dd class="govuk-summary-list__value">
+        <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Strategic action description</h3>
+        {{ action.description }}
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dd class="govuk-summary-list__value">
+          <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Start date</h3>
+          {{ action.start_date|date:"j M Y" }}
+        </dd>
+      </div>
+
+      {% if action.is_archived %}
+      <div class="govuk-summary-list__row">
+        <dd class="govuk-summary-list__value">
+          <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Estimated date of completion</h3>
+          {% get_action_completion action.slug action.supply_chain %}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dd class="govuk-summary-list__value">
+          <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Archive date</h3>
+          {{ action.archived_date|date:"j M Y" }}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row--no-border">
+        <dd class="govuk-summary-list__value">
+          <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Reason for archiving</h3>
+          {{ action.archived_reason|truncatewords:30 }}
+        </dd>
+      </div>
+      {% else %}
+      <div class="govuk-summary-list__row--no-border">
+        <dd class="govuk-summary-list__value">
+          <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Estimated date of completion</h3>
+          {% get_action_completion action.slug action.supply_chain %}
+        </dd>
+      </div>
+      {% endif %}
+</dl>

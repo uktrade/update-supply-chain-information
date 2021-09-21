@@ -6,18 +6,20 @@ from supply_chains.models import (
     StrategicAction,
     RAGRating,
     SupplyChain,
+    SupplyChainStage,
+    SupplyChainStageSection,
 )
 
 
 class SupplyChainFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Product {n}")
+    description = factory.Faker("paragraph", nb_sentences=6)
     last_submission_date = factory.Faker("date_object")
     gov_department = factory.SubFactory(GovDepartmentFactory)
     contact_name = factory.Faker("name")
     contact_email = factory.Faker("email")
     vulnerability_status = factory.fuzzy.FuzzyChoice(RAGRating)
     vulnerability_status_disagree_reason = factory.Faker("sentence")
-    risk_severity_status = factory.fuzzy.FuzzyChoice(SupplyChain.StatusRating)
     risk_severity_status_disagree_reason = factory.Faker("sentence")
 
     class Meta:
@@ -27,7 +29,7 @@ class SupplyChainFactory(factory.django.DjangoModelFactory):
 class StrategicActionFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Strategic action {n}")
     start_date = factory.Faker("date_object")
-    description = factory.Faker("text")
+    description = factory.Faker("paragraph", nb_sentences=6)
     impact = factory.Faker("text")
     category = factory.fuzzy.FuzzyChoice(StrategicAction.Category)
     geographic_scope = factory.fuzzy.FuzzyChoice(StrategicAction.GeographicScope)
@@ -55,3 +57,25 @@ class StrategicActionUpdateFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = "supply_chains.StrategicActionUpdate"
+
+
+class SupplyChainStageFactory(factory.django.DjangoModelFactory):
+    name = factory.fuzzy.FuzzyChoice(
+        SupplyChainStage.StageName,
+    )
+    supply_chain = factory.SubFactory(SupplyChainFactory)
+    order = factory.Faker("pyint", min_value=0, max_value=50)
+
+    class Meta:
+        model = "supply_chains.SupplyChainStage"
+
+
+class SupplyChainStageSectionFactory(factory.django.DjangoModelFactory):
+    name = factory.fuzzy.FuzzyChoice(
+        SupplyChainStageSection.SectionName,
+    )
+    chain_stage = factory.SubFactory(SupplyChainStageFactory)
+    description = factory.Faker("sentence")
+
+    class Meta:
+        model = "supply_chains.SupplyChainStageSection"

@@ -7,7 +7,7 @@ import updates from '../fixtures/strategicActionUpdates.json'
 const user = users[0].fields
 const govDepartment = govDepartments[0].fields
 const supplyChain = supplyChains[4].fields
-const strategicAction = strategicActions[9].fields
+const strategicAction = strategicActions[10].fields
 const update = updates[3].fields
 
 describe('Strategic action update review page', () => {

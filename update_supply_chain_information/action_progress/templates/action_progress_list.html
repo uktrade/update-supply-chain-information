@@ -1,0 +1,27 @@
+{% extends "action_progress_base.html" %}
+
+{% block page_content %}
+
+<br>
+<h3 class="govuk-heading-m" style="color: #797575;margin-bottom: 3px;">{{ dept }}</h3>
+<h2 class="govuk-heading-l govuk-!-font-weight-bold">{{ supply_chain_name }}</h2>
+
+<p class="govuk-body">
+  Select a strategic action to view progress details and information
+</p>
+
+<br>
+{% include "includes/tabbed_action_list.html" %}
+<br>
+
+<div class="app-back-to-top" data-module="app-back-to-top">
+    <a class="govuk-link govuk-link--no-visited-state app-back-to-top__link" href="#top">
+      <svg role="presentation" focusable="false" class="app-back-to-top__icon" xmlns="http://www.w3.org/2000/svg" width="19" height="17" viewBox="0 0 19 17">
+        <path fill="currentColor" d="M6.5 0L0 6.5 1.4 8l4-4v12.7h2V4l4.3 4L13 6.4z"></path>
+      </svg>Back to top
+    </a>
+  </div>
+
+{% endblock page_content %}
+
+

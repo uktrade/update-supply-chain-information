@@ -1,0 +1,45 @@
+<details class="govuk-details component-panel" data-module="govuk-details" id="monthly-update">
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+            Monthly update
+        </span>
+    </summary>
+    <br>
+    <div class="govuk-details__text">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dd class="govuk-summary-list__value">
+                    <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Latest monthly update</h3>
+                    {{ update.content }}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dd class="govuk-summary-list__value">
+                    <h3 class="govuk-heading-s" style="padding-bottom: 10px;">Delivery status</h3>
+                    {% if update.reason_for_delays %}
+                    <div>
+                        {{ update.implementation_rag_rating|title }}
+                        <details class="govuk-details" data-module="govuk-details">
+                            <summary class="govuk-details__summary">
+                                <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+                                    See more
+                                </span>
+                            </summary>
+                            <div class="govuk-details__text">
+                                {{ update.reason_for_delays }}
+                            </div>
+                        </details>
+                    </div>
+                    {% else %}
+                    {{ update.implementation_rag_rating|title }}
+                    {% endif %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row--no-border">
+                <dd class="govuk-summary-list__value govuk-!-font-size-16">
+                    Last updated on {{ update.submission_date|date:"l, M Y" }}
+                </dd>
+            </div>
+        </dl>
+    </div>
+</details>

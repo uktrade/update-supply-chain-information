@@ -39,17 +39,14 @@ This template will contain common base components to be used across Forms and Vi
     <script>
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
     </script>
-    <nav role="navigation">
-        <a href="#main-content" class="govuk-skip-link">Skip to main content</a>
+    <nav aria-labelledby="outer-nav">
+        <a href="#main-content" id="outer-nav" class="govuk-skip-link">Skip to main content</a>
     </nav>
     <header role="banner">
         <div class="govuk-header" data-module="govuk-header">
             <div class="govuk-header__container govuk-width-container">
                 {% block menu_header %}
                 {% endblock menu_header %}
-                <span class="app-header-span">
-                    <p class="app-header-item">{{ request.user }} - {{ request.user.gov_department.name }}</p>
-                </span>
             </div>
         </div>
         <div class="govuk-phase-banner govuk-width-container">
