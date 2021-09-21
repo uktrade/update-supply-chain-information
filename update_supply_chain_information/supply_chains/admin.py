@@ -21,7 +21,7 @@ class CustomAdminSite(AdminSite):
                 )
                 return HttpResponseRedirect(index_path)
 
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("sc-home"))
 
 
 admin_site = CustomAdminSite(name="admin")

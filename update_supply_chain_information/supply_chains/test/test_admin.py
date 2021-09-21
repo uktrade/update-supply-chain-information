@@ -26,13 +26,13 @@ class TestAdminViews:
         client = Client()
         response = client.get(reverse("admin:login"))
         assert response.status_code == 302
-        assert response.url == reverse("index")
+        assert response.url == reverse("sc-home")
 
     def test_login_authenticated_not_staff(self, logged_in_client):
         """Test authenticated user is redirected to index if not staff."""
         response = logged_in_client.get(reverse("admin:login"))
         assert response.status_code == 302
-        assert response.url == reverse("index")
+        assert response.url == reverse("sc-home")
 
     def test_login_authenticated_and_staff(self, logged_in_client, test_user):
         """Test authenticated user successfully reaches admin index when staff."""

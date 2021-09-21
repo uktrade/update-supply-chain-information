@@ -6,7 +6,7 @@ const govDepartment = govDepartments[0].fields
 
 describe('Privacy notice Page', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + '/privacy-notice/')
+    cy.visit(Cypress.config('baseUrlSC') + '/privacy-notice/')
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -20,7 +20,7 @@ describe('Privacy notice Page', () => {
   })
   it('displays breadcrumbs', () => {
     cy.get('ol').children().should('have.length', 1)
-    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/')
+    cy.get('li').contains('Home').should('have.attr', 'href').and('eq', '/supply-chains/')
   })
   it('displays the correct header', () => {
     cy.get('h1').contains('Privacy notice for DIT clients')
@@ -50,6 +50,6 @@ describe('Privacy notice Page', () => {
     )
   })
   it('displays link to privacy notice in footer', () => {
-    cy.get('a').contains('Privacy').should('have.attr', 'href').and('eq', '/privacy-notice/')
+    cy.get('a').contains('Privacy').should('have.attr', 'href').and('eq', '/supply-chains/privacy-notice/')
   })
 })

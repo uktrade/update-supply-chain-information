@@ -20,7 +20,7 @@ from supply_chains.test.factories import StrategicActionFactory, SupplyChainFact
 pytestmark = pytest.mark.django_db
 
 
-def test_homepage_user_redirected():
+def test_sc_homepage_user_redirected():
     """Test unauthenticated client is redirected from homepage."""
     client = Client()
     response = client.get("/")
@@ -29,9 +29,13 @@ def test_homepage_user_redirected():
 
 @pytest.mark.parametrize(
     "num_supply_chains, url, num_supply_chains_returned",
-    ((4, "/", 4), (7, "/", 5), (7, "/?page=2", 2)),
+    (
+        (4, "/supply-chains/", 4),
+        (7, "/supply-chains/", 5),
+        (7, "/supply-chains/?page=2", 2),
+    ),
 )
-def test_homepage_pagination(
+def test_sc_homepage_pagination(
     num_supply_chains, logged_in_client, test_user, url, num_supply_chains_returned
 ):
     """Test pagination of supply chains on homepage.
@@ -50,7 +54,7 @@ def test_homepage_pagination(
     assert hasattr(response.context["supply_chains"][0], "strategic_action_count")
 
 
-def test_homepage_update_complete(logged_in_client, test_user):
+def test_sc_homepage_update_complete(logged_in_client, test_user):
     """Test update_complete is True.
 
     'update_complete' should be True in context passed to homepage when all supply
@@ -65,7 +69,7 @@ def test_homepage_update_complete(logged_in_client, test_user):
         StrategicActionFactory(supply_chain=sc)
 
     # Act
-    response = logged_in_client.get("/")
+    response = logged_in_client.get("/supply-chains/")
 
     # Assert
     assert response.status_code == 200
@@ -83,7 +87,7 @@ def test_homepage_update_complete(logged_in_client, test_user):
     )
 
 
-def test_homepage_update_incomplete(logged_in_client, test_user):
+def test_sc_homepage_update_incomplete(logged_in_client, test_user):
     """Test update_complete is False.
 
     'update_complete' should be False in context passed to homepage when not all
@@ -104,7 +108,7 @@ def test_homepage_update_incomplete(logged_in_client, test_user):
         StrategicActionFactory(supply_chain=sc2)
 
     # Act
-    response = logged_in_client.get("/")
+    response = logged_in_client.get("/supply-chains/")
 
     # Assert
     assert response.status_code == 200
@@ -124,7 +128,7 @@ def test_homepage_update_incomplete(logged_in_client, test_user):
     )
 
 
-def test_homepage_filters_out_archived_supply_chains(logged_in_client, test_user):
+def test_sc_homepage_filters_out_archived_supply_chains(logged_in_client, test_user):
     gov_department = test_user.gov_department
     # Create archived supply chains
     SupplyChainFactory.create_batch(
@@ -134,12 +138,12 @@ def test_homepage_filters_out_archived_supply_chains(logged_in_client, test_user
     SupplyChainFactory.create_batch(5, gov_department=gov_department)
 
     num_unarchived_supply_chains = SupplyChain.objects.filter(is_archived=False).count()
-    response = logged_in_client.get(reverse("index"))
+    response = logged_in_client.get(reverse("sc-home"))
 
     assert len(response.context["supply_chains"]) == num_unarchived_supply_chains
 
 
-def test_homepage_filters_out_archived_SAs(logged_in_client, test_user):
+def test_sc_homepage_filters_out_archived_SAs(logged_in_client, test_user):
     # Arrange
     sc = SupplyChainFactory(
         name="Medical",
@@ -155,14 +159,14 @@ def test_homepage_filters_out_archived_SAs(logged_in_client, test_user):
             sas[i].save()
 
     # Act
-    resp = logged_in_client.get(reverse("index"))
+    resp = logged_in_client.get(reverse("sc-home"))
 
     # Assert
     supply_chain = resp.context["supply_chains"].object_list[0]
     assert supply_chain.strategic_action_count == archived_count
 
 
-def test_homepage_summary_with_archived_SAs(logged_in_client, test_user):
+def test_sc_homepage_summary_with_archived_SAs(logged_in_client, test_user):
     # Arrange
     active_sa = SupplyChainFactory(
         name="Medical",
@@ -179,7 +183,7 @@ def test_homepage_summary_with_archived_SAs(logged_in_client, test_user):
     )
 
     # Act
-    resp = logged_in_client.get(reverse("index"))
+    resp = logged_in_client.get(reverse("sc-home"))
 
     # Assert
     assert resp.context["update_complete"] == False
@@ -187,7 +191,7 @@ def test_homepage_summary_with_archived_SAs(logged_in_client, test_user):
     assert len(resp.context["supply_chains"]) == 2
 
 
-def test_homepage_summary_complete_with_archived_SAs(logged_in_client, test_user):
+def test_sc_homepage_summary_complete_with_archived_SAs(logged_in_client, test_user):
     # Arrange
     active_sa = SupplyChainFactory(
         name="Medical",
@@ -211,7 +215,7 @@ def test_homepage_summary_complete_with_archived_SAs(logged_in_client, test_user
         "supply_chains.models.SupplyChainQuerySet.submitted_since",
         return_value=dummy_qs,
     ):
-        resp = logged_in_client.get(reverse("index"))
+        resp = logged_in_client.get(reverse("sc-home"))
 
     # Assert
     assert resp.context["update_complete"]
