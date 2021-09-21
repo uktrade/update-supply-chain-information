@@ -8,7 +8,7 @@ const supplyChain = supplyChains[0].fields
 
 describe('The Supply Chain Tasklist Page', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + `/${supplyChain.slug}`)
+    cy.visit(Cypress.config('baseUrlSC') + `/${supplyChain.slug}`)
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {
@@ -21,11 +21,9 @@ describe('The Supply Chain Tasklist Page', () => {
     )
   })
   it('displays breadcrumbs', () => {
+    cy.get('ol').children().should('have.length', 2)
     cy.get('li').contains('Home').should('have.attr', 'href').and('eq', `/`)
-    cy.get('li')
-      .contains(`${supplyChain.name}`)
-      .should('have.attr', 'href')
-      .and('eq', `/${supplyChain.slug}/`)
+    cy.get('li').contains('Monthly update').should('have.attr', 'href').and('eq', `/supply-chains/`)
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${supplyChain.name}`)
@@ -49,7 +47,7 @@ const completedSC = supplyChains[1].fields
 
 describe('Allowed to submit ready_to_submit Supply Chains', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + `/${completedSC.slug}`)
+    cy.visit(Cypress.config('baseUrlSC') + `/${completedSC.slug}`)
   })
   it('displays the correct header', () => {
     cy.get('h1').contains(`Update ${completedSC.name}`)
@@ -71,7 +69,7 @@ describe('Allowed to submit ready_to_submit Supply Chains', () => {
       cy.get('form').find('button').click()
       cy.url().should(
         'eq',
-        Cypress.config('baseUrl') + `/${completedSC.slug}/complete/`
+        Cypress.config('baseUrlSC') + `/${completedSC.slug}/complete/`
       )
       cy.get('li').contains('Home')
       cy.get('li').contains('Update complete')
@@ -83,7 +81,7 @@ const submittedSC = supplyChains[4].fields
 
 describe('Allowed to view submitted Supply chain', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + `/${submittedSC.slug}`)
+    cy.visit(Cypress.config('baseUrlSC') + `/${submittedSC.slug}`)
   })
   it('displays the correct header with no action required', () => {
     cy.get('h1').contains(`Update ${submittedSC.name}`)
@@ -114,9 +112,9 @@ describe('Allowed to view submitted Supply chain', () => {
   })
   it('displays button to go back', () => {
     cy.get('a')
-      .contains('Back to home')
+      .contains('Back')
       .should('have.attr', 'href')
-      .and('equal', '/')
+      .and('equal', '/supply-chains/')
     cy.get('form').should('not.exist')
   })
 })
@@ -125,7 +123,7 @@ const largeSC = supplyChains[0].fields
 
 describe('Paginate Strategic actions', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + `/${largeSC.slug}`)
+    cy.visit(Cypress.config('baseUrlSC') + `/${largeSC.slug}`)
   })
   it('displays 5 strategic actions in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 5)
@@ -138,12 +136,12 @@ describe('Paginate Strategic actions', () => {
   })
   it('displays second page of strategic actions after clicking Next', () => {
     cy.contains('Next').click()
-    cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}/?page=2`)
+    cy.url().should('eq', Cypress.config('baseUrlSC') + `/${largeSC.slug}/?page=2`)
     cy.get('tbody').find('tr').should('have.length', 2)
   })
   it('displays first page of strategic actions after clicking Previous', () => {
     cy.contains('Previous').click()
-    cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}/?page=1`)
+    cy.url().should('eq', Cypress.config('baseUrlSC') + `/${largeSC.slug}/?page=1`)
   })
   it('displays enabled submit button', () => {
     cy.get('button').contains('Submit monthly update')
@@ -152,7 +150,7 @@ describe('Paginate Strategic actions', () => {
 
 describe('Error handling while submitting incomplete updates', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + `/${largeSC.slug}`)
+    cy.visit(Cypress.config('baseUrlSC') + `/${largeSC.slug}`)
   })
   it('displays 5 strategic action in the table', () => {
     cy.get('tbody').find('tr').should('have.length', 5)
@@ -164,7 +162,7 @@ describe('Error handling while submitting incomplete updates', () => {
   })
   it('display error on submission', () => {
     cy.get('form').find('button').click()
-    cy.url().should('eq', Cypress.config('baseUrl') + `/${largeSC.slug}/`)
+    cy.url().should('eq', Cypress.config('baseUrlSC') + `/${largeSC.slug}/`)
     cy.get('#error-summary-title').contains('There is a problem')
     cy.get('li')
       .find('a')

@@ -6,7 +6,7 @@ const adminUser = users[1].fields
 
 describe('The access denied page', () => {
   it('successfully loads', () => {
-    cy.visit(Cypress.config('baseUrl') + `/${supplyChain.slug}/`, {failOnStatusCode: false})
+    cy.visit(Cypress.config('baseUrlSC') + `/${supplyChain.slug}/`, {failOnStatusCode: false})
     cy.injectAxe()
   })
   it('has no accessibility issues', () => {

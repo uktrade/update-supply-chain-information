@@ -9,10 +9,10 @@
         <a class="govuk-breadcrumbs__link" href="{% url 'index' %}">Home</a>
       </li>
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' supply_chain.slug %}">{{ supply_chain.name }}</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'sc-home' %}">Monthly update</a>
       </li>
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'monthly-update-review' supply_chain.slug strategic_action.slug update.slug %}" aria-current="page">Current monthly update for {{ strategic_action.name }}</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' supply_chain.slug %}">{{ supply_chain.name }}</a>
       </li>
     </ol>
   </nav>
