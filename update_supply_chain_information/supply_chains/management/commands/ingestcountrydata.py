@@ -40,17 +40,25 @@ class Command(BaseCommand):
             self.filepath = settings.BASE_DIR / self.filepath
         self.ingest_countries()
         self.ingest_supply_chain_country_dependencies()
-        print(f"Countries ingested: {self.countries_ingested}")
-        print(f"Supply chains found: {self.supply_chains_found}")
-        print(f"Dependencies ingested: {self.dependencies_ingested}")
+        self.stdout.write(
+            self.style.ERROR(f"Countries ingested: {self.countries_ingested}")
+        )
+        self.stdout.write(
+            self.style.SUCCESS(f"Supply chains found: {self.supply_chains_found}")
+        )
+        self.stdout.write(
+            self.style.SUCCESS(f"Dependencies ingested: {self.dependencies_ingested}")
+        )
         if self.unrecognised_supply_chains:
-            print(
-                f"*** Unrecognised supply chains: {len(self.unrecognised_supply_chains)} ***"
+            self.stdout.write(
+                self.style.ERROR(
+                    f"Unrecognised supply chains: {len(self.unrecognised_supply_chains)}"
+                )
             )
             for supply_chain_name in sorted(self.unrecognised_supply_chains):
-                print(supply_chain_name)
+                self.stdout.write(self.style.ERROR(supply_chain_name))
         else:
-            print("No unrecognised supply chains.")
+            self.stdout.write(self.style.SUCCESS("No unrecognised supply chains."))
 
     def ingest_countries(self):
         for country_name in self.source_country_names:
@@ -72,7 +80,6 @@ class Command(BaseCommand):
             supply_chain = SupplyChain.objects.get(name__iexact=supply_chain_name)
             self.supply_chains_found += 1
         except SupplyChain.DoesNotExist:
-            # print(f"{supply_chain_name} is not a recognised supply chain name")
             self.unrecognised_supply_chains.append(supply_chain_name)
             return
         for country in self.known_countries:
@@ -80,13 +87,12 @@ class Command(BaseCommand):
             dependency_level = self.source_dependency_level_to_choice_value[
                 source_dependency_level.lower()
             ]
-            dependency, created = CountryDependency.objects.get_or_create(
+            CountryDependency.objects.get_or_create(
                 country=country,
                 supply_chain=supply_chain,
                 dependency_level=dependency_level,
             )
             self.dependencies_ingested += 1
-            # print(f"{supply_chain_name}: {country.name}: {source_dependency_level}")
 
     _known_countries = None
 

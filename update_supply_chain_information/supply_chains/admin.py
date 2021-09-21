@@ -10,15 +10,10 @@ from supply_chains.models import (
     SupplyChain,
     StrategicAction,
     StrategicActionUpdate,
-    SupplyChainStage,
-    SupplyChainStageSection,
-)
-from supply_chains.models import (
-    SupplyChain,
-    StrategicAction,
-    StrategicActionUpdate,
     Country,
     CountryDependency,
+    SupplyChainStage,
+    SupplyChainStageSection,
 )
 
 
@@ -160,9 +155,6 @@ admin_site.register(StrategicActionUpdate, StrategicActionUpdateAdmin)
 admin_site.register(SupplyChainStage, SupplyChainStageAdmin)
 
 
-# class CountryAdmin(admin.ModelAdmin):
-#     pass
-#
 class CountryDependencyAdmin(admin.ModelAdmin):
     readonly_fields = (
         "id",
@@ -194,8 +186,6 @@ class CountryDependencyAdmin(admin.ModelAdmin):
         "country",
     )
     radio_fields = {"dependency_level": admin.HORIZONTAL}
-    # def get_ordering(self, request):
-    #     return (self.supply)
 
 
 admin_site.register(Country)
