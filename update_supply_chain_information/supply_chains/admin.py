@@ -10,6 +10,8 @@ from supply_chains.models import (
     SupplyChain,
     StrategicAction,
     StrategicActionUpdate,
+    Country,
+    CountryDependency,
     SupplyChainStage,
     SupplyChainStageSection,
 )
@@ -151,3 +153,40 @@ admin_site.register(SupplyChain, SupplyChainAdmin)
 admin_site.register(StrategicAction, StrategicActionAdmin)
 admin_site.register(StrategicActionUpdate, StrategicActionUpdateAdmin)
 admin_site.register(SupplyChainStage, SupplyChainStageAdmin)
+
+
+class CountryDependencyAdmin(admin.ModelAdmin):
+    readonly_fields = (
+        "id",
+        "supply_chain",
+        "country",
+    )
+
+    list_display = (
+        "supply_chain",
+        "country",
+        "dependency_level",
+    )
+
+    list_filter = (
+        "supply_chain",
+        "country",
+        "dependency_level",
+    )
+
+    list_editable = ("dependency_level",)
+
+    list_select_related = (
+        "supply_chain",
+        "country",
+    )
+
+    ordering = (
+        "supply_chain",
+        "country",
+    )
+    radio_fields = {"dependency_level": admin.HORIZONTAL}
+
+
+admin_site.register(Country)
+admin_site.register(CountryDependency, CountryDependencyAdmin)

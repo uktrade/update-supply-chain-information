@@ -824,3 +824,57 @@ class SupplyChainStageSection(models.Model):
 
     def __str__(self):
         return f"{self.get_name_display()}, {self.chain_stage.name}"
+
+
+class CountryQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class Country(models.Model):
+    objects = CountryQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=64)
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = "Countries"
+
+
+class CountryDependencyQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class CountryDependency(models.Model):
+    class DependencyLevel(models.TextChoices):
+        NONE = ("none", "No")
+        LOW = ("low", "Low")
+        MEDIUM = ("medium", "Medium")
+        HIGH = ("high", "High")
+        VERY_HIGH = ("very_high", "Very high")
+
+    objects = CountryDependencyQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    dependency_level = models.CharField(
+        choices=DependencyLevel.choices,
+        max_length=9,
+    )
+    supply_chain = models.ForeignKey(
+        SupplyChain,
+        on_delete=models.PROTECT,
+        related_name="country_dependencies",
+    )
+    country = models.ForeignKey(
+        Country, on_delete=models.PROTECT, related_name="supply_chain_dependencies"
+    )
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        choice_label = self.get_dependency_level_display()
+        return f"{choice_label} dependency on {self.country} for {self.supply_chain}"
+
+    class Meta:
+        verbose_name_plural = "Country dependencies"
+        ordering = ("supply_chain", "country")
