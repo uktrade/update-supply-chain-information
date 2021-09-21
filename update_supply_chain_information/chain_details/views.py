@@ -2,11 +2,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView, TemplateView
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
+from django.views.generic import FormView, DetailView
 
 from chain_details.forms import SCDForm
 from accounts.models import GovDepartment
 from supply_chains.models import SupplyChain
 from supply_chains.mixins import PaginationMixin
+from supply_chains.models import ScenarioAssessment
 
 
 class ChainDetailsView(LoginRequiredMixin, FormView):
@@ -67,3 +69,48 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
         )
 
         return context
+
+
+class TestSassView(DetailView):
+    model = ScenarioAssessment
+    template_name = "test-sass-view.html"
+    pk_url_kwarg = "sasspk"
+
+    @property
+    def scenario_assessments(self):
+        for title, attr_prefix in (
+            (
+                "Borders closed",
+                "borders_closed",
+            ),
+            (
+                "Storage full",
+                "storage_full",
+            ),
+            (
+                "Ports blocked",
+                "ports_blocked",
+            ),
+            (
+                "Raw material shortage",
+                "raw_material_shortage",
+            ),
+            (
+                "Labour shortage",
+                "labour_shortage",
+            ),
+            (
+                "Demand spike",
+                "demand_spike",
+            ),
+        ):
+            yield {
+                "title": title,
+                "rag_rating": getattr(self.object, f"{attr_prefix}_rag_rating"),
+                "impact": getattr(self.object, f"{attr_prefix}_impact"),
+            }
+
+    def get_context_data(self, **kwargs):
+        kwargs = super().get_context_data(**kwargs)
+        kwargs["scenario_assessments"] = self.scenario_assessments
+        return kwargs
