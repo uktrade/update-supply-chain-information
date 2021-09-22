@@ -746,7 +746,7 @@ class ScenarioAssessment(GSCUpdateModel):
         help_text="""This field collects information about the scenarios envisaged should the demand spike become critical.""",
     )
     start_date = models.DateField(null=True, blank=True)
-    supply_chain = models.ForeignKey(
+    supply_chain = models.OneToOneField(
         SupplyChain,
         on_delete=models.PROTECT,
         related_name="scenario_assessment",
