@@ -8,6 +8,14 @@
         <p class="govuk-body-s">
             Useful information about how a supply chain might deal with a potential critical scenario.
         </p>
+        {% if critical_scenario_paragraphs %}
+            <h2 class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-padding-top-0">Critical scenarios</h2>
+            {% for critical_scenario_paragraph in critical_scenario_paragraphs %}
+                <p class="govuk-body">
+                {{ critical_scenario_paragraph }}
+                </p>
+            {% endfor %}
+        {% endif %}
         <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
             {% for scenario_assessment in scenario_assessment_sections %}
                 <div class="govuk-accordion__section ">
@@ -26,5 +34,6 @@
             {% endfor %}
         </div>
         {% include "rag_rating_legend.html" %}
+        {% include "gsc_notes_section.html" %}
     </div>
 </details>
