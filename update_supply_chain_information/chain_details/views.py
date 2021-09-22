@@ -52,7 +52,7 @@ class ChainDetailsListView(PaginationMixin, ChainDetailsView):
         return context
 
 
-class ChainDetailsInfoView(TemplateView):
+class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
     template_name = "chain_details_info.html"
 
     def get_context_data(self, **kwargs):
