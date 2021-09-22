@@ -1,5 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import FormView
+from django.views.generic import FormView, TemplateView
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 
@@ -47,6 +47,23 @@ class ChainDetailsListView(PaginationMixin, ChainDetailsView):
             .order_by("name")
             .values("name", "slug", "description"),
             5,
+        )
+
+        return context
+
+
+class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
+    template_name = "chain_details_info.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["dept"] = self.kwargs.get("dept", None)
+        context["sc_slug"] = self.kwargs.get("supply_chain_slug", None)
+
+        context["sc"] = get_object_or_404(
+            SupplyChain,
+            slug=context["sc_slug"],
         )
 
         return context
