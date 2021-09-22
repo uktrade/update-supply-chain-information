@@ -41,6 +41,7 @@ describe('The SCD listing page', () => {
   it('expect sections within filtered results', () => {
     const scNames = supplyChains.slice(0, 5).map(sc => sc.fields.name)
     const scDescriptions = supplyChains.slice(0, 5).map(sc => sc.fields.description)
+    const scdInfoLinks = supplyChains.slice(0, 5).map(sc =>  `/chain-details/${govDepartment.name}/${sc.fields.slug}/`)
 
     cy.get('h2').contains(`${govDepartment.name}`)
     cy.get('p').contains('Select a profile to view supply chain information')
@@ -54,7 +55,7 @@ describe('The SCD listing page', () => {
           .get('dd.govuk-summary-list__value a.govuk-link')
           .contains(scNames[index])
           .should('have.attr', 'href')
-          .and('eq', '#')
+          .and('eq', scdInfoLinks[index])
 
         if (index == 3) {
           cy.wrap($el)
