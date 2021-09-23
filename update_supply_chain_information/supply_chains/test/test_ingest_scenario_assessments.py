@@ -63,11 +63,11 @@ class TestIngestScenarioAssessment:
         supply_chain_two: SupplyChain = SupplyChainFactory(name="Supply Chain Two")
         call_command("ingestscenarioassessments", "no_value_needed_due_to_mock_open")
 
-        assert len(supply_chain_one.scenario_assessment.all()) == 1
-        assert len(supply_chain_two.scenario_assessment.all()) == 1
+        assert supply_chain_one.scenario_assessment
+        assert supply_chain_two.scenario_assessment
 
         scenario_assessment_one: ScenarioAssessment = (
-            supply_chain_one.scenario_assessment.first()
+            supply_chain_one.scenario_assessment
         )
         assert (
             scenario_assessment_one.ports_blocked_rag_rating == NullableRAGRating.NONE
@@ -80,7 +80,7 @@ class TestIngestScenarioAssessment:
         assert scenario_assessment_one.demand_spike_critical_scenario == ""
 
         scenario_assessment_two: ScenarioAssessment = (
-            supply_chain_two.scenario_assessment.first()
+            supply_chain_two.scenario_assessment
         )
         assert (
             scenario_assessment_two.ports_blocked_rag_rating == NullableRAGRating.AMBER
