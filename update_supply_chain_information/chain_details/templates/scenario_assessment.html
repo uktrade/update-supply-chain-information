@@ -1,4 +1,4 @@
-<details class="govuk-details app-dit-panel" data-module="govuk-details">
+<details class="govuk-details app-dit-panel" data-module="govuk-details" id="supply-chain-scenario-testing">
     <summary class="govuk-details__summary">
     <span class="govuk-details__summary-text">
       Scenario testing
@@ -18,7 +18,7 @@
         {% endif %}
         <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
             {% for scenario_assessment in scenario_assessment_sections %}
-                <div class="govuk-accordion__section ">
+                <div class="govuk-accordion__section">
                     <div class="govuk-accordion__section-header">
                         <h2 class="govuk-accordion__section-heading">
                             <span class="govuk-accordion__section-button" id="accordion-{{ scenario_assessment.title|slugify }}">
