@@ -14,6 +14,7 @@ from supply_chains.models import (
     CountryDependency,
     SupplyChainStage,
     SupplyChainStageSection,
+    ScenarioAssessment,
 )
 
 
@@ -117,6 +118,44 @@ class StrategicActionUpdateAdmin(admin.ModelAdmin):
         return obj.supply_chain.gov_department
 
 
+class ScenarioAssessmentAdmin(admin.ModelAdmin):
+    fields = (
+        "supply_chain",
+        "borders_closed_rag_rating",
+        "borders_closed_impact",
+        "borders_closed_is_critical",
+        "borders_closed_critical_scenario",
+        "storage_full_rag_rating",
+        "storage_full_impact",
+        "storage_full_is_critical",
+        "storage_full_critical_scenario",
+        "ports_blocked_rag_rating",
+        "ports_blocked_impact",
+        "ports_blocked_is_critical",
+        "ports_blocked_critical_scenario",
+        "raw_material_shortage_rag_rating",
+        "raw_material_shortage_impact",
+        "raw_material_shortage_is_critical",
+        "raw_material_shortage_critical_scenario",
+        "labour_shortage_rag_rating",
+        "labour_shortage_impact",
+        "labour_shortage_is_critical",
+        "labour_shortage_critical_scenario",
+        "demand_spike_rag_rating",
+        "demand_spike_impact",
+        "demand_spike_is_critical",
+        "demand_spike_critical_scenario",
+        "gsc_updated_on",
+        "gsc_last_changed_by",
+        "gsc_review_on",
+    )
+
+    list_filter = (
+        "supply_chain__gov_department",
+        "supply_chain",
+    )
+
+
 class SCStageSectionInline(admin.StackedInline):
     model = SupplyChainStageSection
     extra = 2
@@ -153,6 +192,7 @@ admin_site.register(SupplyChain, SupplyChainAdmin)
 admin_site.register(StrategicAction, StrategicActionAdmin)
 admin_site.register(StrategicActionUpdate, StrategicActionUpdateAdmin)
 admin_site.register(SupplyChainStage, SupplyChainStageAdmin)
+admin_site.register(ScenarioAssessment, ScenarioAssessmentAdmin)
 
 
 class CountryDependencyAdmin(admin.ModelAdmin):
