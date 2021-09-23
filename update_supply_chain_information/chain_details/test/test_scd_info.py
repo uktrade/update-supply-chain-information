@@ -3,8 +3,7 @@ from django.test import Client
 from django.urls import reverse
 
 from accounts.test.factories import GovDepartmentFactory, UserFactory
-from supply_chains.test.factories import SupplyChainFactory
-
+from supply_chains.test.factories import SupplyChainFactory, ScenarioAssessmentFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -41,6 +40,7 @@ class TestSCDInfo:
         dept_name = "other_dep"
         dept = GovDepartmentFactory(name=dept_name)
         sc = SupplyChainFactory.create(gov_department=dept)
+        ScenarioAssessmentFactory(supply_chain=sc)
 
         # Act
         resp = logged_in_ogd.get(
@@ -58,6 +58,7 @@ class TestSCDInfo:
         dept_name = "other_dep"
         dept = GovDepartmentFactory(name=dept_name)
         sc = SupplyChainFactory.create(gov_department=dept)
+        ScenarioAssessmentFactory(supply_chain=sc)
 
         # Act
         resp = logged_in_client.get(
@@ -73,6 +74,7 @@ class TestSCDInfo:
     def test_auth_success(self, logged_in_client, test_user):
         # Arrange
         sc = SupplyChainFactory.create()
+        ScenarioAssessmentFactory(supply_chain=sc)
 
         # Act
         resp = logged_in_client.get(
