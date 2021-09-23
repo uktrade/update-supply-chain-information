@@ -19,7 +19,6 @@ from supply_chains.test.data import scenario_assessments
 from supply_chains.test.factories import SupplyChainFactory
 
 pytestmark = pytest.mark.django_db
-DATA_FILES_LOC = "update_supply_chain_information/supply_chains/test/data"
 
 
 class TestIngestScenarioAssessment:

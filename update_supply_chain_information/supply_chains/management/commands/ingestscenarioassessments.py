@@ -14,12 +14,6 @@ class Command(BaseCommand):
     filepath = None
     unrecognised_supply_chains = set()
 
-    # source_dependency_level_to_choice_value = {
-    #     # Spreadsheet has an empty string for "No dependency" so munge the label in the value lookup table
-    #     choice[1].lower() if choice[1] != "No" else "": choice[0]
-    #     for choice in CountryDependency.DependencyLevel.choices
-    # }
-
     def add_arguments(self, parser):
         parser.add_argument(
             "csvfile",
