@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 
 from chain_details.forms import SCDForm
 from accounts.models import GovDepartment
-from supply_chains.models import SupplyChain
+from supply_chains.models import SupplyChain, SupplyChainStage
 from supply_chains.mixins import PaginationMixin
 
 
@@ -65,5 +65,9 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
             SupplyChain,
             slug=context["sc_slug"],
         )
+
+        context["stages"] = SupplyChainStage.objects.filter(
+            supply_chain=context["sc"]
+        ).order_by("order")
 
         return context
