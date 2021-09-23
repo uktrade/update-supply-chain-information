@@ -1,0 +1,34 @@
+<div class="app-dit-rag-rating-legend">
+    <p class="govuk-body-s app-dit-rag-rating-legend__item">
+        {% include "svg_rag_rating_icon.html" with rag_rating="Red" %}
+        <span class="govuk-!-font-weight-bold">Red</span>
+        -
+        <span class="app-dit-rag-legend__text">
+            Severe disruption, potentially causing lasting supply shortage and requiring direct HMG intervention
+        </span>
+    </p>
+    <p class="govuk-body-s app-dit-rag-rating-legend__item">
+        {% include "svg_rag_rating_icon.html" with rag_rating="Amber" %}
+        <span class="govuk-!-font-weight-bold">Amber</span>
+        -
+        <span class="app-dit-rag-legend__text">
+        Potential for short-term supply shortage, likely to require careful HMG monitoring of market mechanisms to enable decision on HMG intervention
+        </span>
+    </p>
+    <p class="govuk-body-s app-dit-rag-rating-legend__item">
+        {% include "svg_rag_rating_icon.html" with rag_rating="Green" %}
+        <span class="govuk-!-font-weight-bold">Green</span>
+        -
+        <span class="app-dit-rag-legend__text">
+        Limited disruption on supply chain, normal market mechanism sufficient to resolve
+        </span>
+    </p>
+    <p class="govuk-body-s app-dit-rag-rating-legend__item">
+        {% include "svg_rag_rating_icon.html" with rag_rating="None" %}
+        <span class="govuk-!-font-weight-bold">No RAG status</span>
+        -
+        <span class="app-dit-rag-legend__text">
+        No RAG status applies
+        </span>
+    </p>
+</div>
