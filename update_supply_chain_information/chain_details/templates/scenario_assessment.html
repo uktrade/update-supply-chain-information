@@ -23,11 +23,11 @@
                         <h2 class="govuk-accordion__section-heading">
                             <span class="govuk-accordion__section-button" id="accordion-{{ scenario_assessment.title|slugify }}">
                                 {% include "svg_rag_rating_icon.html" with rag_rating=scenario_assessment.rag_rating %}
-                                {{ scenario_assessment.title}}
+                                {{ scenario_assessment.title }}
                             </span>
                         </h2>
                     </div>
-                    <div id="accordion-default-content-1" class="govuk-accordion__section-content" aria-labelledby="accordion-{{ scenario_assessment.title|slugify }}">
+                    <div id="accordion-default-content-{{ scenario_assessment.title|slugify }}" class="govuk-accordion__section-content" aria-labelledby="accordion-{{ scenario_assessment.title|slugify }}">
                         <p class='govuk-body'>{{ scenario_assessment.impact|linebreaksbr }}</p>
                     </div>
                 </div>
