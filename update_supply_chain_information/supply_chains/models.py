@@ -763,35 +763,53 @@ class SupplyChainStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
 
 class SupplyChainStage(GSCUpdateModel):
     class StageName(models.TextChoices):
-        DEMAND_REQ = ("demand_requirements", "Demand Requirements")
-        RAW_MATERIAL_EXT = ("raw_material_ext", "Raw Materials Extraction/Mining")
+        DEMAND_REQ = ("demand requirements", "Demand Requirements")
+        RAW_MATERIAL_EXT = (
+            "raw materials extraction/mining",
+            "Raw Materials Extraction/Mining",
+        )
         REFINING = ("refining", "Refining")
-        RAW_MATERIAL_PROC = ("raw_material_proc", "Raw Materials Processing/Refining")
-        CHEMICAL_PROC = ("chemical_processing", "Chemical Processing")
-        OTH_MATERIAL_PROC = ("other_material_proc", "Other Material-Conversion Process")
-        RAW_MATERIAL_SUP = ("raw_material_sup", "Raw Materials Suppliers")
-        INT_GOODS = ("intermediate_goods", "Intermediate Goods/Capital")
-        INBOUND_LOG = ("inbound_log", "Inbound Logistics")
-        DELIVERY = ("delivery", "Delivery/Shipping ")
+        RAW_MATERIAL_PROC = (
+            "raw materials processing/refining",
+            "Raw Materials Processing/Refining",
+        )
+        CHEMICAL_PROC = ("chemical processing", "Chemical Processing")
+        OTH_MATERIAL_PROC = (
+            "other material-conversion process",
+            "Other Material-Conversion Process",
+        )
+        RAW_MATERIAL_SUP = ("raw materials suppliers", "Raw Materials Suppliers")
+        INT_GOODS = ("intermediate goods/capital", "Intermediate Goods/Capital")
+        INBOUND_LOG = ("inbound logistics", "Inbound Logistics")
+        DELIVERY = ("delivery/shipping ", "Delivery/Shipping")
         MANUFACTURING = ("manufacturing", "Manufacturing")
-        COMP_SUP = ("comp_sup", "Component Suppliers")
-        FINISHED_GOODS_SUP = ("finished_goods_sup", "Finished Goods Supplier")
+        COMP_SUP = ("component suppliers", "Component Suppliers")
+        FINISHED_GOODS_SUP = ("finished goods supplier", "Finished Goods Supplier")
         ASSEMBLY = ("assembly", "Assembly")
-        TESTING = ("testing_verif", "Testing/Verification/Approval/Release")
-        FINISHED_PRODUCT = ("finished_product", "Finished Product")
-        PACKAGING = ("packaging", "Packaging/Repackaging")
-        OUTBOUND_LOG = ("outbound_log", "Outbound Logistics")
-        STORAGE = ("storage", "Storage/Store")
+        TESTING = (
+            "testing/verification/approval/release",
+            "Testing/Verification/Approval/Release",
+        )
+        FINISHED_PRODUCT = ("finished product", "Finished Product")
+        PACKAGING = ("packaging/repackaging", "Packaging/Repackaging")
+        OUTBOUND_LOG = ("outbound logistics", "Outbound Logistics")
+        STORAGE = ("storage/store", "Storage/Store")
         DISTRIBUTORS = ("distributors", "Distributors")
-        ENDPOINT = ("endpoint", "End Point (Retailer, Hospital, Grid, etc)")
-        ENDUSE = ("end_use", "End Use/Consumer")
-        SERVICE_PROVIDER = ("service_provider", "Service Provider")
+        ENDPOINT = (
+            "end point (retailer, hospital, grid, etc)",
+            "End Point (Retailer, Hospital, Grid, etc)",
+        )
+        ENDUSE = ("end use/consumer", "End Use/Consumer")
+        SERVICE_PROVIDER = ("service provider", "Service Provider")
         INSTALLATION = ("installation", "Installation")
-        DECOMMISSION = ("decommission", "Decommission  Assets")
+        DECOMMISSION = ("decommission  assets", "Decommission  Assets")
         RECYCLING = ("recycling", "Recycling")
-        WASTE_DISPOSAL = ("waste_disposal", "Waste Disposal/Asset Disposal")
+        WASTE_DISPOSAL = (
+            "waste disposal/asset disposal",
+            "Waste Disposal/Asset Disposal",
+        )
         MAINTENANCE = ("maintenance", "Maintenance")
-        OTHER = ("other", "Other - Please Describe")
+        OTHER = ("other - please describe", "Other - Please Describe")
 
     objects = SupplyChainStageQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -832,14 +850,14 @@ class SupplyChainStageSectionQuerySet(ActivityStreamQuerySetMixin, models.QueryS
 class SupplyChainStageSection(models.Model):
     class SectionName(models.TextChoices):
         OVERVIEW = ("overview", "Overview")
-        KEYPRODUCTS = ("key_products", "Key Products")
-        KEYSERVICES = ("key_services", "Key Services")
-        KEYACTIVITIES = ("key_activities", "Key Activities")
-        KEYCOUNTRIES = ("key_countries", "Key Countries")
-        KEYTRANSLINKS = ("key_transport_links", "Key Transport Links")
-        KEYCOMPANIES = ("key_companies", "Key Companies")
-        KEYSECTORS = ("key_sectors", "Key Sectors")
-        KEYOTHINFO = ("other_info", "Other Relevant Information")
+        KEYPRODUCTS = ("key products", "Key Products")
+        KEYSERVICES = ("key services", "Key Services")
+        KEYACTIVITIES = ("key activities", "Key Activities")
+        KEYCOUNTRIES = ("key countries", "Key Countries")
+        KEYTRANSLINKS = ("key transport links", "Key Transport Links")
+        KEYCOMPANIES = ("key companies", "Key Companies")
+        KEYSECTORS = ("key sectors", "Key Sectors")
+        KEYOTHINFO = ("other relevant information", "Other Relevant Information")
 
     objects = SupplyChainStageSectionQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
