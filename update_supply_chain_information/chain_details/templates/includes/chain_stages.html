@@ -12,7 +12,7 @@
             View the stages involved in a supply chain. Get information about products, services, companies, activities, countries, transport points and sectors.
         </p>
 
-        <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+        <div class="govuk-accordion" data-module="govuk-accordion" id="stage-accordion">
             {% for stage in stages %}
             {% with it=forloop.counter|stringformat:"i" %}
             {% with heading="accordion-default-heading-"|add:it content="accordion-default-content-"|add:it %}
