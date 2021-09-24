@@ -13,17 +13,19 @@ class ActivityStreamQuerySetMixin:
         Convert a queryset into a form suitable for serialisation in the activity stream feed.
         """
         fields = self.model._meta.get_fields()
-        # Find all fields that are foreign keys, as their values will be adjusted on serialisation
+        # Find all fields that are foreign keys or one-to-one keys, as their values will be adjusted on serialisation
         # to match the `id` values required by Activity Stream.
+        # NOTE: check other relations, such as ManyToMany, just in case any show up in future models.
         foreign_key_fields = [
             [field.name, field.related_model.__name__]
             for field in fields
-            if field.is_relation and field.many_to_one
+            if field.is_relation and (field.many_to_one or field.one_to_one)
         ]
-        # NOTE: check other relations, such as ManyToMany, just in case any show up in future models.
         # Get all non-foreign-key field names so they can be serialised by the database.
         field_names = [
-            field.name for field in fields if not field.is_relation or field.many_to_one
+            field.name
+            for field in fields
+            if not field.is_relation or (field.many_to_one or field.one_to_one)
         ]
         # `JSONObject` expects a dict of JSON names mapped to field names;
         # we just want all fields to have the same name in JSON as they do in the DB.
