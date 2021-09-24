@@ -854,7 +854,7 @@ class SupplyChainStageSection(models.Model):
         KEYSERVICES = ("key services", "Key Services")
         KEYACTIVITIES = ("key activities", "Key Activities")
         KEYCOUNTRIES = ("key countries", "Key Countries")
-        KEYTRANSLINKS = ("key transport links", "Key Transport Links")
+        KEYTRANSPTS = ("key transport points", "Key Transport Points")
         KEYCOMPANIES = ("key companies", "Key Companies")
         KEYSECTORS = ("key sectors", "Key Sectors")
         KEYOTHINFO = ("other relevant information", "Other Relevant Information")
