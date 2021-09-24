@@ -26,6 +26,15 @@ class TestActivityStreamQuerySetMixin:
         assert "supply_chain" == foreign_keys[0][0]
         assert "SupplyChain" == foreign_keys[0][1]
 
+    def test_activity_stream_queryset_includes_one_to_one_field_in_foreign_keys_information(
+        self, scenario_assessment_queryset
+    ):
+        instance = scenario_assessment_queryset.for_activity_stream().first()
+        assert "foreign_keys" in instance
+        foreign_keys = instance["foreign_keys"]["keys"]
+        assert "supply_chain" == foreign_keys[0][0]
+        assert "SupplyChain" == foreign_keys[0][1]
+
     def test_activity_stream_queryset_includes_object_type(
         self, strategic_action_queryset
     ):

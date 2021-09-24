@@ -15,11 +15,14 @@ from supply_chains.models import (
     StrategicAction,
     StrategicActionQuerySet,
     StrategicActionUpdate,
+    ScenarioAssessment,
+    ScenarioAssessmentQuerySet,
 )
 from supply_chains.test.factories import (
     StrategicActionUpdateFactory,
     SupplyChainFactory,
     StrategicActionFactory,
+    ScenarioAssessmentFactory,
 )
 
 
@@ -66,6 +69,15 @@ def strategic_action_queryset(
             mock_now.return_value = last_modified
             StrategicActionFactory(supply_chain=supply_chain)
     return StrategicAction.objects.all()
+
+
+@pytest.fixture(scope="function")
+def scenario_assessment_queryset(last_modified_times) -> ScenarioAssessmentQuerySet:
+    supply_chain = SupplyChainFactory(name="SA OneToOne Test Supply Chain")
+    with mock.patch("django.utils.timezone.now") as mock_now:
+        mock_now.return_value = last_modified_times[0]
+        ScenarioAssessmentFactory(supply_chain=supply_chain)
+    return ScenarioAssessment.objects.all()
 
 
 @pytest.fixture()
