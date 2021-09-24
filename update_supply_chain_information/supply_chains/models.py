@@ -29,6 +29,13 @@ class RAGRating(models.TextChoices):
     GREEN = ("GREEN", "Green")
 
 
+class NullableRAGRating(models.TextChoices):
+    RED = ("RED", "Red")
+    AMBER = ("AMBER", "Amber")
+    GREEN = ("GREEN", "Green")
+    NONE = (None, "—")
+
+
 class SupplyChainQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     def submitted_since(self, deadline):
         return self.filter(last_submission_date__gt=deadline)
@@ -666,7 +673,12 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     borders_closed_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    borders_closed_is_critical = models.BooleanField(default=False)
+    borders_closed_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the lack of storage facilities become critical.""",
     )
     storage_full_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
@@ -674,7 +686,12 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     storage_full_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    storage_full_is_critical = models.BooleanField(default=False)
+    storage_full_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the lack of storage facilities become critical.""",
     )
     ports_blocked_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
@@ -682,7 +699,12 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     ports_blocked_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    ports_blocked_is_critical = models.BooleanField(default=False)
+    ports_blocked_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the port blockages become critical.""",
     )
     raw_material_shortage_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
@@ -690,7 +712,12 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     raw_material_shortage_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    raw_material_shortage_is_critical = models.BooleanField(default=False)
+    raw_material_shortage_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the raw materials shortage become critical.""",
     )
     labour_shortage_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
@@ -698,7 +725,12 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     labour_shortage_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    labour_shortage_is_critical = models.BooleanField(default=False)
+    labour_shortage_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the labour shortages become critical.""",
     )
     demand_spike_impact = models.TextField(
         help_text="""This field collects information about the potential impacts that would occur should
@@ -706,14 +738,23 @@ class ScenarioAssessment(GSCUpdateModel):
     )
     demand_spike_rag_rating = models.CharField(
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
     )
-    supply_chain = models.ForeignKey(
+    demand_spike_is_critical = models.BooleanField(default=False)
+    demand_spike_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the demand spike become critical.""",
+    )
+    start_date = models.DateField(null=True, blank=True)
+    supply_chain = models.OneToOneField(
         SupplyChain,
         on_delete=models.PROTECT,
         related_name="scenario_assessment",
     )
     last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.supply_chain.name} scenario assessment"
 
 
 class SupplyChainStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
@@ -722,35 +763,53 @@ class SupplyChainStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
 
 class SupplyChainStage(GSCUpdateModel):
     class StageName(models.TextChoices):
-        DEMAND_REQ = ("demand_requirements", "Demand Requirements")
-        RAW_MATERIAL_EXT = ("raw_material_ext", "Raw Materials Extraction/Mining")
+        DEMAND_REQ = ("demand requirements", "Demand Requirements")
+        RAW_MATERIAL_EXT = (
+            "raw materials extraction/mining",
+            "Raw Materials Extraction/Mining",
+        )
         REFINING = ("refining", "Refining")
-        RAW_MATERIAL_PROC = ("raw_material_proc", "Raw Materials Processing/Refining")
-        CHEMICAL_PROC = ("chemical_processing", "Chemical Processing")
-        OTH_MATERIAL_PROC = ("other_material_proc", "Other Material-Conversion Process")
-        RAW_MATERIAL_SUP = ("raw_material_sup", "Raw Materials Suppliers")
-        INT_GOODS = ("intermediate_goods", "Intermediate Goods/Capital")
-        INBOUND_LOG = ("inbound_log", "Inbound Logistics")
-        DELIVERY = ("delivery", "Delivery/Shipping ")
+        RAW_MATERIAL_PROC = (
+            "raw materials processing/refining",
+            "Raw Materials Processing/Refining",
+        )
+        CHEMICAL_PROC = ("chemical processing", "Chemical Processing")
+        OTH_MATERIAL_PROC = (
+            "other material-conversion process",
+            "Other Material-Conversion Process",
+        )
+        RAW_MATERIAL_SUP = ("raw materials suppliers", "Raw Materials Suppliers")
+        INT_GOODS = ("intermediate goods/capital", "Intermediate Goods/Capital")
+        INBOUND_LOG = ("inbound logistics", "Inbound Logistics")
+        DELIVERY = ("delivery/shipping ", "Delivery/Shipping ")
         MANUFACTURING = ("manufacturing", "Manufacturing")
-        COMP_SUP = ("comp_sup", "Component Suppliers")
-        FINISHED_GOODS_SUP = ("finished_goods_sup", "Finished Goods Supplier")
+        COMP_SUP = ("component suppliers", "Component Suppliers")
+        FINISHED_GOODS_SUP = ("finished goods supplier", "Finished Goods Supplier")
         ASSEMBLY = ("assembly", "Assembly")
-        TESTING = ("testing_verif", "Testing/Verification/Approval/Release")
-        FINISHED_PRODUCT = ("finished_product", "Finished Product")
-        PACKAGING = ("packaging", "Packaging/Repackaging")
-        OUTBOUND_LOG = ("outbound_log", "Outbound Logistics")
-        STORAGE = ("storage", "Storage/Store")
+        TESTING = (
+            "testing/verification/approval/release",
+            "Testing/Verification/Approval/Release",
+        )
+        FINISHED_PRODUCT = ("finished product", "Finished Product")
+        PACKAGING = ("packaging/repackaging", "Packaging/Repackaging")
+        OUTBOUND_LOG = ("outbound logistics", "Outbound Logistics")
+        STORAGE = ("storage/store", "Storage/Store")
         DISTRIBUTORS = ("distributors", "Distributors")
-        ENDPOINT = ("endpoint", "End Point (Retailer, Hospital, Grid, etc)")
-        ENDUSE = ("end_use", "End Use/Consumer")
-        SERVICE_PROVIDER = ("service_provider", "Service Provider")
+        ENDPOINT = (
+            "end point (retailer, hospital, grid, etc)",
+            "End Point (Retailer, Hospital, Grid, etc)",
+        )
+        ENDUSE = ("end use/consumer", "End Use/Consumer")
+        SERVICE_PROVIDER = ("service provider", "Service Provider")
         INSTALLATION = ("installation", "Installation")
-        DECOMMISSION = ("decommission", "Decommission  Assets")
+        DECOMMISSION = ("decommission  assets", "Decommission  Assets")
         RECYCLING = ("recycling", "Recycling")
-        WASTE_DISPOSAL = ("waste_disposal", "Waste Disposal/Asset Disposal")
+        WASTE_DISPOSAL = (
+            "waste disposal/asset disposal",
+            "Waste Disposal/Asset Disposal",
+        )
         MAINTENANCE = ("maintenance", "Maintenance")
-        OTHER = ("other", "Other - Please Describe")
+        OTHER = ("other - please describe", "Other - Please Describe")
 
     objects = SupplyChainStageQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -791,14 +850,14 @@ class SupplyChainStageSectionQuerySet(ActivityStreamQuerySetMixin, models.QueryS
 class SupplyChainStageSection(models.Model):
     class SectionName(models.TextChoices):
         OVERVIEW = ("overview", "Overview")
-        KEYPRODUCTS = ("key_products", "Key Products")
-        KEYSERVICES = ("key_services", "Key Services")
-        KEYACTIVITIES = ("key_activities", "Key Activities")
-        KEYCOUNTRIES = ("key_countries", "Key Countries")
-        KEYTRANSLINKS = ("key_transport_links", "Key Transport Links")
-        KEYCOMPANIES = ("key_companies", "Key Companies")
-        KEYSECTORS = ("key_sectors", "Key Sectors")
-        KEYOTHINFO = ("other_info", "Other Relevant Information")
+        KEYPRODUCTS = ("key products", "Key Products")
+        KEYSERVICES = ("key services", "Key Services")
+        KEYACTIVITIES = ("key activities", "Key Activities")
+        KEYCOUNTRIES = ("key countries", "Key Countries")
+        KEYTRANSLINKS = ("key transport links", "Key Transport Links")
+        KEYCOMPANIES = ("key companies", "Key Companies")
+        KEYSECTORS = ("key sectors", "Key Sectors")
+        KEYOTHINFO = ("other relevant information", "Other Relevant Information")
 
     objects = SupplyChainStageSectionQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

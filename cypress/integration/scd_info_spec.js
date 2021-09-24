@@ -60,4 +60,31 @@ describe('The SCD info page', () => {
           .contains(supplyChain.fields.description)
       })
   })
+  it('shows the "Scenario testing" section', () => {
+    cy.get('#supply-chain-scenario-testing')
+      .should('have.length', 1)
+      .each(($el) => {
+        cy.wrap($el).find('summary').each(($el) => {
+          cy.wrap($el).should('have.length', 1)
+              .contains('Scenario testing')
+        }).find('+ .govuk-details__text').each(($el) => {
+          cy.wrap($el).should('have.length', 1)
+            .find('> p')
+            .contains('Useful information about how a supply chain might deal with a potential critical scenario.')
+          cy.wrap($el).find('> h2').should('have.length', 1)
+            .contains('Critical scenarios')
+            .find('+ p').contains('Storage full: Bad things')
+          cy.wrap($el).find('.govuk-accordion').each(($el) => {
+            cy.wrap($el).should('have.length', 1)
+              .find('> .govuk-accordion__section')
+              .should('have.length', 6).each(($el) => {
+                cy.wrap($el).find('> .govuk-accordion__section-header')
+                  .should('have.length', 1)
+                cy.wrap($el).find('> .govuk-accordion__section-content')
+                    .should('have.length', 1)
+            })
+          })
+        })
+      })
+  })
 })
