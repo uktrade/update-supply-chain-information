@@ -781,7 +781,7 @@ class SupplyChainStage(GSCUpdateModel):
         RAW_MATERIAL_SUP = ("raw materials suppliers", "Raw Materials Suppliers")
         INT_GOODS = ("intermediate goods/capital", "Intermediate Goods/Capital")
         INBOUND_LOG = ("inbound logistics", "Inbound Logistics")
-        DELIVERY = ("delivery/shipping ", "Delivery/Shipping ")
+        DELIVERY = ("delivery/shipping ", "Delivery/Shipping")
         MANUFACTURING = ("manufacturing", "Manufacturing")
         COMP_SUP = ("component suppliers", "Component Suppliers")
         FINISHED_GOODS_SUP = ("finished goods supplier", "Finished Goods Supplier")
