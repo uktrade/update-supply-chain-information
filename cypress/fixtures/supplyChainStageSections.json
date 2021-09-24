@@ -13,70 +13,70 @@
   "model": "supply_chains.supplychainstagesection",
   "pk": "0efcd6f9-55ed-4530-aa57-1b487e5c0751",
   "fields": {
-    "name": "key_transport_links",
+    "name": "key transport links",
     "description": "Southern owner person concern hotel mission. Attorney exist page figure. Professional policy may option guess indeed draw public. Drive door read now claim always out. Process fear already air. Establish friend physical newspaper wrong.",
     "chain_stage": "6eeab69d-0c8b-4e35-afc6-cbde004704ea",
-    "last_modified": "2021-09-22T15:01:37.772Z"
+    "last_modified": "2021-09-24T09:45:41.221Z"
   }
 },
 {
   "model": "supply_chains.supplychainstagesection",
   "pk": "10b4dc6e-c8b4-4af0-a14f-03bd2661adf7",
   "fields": {
-    "name": "key_sectors",
+    "name": "key sectors",
     "description": "Store relationship guy how movement black benefit. Run surface least body approach might. Itself candidate reach hour heavy easy.",
     "chain_stage": "41fec4aa-f92d-4a9e-a069-472d8ae7657e",
-    "last_modified": "2021-09-22T14:59:17.938Z"
+    "last_modified": "2021-09-24T09:50:01.770Z"
   }
 },
 {
   "model": "supply_chains.supplychainstagesection",
   "pk": "1a46060f-b580-404b-b92c-56b39024e7d1",
   "fields": {
-    "name": "key_companies",
+    "name": "key countries",
     "description": "Story expect media person could agent low. Me operation support story million environmental. Administration series bank first.",
     "chain_stage": "9efc3420-e566-4389-8ec5-be6daf1146a7",
-    "last_modified": "2021-09-22T15:05:13.869Z"
+    "last_modified": "2021-09-24T09:48:49.679Z"
   }
 },
 {
   "model": "supply_chains.supplychainstagesection",
   "pk": "207d7f55-f7c3-4188-a485-2dfbdda63b85",
   "fields": {
-    "name": "key_activities",
+    "name": "key activities",
     "description": "Short small benefit serve land bed participant. Develop social lawyer computer song. Himself about agree.",
     "chain_stage": "c0972fd6-7bc6-44db-883c-3e6e16d94428",
-    "last_modified": "2021-09-22T15:02:10.474Z"
+    "last_modified": "2021-09-24T09:44:18.342Z"
   }
 },
 {
   "model": "supply_chains.supplychainstagesection",
   "pk": "24d80e2d-3e1f-4565-9789-b7ea1657ccdb",
   "fields": {
-    "name": "overview",
+    "name": "key companies",
     "description": "Own expert reality possible able across. Walk get eight.",
     "chain_stage": "c0972fd6-7bc6-44db-883c-3e6e16d94428",
-    "last_modified": "2021-09-22T15:02:10.477Z"
+    "last_modified": "2021-09-24T09:44:18.343Z"
   }
 },
 {
   "model": "supply_chains.supplychainstagesection",
   "pk": "2f5d1705-c84f-4ffc-a8de-d78fdadc307d",
   "fields": {
-    "name": "key_activities",
+    "name": "key activities",
     "description": "Eye to box. Yourself democratic wind change low born.",
     "chain_stage": "72d0ee32-05f5-4a6a-8e07-287bda04de48",
-    "last_modified": "2021-09-22T15:03:49.666Z"
+    "last_modified": "2021-09-24T09:45:03.485Z"
   }
 },
 {
   "model": "supply_chains.supplychainstagesection",
   "pk": "3e822087-0f7c-4d4c-9338-017a7e8b6390",
   "fields": {
-    "name": "key_countries",
+    "name": "key countries",
     "description": "Economy out sure so candidate produce. In box various sit. Project suddenly never soon where.",
     "chain_stage": "6eeab69d-0c8b-4e35-afc6-cbde004704ea",
-    "last_modified": "2021-09-22T15:01:37.771Z"
+    "last_modified": "2021-09-24T09:45:41.222Z"
   }
 },
 {
@@ -103,40 +103,40 @@
   "model": "supply_chains.supplychainstagesection",
   "pk": "69f7e309-c7a9-4a6e-ac7e-6a1e62f252a7",
   "fields": {
-    "name": "key_countries",
+    "name": "key countries",
     "description": "Relationship sure yes forward. Close production by situation simply measure ahead. Spring public person ahead nation nice. Can fear technology when much check walk buy. Develop different for Mr.",
     "chain_stage": "72d0ee32-05f5-4a6a-8e07-287bda04de48",
-    "last_modified": "2021-09-22T15:03:49.667Z"
+    "last_modified": "2021-09-24T09:45:03.486Z"
   }
 },
 {
   "model": "supply_chains.supplychainstagesection",
   "pk": "8ef93f1b-d86e-4ddd-b65b-85cea4167161",
   "fields": {
-    "name": "key_products",
+    "name": "key products",
     "description": "Friend you door civil strategy west keep body. Certain help detail television.",
     "chain_stage": "6eeab69d-0c8b-4e35-afc6-cbde004704ea",
-    "last_modified": "2021-09-22T15:01:37.770Z"
+    "last_modified": "2021-09-24T09:45:41.222Z"
   }
 },
 {
   "model": "supply_chains.supplychainstagesection",
   "pk": "9444d991-cc90-4d34-9aca-2368b89b24b2",
   "fields": {
-    "name": "key_activities",
+    "name": "key activities",
     "description": "Man choose support number keep individual. Experience home care use. Determine high cell so act. Pretty provide provide gas say.",
     "chain_stage": "6eeab69d-0c8b-4e35-afc6-cbde004704ea",
-    "last_modified": "2021-09-22T15:01:37.771Z"
+    "last_modified": "2021-09-24T09:45:41.223Z"
   }
 },
 {
   "model": "supply_chains.supplychainstagesection",
   "pk": "a862f196-507f-4550-af4f-915340a7b661",
   "fields": {
-    "name": "key_products",
+    "name": "key products",
     "description": "Both as glass cultural indeed.",
     "chain_stage": "41fec4aa-f92d-4a9e-a069-472d8ae7657e",
-    "last_modified": "2021-09-22T14:59:17.938Z"
+    "last_modified": "2021-09-24T09:50:01.770Z"
   }
 },
 {
@@ -163,10 +163,10 @@
   "model": "supply_chains.supplychainstagesection",
   "pk": "ea7ee8f6-aa16-4d0c-9b3d-b0109b25fdee",
   "fields": {
-    "name": "key_activities",
+    "name": "key activities",
     "description": "Life scientist read full responsibility interview cut experience. Much another have radio plan. Yeah direction upon catch another whatever. Point but these way. White next answer treat.",
     "chain_stage": "a1b9b1ad-60bd-46a7-a905-b6a102856e21",
-    "last_modified": "2021-09-22T15:05:42.545Z"
+    "last_modified": "2021-09-24T09:48:36.818Z"
   }
 }
 ]
