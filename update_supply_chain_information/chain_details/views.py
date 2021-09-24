@@ -144,5 +144,6 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
         context["stages"] = SupplyChainStage.objects.filter(
             supply_chain=context["sc"]
         ).order_by("order")
+        context["stage_notes"] = context["stages"].order_by("-gsc_updated_on")[0]
 
         return context

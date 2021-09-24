@@ -1,3 +1,5 @@
+{% load gsc_notes %}
+
 <details class="govuk-details app-dit-panel" data-module="govuk-details" id="supply-chain-scenario-testing">
     <summary class="govuk-details__summary">
     <span class="govuk-details__summary-text">
@@ -34,6 +36,8 @@
             {% endfor %}
         </div>
         {% include "rag_rating_legend.html" %}
-        {% include "gsc_notes_section.html" %}
+        <div class="app-dit-gsc-notes">
+            {% gsc_notes instance=sc.scenario_assessment %}
+        </div>
     </div>
 </details>
