@@ -1,0 +1,9 @@
+{% for section in stage.stage_sections.all %}
+
+<h3 class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-padding-top-0">{{ section.get_name_display }}</h3>
+<p class="govuk-body govuk-!-font-size-19">
+    {{ section.description }}
+</p>
+
+
+{% endfor %}

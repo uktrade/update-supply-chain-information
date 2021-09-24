@@ -60,6 +60,15 @@ describe('The SCD info page', () => {
           .contains(supplyChain.fields.description)
       })
   })
+  it('shows the Stage section', () => {
+    cy.get('#chain-stages').should('exist').should('have.length', 1).should('not.have.attr', 'open')
+    cy.get('#chain-stages summary.govuk-details__summary span.govuk-details__summary-text').contains('Supply chain stages')
+    cy.get('#chain-stages div.govuk-details__text p.govuk-body-s').should('exist')
+    cy.get('#stage-accordion').should('exist').should('have.length', 1).should('not.have.attr', 'open')
+    cy.get('#stage-accordion h2.govuk-accordion__section-heading').should('exist').should('have.length', 1).contains('Demand Requirements')
+    cy.get('#stage-accordion h3.govuk-heading-s').should('exist').should('have.length', 1).contains('Overview')
+    cy.get('#chain-stages div.app-dit-gsc-notes p.govuk-body-s').should('exist').should('have.length', 1).contains(/Last updated by bond on.*/)
+  })
   it('shows the "Scenario testing" section', () => {
     cy.get('#supply-chain-scenario-testing')
       .should('have.length', 1)

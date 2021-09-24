@@ -8,7 +8,7 @@ from django.views.generic import FormView, DetailView
 
 from chain_details.forms import SCDForm
 from accounts.models import GovDepartment
-from supply_chains.models import SupplyChain
+from supply_chains.models import SupplyChain, SupplyChainStage
 from supply_chains.mixins import PaginationMixin
 from supply_chains.models import ScenarioAssessment
 
@@ -141,5 +141,9 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
         context["critical_scenario_paragraphs"] = self.critical_scenario_paragraphs(
             supply_chain.scenario_assessment
         )
+        context["stages"] = SupplyChainStage.objects.filter(
+            supply_chain=context["sc"]
+        ).order_by("order")
+        context["stage_notes"] = context["stages"].order_by("-gsc_updated_on").first()
 
         return context
