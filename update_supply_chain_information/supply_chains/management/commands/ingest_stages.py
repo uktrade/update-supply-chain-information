@@ -49,7 +49,7 @@ def _update_section(sc: SupplyChain, stage: SupplyChainStage, row: Dict) -> obje
 
 
 class Command(BaseCommand):
-    help = "Ingest CSV formatted resilience tool data"
+    help = "Ingest CSV formatted resilience tool stage data"
 
     def add_arguments(self, parser):
         parser.add_argument(
