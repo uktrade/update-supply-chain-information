@@ -50,11 +50,13 @@
                 Supply chain details
             </a>
         </li>
+        {% with qs_ci_link="https://data.trade.gov.uk/visualisations/link/6a51d70e-08e7-42cd-98d9-e5bb4c1db430" %}
         <li class="govuk-header__navigation-item">
-            <a class="govuk-header__link" href="#">
+            <a class="govuk-header__link" href="{{ qs_ci_link }}">
                 Country information
             </a>
         </li>
+        {% endwith %}
     </ul>
 </nav>
 {% endblock menu_header %}
