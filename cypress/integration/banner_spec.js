@@ -22,11 +22,11 @@ describe('The banner', () => {
     )
   })
   it('Displays navigation links', () => {
-    const navLinkNames = ['Home', 'Monthly update', 'Strategic action progress', 'Supply chain details']
-    const navLinks = ['/', '/supply-chains/', '/action-progress/', '/chain-details/']
+    const navLinkNames = ['Home', 'Monthly update', 'Strategic action summary', 'Strategic action progress', 'Supply chain details', 'Country information']
+    const navLinks = ['/', '/supply-chains/', '/action-progress/', null, '/chain-details/', null]
 
     cy.get('nav ul li.govuk-header__navigation-item')
-      .should('have.length', 4)
+      .should('have.length', 6)
       .each(($el, index) => {
         if (index == 0) {
           cy.wrap($el).get('li.govuk-header__navigation-item--active').should('exist')
@@ -36,12 +36,21 @@ describe('The banner', () => {
             .should('have.attr', 'href')
             .and('equal', navLinks[index])
         } else {
-          cy.wrap($el).find('li.govuk-header__navigation-item--active').should('not.exist')
-          cy.wrap($el).find('a.govuk-header__link')
-            .should('exist')
-            .contains(navLinkNames[index])
-            .should('have.attr', 'href')
-            .and('equal', navLinks[index])
+          if(navLinks[index]){
+            cy.wrap($el).find('li.govuk-header__navigation-item--active').should('not.exist')
+            cy.wrap($el).find('a.govuk-header__link')
+              .should('exist')
+              .contains(navLinkNames[index])
+              .should('have.attr', 'href')
+              .and('equal', navLinks[index])
+          } else {
+            cy.wrap($el).find('li.govuk-header__navigation-item--active').should('not.exist')
+            cy.wrap($el).find('a.govuk-header__link')
+              .should('exist')
+              .contains(navLinkNames[index])
+              .should('have.attr', 'href')
+          }
+
         }
       })
   })
