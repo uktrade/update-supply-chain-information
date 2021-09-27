@@ -35,14 +35,28 @@
         </li>
         <li class="govuk-header__navigation-item {% if active_menu == 'sap' %} govuk-header__navigation-item--active{% endif %}">
             <a class="govuk-header__link" href={% url 'action-progress' %}>
+                Strategic action summary
+            </a>
+        </li>
+        {% with qs_sap_link="https://data.trade.gov.uk/visualisations/link/6a51d70e-08e7-42cd-98d9-e5bb4c1db430" %}
+        <li class="govuk-header__navigation-item">
+            <a class="govuk-header__link" href="{{ qs_sap_link }}">
                 Strategic action progress
             </a>
         </li>
+        {% endwith %}
         <li class="govuk-header__navigation-item {% if active_menu == 'scd' %} govuk-header__navigation-item--active{% endif %}">
             <a class="govuk-header__link" href={% url 'chain-details' %}>
                 Supply chain details
             </a>
         </li>
+        {% with qs_ci_link="https://data.trade.gov.uk/visualisations/link/6a51d70e-08e7-42cd-98d9-e5bb4c1db430" %}
+        <li class="govuk-header__navigation-item">
+            <a class="govuk-header__link" href="{{ qs_ci_link }}">
+                Country information
+            </a>
+        </li>
+        {% endwith %}
     </ul>
 </nav>
 {% endblock menu_header %}

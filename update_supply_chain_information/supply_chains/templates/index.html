@@ -41,13 +41,29 @@
             <li>
                 {% get_action_progress_route request.user as route %}
                 <a class="services-heading govuk-link govuk-!-font-weight-bold" href={{ route }}>Strategic action
-                    progress</a>
+                    summary</a>
                 <p class="home-services-para">
-                    Explore the latest status on departmental strategic actions across the critical supply chain.
+                    View all departmental strategic actions across the critical supply chains.
                 </p>
             </li>
         </ul>
     </div>
+    {% with qs_sap_link="https://data.trade.gov.uk/visualisations/link/6a51d70e-08e7-42cd-98d9-e5bb4c1db430" %}
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href="{{ qs_sap_link }}" class="services-heading govuk-link govuk-!-font-weight-bold">Strategic action progress</a>
+
+                <p class="home-services-para">
+                    Find out more about all strategic action progress and status history.
+                </p>
+            </li>
+        </ul>
+    </div>
+    {% endwith %}
+</div>
+
+<div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
         <ul class="govuk-list">
             <li>
@@ -55,11 +71,26 @@
                     chain details</a>
 
                 <p class="home-services-para">
-                    Explore supply chain information in detail, including country dependency.
+                    View all supply chain information including vulnerabilities, maturity ratings, criticality scores, supply chain stages and scenario testing.
                 </p>
             </li>
         </ul>
     </div>
+    {% with qs_ci_link="https://data.trade.gov.uk/visualisations/link/6a51d70e-08e7-42cd-98d9-e5bb4c1db430" %}
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href="{{ qs_ci_link }}" class="services-heading govuk-link govuk-!-font-weight-bold">Country information</a>
+
+                <p class="home-services-para">
+                    Find out more about all country dependencies in relation to supply chain information.
+                </p>
+            </li>
+        </ul>
+    </div>
+    {% endwith %}
+
 </div>
+
 
 {% endblock %}
