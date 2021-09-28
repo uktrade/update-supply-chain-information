@@ -1,5 +1,5 @@
 {% extends "chain_details_base.html" %}
-
+{% load supply_chain_tags %}
 
 {% block page_header %}
 
@@ -43,7 +43,20 @@
 {% include "includes/chain_stages.html" %}
 {% include "scenario_assessment.html" %}
 
-<br>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half" id="app-quicksight-countries-link">
+        <ul class="govuk-list">
+            <li>
+                <a href="{% quicksight_countries_dashboard_url %}" class="services-heading govuk-link govuk-!-font-weight-bold">Country information</a>
+
+                <p class="home-services-para">
+                    Find out more about all country dependencies in relation to supply chain information.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
+    <br>
 
 
 <div class="app-back-to-top" data-module="app-back-to-top">
@@ -54,6 +67,5 @@
     </svg>Back to top
   </a>
 </div>
-
 
 {% endblock page_content %}

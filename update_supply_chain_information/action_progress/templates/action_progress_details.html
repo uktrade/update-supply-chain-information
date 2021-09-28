@@ -24,6 +24,19 @@
 {% include "includes/action_details.html" %}
 
 <br>
+{% with qs_sap_link="https://data.trade.gov.uk/visualisations/link/6a51d70e-08e7-42cd-98d9-e5bb4c1db430" %}
+    <div class="govuk-grid-column-one-half govuk-!-padding-left-0" id="app-quicksight-countries-link">
+        <ul class="govuk-list">
+            <li>
+                <a href="{{ qs_sap_link }}" class="services-heading govuk-link govuk-!-font-weight-bold">Strategic action progress</a>
+
+                <p class="home-services-para">
+                    Find out more about all strategic action progress and status history.
+                </p>
+            </li>
+        </ul>
+    </div>
+{% endwith %}
 <br>
 <div class="app-back-to-top" data-module="app-back-to-top">
     <a class="govuk-link govuk-link--no-visited-state app-back-to-top__link" href="#top">

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load supply_chain_tags %}
 
 {% block body %}
 <h1 class="govuk-heading-xl" style="margin-bottom: 15px;">UK supply chain<br>resilience tool</h1>
@@ -76,11 +77,10 @@
             </li>
         </ul>
     </div>
-    {% with qs_ci_link="https://data.trade.gov.uk/visualisations/link/6a51d70e-08e7-42cd-98d9-e5bb4c1db430" %}
     <div class="govuk-grid-column-one-half">
         <ul class="govuk-list">
             <li>
-                <a href="{{ qs_ci_link }}" class="services-heading govuk-link govuk-!-font-weight-bold">Country information</a>
+                <a href="{% quicksight_countries_dashboard_url %}" class="services-heading govuk-link govuk-!-font-weight-bold">Country information</a>
 
                 <p class="home-services-para">
                     Find out more about all country dependencies in relation to supply chain information.
@@ -88,7 +88,6 @@
             </li>
         </ul>
     </div>
-    {% endwith %}
 
 </div>
 
