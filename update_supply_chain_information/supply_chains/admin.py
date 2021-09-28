@@ -4,6 +4,7 @@ from django.contrib.admin import AdminSite
 from django.contrib.postgres.forms.array import SplitArrayField
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.template.defaultfilters import linebreaks_filter
 
 from accounts.models import GovDepartment, User
 from supply_chains.models import (
@@ -15,6 +16,7 @@ from supply_chains.models import (
     SupplyChainStage,
     SupplyChainStageSection,
     ScenarioAssessment,
+    SupplyChainUmbrella,
 )
 
 
@@ -158,7 +160,7 @@ class ScenarioAssessmentAdmin(admin.ModelAdmin):
 
 class SCStageSectionInline(admin.StackedInline):
     model = SupplyChainStageSection
-    extra = 2
+    extra = 1
 
 
 class SupplyChainStageAdmin(admin.ModelAdmin):
@@ -184,15 +186,6 @@ class SupplyChainStageAdmin(admin.ModelAdmin):
     )
 
     list_filter = ("supply_chain__name",)
-
-
-admin_site.register(GovDepartment, GovDepartmentAdmin)
-admin_site.register(User, UserAdmin)
-admin_site.register(SupplyChain, SupplyChainAdmin)
-admin_site.register(StrategicAction, StrategicActionAdmin)
-admin_site.register(StrategicActionUpdate, StrategicActionUpdateAdmin)
-admin_site.register(SupplyChainStage, SupplyChainStageAdmin)
-admin_site.register(ScenarioAssessment, ScenarioAssessmentAdmin)
 
 
 class CountryDependencyAdmin(admin.ModelAdmin):
@@ -228,5 +221,24 @@ class CountryDependencyAdmin(admin.ModelAdmin):
     radio_fields = {"dependency_level": admin.HORIZONTAL}
 
 
+class SupplyChainUmbrellaAdmin(admin.ModelAdmin):
+    readonly_fields = ("id",)
+
+    list_display = ("name", "gov_department", "supply_chains")
+
+    def supply_chains(self, obj):
+        scs = obj.supply_chains.values("name").order_by("name")
+        names = [x["name"] for x in scs]
+        return linebreaks_filter("\n".join(names))
+
+
+admin_site.register(GovDepartment, GovDepartmentAdmin)
+admin_site.register(User, UserAdmin)
+admin_site.register(SupplyChain, SupplyChainAdmin)
+admin_site.register(StrategicAction, StrategicActionAdmin)
+admin_site.register(StrategicActionUpdate, StrategicActionUpdateAdmin)
+admin_site.register(SupplyChainStage, SupplyChainStageAdmin)
+admin_site.register(ScenarioAssessment, ScenarioAssessmentAdmin)
 admin_site.register(Country)
 admin_site.register(CountryDependency, CountryDependencyAdmin)
+admin_site.register(SupplyChainUmbrella, SupplyChainUmbrellaAdmin)

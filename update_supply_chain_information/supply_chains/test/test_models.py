@@ -1,13 +1,12 @@
-from datetime import date, timedelta
-from dateutil.relativedelta import relativedelta
+from datetime import date
+from typing import Dict, Final
 
 import pytest
-from reversion.models import Version
 from django.core.exceptions import ValidationError
 from django.template.defaultfilters import slugify
+from accounts.test.factories import GovDepartmentFactory
 
 from supply_chains.models import (
-    StrategicAction,
     RAGRating,
 )
 from supply_chains.models import SupplyChain, StrategicActionUpdate
@@ -15,8 +14,8 @@ from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,
     StrategicActionUpdateFactory,
+    SupplyChainUmbrellaFactory,
 )
-from accounts.models import GovDepartment
 
 pytestmark = pytest.mark.django_db
 
@@ -55,14 +54,6 @@ def test_no_archived_date_save_strategic_action():
     )
 
 
-def test_no_archived_reason_save_supply_chain():
-    """Validate that no supply chain can be archived w/o archive_reason"""
-    msg = "An archived_reason must be given when archiving a supply chain."
-    with pytest.raises(ValidationError) as excifno:
-        SupplyChainFactory(is_archived=True)
-        assert msg in excifno.value.messages
-
-
 def test_archived_date_set_save_strategic_action():
     """Test archived_date is set when archived strategic action saved."""
     sa = StrategicActionFactory(is_archived=True, archived_reason="A reason")
@@ -92,3 +83,108 @@ def test_sc_risk_status():
     # Assert
     assert SupplyChain.objects.count() == 1
     assert SupplyChain.objects.get(name=sc_name).risk_severity_status == ""
+
+
+ArcReason: Final = "archived_reason"
+SCUmbrella: Final = "supply_chain_umbrella"
+
+ERROR_MSGS = {
+    ArcReason: ["An archived_reason must be given when archiving a supply chain."],
+    SCUmbrella: ["Department should match for supply chain and umbrella."],
+}
+
+
+class TestSCModel:
+    def validate(self, chain, expected_errors: Dict, objects_saved: int = 0):
+        try:
+            chain.full_clean()
+            chain.save()
+        except ValidationError as err:
+            details = dict(err)
+
+            assert all(
+                [
+                    [key in details for key in expected_errors],
+                    [expected_errors[key] == details[key] for key in expected_errors],
+                ]
+            )
+        else:
+            if expected_errors:
+                pytest.fail(f"No expections were raised out of {expected_errors}")
+        finally:
+            assert SupplyChain.objects.count() == objects_saved
+
+    def test_SC_no_umbrella(self, test_user):
+        # Arrange
+        # Act
+        sc = SupplyChainFactory.build(
+            gov_department=test_user.gov_department, supply_chain_umbrella=None
+        )
+
+        # Assert
+        self.validate(sc, {}, objects_saved=1)
+
+    def test_SC_with_umbrella(self, test_user):
+        # Arrange
+        umbrella = SupplyChainUmbrellaFactory.create(
+            gov_department=test_user.gov_department
+        )
+
+        # Act
+        sc = SupplyChainFactory.build(
+            gov_department=test_user.gov_department, supply_chain_umbrella=umbrella
+        )
+
+        # Assert
+        self.validate(sc, {}, objects_saved=1)
+
+    def test_SC_with_inv_umbrella(self, test_user):
+        # Arrange
+        dept = GovDepartmentFactory.create()
+        umbrella = SupplyChainUmbrellaFactory.create(gov_department=dept)
+
+        # Act
+        sc = SupplyChainFactory.build(
+            gov_department=test_user.gov_department, supply_chain_umbrella=umbrella
+        )
+
+        # Assert
+        self.validate(sc, {SCUmbrella: ERROR_MSGS[SCUmbrella]}, objects_saved=0)
+
+    def test_SC_unlink_umbrella(self, test_user):
+        # Arrange
+        umbrella = SupplyChainUmbrellaFactory.create(
+            gov_department=test_user.gov_department,
+        )
+        sc = SupplyChainFactory.create(
+            gov_department=test_user.gov_department, supply_chain_umbrella=umbrella
+        )
+
+        # Act
+        sc.supply_chain_umbrella = None
+
+        # Assert
+        self.validate(sc, {}, objects_saved=1)
+
+    def test_archived_SC(self, test_user):
+        # Arrange
+        # Act
+        sc = SupplyChainFactory.build(
+            gov_department=test_user.gov_department,
+            is_archived=True,
+            archived_reason="Hello World",
+        )
+
+        # Assert
+        self.validate(sc, {}, objects_saved=1)
+
+    def test_archived_no_reason(self, test_user):
+        # Arrange
+        # Act
+        sc = SupplyChainFactory.build(
+            gov_department=test_user.gov_department,
+            is_archived=True,
+        )
+
+        # Assert
+        self.validate(sc, {ArcReason: ERROR_MSGS[ArcReason]}, objects_saved=0)

@@ -12,6 +12,15 @@ from supply_chains.models import (
 )
 
 
+class SupplyChainUmbrellaFactory(factory.django.DjangoModelFactory):
+    name = factory.Sequence(lambda n: f"Category {n}")
+    description = factory.Faker("paragraph", nb_sentences=6)
+    gov_department = factory.SubFactory(GovDepartmentFactory)
+
+    class Meta:
+        model = "supply_chains.SupplyChainUmbrella"
+
+
 class SupplyChainFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: f"Product {n}")
     description = factory.Faker("paragraph", nb_sentences=6)
