@@ -2,6 +2,7 @@ import pytest
 from django.test import Client
 from django.urls import reverse
 
+from accounts.models import GovDepartment
 from accounts.test.factories import GovDepartmentFactory, UserFactory
 from supply_chains.test.factories import SupplyChainFactory, ScenarioAssessmentFactory
 
@@ -40,7 +41,6 @@ class TestSCDInfo:
         dept_name = "other_dep"
         dept = GovDepartmentFactory(name=dept_name)
         sc = SupplyChainFactory.create(gov_department=dept)
-        ScenarioAssessmentFactory(supply_chain=sc)
 
         # Act
         resp = logged_in_ogd.get(
@@ -58,7 +58,6 @@ class TestSCDInfo:
         dept_name = "other_dep"
         dept = GovDepartmentFactory(name=dept_name)
         sc = SupplyChainFactory.create(gov_department=dept)
-        ScenarioAssessmentFactory(supply_chain=sc)
 
         # Act
         resp = logged_in_client.get(
@@ -74,7 +73,6 @@ class TestSCDInfo:
     def test_auth_success(self, logged_in_client, test_user):
         # Arrange
         sc = SupplyChainFactory.create()
-        ScenarioAssessmentFactory(supply_chain=sc)
 
         # Act
         resp = logged_in_client.get(
@@ -99,3 +97,20 @@ class TestSCDInfo:
 
         # Assert
         assert resp.status_code == 404
+
+    def test_supply_chain_scenario_assessment_is_optional(self, logged_in_ogd):
+        # Arrange
+        dept = GovDepartment.objects.first()
+        sc = SupplyChainFactory.create(gov_department=dept)
+
+        # Act
+        resp = logged_in_ogd.get(
+            reverse(
+                "chain-details-info",
+                kwargs={"dept": dept.name, "supply_chain_slug": sc.slug},
+            )
+        )
+
+        # Assert
+        assert resp.status_code == 200
+        assert not hasattr(resp.context["sc"], "scenario_assessment")
