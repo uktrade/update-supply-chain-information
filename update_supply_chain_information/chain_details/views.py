@@ -135,12 +135,13 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
         )
 
         context["sc"] = supply_chain
-        context["scenario_assessment_sections"] = self.scenario_assessment_sections(
-            supply_chain.scenario_assessment
-        )
-        context["critical_scenario_paragraphs"] = self.critical_scenario_paragraphs(
-            supply_chain.scenario_assessment
-        )
+        if hasattr(supply_chain, "scenario_assessment"):
+            context["scenario_assessment_sections"] = self.scenario_assessment_sections(
+                supply_chain.scenario_assessment
+            )
+            context["critical_scenario_paragraphs"] = self.critical_scenario_paragraphs(
+                supply_chain.scenario_assessment
+            )
         context["stages"] = SupplyChainStage.objects.filter(
             supply_chain=context["sc"]
         ).order_by("order")
