@@ -55,14 +55,6 @@ def test_no_archived_date_save_strategic_action():
     )
 
 
-def test_no_archived_reason_save_supply_chain():
-    """Validate that no supply chain can be archived w/o archive_reason"""
-    msg = "An archived_reason must be given when archiving a supply chain."
-    with pytest.raises(ValidationError) as excifno:
-        SupplyChainFactory(is_archived=True)
-        assert msg in excifno.value.messages
-
-
 def test_archived_date_set_save_strategic_action():
     """Test archived_date is set when archived strategic action saved."""
     sa = StrategicActionFactory(is_archived=True, archived_reason="A reason")

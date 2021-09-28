@@ -36,6 +36,31 @@ class NullableRAGRating(models.TextChoices):
     NONE = (None, "—")
 
 
+class SupplyChainUmbrellaQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class SupplyChainUmbrella(models.Model):
+    objects = SupplyChainUmbrellaQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH, unique=True)
+    description = models.TextField(blank=True, default="")
+    last_modified = models.DateTimeField(auto_now=True)
+    gov_department = models.ForeignKey(
+        GovDepartment,
+        on_delete=models.PROTECT,
+        related_name="supply_chain_umbrellas",
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self) -> str:
+        if self.gov_department:
+            return f"{self.name}, {self.gov_department.name}"
+        else:
+            return f"{self.name}"
+
+
 class SupplyChainQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     def submitted_since(self, deadline):
         return self.filter(last_submission_date__gt=deadline)
@@ -57,6 +82,15 @@ class SupplyChain(models.Model):
         on_delete=models.PROTECT,
         related_name="supply_chains",
     )
+
+    supply_chain_umbrella = models.ForeignKey(
+        SupplyChainUmbrella,
+        on_delete=models.PROTECT,
+        related_name="supply_chains",
+        blank=True,
+        null=True,
+    )
+
     contact_name = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH, blank=True
     )
@@ -83,6 +117,34 @@ class SupplyChain(models.Model):
     archived_date = models.DateField(null=True, blank=True)
     last_modified = models.DateTimeField(auto_now=True)
 
+    def clean(self) -> None:
+        error_dict = {}
+        if self.supply_chain_umbrella and self.supply_chain_umbrella.gov_department:
+            if self.supply_chain_umbrella.gov_department != self.gov_department:
+                error_dict.update(
+                    {
+                        "supply_chain_umbrella": ValidationError(
+                            _("Department should match for supply chain and umbrella."),
+                            code="invalid",
+                        ),
+                    }
+                )
+
+        if self.is_archived and self.archived_reason == "":
+            error_dict.update(
+                {
+                    "archived_reason": ValidationError(
+                        _(
+                            "An archived_reason must be given when archiving a supply chain."
+                        ),
+                        code="required",
+                    ),
+                }
+            )
+
+        if error_dict:
+            raise ValidationError(error_dict)
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
@@ -90,19 +152,16 @@ class SupplyChain(models.Model):
         if self.is_archived and self.archived_date is None:
             self.archived_date = timezone.now().date()
 
-        self.full_clean()
+        if self.supply_chain_umbrella:
+            if not self.supply_chain_umbrella.gov_department:
+                # this must be the first link
+                self.supply_chain_umbrella.gov_department = self.gov_department
+                self.supply_chain_umbrella.save()
 
         return super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
-
-    def clean_fields(self, exclude=None):
-        super().clean_fields(exclude=exclude)
-        if self.is_archived and self.archived_reason == "":
-            raise ValidationError(
-                "An archived_reason must be given when archiving a supply chain."
-            )
 
 
 class StrategicActionQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
