@@ -1,5 +1,5 @@
 {% extends "action_progress_base.html" %}
-
+{% load supply_chain_tags %}
 
 {% block page_header %}
 
@@ -24,6 +24,19 @@
 {% include "includes/action_details.html" %}
 
 <br>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half" id="app-quicksight-countries-link">
+        <ul class="govuk-list">
+            <li>
+                <a href="{% visualisation_link %}" class="services-heading govuk-link govuk-!-font-weight-bold">Strategic action progress</a>
+
+                <p class="home-services-para">
+                    Find out more about all strategic action progress and status history.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
 <br>
 <div class="app-back-to-top" data-module="app-back-to-top">
     <a class="govuk-link govuk-link--no-visited-state app-back-to-top__link" href="#top">

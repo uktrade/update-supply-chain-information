@@ -1,0 +1,40 @@
+{% load gsc_notes %}
+
+<details class="govuk-details component-panel" data-module="govuk-details" id="chain-stages">
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+            Supply chain stages
+        </span>
+    </summary>
+    <br>
+    <div class="govuk-details__text app-dit-details__text">
+        <p class="govuk-body-s">
+            View the stages involved in a supply chain. Get information about products, services, companies, activities, countries, transport points and sectors.
+        </p>
+
+        <div class="govuk-accordion" data-module="govuk-accordion" id="stage-accordion">
+            {% for stage in stages %}
+            {% with it=forloop.counter|stringformat:"i" %}
+            {% with heading="accordion-default-heading-"|add:it content="accordion-default-content-"|add:it %}
+            <div class="govuk-accordion__section ">
+                <div class="govuk-accordion__section-header">
+                    <h2 class="govuk-accordion__section-heading">
+                        <span class="govuk-accordion__section-button" id={{heading}}>
+                            {{ stage.get_name_display }}
+                        </span>
+                    </h2>
+                </div>
+                <div id={{content}} class="govuk-accordion__section-content"
+                    aria-labelledby={{heading}}>
+                    {% include "includes/stage_section.html" with stage=stage %}
+                </div>
+            </div>
+            {% endwith %}
+            {% endwith %}
+            {% endfor %}
+        </div>
+        <div class="app-dit-gsc-notes">
+            {% gsc_notes instance=stage_notes %}
+        </div>
+    </div>
+</details>

@@ -1,0 +1,49 @@
+{% load gsc_notes %}
+
+<details class="govuk-details component-panel" data-module="govuk-details" id="supply-chain-scenario-testing"{% if not sc.scenario_assessment %} open{% endif %}>
+    <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+      Scenario testing
+    </span>
+    </summary>
+    <div class="govuk-details__text app-dit-details__text">
+        {% if sc.scenario_assessment %}
+            <p class="govuk-body-s">
+                Useful information about how a supply chain might deal with a potential critical scenario.
+            </p>
+            {% if critical_scenario_paragraphs %}
+                <h2 class="govuk-heading-s govuk-!-margin-bottom-2 govuk-!-padding-top-0">Critical scenarios</h2>
+                {% for critical_scenario_paragraph in critical_scenario_paragraphs %}
+                    <p class="govuk-body">
+                    {{ critical_scenario_paragraph }}
+                    </p>
+                {% endfor %}
+            {% endif %}
+            <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+                {% for scenario_assessment in scenario_assessment_sections %}
+                    <div class="govuk-accordion__section">
+                        <div class="govuk-accordion__section-header">
+                            <h2 class="govuk-accordion__section-heading">
+                                <span class="govuk-accordion__section-button" id="accordion-{{ scenario_assessment.title|slugify }}">
+                                    {% include "svg_rag_rating_icon.html" with rag_rating=scenario_assessment.rag_rating|default:'None' %}
+                                    {{ scenario_assessment.title }}
+                                </span>
+                            </h2>
+                        </div>
+                        <div id="accordion-default-content-{{ scenario_assessment.title|slugify }}" class="govuk-accordion__section-content" aria-labelledby="accordion-{{ scenario_assessment.title|slugify }}">
+                            <p class='govuk-body'>{{ scenario_assessment.impact|linebreaksbr }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            {% include "rag_rating_legend.html" %}
+            <div class="app-dit-gsc-notes">
+                {% gsc_notes instance=sc.scenario_assessment %}
+            </div>
+        {% else %}
+            <p class="govuk-body-s">
+                No scenario testing information found.
+            </p>
+        {% endif %}
+    </div>
+</details>

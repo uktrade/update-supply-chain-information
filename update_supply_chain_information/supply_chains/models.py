@@ -1,15 +1,13 @@
-from datetime import datetime, date, timedelta
-from dateutil.relativedelta import relativedelta
 import uuid
-from django.db.models import constraints
+from datetime import datetime, date, timedelta
 
 import reversion
-from django.db import models
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.utils import timezone
+from django.db import models
 from django.template.defaultfilters import slugify
-from django.contrib.postgres.fields import ArrayField
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from accounts.models import GovDepartment
@@ -19,7 +17,6 @@ from supply_chains.utils import (
     get_last_working_day_of_a_month,
 )
 
-
 MAX_SLUG_LENGTH = 75
 
 
@@ -27,6 +24,38 @@ class RAGRating(models.TextChoices):
     RED = ("RED", "Red")
     AMBER = ("AMBER", "Amber")
     GREEN = ("GREEN", "Green")
+
+
+class NullableRAGRating(models.TextChoices):
+    RED = ("RED", "Red")
+    AMBER = ("AMBER", "Amber")
+    GREEN = ("GREEN", "Green")
+    NONE = (None, "—")
+
+
+class SupplyChainUmbrellaQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class SupplyChainUmbrella(models.Model):
+    objects = SupplyChainUmbrellaQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH, unique=True)
+    description = models.TextField(blank=True, default="")
+    last_modified = models.DateTimeField(auto_now=True)
+    gov_department = models.ForeignKey(
+        GovDepartment,
+        on_delete=models.PROTECT,
+        related_name="supply_chain_umbrellas",
+        null=True,
+        blank=True,
+    )
+
+    def __str__(self) -> str:
+        if self.gov_department:
+            return f"{self.name}, {self.gov_department.name}"
+        else:
+            return f"{self.name}"
 
 
 class SupplyChainQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
@@ -50,6 +79,15 @@ class SupplyChain(models.Model):
         on_delete=models.PROTECT,
         related_name="supply_chains",
     )
+
+    supply_chain_umbrella = models.ForeignKey(
+        SupplyChainUmbrella,
+        on_delete=models.PROTECT,
+        related_name="supply_chains",
+        blank=True,
+        null=True,
+    )
+
     contact_name = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH, blank=True
     )
@@ -76,6 +114,34 @@ class SupplyChain(models.Model):
     archived_date = models.DateField(null=True, blank=True)
     last_modified = models.DateTimeField(auto_now=True)
 
+    def clean(self) -> None:
+        error_dict = {}
+        if self.supply_chain_umbrella and self.supply_chain_umbrella.gov_department:
+            if self.supply_chain_umbrella.gov_department != self.gov_department:
+                error_dict.update(
+                    {
+                        "supply_chain_umbrella": ValidationError(
+                            _("Department should match for supply chain and umbrella."),
+                            code="invalid",
+                        ),
+                    }
+                )
+
+        if self.is_archived and self.archived_reason == "":
+            error_dict.update(
+                {
+                    "archived_reason": ValidationError(
+                        _(
+                            "An archived_reason must be given when archiving a supply chain."
+                        ),
+                        code="required",
+                    ),
+                }
+            )
+
+        if error_dict:
+            raise ValidationError(error_dict)
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
@@ -83,19 +149,16 @@ class SupplyChain(models.Model):
         if self.is_archived and self.archived_date is None:
             self.archived_date = timezone.now().date()
 
-        self.full_clean()
+        if self.supply_chain_umbrella:
+            if not self.supply_chain_umbrella.gov_department:
+                # this must be the first link
+                self.supply_chain_umbrella.gov_department = self.gov_department
+                self.supply_chain_umbrella.save()
 
         return super().save(*args, **kwargs)
 
     def __str__(self):
         return self.name
-
-    def clean_fields(self, exclude=None):
-        super().clean_fields(exclude=exclude)
-        if self.is_archived and self.archived_reason == "":
-            raise ValidationError(
-                "An archived_reason must be given when archiving a supply chain."
-            )
 
 
 class StrategicActionQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
@@ -656,64 +719,135 @@ class ScenarioAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     pass
 
 
+@reversion.register()
 class ScenarioAssessment(GSCUpdateModel):
     objects = ScenarioAssessmentQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)
     borders_closed_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         the borders close.""",
     )
     borders_closed_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    borders_closed_is_critical = models.BooleanField(default=False)
+    borders_closed_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the lack of storage facilities become critical.""",
     )
     storage_full_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         storage facilities be full.""",
     )
     storage_full_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    storage_full_is_critical = models.BooleanField(default=False)
+    storage_full_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the lack of storage facilities become critical.""",
     )
     ports_blocked_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         the ports be blocked.""",
     )
     ports_blocked_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    ports_blocked_is_critical = models.BooleanField(default=False)
+    ports_blocked_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the port blockages become critical.""",
     )
     raw_material_shortage_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         there be a raw material shortage.""",
     )
     raw_material_shortage_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    raw_material_shortage_is_critical = models.BooleanField(default=False)
+    raw_material_shortage_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the raw materials shortage become critical.""",
     )
     labour_shortage_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         there be a labour shortage.""",
     )
     labour_shortage_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
+    )
+    labour_shortage_is_critical = models.BooleanField(default=False)
+    labour_shortage_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the labour shortages become critical.""",
     )
     demand_spike_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         the demand spike.""",
     )
     demand_spike_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
-        choices=RAGRating.choices,
+        choices=NullableRAGRating.choices,
     )
-    supply_chain = models.ForeignKey(
+    demand_spike_is_critical = models.BooleanField(default=False)
+    demand_spike_critical_scenario = models.TextField(
+        blank=True,
+        help_text="""This field collects information about the scenarios envisaged should the demand spike become critical.""",
+    )
+    start_date = models.DateField(null=True, blank=True)
+    supply_chain = models.OneToOneField(
         SupplyChain,
         on_delete=models.PROTECT,
         related_name="scenario_assessment",
     )
     last_modified = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        # Log changes in reversion
+        user = kwargs.pop("user", None)
+        # Assume this is a new one
+        prefix = "Created"
+        if self.pk is not None:
+            # The test item factory appears to create a PK for the model, so it might not really exist
+            try:
+                ScenarioAssessment.objects.get(pk=self.pk)
+                # existing instance so record as Edit
+                prefix = "Edited"
+            except ScenarioAssessment.DoesNotExist:
+                pass
+        reversion_message = (
+            f"{prefix}: scenario assessment for {self.supply_chain.name}"
+        )
+        with reversion.create_revision():
+            result = super().save(*args, **kwargs)
+            if reversion_message is not None:
+                reversion.set_comment(reversion_message)
+            if user is not None:
+                reversion.set_user(user)
+        return result
+
+    def __str__(self):
+        return f"{self.supply_chain.name} scenario assessment"
 
 
 class SupplyChainStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
@@ -722,35 +856,53 @@ class SupplyChainStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
 
 class SupplyChainStage(GSCUpdateModel):
     class StageName(models.TextChoices):
-        DEMAND_REQ = ("demand_requirements", "Demand Requirements")
-        RAW_MATERIAL_EXT = ("raw_material_ext", "Raw Materials Extraction/Mining")
+        DEMAND_REQ = ("demand requirements", "Demand Requirements")
+        RAW_MATERIAL_EXT = (
+            "raw materials extraction/mining",
+            "Raw Materials Extraction/Mining",
+        )
         REFINING = ("refining", "Refining")
-        RAW_MATERIAL_PROC = ("raw_material_proc", "Raw Materials Processing/Refining")
-        CHEMICAL_PROC = ("chemical_processing", "Chemical Processing")
-        OTH_MATERIAL_PROC = ("other_material_proc", "Other Material-Conversion Process")
-        RAW_MATERIAL_SUP = ("raw_material_sup", "Raw Materials Suppliers")
-        INT_GOODS = ("intermediate_goods", "Intermediate Goods/Capital")
-        INBOUND_LOG = ("inbound_log", "Inbound Logistics")
-        DELIVERY = ("delivery", "Delivery/Shipping ")
+        RAW_MATERIAL_PROC = (
+            "raw materials processing/refining",
+            "Raw Materials Processing/Refining",
+        )
+        CHEMICAL_PROC = ("chemical processing", "Chemical Processing")
+        OTH_MATERIAL_PROC = (
+            "other material-conversion process",
+            "Other Material-Conversion Process",
+        )
+        RAW_MATERIAL_SUP = ("raw materials suppliers", "Raw Materials Suppliers")
+        INT_GOODS = ("intermediate goods/capital", "Intermediate Goods/Capital")
+        INBOUND_LOG = ("inbound logistics", "Inbound Logistics")
+        DELIVERY = ("delivery/shipping ", "Delivery/Shipping")
         MANUFACTURING = ("manufacturing", "Manufacturing")
-        COMP_SUP = ("comp_sup", "Component Suppliers")
-        FINISHED_GOODS_SUP = ("finished_goods_sup", "Finished Goods Supplier")
+        COMP_SUP = ("component suppliers", "Component Suppliers")
+        FINISHED_GOODS_SUP = ("finished goods supplier", "Finished Goods Supplier")
         ASSEMBLY = ("assembly", "Assembly")
-        TESTING = ("testing_verif", "Testing/Verification/Approval/Release")
-        FINISHED_PRODUCT = ("finished_product", "Finished Product")
-        PACKAGING = ("packaging", "Packaging/Repackaging")
-        OUTBOUND_LOG = ("outbound_log", "Outbound Logistics")
-        STORAGE = ("storage", "Storage/Store")
+        TESTING = (
+            "testing/verification/approval/release",
+            "Testing/Verification/Approval/Release",
+        )
+        FINISHED_PRODUCT = ("finished product", "Finished Product")
+        PACKAGING = ("packaging/repackaging", "Packaging/Repackaging")
+        OUTBOUND_LOG = ("outbound logistics", "Outbound Logistics")
+        STORAGE = ("storage/store", "Storage/Store")
         DISTRIBUTORS = ("distributors", "Distributors")
-        ENDPOINT = ("endpoint", "End Point (Retailer, Hospital, Grid, etc)")
-        ENDUSE = ("end_use", "End Use/Consumer")
-        SERVICE_PROVIDER = ("service_provider", "Service Provider")
+        ENDPOINT = (
+            "end point (retailer, hospital, grid, etc)",
+            "End Point (Retailer, Hospital, Grid, etc)",
+        )
+        ENDUSE = ("end use/consumer", "End Use/Consumer")
+        SERVICE_PROVIDER = ("service provider", "Service Provider")
         INSTALLATION = ("installation", "Installation")
-        DECOMMISSION = ("decommission", "Decommission  Assets")
+        DECOMMISSION = ("decommission  assets", "Decommission  Assets")
         RECYCLING = ("recycling", "Recycling")
-        WASTE_DISPOSAL = ("waste_disposal", "Waste Disposal/Asset Disposal")
+        WASTE_DISPOSAL = (
+            "waste disposal/asset disposal",
+            "Waste Disposal/Asset Disposal",
+        )
         MAINTENANCE = ("maintenance", "Maintenance")
-        OTHER = ("other", "Other - Please Describe")
+        OTHER = ("other - please describe", "Other - Please Describe")
 
     objects = SupplyChainStageQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -791,14 +943,14 @@ class SupplyChainStageSectionQuerySet(ActivityStreamQuerySetMixin, models.QueryS
 class SupplyChainStageSection(models.Model):
     class SectionName(models.TextChoices):
         OVERVIEW = ("overview", "Overview")
-        KEYPRODUCTS = ("key_products", "Key Products")
-        KEYSERVICES = ("key_services", "Key Services")
-        KEYACTIVITIES = ("key_activities", "Key Activities")
-        KEYCOUNTRIES = ("key_countries", "Key Countries")
-        KEYTRANSLINKS = ("key_transport_links", "Key Transport Links")
-        KEYCOMPANIES = ("key_companies", "Key Companies")
-        KEYSECTORS = ("key_sectors", "Key Sectors")
-        KEYOTHINFO = ("other_info", "Other Relevant Information")
+        KEYPRODUCTS = ("key products", "Key Products")
+        KEYSERVICES = ("key services", "Key Services")
+        KEYACTIVITIES = ("key activities", "Key Activities")
+        KEYCOUNTRIES = ("key countries", "Key Countries")
+        KEYTRANSPTS = ("key transport points", "Key Transport Points")
+        KEYCOMPANIES = ("key companies", "Key Companies")
+        KEYSECTORS = ("key sectors", "Key Sectors")
+        KEYOTHINFO = ("other relevant information", "Other Relevant Information")
 
     objects = SupplyChainStageSectionQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

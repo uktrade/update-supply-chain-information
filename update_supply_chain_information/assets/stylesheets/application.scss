@@ -59,3 +59,71 @@ span.moj-sub-navigation__link:hover {
   grid-template-columns: auto auto;
   grid-gap: 10px;
 }
+
+.app-dit-details__text {
+  border-left-color: transparent;
+}
+
+.app-dit-rag-rating__icon svg {
+  width: 1.8rem;
+  height: 1.8rem;
+  position: relative;
+  bottom: -0.32rem;
+  padding-right: 0.5rem;
+}
+
+.app-dit-rag-rating__icon svg text {
+  font-size: 3rem;
+  font-weight: normal;
+}
+
+.app-dit-rag-rating__icon-red svg {
+  color: #d4351c;
+}
+
+.app-dit-rag-rating__icon-red svg text {
+  color: #fff;
+}
+
+.app-dit-rag-rating__icon-green svg {
+  color: #00703c;
+}
+
+.app-dit-rag-rating__icon-green svg text {
+  color: #fff;
+}
+
+.app-dit-rag-rating__icon-amber svg {
+  color: #f47738;
+}
+
+.app-dit-rag-rating__icon-amber svg text {
+  color: #000;
+}
+
+.app-dit-rag-rating__icon-none svg {
+  color: govuk-colour("dark-grey", $legacy: "grey-1");
+}
+
+.app-dit-rag-rating__icon-none svg rect {
+  color: #fff;
+}
+
+.app-dit-rag-rating-legend {
+  position: relative;
+  @include govuk-responsive-margin(9, "top");
+}
+
+.app-dit-rag-rating-legend__item {
+  margin-left: 2.5em;
+}
+
+.app-dit-rag-rating-legend__item .app-dit-rag-rating__icon {
+  position: absolute;
+  left: 0;
+  margin-top: -0.75rem;
+}
+
+.app-dit-gsc-notes {
+  @include govuk-responsive-margin(9, "top");
+}

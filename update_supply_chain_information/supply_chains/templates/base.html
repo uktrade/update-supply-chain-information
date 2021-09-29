@@ -35,12 +35,22 @@
         </li>
         <li class="govuk-header__navigation-item {% if active_menu == 'sap' %} govuk-header__navigation-item--active{% endif %}">
             <a class="govuk-header__link" href={% url 'action-progress' %}>
+                Strategic action summary
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item">
+            <a class="govuk-header__link" href="{% visualisation_link %}">
                 Strategic action progress
             </a>
         </li>
         <li class="govuk-header__navigation-item {% if active_menu == 'scd' %} govuk-header__navigation-item--active{% endif %}">
             <a class="govuk-header__link" href={% url 'chain-details' %}>
                 Supply chain details
+            </a>
+        </li>
+        <li class="govuk-header__navigation-item">
+            <a class="govuk-header__link" href="{% quicksight_countries_dashboard_url %}">
+                Country information
             </a>
         </li>
     </ul>

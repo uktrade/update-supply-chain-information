@@ -12,16 +12,16 @@
 
 <br>
 <dl class="govuk-summary-list">
-    <div class="tasklist-top-border"></div>
-    {% for sc in chains %}
-    <div class="govuk-summary-list__row">
-        <dd class="govuk-summary-list__value">
-            <a href="#" class="govuk-link govuk-!-font-weight-bold">{{ sc.name }}</a>
-            <p class="scd-description govuk-!-font-size-16"> {{ sc.description|truncatewords:30 }} </p>
-        </dd>
-    </div>
+  <div class="tasklist-top-border"></div>
+  {% for sc in chains %}
+  <div class="govuk-summary-list__row">
+    <dd class="govuk-summary-list__value">
+      <a href={% url 'chain-details-info' dept sc.slug %} class="govuk-link govuk-!-font-weight-bold">{{ sc.name }}</a>
+      <p class="scd-description govuk-!-font-size-16"> {{ sc.description|truncatewords:30 }} </p>
+    </dd>
+  </div>
 
-    {% endfor %}
+  {% endfor %}
 </dl>
 {% if chains.has_other_pages %}
 {% include 'includes/pagination.html' with objects=chains objects_name="supply chains" %}
@@ -30,14 +30,13 @@
 <br>
 
 <div class="app-back-to-top" data-module="app-back-to-top">
-    <a class="govuk-link govuk-link--no-visited-state app-back-to-top__link" href="#top">
-      <svg role="presentation" focusable="false" class="app-back-to-top__icon" xmlns="http://www.w3.org/2000/svg" width="19" height="17" viewBox="0 0 19 17">
-        <path fill="currentColor" d="M6.5 0L0 6.5 1.4 8l4-4v12.7h2V4l4.3 4L13 6.4z"></path>
-      </svg>Back to top
-    </a>
-  </div>
+  <a class="govuk-link govuk-link--no-visited-state app-back-to-top__link" href="#top">
+    <svg role="presentation" focusable="false" class="app-back-to-top__icon" xmlns="http://www.w3.org/2000/svg"
+      width="19" height="17" viewBox="0 0 19 17">
+      <path fill="currentColor" d="M6.5 0L0 6.5 1.4 8l4-4v12.7h2V4l4.3 4L13 6.4z"></path>
+    </svg>Back to top
+  </a>
+</div>
 
 
 {% endblock page_content %}
-
-

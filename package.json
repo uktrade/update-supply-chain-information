@@ -13,14 +13,14 @@
     "file-loader": "^6.2.0",
     "govuk-frontend": "^3.13.0",
     "mini-css-extract-plugin": "^2.2.0",
-    "sass": "^1.37.5",
+    "sass": "^1.42.1",
     "sass-loader": "^12.1.0",
-    "webpack": "^5.50.0",
+    "webpack": "^5.53.0",
     "webpack-bundle-tracker": "^1.2.0",
-    "webpack-cli": "^4.7.2"
+    "webpack-cli": "^4.8.0"
   },
   "devDependencies": {
-    "axe-core": "^4.2.3",
+    "axe-core": "^4.3.3",
     "cypress": "^6.9.1",
     "cypress-axe": "^0.13.0",
     "webpack-dev-server": "^3.9.0"

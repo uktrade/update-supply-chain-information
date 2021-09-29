@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load supply_chain_tags %}
 
 {% block body %}
 <h1 class="govuk-heading-xl" style="margin-bottom: 15px;">UK supply chain<br>resilience tool</h1>
@@ -41,9 +42,9 @@
             <li>
                 {% get_action_progress_route request.user as route %}
                 <a class="services-heading govuk-link govuk-!-font-weight-bold" href={{ route }}>Strategic action
-                    progress</a>
+                    summary</a>
                 <p class="home-services-para">
-                    Explore the latest status on departmental strategic actions across the critical supply chain.
+                    View all departmental strategic actions across the critical supply chains.
                 </p>
             </li>
         </ul>
@@ -51,15 +52,42 @@
     <div class="govuk-grid-column-one-half">
         <ul class="govuk-list">
             <li>
-                <a href={% url 'chain-details' %} class="services-heading govuk-link govuk-!-font-weight-bold">Supply
-                    chain details</a>
+                <a href="{% visualisation_link %}" class="services-heading govuk-link govuk-!-font-weight-bold">Strategic action progress</a>
 
                 <p class="home-services-para">
-                    Explore supply chain information in detail, including country dependency.
+                    Find out more about all strategic action progress and status history.
                 </p>
             </li>
         </ul>
     </div>
 </div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href={% url 'chain-details' %} class="services-heading govuk-link govuk-!-font-weight-bold">Supply
+                    chain details</a>
+
+                <p class="home-services-para">
+                    View all supply chain information including vulnerabilities, maturity ratings, criticality scores, supply chain stages and scenario testing.
+                </p>
+            </li>
+        </ul>
+    </div>
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href="{% quicksight_countries_dashboard_url %}" class="services-heading govuk-link govuk-!-font-weight-bold">Country information</a>
+
+                <p class="home-services-para">
+                    Find out more about all country dependencies in relation to supply chain information.
+                </p>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
 
 {% endblock %}
