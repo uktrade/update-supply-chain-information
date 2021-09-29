@@ -1,15 +1,13 @@
-from datetime import datetime, date, timedelta
-from dateutil.relativedelta import relativedelta
 import uuid
-from django.db.models import constraints
+from datetime import datetime, date, timedelta
 
 import reversion
-from django.db import models
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.utils import timezone
+from django.db import models
 from django.template.defaultfilters import slugify
-from django.contrib.postgres.fields import ArrayField
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
 from accounts.models import GovDepartment
@@ -18,7 +16,6 @@ from supply_chains.utils import (
     get_last_working_day_of_previous_month,
     get_last_working_day_of_a_month,
 )
-
 
 MAX_SLUG_LENGTH = 75
 
@@ -722,6 +719,7 @@ class ScenarioAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     pass
 
 
+@reversion.register()
 class ScenarioAssessment(GSCUpdateModel):
     objects = ScenarioAssessmentQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -811,6 +809,30 @@ class ScenarioAssessment(GSCUpdateModel):
         related_name="scenario_assessment",
     )
     last_modified = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        # Log changes in reversion
+        user = kwargs.pop("user", None)
+        # Assume this is a new one
+        prefix = "Created"
+        if self.pk is not None:
+            # The test item factory appears to create a PK for the model, so it might not really exist
+            try:
+                ScenarioAssessment.objects.get(pk=self.pk)
+                # existing instance so record as Edit
+                prefix = "Edited"
+            except ScenarioAssessment.DoesNotExist:
+                pass
+        reversion_message = (
+            f"{prefix}: scenario assessment for {self.supply_chain.name}"
+        )
+        with reversion.create_revision():
+            result = super().save(*args, **kwargs)
+            if reversion_message is not None:
+                reversion.set_comment(reversion_message)
+            if user is not None:
+                reversion.set_user(user)
+        return result
 
     def __str__(self):
         return f"{self.supply_chain.name} scenario assessment"
