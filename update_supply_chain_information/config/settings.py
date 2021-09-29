@@ -252,3 +252,8 @@ HAWK_CREDENTIALS = {
     },
 }
 HAWK_MESSAGE_EXPIRATION = 60  # seconds until a Hawk header is regarded as expired
+
+# This value is set in Vault so it can be readily updated once the correct link is available
+QUICKSIGHT_COUNTRIES_DASHBOARD_URL = env.str(
+    "QUICKSIGHT_COUNTRIES_DASHBOARD_URL", default="about:blank"
+)

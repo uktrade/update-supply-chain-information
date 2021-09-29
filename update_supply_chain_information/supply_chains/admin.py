@@ -4,6 +4,7 @@ from django.contrib.admin import AdminSite
 from django.contrib.postgres.forms.array import SplitArrayField
 from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.template.defaultfilters import linebreaks_filter
 
 from accounts.models import GovDepartment, User
 from supply_chains.models import (
@@ -14,6 +15,8 @@ from supply_chains.models import (
     CountryDependency,
     SupplyChainStage,
     SupplyChainStageSection,
+    ScenarioAssessment,
+    SupplyChainUmbrella,
 )
 
 
@@ -117,9 +120,47 @@ class StrategicActionUpdateAdmin(admin.ModelAdmin):
         return obj.supply_chain.gov_department
 
 
+class ScenarioAssessmentAdmin(admin.ModelAdmin):
+    fields = (
+        "supply_chain",
+        "borders_closed_rag_rating",
+        "borders_closed_impact",
+        "borders_closed_is_critical",
+        "borders_closed_critical_scenario",
+        "storage_full_rag_rating",
+        "storage_full_impact",
+        "storage_full_is_critical",
+        "storage_full_critical_scenario",
+        "ports_blocked_rag_rating",
+        "ports_blocked_impact",
+        "ports_blocked_is_critical",
+        "ports_blocked_critical_scenario",
+        "raw_material_shortage_rag_rating",
+        "raw_material_shortage_impact",
+        "raw_material_shortage_is_critical",
+        "raw_material_shortage_critical_scenario",
+        "labour_shortage_rag_rating",
+        "labour_shortage_impact",
+        "labour_shortage_is_critical",
+        "labour_shortage_critical_scenario",
+        "demand_spike_rag_rating",
+        "demand_spike_impact",
+        "demand_spike_is_critical",
+        "demand_spike_critical_scenario",
+        "gsc_updated_on",
+        "gsc_last_changed_by",
+        "gsc_review_on",
+    )
+
+    list_filter = (
+        "supply_chain__gov_department",
+        "supply_chain",
+    )
+
+
 class SCStageSectionInline(admin.StackedInline):
     model = SupplyChainStageSection
-    extra = 2
+    extra = 1
 
 
 class SupplyChainStageAdmin(admin.ModelAdmin):
@@ -145,14 +186,6 @@ class SupplyChainStageAdmin(admin.ModelAdmin):
     )
 
     list_filter = ("supply_chain__name",)
-
-
-admin_site.register(GovDepartment, GovDepartmentAdmin)
-admin_site.register(User, UserAdmin)
-admin_site.register(SupplyChain, SupplyChainAdmin)
-admin_site.register(StrategicAction, StrategicActionAdmin)
-admin_site.register(StrategicActionUpdate, StrategicActionUpdateAdmin)
-admin_site.register(SupplyChainStage, SupplyChainStageAdmin)
 
 
 class CountryDependencyAdmin(admin.ModelAdmin):
@@ -188,5 +221,24 @@ class CountryDependencyAdmin(admin.ModelAdmin):
     radio_fields = {"dependency_level": admin.HORIZONTAL}
 
 
+class SupplyChainUmbrellaAdmin(admin.ModelAdmin):
+    readonly_fields = ("id",)
+
+    list_display = ("name", "gov_department", "supply_chains")
+
+    def supply_chains(self, obj):
+        scs = obj.supply_chains.values("name").order_by("name")
+        names = [x["name"] for x in scs]
+        return linebreaks_filter("\n".join(names))
+
+
+admin_site.register(GovDepartment, GovDepartmentAdmin)
+admin_site.register(User, UserAdmin)
+admin_site.register(SupplyChain, SupplyChainAdmin)
+admin_site.register(StrategicAction, StrategicActionAdmin)
+admin_site.register(StrategicActionUpdate, StrategicActionUpdateAdmin)
+admin_site.register(SupplyChainStage, SupplyChainStageAdmin)
+admin_site.register(ScenarioAssessment, ScenarioAssessmentAdmin)
 admin_site.register(Country)
 admin_site.register(CountryDependency, CountryDependencyAdmin)
+admin_site.register(SupplyChainUmbrella, SupplyChainUmbrellaAdmin)

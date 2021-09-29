@@ -8,7 +8,17 @@ from supply_chains.models import (
     SupplyChain,
     SupplyChainStage,
     SupplyChainStageSection,
+    NullableRAGRating,
 )
+
+
+class SupplyChainUmbrellaFactory(factory.django.DjangoModelFactory):
+    name = factory.Sequence(lambda n: f"Category {n}")
+    description = factory.Faker("paragraph", nb_sentences=6)
+    gov_department = factory.SubFactory(GovDepartmentFactory)
+
+    class Meta:
+        model = "supply_chains.SupplyChainUmbrella"
 
 
 class SupplyChainFactory(factory.django.DjangoModelFactory):
@@ -79,3 +89,47 @@ class SupplyChainStageSectionFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = "supply_chains.SupplyChainStageSection"
+
+
+class ScenarioAssessmentFactory(factory.django.DjangoModelFactory):
+    borders_closed_impact = factory.Faker("text")
+    borders_closed_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    borders_closed_is_critical = factory.Faker("pybool")
+    borders_closed_critical_scenario = factory.Faker("text")
+    storage_full_impact = factory.Faker("text")
+    storage_full_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    storage_full_is_critical = factory.Faker("pybool")
+    storage_full_critical_scenario = factory.Faker("text")
+    ports_blocked_impact = factory.Faker("text")
+    ports_blocked_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    ports_blocked_is_critical = factory.Faker("pybool")
+    ports_blocked_critical_scenario = factory.Faker("text")
+    raw_material_shortage_impact = factory.Faker("text")
+    raw_material_shortage_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    raw_material_shortage_is_critical = factory.Faker("pybool")
+    raw_material_shortage_critical_scenario = factory.Faker("text")
+    labour_shortage_impact = factory.Faker("text")
+    labour_shortage_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    labour_shortage_is_critical = factory.Faker("pybool")
+    labour_shortage_critical_scenario = factory.Faker("text")
+    demand_spike_impact = factory.Faker("text")
+    demand_spike_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    demand_spike_is_critical = factory.Faker("pybool")
+    demand_spike_critical_scenario = factory.Faker("text")
+    start_date = factory.Faker("date_object")
+    supply_chain = factory.SubFactory(SupplyChainFactory)
+
+    class Meta:
+        model = "supply_chains.ScenarioAssessment"

@@ -100,6 +100,11 @@ describe('The SAP details page', () => {
     cy.get('#action-details div.govuk-details__text dl.govuk-summary-list div dd.govuk-summary-list__value')
       .should('have.length', 7)
   })
+  it('shows the QuickSight link', () => {
+    cy.get('#app-quicksight-countries-link').should('exist')
+    cy.get('#app-quicksight-countries-link a[href]').should('exist').should('contain.text', "Strategic action progress")
+    cy.get('#app-quicksight-countries-link p.home-services-para').should('exist').should('contain.text', "Find out more about all strategic action progress and status history.")
+  })
 })
 
 const archivedAction = actions.filter(action => action.fields.name == "SA 007")[0]

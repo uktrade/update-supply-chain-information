@@ -1,0 +1,106 @@
+[
+{
+  "model": "supply_chains.supplychainstage",
+  "pk": "41fec4aa-f92d-4a9e-a069-472d8ae7657e",
+  "fields": {
+    "gsc_last_changed_by": "marshall",
+    "gsc_updated_on": "2021-08-18",
+    "gsc_review_on": null,
+    "name": "chemical processing",
+    "supply_chain": "14201f69-2d95-4b4c-9523-b44c6c732a80",
+    "order": 2,
+    "last_modified": "2021-09-24T09:50:01.769Z"
+  }
+},
+{
+  "model": "supply_chains.supplychainstage",
+  "pk": "6eeab69d-0c8b-4e35-afc6-cbde004704ea",
+  "fields": {
+    "gsc_last_changed_by": "spiderman",
+    "gsc_updated_on": "2021-09-09",
+    "gsc_review_on": null,
+    "name": "raw materials extraction/mining",
+    "supply_chain": "14201f69-2d95-4b4c-9523-b44c6c732a80",
+    "order": 4,
+    "last_modified": "2021-09-24T09:45:41.220Z"
+  }
+},
+{
+  "model": "supply_chains.supplychainstage",
+  "pk": "72d0ee32-05f5-4a6a-8e07-287bda04de48",
+  "fields": {
+    "gsc_last_changed_by": "hulk",
+    "gsc_updated_on": "2021-08-11",
+    "gsc_review_on": null,
+    "name": "refining",
+    "supply_chain": "14201f69-2d95-4b4c-9523-b44c6c732a80",
+    "order": 8,
+    "last_modified": "2021-09-24T09:45:03.484Z"
+  }
+},
+{
+  "model": "supply_chains.supplychainstage",
+  "pk": "813b1077-2b98-4a53-aeca-a65c51ef2372",
+  "fields": {
+    "gsc_last_changed_by": "liberty",
+    "gsc_updated_on": "2021-08-10",
+    "gsc_review_on": null,
+    "name": "demand requirements",
+    "supply_chain": "3dcb2693-5ce7-420b-bfcf-ee70be2921fc",
+    "order": 1,
+    "last_modified": "2021-09-24T09:49:12.779Z"
+  }
+},
+{
+  "model": "supply_chains.supplychainstage",
+  "pk": "9d80339a-83bb-488c-b47e-ac82ec0d4285",
+  "fields": {
+    "gsc_last_changed_by": "bond",
+    "gsc_updated_on": "2021-09-22",
+    "gsc_review_on": null,
+    "name": "demand requirements",
+    "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+    "order": 2,
+    "last_modified": "2021-09-24T09:42:48.150Z"
+  }
+},
+{
+  "model": "supply_chains.supplychainstage",
+  "pk": "9efc3420-e566-4389-8ec5-be6daf1146a7",
+  "fields": {
+    "gsc_last_changed_by": "elsa",
+    "gsc_updated_on": "2021-08-10",
+    "gsc_review_on": null,
+    "name": "demand requirements",
+    "supply_chain": "4c8fcc98-aa4e-402b-9ff4-b06ae3c3dcd1",
+    "order": 3,
+    "last_modified": "2021-09-24T09:48:49.678Z"
+  }
+},
+{
+  "model": "supply_chains.supplychainstage",
+  "pk": "a1b9b1ad-60bd-46a7-a905-b6a102856e21",
+  "fields": {
+    "gsc_last_changed_by": "peppa",
+    "gsc_updated_on": "2021-08-17",
+    "gsc_review_on": null,
+    "name": "finished product",
+    "supply_chain": "4c8fcc98-aa4e-402b-9ff4-b06ae3c3dcd1",
+    "order": 5,
+    "last_modified": "2021-09-24T09:48:36.818Z"
+  }
+},
+{
+  "model": "supply_chains.supplychainstage",
+  "pk": "c0972fd6-7bc6-44db-883c-3e6e16d94428",
+  "fields": {
+    "gsc_last_changed_by": "olaf",
+    "gsc_updated_on": "2021-09-06",
+    "gsc_review_on": null,
+    "name": "demand requirements",
+    "supply_chain": "14201f69-2d95-4b4c-9523-b44c6c732a80",
+    "order": 6,
+    "last_modified": "2021-09-24T09:44:18.342Z"
+  }
+}
+]
