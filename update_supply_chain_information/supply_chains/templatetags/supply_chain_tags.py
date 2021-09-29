@@ -1,8 +1,4 @@
-import re
-from urllib.parse import urlencode
-
 from django.conf import settings
-from django import template
 from django.template.defaulttags import register
 from django.urls import reverse
 
@@ -52,13 +48,6 @@ def get_active_menu(context):
 @register.simple_tag(takes_context=False)
 def quicksight_countries_dashboard_url():
     return settings.QUICKSIGHT_COUNTRIES_DASHBOARD_URL
-
-
-link_template = template.Template(
-    '<a href="{{ visualisation_url }}" class="temp-visual-link">Visuals</a>'
-)
-
-url_scheme_removal_re = re.compile(r"^https?://")
 
 
 @register.simple_tag(takes_context=True)
