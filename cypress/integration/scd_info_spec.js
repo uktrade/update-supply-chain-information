@@ -102,3 +102,25 @@ describe('The SCD info page', () => {
     cy.get('#app-quicksight-countries-link p.home-services-para').should('exist').should('contain.text', "Find out more about all country dependencies in relation to supply chain information.")
   })
 })
+
+const supplyChainWithoutScenarioAssessment = supplyChains[2]
+
+const scdNoScenarioAssessmentInfoUrl = urls.scd + `${govDepartment.name}/` + `${supplyChainWithoutScenarioAssessment.fields.slug}/`
+
+describe('The SCD info page when there is no scenario assessment', () => {
+  it('successfully loads', () => {
+    cy.visit(scdNoScenarioAssessmentInfoUrl)
+  })
+  it('shows a "no data" message in the "Scenario testing" section', () => {
+    cy.get('#supply-chain-scenario-testing > .govuk-details__text > p').invoke('text').then((text) => text.trim()).should(
+        'equal',
+        'No scenario testing information found.'
+    )
+  })
+  it('the "Scenario testing" section is open', () => {
+    cy.get('#supply-chain-scenario-testing').should(
+        'have.attr',
+        'open'
+    )
+  })
+})

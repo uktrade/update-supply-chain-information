@@ -727,10 +727,12 @@ class ScenarioAssessment(GSCUpdateModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)
     borders_closed_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         the borders close.""",
     )
     borders_closed_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
         choices=NullableRAGRating.choices,
     )
@@ -740,10 +742,12 @@ class ScenarioAssessment(GSCUpdateModel):
         help_text="""This field collects information about the scenarios envisaged should the lack of storage facilities become critical.""",
     )
     storage_full_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         storage facilities be full.""",
     )
     storage_full_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
         choices=NullableRAGRating.choices,
     )
@@ -753,10 +757,12 @@ class ScenarioAssessment(GSCUpdateModel):
         help_text="""This field collects information about the scenarios envisaged should the lack of storage facilities become critical.""",
     )
     ports_blocked_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         the ports be blocked.""",
     )
     ports_blocked_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
         choices=NullableRAGRating.choices,
     )
@@ -766,10 +772,12 @@ class ScenarioAssessment(GSCUpdateModel):
         help_text="""This field collects information about the scenarios envisaged should the port blockages become critical.""",
     )
     raw_material_shortage_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         there be a raw material shortage.""",
     )
     raw_material_shortage_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
         choices=NullableRAGRating.choices,
     )
@@ -779,10 +787,12 @@ class ScenarioAssessment(GSCUpdateModel):
         help_text="""This field collects information about the scenarios envisaged should the raw materials shortage become critical.""",
     )
     labour_shortage_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         there be a labour shortage.""",
     )
     labour_shortage_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
         choices=NullableRAGRating.choices,
     )
@@ -792,10 +802,12 @@ class ScenarioAssessment(GSCUpdateModel):
         help_text="""This field collects information about the scenarios envisaged should the labour shortages become critical.""",
     )
     demand_spike_impact = models.TextField(
+        blank=True,
         help_text="""This field collects information about the potential impacts that would occur should
         the demand spike.""",
     )
     demand_spike_rag_rating = models.CharField(
+        blank=True,
         max_length=5,
         choices=NullableRAGRating.choices,
     )
