@@ -105,15 +105,6 @@ const scdNoScenarioAssessmentInfoUrl = urls.scd + `${govDepartment.name}/` + `${
 describe('The SCD info page when there is no scenario assessment', () => {
   it('successfully loads', () => {
     cy.visit(scdNoScenarioAssessmentInfoUrl)
-    cy.injectAxe()
-  })
-  it('has no accessibility issues', () => {
-    // Due to header h1 and h3 with missing h2
-    cy.runA11y('html', {
-      rules: {
-        "heading-order": {enabled: false}
-      }
-    })
   })
   it('shows a "no data" message in the "Scenario testing" section', () => {
     cy.get('#supply-chain-scenario-testing > .govuk-details__text > p').invoke('text').then((text) => text.trim()).should(
