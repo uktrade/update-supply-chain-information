@@ -48,3 +48,12 @@ def get_active_menu(context):
 @register.simple_tag(takes_context=False)
 def quicksight_countries_dashboard_url():
     return settings.QUICKSIGHT_COUNTRIES_DASHBOARD_URL
+
+
+@register.simple_tag(takes_context=True)
+def visualisation_link(context):
+    request = context["request"]
+    user = request.user
+    gov_department = user.gov_department
+    visualisation_url = gov_department.visualisation_url
+    return visualisation_url

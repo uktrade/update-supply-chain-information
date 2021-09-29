@@ -107,6 +107,12 @@ class GovDepartment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
     email_domains = ArrayField(models.CharField(max_length=100))
+    visualisation_url = models.URLField(
+        blank=True,
+        default="",
+        help_text="URL of the visualisation page for this department",
+        verbose_name="Visualisation URL",
+    )
     last_modified = models.DateTimeField(auto_now=True)
 
     def __str__(self):
