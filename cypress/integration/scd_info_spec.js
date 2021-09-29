@@ -96,4 +96,9 @@ describe('The SCD info page', () => {
         })
       })
   })
+  it('shows the QuickSight link', () => {
+    cy.get('#app-quicksight-countries-link').should('exist')
+    cy.get('#app-quicksight-countries-link a[href]').should('exist').should('contain.text', "Country information")
+    cy.get('#app-quicksight-countries-link p.home-services-para').should('exist').should('contain.text', "Find out more about all country dependencies in relation to supply chain information.")
+  })
 })
