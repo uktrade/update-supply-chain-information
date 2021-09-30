@@ -1,8 +1,10 @@
 from datetime import date
 from typing import List, Dict
+from itertools import groupby
 
-
+from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.expressions import Q
 from django.http import HttpResponseRedirect
 from django.template.defaultfilters import date as date_filter
 from django.db.models import Count, When, Case, Value
@@ -26,6 +28,7 @@ from supply_chains.forms import (
 )
 from supply_chains.models import (
     SupplyChain,
+    SupplyChainUmbrella,
     StrategicAction,
     StrategicActionUpdate,
     RAGRating,
@@ -53,18 +56,50 @@ class SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView):
             )
         ).order_by("name")
 
+    def _inject_sc_umbrellas(self):
+        # Due to annotate within get_queryset, distinct can't be used
+        i = self.object_list.filter(supply_chain_umbrella__isnull=False)
+        tuples = [(x.supply_chain_umbrella, x.id) for x in i]
+        unique_umbrellas = [next(g) for _, g in groupby(tuples, key=lambda x: x[0])]
+
+        print(self.object_list.count())
+
+        chains = self.object_list.filter(
+            Q(supply_chain_umbrella__isnull=True)
+            | Q(id__in=[x[1] for x in unique_umbrellas])
+        )
+
+        print(chains.count())
+
+        u = self.request.user.gov_department.supply_chain_umbrellas.all()
+
+        print(
+            u.first()
+            .supply_chains.all()
+            .order_by("-last_submission_date")
+            .first()
+            .last_submission_date
+        )
+        sum = u.first().supply_chains.annotate(
+            strategic_action_count=Count(
+                Case(When(strategic_actions__is_archived=False, then=Value(1)))
+            )
+        )
+
+        print(sum.aggregate(Sum("strategic_action_count")))
+
+        return chains
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         last_deadline = get_last_working_day_of_previous_month()
 
-        context["supply_chains"] = self.paginate(self.object_list, 5)
         context["deadline"] = get_last_working_day_of_a_month(
             get_last_day_of_this_month()
         )
         context["num_updated_supply_chains"] = self.object_list.submitted_since(
             last_deadline
         ).count()
-        context["gov_department_name"] = self.request.user.gov_department.name
 
         # Total supply chains are aways sum of supply chains with active SAs.
         # Though SC with 0 active SA are listed, no action is required and hence not included
@@ -80,6 +115,9 @@ class SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView):
             total_sc_with_active_sa - context["num_updated_supply_chains"]
         )
 
+        chain_list = self._inject_sc_umbrellas()
+
+        context["supply_chains"] = self.paginate(chain_list, 5)
         return context
 
 
