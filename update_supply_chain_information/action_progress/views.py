@@ -1,5 +1,6 @@
 from typing import List
 
+from django.db.models.expressions import Q, F
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import FormView
 from django.urls import reverse
@@ -84,9 +85,29 @@ class ActionProgressDeptView(DeptAuthRequiredMixin, ActionProgressView):
         if kwargs["initial"]:
             dept_name = kwargs["initial"]["department"]
             if dept_name:
-                kwargs["supply_chain_qs"] = SupplyChain.objects.filter(
-                    gov_department__name=dept_name
+                qs = (
+                    SupplyChain.objects.filter(
+                        Q(supply_chain_umbrella__isnull=True),
+                        gov_department__name=dept_name,
+                    )
+                    .annotate(names=F("name"))
+                    .values_list("names", flat=True)
                 )
+
+                u = (
+                    SupplyChain.objects.filter(
+                        Q(supply_chain_umbrella__isnull=False),
+                        gov_department__name=dept_name,
+                    )
+                    .distinct("supply_chain_umbrella")
+                    .annotate(names=F("supply_chain_umbrella__name"))
+                    .values_list("names", flat=True)
+                )
+
+                print(u)
+                # qs |= u
+
+                kwargs["supply_chain_qs"] = qs
 
         kwargs["supply_chain_required"] = True
         return kwargs
