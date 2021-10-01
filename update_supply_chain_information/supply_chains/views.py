@@ -201,7 +201,7 @@ class SCTaskListView(
                 slug=supply_chain_slug, is_archived=False
             )
         except SupplyChain.DoesNotExist:
-            umbrella = SupplyChainUmbrella.objects.get(name="Snacks")
+            umbrella = SupplyChainUmbrella.objects.get(slug=supply_chain_slug)
             print(umbrella)
 
             scs = umbrella.supply_chains.all()

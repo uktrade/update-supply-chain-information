@@ -37,7 +37,7 @@ class GovDepPermissionMixin:
             supply_chain = SupplyChain.objects.get(slug=kwargs.get("supply_chain_slug"))
         except SupplyChain.DoesNotExist:
             supply_chain = (
-                SupplyChainUmbrella.objects.get(name="Snacks")
+                SupplyChainUmbrella.objects.get(slug=kwargs.get("supply_chain_slug"))
                 .supply_chains.all()
                 .first()
             )

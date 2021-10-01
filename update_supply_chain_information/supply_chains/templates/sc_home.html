@@ -58,7 +58,7 @@
             {% if supplychain.supply_chain_umbrella %}
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header">
-                        <a href="{% url 'supply-chain-task-list' 'abcd' %}?umbrella={{ supplychain.supply_chain_umbrella.name }}"  class="govuk-link">{{ supplychain.supply_chain_umbrella.name }}</a>
+                        <a href="{% url 'supply-chain-task-list' supplychain.supply_chain_umbrella.slug %}"  class="govuk-link">{{ supplychain.supply_chain_umbrella.name }}</a>
                     </th>
                     <td class="govuk-table__cell">{{supplychain.strategic_action_count}}</td>
                     <td class="govuk-table__cell govuk-table__cell--numeric">{{supplychain.last_submission_date|date:"j M Y"}}</td>
