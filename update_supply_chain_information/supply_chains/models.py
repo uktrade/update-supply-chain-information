@@ -43,6 +43,9 @@ class SupplyChainUmbrella(models.Model):
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH, unique=True)
     description = models.TextField(blank=True, default="")
     last_modified = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(
+        null=True, blank=True, unique=True, max_length=MAX_SLUG_LENGTH
+    )
     gov_department = models.ForeignKey(
         GovDepartment,
         on_delete=models.PROTECT,
@@ -56,6 +59,12 @@ class SupplyChainUmbrella(models.Model):
             return f"{self.name}, {self.gov_department.name}"
         else:
             return f"{self.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.slug or self.slug != slugify(self.name):
+            self.slug = slugify(self.name)
+
+        return super().save(*args, **kwargs)
 
 
 class SupplyChainQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
