@@ -17,6 +17,7 @@ from supply_chains.models import (
     SupplyChainStageSection,
     ScenarioAssessment,
     SupplyChainUmbrella,
+    VulnerabilityAssessment,
 )
 
 
@@ -232,6 +233,67 @@ class SupplyChainUmbrellaAdmin(admin.ModelAdmin):
         return linebreaks_filter("\n".join(names))
 
 
+class VulnerabilityAssessmentAdmin(admin.ModelAdmin):
+    fields = (
+        "supply_stage_rag_rating",
+        "supply_rag_rating_1",
+        "supply_stage_summary_1",
+        "supply_stage_rationale_1",
+        "supply_rag_rating_2",
+        "supply_stage_summary_2",
+        "supply_stage_rationale_2",
+        "supply_rag_rating_3",
+        "supply_stage_summary_3",
+        "supply_stage_rationale_3",
+        "receive_stage_rag_rating",
+        "receive_rag_rating_4",
+        "receive_stage_summary_4",
+        "receive_stage_rationale_4",
+        "receive_rag_rating_5",
+        "receive_stage_summary_5",
+        "receive_stage_rationale_5",
+        "receive_rag_rating_6",
+        "receive_stage_summary_6",
+        "receive_stage_rationale_6",
+        "make_stage_rag_rating",
+        "make_rag_rating_7",
+        "make_stage_summary_7",
+        "make_stage_rationale_7",
+        "make_rag_rating_8",
+        "make_stage_summary_8",
+        "make_stage_rationale_8",
+        "make_rag_rating_9",
+        "make_stage_summary_9",
+        "make_stage_rationale_9",
+        "make_rag_rating_10",
+        "make_stage_summary_10",
+        "make_stage_rationale_10",
+        "store_stage_rag_rating",
+        "store_rag_rating_11",
+        "store_stage_summary_11",
+        "store_stage_rationale_11",
+        "store_rag_rating_12",
+        "store_stage_summary_12",
+        "store_stage_rationale_12",
+        "store_rag_rating_13",
+        "store_stage_summary_13",
+        "store_stage_rationale_13",
+        "deliver_stage_rag_rating",
+        "deliver_rag_rating_14",
+        "deliver_stage_summary_14",
+        "deliver_stage_rationale_14",
+        "supply_chain",
+        "gsc_updated_on",
+        "gsc_last_changed_by",
+        "gsc_review_on",
+    )
+
+    list_filter = (
+        "supply_chain__gov_department",
+        "supply_chain",
+    )
+
+
 admin_site.register(GovDepartment, GovDepartmentAdmin)
 admin_site.register(User, UserAdmin)
 admin_site.register(SupplyChain, SupplyChainAdmin)
@@ -242,3 +304,4 @@ admin_site.register(ScenarioAssessment, ScenarioAssessmentAdmin)
 admin_site.register(Country)
 admin_site.register(CountryDependency, CountryDependencyAdmin)
 admin_site.register(SupplyChainUmbrella, SupplyChainUmbrellaAdmin)
+admin_site.register(VulnerabilityAssessment, VulnerabilityAssessmentAdmin)
