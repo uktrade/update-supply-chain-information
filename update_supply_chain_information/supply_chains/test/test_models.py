@@ -8,13 +8,16 @@ from accounts.test.factories import GovDepartmentFactory
 
 from supply_chains.models import (
     RAGRating,
+    VulnerabilityAssessment,
 )
 from supply_chains.models import SupplyChain, StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,
     StrategicActionUpdateFactory,
+    SupplyChainStageFactory,
     SupplyChainUmbrellaFactory,
+    VulnerabilityAssessmentFactory,
 )
 
 pytestmark = pytest.mark.django_db
@@ -188,3 +191,42 @@ class TestSCModel:
 
         # Assert
         self.validate(sc, {ArcReason: ERROR_MSGS[ArcReason]}, objects_saved=0)
+
+
+class TestVulAssessmentModel:
+    def test_vul_object_save(self):
+        # Arrage
+        vul_obj = VulnerabilityAssessmentFactory.build()
+        sc = SupplyChainFactory.create()
+
+        # Act
+        vul_obj.supply_chain = sc
+        vul_obj.full_clean()
+        vul_obj.save()
+
+        # Assert
+        VulnerabilityAssessment.objects.count() == 1
+
+    def test_vul_object_sc_required(self):
+        # Arrage
+        vul_obj = VulnerabilityAssessmentFactory.build()
+
+        # Act
+        # Assert
+        vul_obj.supply_chain = None
+
+        with pytest.raises(ValidationError) as exc_info:
+            vul_obj.full_clean()
+            vul_obj.save()
+
+    def test_vul_object_missing_RAG(self):
+        # Arrage
+        sc = SupplyChainFactory.create()
+        vul_obj = VulnerabilityAssessmentFactory.build(supply_chain=sc)
+
+        # Act
+        # Assert
+        vul_obj.supply_stage_rag_rating = None
+        with pytest.raises(ValidationError) as exc_info:
+            vul_obj.full_clean()
+            vul_obj.save()
