@@ -680,52 +680,52 @@ class VulnerabilityAssessment(GSCUpdateModel):
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Supply stage 1 - RAG Rating",
+        verbose_name="Supply stage 1 - Dependence on foreign suppliers for product - RAG Rating",
     )
     supply_stage_summary_1 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Supply stage 1 - Summary",
+        verbose_name="Supply stage 1 - Dependence on foreign suppliers for product - Summary",
     )
     supply_stage_rationale_1 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Supply stage 1 - Rationale",
+        verbose_name="Supply stage 1 - Dependence on foreign suppliers for product- Rationale",
     )
     supply_rag_rating_2 = models.CharField(
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Supply stage 2 - RAG Rating",
+        verbose_name="Supply stage 2 - Ability to source alternative​ products - RAG Rating",
     )
     supply_stage_summary_2 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Supply stage 2 - Summary",
+        verbose_name="Supply stage 2 - Ability to source alternative​ products - Summary",
     )
     supply_stage_rationale_2 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Supply stage 2 - Rationale",
+        verbose_name="Supply stage 2 - Ability to source alternative​ products - Rationale",
     )
     supply_rag_rating_3 = models.CharField(
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Supply stage 3 - RAG Rating",
+        verbose_name="Supply stage 3 - Resilience of​ supply base - RAG Rating",
     )
     supply_stage_summary_3 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Supply stage 3 - Summary",
+        verbose_name="Supply stage 3 - Resilience of​ supply base - Summary",
     )
     supply_stage_rationale_3 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Supply stage 3 - Rationale",
+        verbose_name="Supply stage 3 - Resilience of​ supply base - Rationale",
     )
 
     receive_stage_rag_rating = models.CharField(
@@ -740,52 +740,52 @@ class VulnerabilityAssessment(GSCUpdateModel):
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Receive stage 4 - RAG Rating",
+        verbose_name="Receive stage 4 - Reliance on long shipping lead times - RAG Rating",
     )
     receive_stage_summary_4 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Receive stage 4 - Summary",
+        verbose_name="Receive stage 4 - Reliance on long shipping lead times - Summary",
     )
     receive_stage_rationale_4 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Receive stage 4 - Rationale",
+        verbose_name="Receive stage 4 - Reliance on long shipping lead times - Rationale",
     )
     receive_rag_rating_5 = models.CharField(
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Receive stage 5 - RAG Rating",
+        verbose_name="Receive stage 5 - Susceptibility to port congestion - RAG Rating",
     )
     receive_stage_summary_5 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Receive stage 5 - Summary",
+        verbose_name="Receive stage 5 - Susceptibility to port congestion - Summary",
     )
     receive_stage_rationale_5 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Receive stage 5 - Rationale",
+        verbose_name="Receive stage 5 - Susceptibility to port congestion - Rationale",
     )
     receive_rag_rating_6 = models.CharField(
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Receive stage 6 - RAG Rating",
+        verbose_name="Receive stage 6 - Size of product stockpile held in UK - RAG Rating",
     )
     receive_stage_summary_6 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Receive stage 6 - Summary",
+        verbose_name="Receive stage 6 - Size of product stockpile held in UK - Summary",
     )
     receive_stage_rationale_6 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Receive stage 6 - Rationale",
+        verbose_name="Receive stage 6 - Size of product stockpile held in UK - Rationale",
     )
 
     make_stage_rag_rating = models.CharField(
@@ -800,69 +800,69 @@ class VulnerabilityAssessment(GSCUpdateModel):
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Make stage 7 - RAG Rating",
+        verbose_name="Make stage 7 - Ability to​ substitute planned replacement - RAG Rating",
     )
     make_stage_summary_7 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Make stage 7 - Summary",
+        verbose_name="Make stage 7 - Ability to​ substitute planned replacement - Summary",
     )
     make_stage_rationale_7 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Make stage 7 - Rationale",
+        verbose_name="Make stage 7 - Ability to​ substitute planned replacement - Rationale",
     )
     make_rag_rating_8 = models.CharField(
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Make stage 8 - RAG Rating",
+        verbose_name="Make stage 8 - Dependence on foreign contractors​ - RAG Rating",
     )
     make_stage_summary_8 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Make stage 8 - Summary",
+        verbose_name="Make stage 8 - Dependence on foreign contractors​ - Summary",
     )
     make_stage_rationale_8 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Make stage 8 - Rationale",
+        verbose_name="Make stage 8 - Dependence on foreign contractors​ - Rationale",
     )
     make_rag_rating_9 = models.CharField(
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Make stage 9 - RAG Rating",
+        verbose_name="Make stage 9 - Ability to ramp up UK production capacity - RAG Rating",
     )
     make_stage_summary_9 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Make stage 9 - Summary",
+        verbose_name="Make stage 9 - Ability to ramp up UK production capacity - Summary",
     )
     make_stage_rationale_9 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Make stage 9 - Rationale",
+        verbose_name="Make stage 9 - Ability to ramp up UK production capacity - Rationale",
     )
     make_rag_rating_10 = models.CharField(
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Make stage 10 - RAG Rating",
+        verbose_name="Make stage 10 - Susceptibility to labour shortage​ - RAG Rating",
     )
     make_stage_summary_10 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Make stage 10 - Summary",
+        verbose_name="Make stage 10 - Susceptibility to labour shortage​ - Summary",
     )
     make_stage_rationale_10 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Make stage 10 - Rationale",
+        verbose_name="Make stage 10 - Susceptibility to labour shortage​ - Rationale",
     )
 
     store_stage_rag_rating = models.CharField(
@@ -877,52 +877,52 @@ class VulnerabilityAssessment(GSCUpdateModel):
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Store stage 11 - RAG Rating",
+        verbose_name="Store stage 11 - Size of stock buffer held in UK​ - RAG Rating",
     )
     store_stage_summary_11 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Store stage 11 - Summary",
+        verbose_name="Store stage 11 - Size of stock buffer held in UK​ - Summary",
     )
     store_stage_rationale_11 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Store stage 11 - Rationale",
+        verbose_name="Store stage 11 - Size of stock buffer held in UK​ - Rationale",
     )
     store_rag_rating_12 = models.CharField(
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Store stage 12 - RAG Rating",
+        verbose_name="Store stage 12 - Feasibility of stockpiling​ - RAG Rating",
     )
     store_stage_summary_12 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Store stage 12 - Summary",
+        verbose_name="Store stage 12 - Feasibility of stockpiling​ - Summary",
     )
     store_stage_rationale_12 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Store stage 12 - Rationale",
+        verbose_name="Store stage 12 - Feasibility of stockpiling​ - Rationale",
     )
     store_rag_rating_13 = models.CharField(
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Store stage 13 - RAG Rating",
+        verbose_name="Store stage 13 - Availability of storage in UK​ - RAG Rating",
     )
     store_stage_summary_13 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Store stage 13 - Summary",
+        verbose_name="Store stage 13 - Availability of storage in UK​ - Summary",
     )
     store_stage_rationale_13 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Store stage 13 - Rationale",
+        verbose_name="Store stage 13 - Availability of storage in UK​ - Rationale",
     )
 
     deliver_stage_rag_rating = models.CharField(
@@ -937,18 +937,18 @@ class VulnerabilityAssessment(GSCUpdateModel):
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Deliver stage 14 - RAG Rating",
+        verbose_name="Deliver stage 14 - Ability to ramp up UK delivery capacity - RAG Rating",
     )
     deliver_stage_summary_14 = models.CharField(
         max_length=settings.CHARFIELD_MAX_LENGTH,
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Deliver stage 14 - Summary",
+        verbose_name="Deliver stage 14 - Ability to ramp up UK delivery capacity - Summary",
     )
     deliver_stage_rationale_14 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Deliver stage 14 - Rationale",
+        verbose_name="Deliver stage 14 - Ability to ramp up UK delivery capacity - Rationale",
     )
 
     supply_chain = models.ForeignKey(
