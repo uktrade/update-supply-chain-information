@@ -682,8 +682,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Supply stage 1 - Dependence on foreign suppliers for product - RAG Rating",
     )
-    supply_stage_summary_1 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    supply_stage_summary_1 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Supply stage 1 - Dependence on foreign suppliers for product - Summary",
@@ -699,8 +698,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Supply stage 2 - Ability to source alternative​ products - RAG Rating",
     )
-    supply_stage_summary_2 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    supply_stage_summary_2 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Supply stage 2 - Ability to source alternative​ products - Summary",
@@ -716,8 +714,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Supply stage 3 - Resilience of​ supply base - RAG Rating",
     )
-    supply_stage_summary_3 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    supply_stage_summary_3 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Supply stage 3 - Resilience of​ supply base - Summary",
@@ -742,8 +739,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Receive stage 4 - Reliance on long shipping lead times - RAG Rating",
     )
-    receive_stage_summary_4 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    receive_stage_summary_4 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Receive stage 4 - Reliance on long shipping lead times - Summary",
@@ -759,8 +755,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Receive stage 5 - Susceptibility to port congestion - RAG Rating",
     )
-    receive_stage_summary_5 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    receive_stage_summary_5 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Receive stage 5 - Susceptibility to port congestion - Summary",
@@ -776,8 +771,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Receive stage 6 - Size of product stockpile held in UK - RAG Rating",
     )
-    receive_stage_summary_6 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    receive_stage_summary_6 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Receive stage 6 - Size of product stockpile held in UK - Summary",
@@ -802,8 +796,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Make stage 7 - Ability to​ substitute planned replacement - RAG Rating",
     )
-    make_stage_summary_7 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    make_stage_summary_7 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Make stage 7 - Ability to​ substitute planned replacement - Summary",
@@ -819,8 +812,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Make stage 8 - Dependence on foreign contractors​ - RAG Rating",
     )
-    make_stage_summary_8 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    make_stage_summary_8 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Make stage 8 - Dependence on foreign contractors​ - Summary",
@@ -836,8 +828,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Make stage 9 - Ability to ramp up UK production capacity - RAG Rating",
     )
-    make_stage_summary_9 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    make_stage_summary_9 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Make stage 9 - Ability to ramp up UK production capacity - Summary",
@@ -853,8 +844,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Make stage 10 - Susceptibility to labour shortage​ - RAG Rating",
     )
-    make_stage_summary_10 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    make_stage_summary_10 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Make stage 10 - Susceptibility to labour shortage​ - Summary",
@@ -879,8 +869,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Store stage 11 - Size of stock buffer held in UK​ - RAG Rating",
     )
-    store_stage_summary_11 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    store_stage_summary_11 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Store stage 11 - Size of stock buffer held in UK​ - Summary",
@@ -896,8 +885,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Store stage 12 - Feasibility of stockpiling​ - RAG Rating",
     )
-    store_stage_summary_12 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    store_stage_summary_12 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Store stage 12 - Feasibility of stockpiling​ - Summary",
@@ -913,8 +901,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Store stage 13 - Availability of storage in UK​ - RAG Rating",
     )
-    store_stage_summary_13 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    store_stage_summary_13 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Store stage 13 - Availability of storage in UK​ - Summary",
@@ -939,8 +926,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
         default=NullableRAGRating.NONE,
         verbose_name="Deliver stage 14 - Ability to ramp up UK delivery capacity - RAG Rating",
     )
-    deliver_stage_summary_14 = models.CharField(
-        max_length=settings.CHARFIELD_MAX_LENGTH,
+    deliver_stage_summary_14 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
         verbose_name="Deliver stage 14 - Ability to ramp up UK delivery capacity - Summary",
