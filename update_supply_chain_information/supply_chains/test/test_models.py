@@ -5,16 +5,27 @@ import pytest
 from django.core.exceptions import ValidationError
 from django.template.defaultfilters import slugify
 from accounts.test.factories import GovDepartmentFactory
+from activity_stream.test.conftest import supply_chain
 
 from supply_chains.models import (
-    RAGRating,
+    VulnerabilityAssessment,
+    VulAssessmentSupplyStage,
+    VulAssessmentReceiveStage,
+    VulAssessmentMakeStage,
+    VulAssessmentStoreStage,
+    VulAssessmentDeliverStage,
 )
-from supply_chains.models import SupplyChain, StrategicActionUpdate
+from supply_chains.models import SupplyChain
 from supply_chains.test.factories import (
     SupplyChainFactory,
     StrategicActionFactory,
-    StrategicActionUpdateFactory,
     SupplyChainUmbrellaFactory,
+    VulnerabilityAssessmentFactory,
+    VulAssessmentSupplyStageFactory,
+    VulAssessmentReceiveStageFactory,
+    VulAssessmentMakeStageFactory,
+    VulAssessmentStoreStageFactory,
+    VulAssessmentDeliverStageFactory,
 )
 
 pytestmark = pytest.mark.django_db
@@ -188,3 +199,71 @@ class TestSCModel:
 
         # Assert
         self.validate(sc, {ArcReason: ERROR_MSGS[ArcReason]}, objects_saved=0)
+
+
+class TestVulAssessmentModel:
+    def test_vul_object_save(self):
+        # Arrage
+        # Act
+        sc = SupplyChainFactory.create()
+        vul_obj = VulnerabilityAssessmentFactory.create(supply_chain=sc)
+        VulAssessmentSupplyStageFactory.create(vulnerability=vul_obj)
+        VulAssessmentReceiveStageFactory.create(vulnerability=vul_obj)
+        VulAssessmentMakeStageFactory.create(vulnerability=vul_obj)
+        VulAssessmentDeliverStageFactory.create(vulnerability=vul_obj)
+        VulAssessmentStoreStageFactory.create(vulnerability=vul_obj)
+
+        # Assert
+        assert SupplyChain.objects.count() == 1
+        assert VulnerabilityAssessment.objects.count() == 1
+        assert VulAssessmentSupplyStage.objects.count() == 1
+        assert VulAssessmentReceiveStage.objects.count() == 1
+        assert VulAssessmentMakeStage.objects.count() == 1
+        assert VulAssessmentStoreStage.objects.count() == 1
+        assert VulAssessmentDeliverStage.objects.count() == 1
+
+    def test_vul_object_sc_required(self):
+        # Arrage
+        vul_obj = VulnerabilityAssessmentFactory.build()
+
+        # Act
+        # Assert
+        vul_obj.supply_chain = None
+
+        with pytest.raises(ValidationError) as exc_info:
+            vul_obj.full_clean()
+            vul_obj.save()
+
+    def test_supply_stage_missing_RAG(self):
+        # Arrage
+        sc = SupplyChainFactory.create()
+        vul_obj = VulnerabilityAssessmentFactory.build(supply_chain=sc)
+
+        # Act
+        supply = VulAssessmentSupplyStageFactory.build(
+            supply_stage_rag_rating=None, vulnerability=vul_obj
+        )
+
+        # Assert
+        with pytest.raises(ValidationError) as exc_info:
+            supply.full_clean()
+            supply.save()
+
+        assert VulAssessmentSupplyStage.objects.count() == 0
+
+    def test_receive_stage_missing_summary(self):
+        # Arrage
+        sc = SupplyChainFactory.create()
+        vul_obj = VulnerabilityAssessmentFactory.build(supply_chain=sc)
+
+        # Act
+        receive = VulAssessmentReceiveStageFactory.build(
+            receive_stage_summary_4=None, vulnerability=vul_obj
+        )
+
+        # Assert
+        with pytest.raises(ValidationError) as exc_info:
+            receive.full_clean()
+            receive.save()
+
+        assert VulAssessmentReceiveStage.objects.count() == 0
