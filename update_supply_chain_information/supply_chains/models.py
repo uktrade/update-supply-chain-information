@@ -663,56 +663,404 @@ class VulnerabilityAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QueryS
     pass
 
 
+# Refactoring flat structured VulnerabilityAssessment models just enough to fix RT-609
 class VulnerabilityAssessment(GSCUpdateModel):
     objects = VulnerabilityAssessmentQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)
-    supply_rag_rating = models.CharField(
-        max_length=5,
-        choices=RAGRating.choices,
-    )
-    supply_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that
-        contribute to the vulnerability of the supply element of the chain.""",
-    )
-    make_rag_rating = models.CharField(
-        max_length=5,
-        choices=RAGRating.choices,
-    )
-    make_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that
-        contribute to the vulnerability of the make element of the chain.""",
-    )
-    receive_rag_rating = models.CharField(
-        max_length=5,
-        choices=RAGRating.choices,
-    )
-    receive_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that
-        contribute to the vulnerability of the receive element of the chain.""",
-    )
-    store_rag_rating = models.CharField(
-        max_length=5,
-        choices=RAGRating.choices,
-    )
-    store_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that
-        contribute to the vulnerability of the store element of the chain.""",
-    )
-    deliver_rag_rating = models.CharField(
-        max_length=5,
-        choices=RAGRating.choices,
-    )
-    deliver_rating_reason = models.TextField(
-        help_text="""This field collects information about the characteristics that
-        contribute to the vulnerability of the deliver element of the chain.""",
-    )
+
     supply_chain = models.ForeignKey(
         SupplyChain,
         on_delete=models.PROTECT,
         related_name="vulnerability_assessment",
     )
     last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.supply_chain.name} vulnerability assessment"
+
+
+class VulAssessmentSupplyStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class VulAssessmentSupplyStage(models.Model):
+    objects = VulAssessmentSupplyStageQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    supply_stage_rag_rating = models.CharField(
+        max_length=5,
+        help_text="""RAG rating for the whole stage.""",
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Supply stage - RAG Rating",
+    )
+
+    supply_rag_rating_1 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Supply stage 1 - Dependence on foreign suppliers for product - RAG Rating",
+    )
+    supply_stage_summary_1 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Supply stage 1 - Dependence on foreign suppliers for product - Summary",
+    )
+    supply_stage_rationale_1 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Supply stage 1 - Dependence on foreign suppliers for product- Rationale",
+    )
+    supply_rag_rating_2 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Supply stage 2 - Ability to source alternative products - RAG Rating",
+    )
+    supply_stage_summary_2 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Supply stage 2 - Ability to source alternative products - Summary",
+    )
+    supply_stage_rationale_2 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Supply stage 2 - Ability to source alternative products - Rationale",
+    )
+    supply_rag_rating_3 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Supply stage 3 - Resilience of supply base - RAG Rating",
+    )
+    supply_stage_summary_3 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Supply stage 3 - Resilience of supply base - Summary",
+    )
+    supply_stage_rationale_3 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Supply stage 3 - Resilience of supply base - Rationale",
+    )
+
+    vulnerability = models.OneToOneField(
+        VulnerabilityAssessment,
+        on_delete=models.PROTECT,
+        related_name="vulnerability_supply_stage",
+    )
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return "1, 2, 3"
+
+    class Meta:
+        verbose_name = "Vulnerability Assessment Supply Stage"
+
+
+class VulAssessmentReceiveStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class VulAssessmentReceiveStage(models.Model):
+    objects = VulAssessmentReceiveStageQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    receive_stage_rag_rating = models.CharField(
+        max_length=5,
+        help_text="""RAG rating for the whole stage.""",
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Receive stage - RAG Rating",
+    )
+
+    receive_rag_rating_4 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Receive stage 4 - Reliance on long shipping lead times - RAG Rating",
+    )
+    receive_stage_summary_4 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Receive stage 4 - Reliance on long shipping lead times - Summary",
+    )
+    receive_stage_rationale_4 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Receive stage 4 - Reliance on long shipping lead times - Rationale",
+    )
+    receive_rag_rating_5 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Receive stage 5 - Susceptibility to port congestion - RAG Rating",
+    )
+    receive_stage_summary_5 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Receive stage 5 - Susceptibility to port congestion - Summary",
+    )
+    receive_stage_rationale_5 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Receive stage 5 - Susceptibility to port congestion - Rationale",
+    )
+    receive_rag_rating_6 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Receive stage 6 - Size of product stockpile held in UK - RAG Rating",
+    )
+    receive_stage_summary_6 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Receive stage 6 - Size of product stockpile held in UK - Summary",
+    )
+    receive_stage_rationale_6 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Receive stage 6 - Size of product stockpile held in UK - Rationale",
+    )
+
+    vulnerability = models.OneToOneField(
+        VulnerabilityAssessment,
+        on_delete=models.PROTECT,
+        related_name="vulnerability_receive_stage",
+    )
+
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return "4, 5, 6"
+
+    class Meta:
+        verbose_name = "Vulnerability Assessment Receive Stage"
+
+
+class VulAssessmentMakeStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class VulAssessmentMakeStage(models.Model):
+    objects = VulAssessmentMakeStageQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    make_stage_rag_rating = models.CharField(
+        max_length=5,
+        help_text="""RAG rating for the whole stage.""",
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Make stage - RAG Rating",
+    )
+
+    make_rag_rating_7 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Make stage 7 - Ability to substitute planned replacement - RAG Rating",
+    )
+    make_stage_summary_7 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Make stage 7 - Ability to substitute planned replacement - Summary",
+    )
+    make_stage_rationale_7 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Make stage 7 - Ability to substitute planned replacement - Rationale",
+    )
+    make_rag_rating_8 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Make stage 8 - Dependence on foreign contractors - RAG Rating",
+    )
+    make_stage_summary_8 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Make stage 8 - Dependence on foreign contractors - Summary",
+    )
+    make_stage_rationale_8 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Make stage 8 - Dependence on foreign contractors - Rationale",
+    )
+    make_rag_rating_9 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Make stage 9 - Ability to ramp up UK production capacity - RAG Rating",
+    )
+    make_stage_summary_9 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Make stage 9 - Ability to ramp up UK production capacity - Summary",
+    )
+    make_stage_rationale_9 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Make stage 9 - Ability to ramp up UK production capacity - Rationale",
+    )
+    make_rag_rating_10 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Make stage 10 - Susceptibility to labour shortage - RAG Rating",
+    )
+    make_stage_summary_10 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Make stage 10 - Susceptibility to labour shortage - Summary",
+    )
+    make_stage_rationale_10 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Make stage 10 - Susceptibility to labour shortage - Rationale",
+    )
+
+    vulnerability = models.OneToOneField(
+        VulnerabilityAssessment,
+        on_delete=models.PROTECT,
+        related_name="vulnerability_make_stage",
+    )
+
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return "7, 8, 9, 10"
+
+    class Meta:
+        verbose_name = "Vulnerability Assessment Make Stage"
+
+
+class VulAssessmentStoreStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class VulAssessmentStoreStage(models.Model):
+    objects = VulAssessmentStoreStageQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    store_stage_rag_rating = models.CharField(
+        max_length=5,
+        help_text="""RAG rating for the whole stage.""",
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Store stage - RAG Rating",
+    )
+
+    store_rag_rating_11 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Store stage 11 - Size of stock buffer held in UK - RAG Rating",
+    )
+    store_stage_summary_11 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Store stage 11 - Size of stock buffer held in UK - Summary",
+    )
+    store_stage_rationale_11 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Store stage 11 - Size of stock buffer held in UK - Rationale",
+    )
+    store_rag_rating_12 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Store stage 12 - Feasibility of stockpiling - RAG Rating",
+    )
+    store_stage_summary_12 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Store stage 12 - Feasibility of stockpiling - Summary",
+    )
+    store_stage_rationale_12 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Store stage 12 - Feasibility of stockpiling - Rationale",
+    )
+    store_rag_rating_13 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Store stage 13 - Availability of storage in UK - RAG Rating",
+    )
+    store_stage_summary_13 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Store stage 13 - Availability of storage in UK - Summary",
+    )
+    store_stage_rationale_13 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Store stage 13 - Availability of storage in UK - Rationale",
+    )
+
+    vulnerability = models.OneToOneField(
+        VulnerabilityAssessment,
+        on_delete=models.PROTECT,
+        related_name="vulnerability_store_stage",
+    )
+
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return "11, 12, 13"
+
+    class Meta:
+        verbose_name = "Vulnerability Assessment Store Stage"
+
+
+class VulAssessmentDeliverStageQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
+    pass
+
+
+class VulAssessmentDeliverStage(models.Model):
+    objects = VulAssessmentDeliverStageQuerySet.as_manager()
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+    deliver_stage_rag_rating = models.CharField(
+        max_length=5,
+        help_text="""RAG rating for the whole stage.""",
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Deliver stage - RAG Rating",
+    )
+
+    deliver_rag_rating_14 = models.CharField(
+        max_length=5,
+        choices=NullableRAGRating.choices,
+        default=NullableRAGRating.NONE,
+        verbose_name="Deliver stage 14 - Ability to ramp up UK delivery capacity - RAG Rating",
+    )
+    deliver_stage_summary_14 = models.TextField(
+        help_text="""Summary of supply stage.""",
+        default="",
+        verbose_name="Deliver stage 14 - Ability to ramp up UK delivery capacity - Summary",
+    )
+    deliver_stage_rationale_14 = models.TextField(
+        help_text="""Rationale of supply stage.""",
+        default="",
+        verbose_name="Deliver stage 14 - Ability to ramp up UK delivery capacity - Rationale",
+    )
+
+    vulnerability = models.OneToOneField(
+        VulnerabilityAssessment,
+        on_delete=models.PROTECT,
+        related_name="vulnerability_deliver_stage",
+    )
+
+    last_modified = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return "14"
+
+    class Meta:
+        verbose_name = "Vulnerability Assessment Deliver Stage"
 
 
 class ScenarioAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):

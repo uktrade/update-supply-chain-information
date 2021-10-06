@@ -9,6 +9,7 @@ from supply_chains.models import (
     SupplyChainStage,
     SupplyChainStageSection,
     NullableRAGRating,
+    VulnerabilityAssessment,
 )
 
 
@@ -133,3 +134,145 @@ class ScenarioAssessmentFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = "supply_chains.ScenarioAssessment"
+
+
+class VulnerabilityAssessmentFactory(factory.django.DjangoModelFactory):
+
+    supply_chain = factory.SubFactory(SupplyChainFactory)
+
+    class Meta:
+        model = "supply_chains.VulnerabilityAssessment"
+
+
+class VulAssessmentSupplyStageFactory(factory.django.DjangoModelFactory):
+    supply_stage_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    supply_rag_rating_1 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    supply_stage_summary_1 = factory.Faker("text")
+    supply_stage_rationale_1 = factory.Faker("paragraph", nb_sentences=3)
+
+    supply_rag_rating_2 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    supply_stage_summary_2 = factory.Faker("text")
+    supply_stage_rationale_2 = factory.Faker("paragraph", nb_sentences=3)
+
+    supply_rag_rating_3 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    supply_stage_summary_3 = factory.Faker("text")
+    supply_stage_rationale_3 = factory.Faker("paragraph", nb_sentences=3)
+
+    vulnerability = factory.SubFactory(VulnerabilityAssessmentFactory)
+
+    class Meta:
+        model = "supply_chains.VulAssessmentSupplyStage"
+
+
+class VulAssessmentReceiveStageFactory(factory.django.DjangoModelFactory):
+    receive_stage_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    receive_rag_rating_4 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    receive_stage_summary_4 = factory.Faker("text")
+    receive_stage_rationale_4 = factory.Faker("paragraph", nb_sentences=3)
+
+    receive_rag_rating_5 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    receive_stage_summary_5 = factory.Faker("text")
+    receive_stage_rationale_5 = factory.Faker("paragraph", nb_sentences=3)
+
+    receive_rag_rating_6 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    receive_stage_summary_6 = factory.Faker("text")
+    receive_stage_rationale_6 = factory.Faker("paragraph", nb_sentences=3)
+
+    vulnerability = factory.SubFactory(VulnerabilityAssessmentFactory)
+
+    class Meta:
+        model = "supply_chains.VulAssessmentReceiveStage"
+
+
+class VulAssessmentMakeStageFactory(factory.django.DjangoModelFactory):
+    make_stage_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    make_rag_rating_7 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    make_stage_summary_7 = factory.Faker("text")
+    make_stage_rationale_7 = factory.Faker("paragraph", nb_sentences=3)
+
+    make_rag_rating_8 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    make_stage_summary_8 = factory.Faker("text")
+    make_stage_rationale_8 = factory.Faker("paragraph", nb_sentences=3)
+
+    make_rag_rating_9 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    make_stage_summary_9 = factory.Faker("text")
+    make_stage_rationale_9 = factory.Faker("paragraph", nb_sentences=3)
+
+    make_rag_rating_10 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    make_stage_summary_10 = factory.Faker("text")
+    make_stage_rationale_10 = factory.Faker("paragraph", nb_sentences=3)
+
+    vulnerability = factory.SubFactory(VulnerabilityAssessmentFactory)
+
+    class Meta:
+        model = "supply_chains.VulAssessmentMakeStage"
+
+
+class VulAssessmentStoreStageFactory(factory.django.DjangoModelFactory):
+    store_stage_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    store_rag_rating_11 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    store_stage_summary_11 = factory.Faker("text")
+    store_stage_rationale_11 = factory.Faker("paragraph", nb_sentences=3)
+
+    store_rag_rating_12 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    store_stage_summary_12 = factory.Faker("text")
+    store_stage_rationale_12 = factory.Faker("paragraph", nb_sentences=3)
+
+    store_rag_rating_13 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    store_stage_summary_13 = factory.Faker("text")
+    store_stage_rationale_13 = factory.Faker("paragraph", nb_sentences=3)
+
+    vulnerability = factory.SubFactory(VulnerabilityAssessmentFactory)
+
+    class Meta:
+        model = "supply_chains.VulAssessmentStoreStage"
+
+
+class VulAssessmentDeliverStageFactory(factory.django.DjangoModelFactory):
+    deliver_stage_rag_rating = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    deliver_rag_rating_14 = factory.fuzzy.FuzzyChoice(
+        NullableRAGRating,
+    )
+    deliver_stage_summary_14 = factory.Faker("text")
+    deliver_stage_rationale_14 = factory.Faker("paragraph", nb_sentences=3)
+
+    vulnerability = factory.SubFactory(VulnerabilityAssessmentFactory)
+
+    class Meta:
+        model = "supply_chains.VulAssessmentDeliverStage"
