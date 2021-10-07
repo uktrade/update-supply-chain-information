@@ -669,7 +669,7 @@ class VulnerabilityAssessment(GSCUpdateModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     date_created = models.DateField(auto_now_add=True)
 
-    supply_chain = models.ForeignKey(
+    supply_chain = models.OneToOneField(
         SupplyChain,
         on_delete=models.PROTECT,
         related_name="vulnerability_assessment",
