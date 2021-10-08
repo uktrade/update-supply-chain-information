@@ -58,6 +58,23 @@ class ChainDetailsListView(PaginationMixin, ChainDetailsView):
 
 class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
     template_name = "chain_details_info.html"
+    VUL_STAGE_TITLES = [
+        None,
+        "Dependence on foreign suppliers for product",
+        "Ability to source alternative products",
+        "Resilience of supply base",
+        "Reliance on long shipping lead times",
+        "Susceptibility to port congestion",
+        "Size of product stockpile held in UK",
+        "Ability to substitute planned replacement",
+        "Dependence on foreign contractors",
+        "Ability to ramp up UK production capacity",
+        "Susceptibility to labour shortage",
+        "Size of stock buffer held in UK",
+        "Feasibility of stockpiling",
+        "Availability of storage in UK",
+        "Ability to ramp up UK delivery capacity",
+    ]
 
     def scenario_assessment_sections(self, scenario_assessment: ScenarioAssessment):
         sections = []
@@ -146,5 +163,15 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
             supply_chain=context["sc"]
         ).order_by("order")
         context["stage_notes"] = context["stages"].order_by("-gsc_updated_on").first()
+
+        vul = supply_chain.vulnerability_assessment
+        # context["vulnerabilities"] = vul
+        context["vul_supply"] = vul.vulnerability_supply_stage
+        context["vul_receive"] = vul.vulnerability_receive_stage
+        context["vul_make"] = vul.vulnerability_make_stage
+        context["vul_store"] = vul.vulnerability_store_stage
+        context["vul_deliver"] = vul.vulnerability_deliver_stage
+
+        context["vul_title_list"] = self.VUL_STAGE_TITLES
 
         return context

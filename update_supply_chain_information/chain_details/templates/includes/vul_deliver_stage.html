@@ -1,0 +1,30 @@
+{% load scd_tags %}
+
+
+<div class="govuk-accordion" data-module="govuk-accordion" id="supply-accordion">
+    {% with char_id='14' %}
+    {% with it=forloop.counter|stringformat:"i" %}
+    {% with heading="accordion-default-heading-"|add:it content="accordion-default-content-"|add:it %}
+    <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+                <span class="govuk-accordion__section-button" id={{heading}}>
+                    {% with rag="deliver_rag_rating_"|add:char_id %}
+                    {% getattribute_value stage rag as rag_value %}
+                    {% include "svg_rag_rating_icon.html" with rag_rating=rag_value|default:'None' %}
+                    {{char_id}} - {% get_vul_stage_title vul_title_list char_id %}
+                    {% endwith %}
+                </span>
+            </h2>
+        </div>
+        <div id={{content}} class="govuk-accordion__section-content" aria-labelledby={{heading}}>
+            {% with summ="deliver_stage_summary_"|add:char_id rat="deliver_stage_rationale_"|add:char_id %}
+            {% include "includes/vul_stage_info.html" with summary=summ rationale=rat %}
+            {% endwith %}
+        </div>
+    </div>
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+</div>
+

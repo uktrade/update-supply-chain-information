@@ -1,0 +1,76 @@
+{% load gsc_notes %}
+{% load scd_tags %}
+
+<details class="govuk-details component-panel" data-module="govuk-details" id="vul-rating">
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+            Vulnerability rating
+        </span>
+    </summary>
+    <br>
+    <div class="govuk-details__text app-dit-details__text">
+        <div class="govuk-tabs" data-module="govuk-tabs">
+            <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <a class="govuk-tabs__tab" href="#supply-stage">
+                        <div class="govuk-!-font-size-10">
+                            {% include "svg_rag_rating_icon.html" with rag_rating=vul_supply.supply_stage_rag_rating|default:'None' %}
+                        </div>
+                        Supply
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" href="#receive-stage">
+                        <div>
+                            {% include "svg_rag_rating_icon.html" with rag_rating=vul_receive.receive_stage_rag_rating|default:'None' %}
+                        </div>
+                        Receive
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" href="#make-stage">
+                        <div>
+                            {% include "svg_rag_rating_icon.html" with rag_rating=vul_make.make_stage_rag_rating|default:'None' %}
+                        </div>
+                        Make
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" href="#store-stage">
+                        <div>
+                            {% include "svg_rag_rating_icon.html" with rag_rating=vul_store.store_stage_rag_rating|default:'None' %}
+                        </div>
+                        Store
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" href="#deliver-stage">
+                        <div>
+                            {% include "svg_rag_rating_icon.html" with rag_rating=vul_deliver.deliver_stage_rag_rating|default:'None' %}
+                        </div>
+                        Deliver
+                    </a>
+                </li>
+            </ul>
+            <div class="govuk-tabs__panel" id="supply-stage">
+                {% include "includes/vul_supply_stage.html" with stage=vul_supply %}
+            </div>
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="receive-stage">
+                {% include "includes/vul_receive_stage.html" with stage=vul_receive %}
+            </div>
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="make-stage">
+                {% include "includes/vul_make_stage.html" with stage=vul_make %}
+            </div>
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="store-stage">
+                {% include "includes/vul_store_stage.html" with stage=vul_store %}
+            </div>
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="deliver-stage">
+                {% include "includes/vul_deliver_stage.html" with stage=vul_deliver %}
+            </div>
+        </div>
+        {% include "rag_rating_legend.html" %}
+        <div class="app-dit-gsc-notes">
+            {% gsc_notes instance=stage_notes %}
+        </div>
+    </div>
+</details>
