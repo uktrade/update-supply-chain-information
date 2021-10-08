@@ -165,7 +165,6 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
         context["stage_notes"] = context["stages"].order_by("-gsc_updated_on").first()
 
         vul = supply_chain.vulnerability_assessment
-        # context["vulnerabilities"] = vul
         context["vul_supply"] = vul.vulnerability_supply_stage
         context["vul_receive"] = vul.vulnerability_receive_stage
         context["vul_make"] = vul.vulnerability_make_stage
