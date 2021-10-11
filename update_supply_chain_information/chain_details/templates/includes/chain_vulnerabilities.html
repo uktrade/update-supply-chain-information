@@ -5,10 +5,15 @@
     <summary class="govuk-details__summary">
         <span class="govuk-details__summary-text govuk-!-font-weight-bold">
             Vulnerability rating
+            <a style="padding-left: 5px;">
+                {% include "svg_rag_rating_icon.html" with rag_rating=sc.vulnerability_status|default:'None' %}
+            </a>
+
         </span>
     </summary>
     <br>
     <div class="govuk-details__text app-dit-details__text">
+        {% if vul %}
         <div class="govuk-tabs" data-module="govuk-tabs">
             <ul class="govuk-tabs__list">
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
@@ -72,5 +77,10 @@
         <div class="app-dit-gsc-notes">
             {% gsc_notes instance=stage_notes %}
         </div>
+        {% else %}
+        <p class="govuk-body-s">
+            No vulnerability information found.
+        </p>
+        {% endif %}
     </div>
 </details>

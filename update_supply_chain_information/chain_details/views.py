@@ -164,13 +164,15 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
         ).order_by("order")
         context["stage_notes"] = context["stages"].order_by("-gsc_updated_on").first()
 
-        vul = supply_chain.vulnerability_assessment
-        context["vul_supply"] = vul.vulnerability_supply_stage
-        context["vul_receive"] = vul.vulnerability_receive_stage
-        context["vul_make"] = vul.vulnerability_make_stage
-        context["vul_store"] = vul.vulnerability_store_stage
-        context["vul_deliver"] = vul.vulnerability_deliver_stage
+        if hasattr(supply_chain, "vulnerability_assessment"):
+            vul = supply_chain.vulnerability_assessment
+            context["vul"] = vul
+            context["vul_supply"] = vul.vulnerability_supply_stage
+            context["vul_receive"] = vul.vulnerability_receive_stage
+            context["vul_make"] = vul.vulnerability_make_stage
+            context["vul_store"] = vul.vulnerability_store_stage
+            context["vul_deliver"] = vul.vulnerability_deliver_stage
 
-        context["vul_title_list"] = self.VUL_STAGE_TITLES
+            context["vul_title_list"] = self.VUL_STAGE_TITLES
 
         return context
