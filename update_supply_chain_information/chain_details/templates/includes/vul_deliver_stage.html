@@ -11,8 +11,10 @@
                 <span class="govuk-accordion__section-button" id={{heading}}>
                     {% with rag="deliver_rag_rating_"|add:char_id %}
                     {% getattribute_value stage rag as rag_value %}
-                    {% include "svg_rag_rating_icon.html" with rag_rating=rag_value|default:'None' %}
-                    {{char_id}} - {% get_vul_stage_title vul_title_list char_id %}
+                    <div class="vul-stage-grid">
+                        <div>{% include "svg_rag_rating_icon.html" with vulnerability="1" rag_rating=rag_value|default:'None' %}</div>
+                        <div>{{char_id}} - {% get_vul_stage_title vul_title_list char_id %}</div>
+                    </div>
                     {% endwith %}
                 </span>
             </h2>

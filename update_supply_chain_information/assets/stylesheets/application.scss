@@ -69,7 +69,7 @@ span.moj-sub-navigation__link:hover {
   height: 1.8rem;
   position: relative;
   bottom: -0.32rem;
-  padding-right: 0rem;
+  padding-right: 0.5rem;
 }
 
 .app-dit-rag-rating__icon svg text {
@@ -126,4 +126,10 @@ span.moj-sub-navigation__link:hover {
 
 .app-dit-gsc-notes {
   @include govuk-responsive-margin(9, "top");
+}
+
+.vul-stage-grid {
+  display: grid;
+  grid-template-columns: 1fr 10fr;
+  align-items: start;
 }
