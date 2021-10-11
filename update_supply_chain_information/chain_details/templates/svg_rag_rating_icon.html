@@ -1,11 +1,25 @@
+{% if vulnerability %}
 <span class="app-dit-rag-rating__icon app-dit-rag-rating__icon-{{ rag_rating|lower }}">
-    <svg role="img" viewBox="0 0 76 76">
+    <svg role="img" viewBox="0 0 70 70" style="bottom: -0.05rem;">
         <title>Rating: {{ rag_rating|lower|capfirst }}</title>
-        <circle r="38" cx="38" cy="38" fill="currentColor"></circle>
+        <circle r="32" cx="38" cy="38" fill="currentColor"></circle>
         {% if rag_rating.0 == "N" %}
-            <rect x="16" y="33" width="44" height="10" fill="currentColor" stroke-width="0"></rect>
+        <rect x="16" y="33" width="44" height="10" fill="currentColor" stroke-width="0"></rect>
         {% else %}
-            <text x="38" y="54" text-anchor="middle" fill="currentColor">{{ rag_rating.0 }}</text>
+        <text x="38" y="54" text-anchor="middle" fill="currentColor">{{ rag_rating.0 }}</text>
         {% endif %}
     </svg>
 </span>
+{% else %}
+<span class="app-dit-rag-rating__icon app-dit-rag-rating__icon-{{ rag_rating|lower }}">
+    <svg role="img" viewBox="0 0 70 70">
+        <title>Rating: {{ rag_rating|lower|capfirst }}</title>
+        <circle r="32" cx="38" cy="38" fill="currentColor"></circle>
+        {% if rag_rating.0 == "N" %}
+        <rect x="16" y="33" width="44" height="10" fill="currentColor" stroke-width="0"></rect>
+        {% else %}
+        <text x="38" y="54" text-anchor="middle" fill="currentColor">{{ rag_rating.0 }}</text>
+        {% endif %}
+    </svg>
+</span>
+{% endif %}
