@@ -1,0 +1,32 @@
+{% load scd_tags %}
+
+
+<div class="govuk-accordion" data-module="govuk-accordion" id="deliver-accordion">
+    {% with char_id='14' %}
+    {% with it=forloop.counter|stringformat:"i" %}
+    {% with heading="deliver-accordion-heading-"|add:it content="deliver-accordion-content-"|add:it %}
+    <div class="govuk-accordion__section ">
+        <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+                <span class="govuk-accordion__section-button" id={{heading}}>
+                    {% with rag="deliver_rag_rating_"|add:char_id %}
+                    {% getattribute_value stage rag as rag_value %}
+                    <div class="vul-stage-grid">
+                        <div>{% include "svg_rag_rating_icon.html" with vulnerability="1" rag_rating=rag_value|default:'None' %}</div>
+                        <div>{{char_id}} - {% get_vul_stage_title vul_title_list char_id %}</div>
+                    </div>
+                    {% endwith %}
+                </span>
+            </h2>
+        </div>
+        <div id={{content}} class="govuk-accordion__section-content" aria-labelledby={{heading}}>
+            {% with summ="deliver_stage_summary_"|add:char_id rat="deliver_stage_rationale_"|add:char_id %}
+            {% include "includes/vul_stage_info.html" with summary=summ rationale=rat %}
+            {% endwith %}
+        </div>
+    </div>
+    {% endwith %}
+    {% endwith %}
+    {% endwith %}
+</div>
+
