@@ -1,9 +1,9 @@
 {% load scd_tags %}
 
-<div class="govuk-accordion" data-module="govuk-accordion" id="supply-accordion">
+<div class="govuk-accordion" data-module="govuk-accordion" id="receive-accordion">
     {% for char_id in '456'|make_list %}
     {% with it=forloop.counter|stringformat:"i" %}
-    {% with heading="accordion-default-heading-"|add:it content="accordion-default-content-"|add:it %}
+    {% with heading="receive-accordion-heading-"|add:it content="receive-accordion-content-"|add:it %}
     <div class="govuk-accordion__section ">
         <div class="govuk-accordion__section-header">
             <h2 class="govuk-accordion__section-heading">
