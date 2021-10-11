@@ -69,13 +69,35 @@ describe('The SCD info page', () => {
     cy.get('#stage-accordion h3.govuk-heading-s').should('exist').should('have.length', 1).contains('Overview')
     cy.get('#chain-stages div.app-dit-gsc-notes p.govuk-body-s').should('exist').should('have.length', 1).contains(/Last updated by bond on.*/)
   })
+  it('shows the Vulnerability rating', () => {
+    const stages = ['Supply', 'Receive', 'Make', 'Store', 'Deliver']
+    cy.get('#vul-rating').should('exist').should('have.length', 1).should('not.have.attr', 'open')
+    cy.get('#vul-rating summary.govuk-details__summary span.govuk-details__summary-text').contains('Vulnerability rating')
+    cy.get('#vul-rating summary.govuk-details__summary span.govuk-details__summary-text span.app-dit-rag-rating__icon').should('exist')
+
+    cy.get('#vul-rating div.govuk-details__text div.govuk-tabs ul.govuk-tabs__list li.govuk-tabs__list-item')
+      .should('have.length', 5)
+      .each(($elm, index) => {
+        cy.wrap($elm).get('a.govuk-tabs__tab').contains(stages[index])
+        cy.wrap($elm).get('div span.app-dit-rag-rating__icon').should('exist')
+      })
+
+    cy.get('#supply-accordion div.govuk-accordion__section').should('have.length', 3)
+    cy.get('#receive-accordion div.govuk-accordion__section').should('have.length', 3)
+    cy.get('#make-accordion div.govuk-accordion__section').should('have.length', 4)
+    cy.get('#store-accordion div.govuk-accordion__section').should('have.length', 3)
+    cy.get('#deliver-accordion div.govuk-accordion__section').should('have.length', 1)
+
+    cy.get('#vul-rating div.app-dit-rag-rating-legend').should('exist')
+    cy.get('#vul-rating div.app-dit-gsc-notes p.govuk-body-s').should('exist').should('have.length', 1).contains(/Last updated by bond on.*/)
+  })
   it('shows the "Scenario testing" section', () => {
     cy.get('#supply-chain-scenario-testing')
       .should('have.length', 1)
       .each(($el) => {
         cy.wrap($el).find('summary').each(($el) => {
           cy.wrap($el).should('have.length', 1)
-              .contains('Scenario testing')
+            .contains('Scenario testing')
         }).find('+ .govuk-details__text').each(($el) => {
           cy.wrap($el).should('have.length', 1)
             .find('> p')
@@ -90,8 +112,8 @@ describe('The SCD info page', () => {
                 cy.wrap($el).find('> .govuk-accordion__section-header')
                   .should('have.length', 1)
                 cy.wrap($el).find('> .govuk-accordion__section-content')
-                    .should('have.length', 1)
-            })
+                  .should('have.length', 1)
+              })
           })
         })
       })
@@ -113,14 +135,14 @@ describe('The SCD info page when there is no scenario assessment', () => {
   })
   it('shows a "no data" message in the "Scenario testing" section', () => {
     cy.get('#supply-chain-scenario-testing > .govuk-details__text > p').invoke('text').then((text) => text.trim()).should(
-        'equal',
-        'No scenario testing information found.'
+      'equal',
+      'No scenario testing information found.'
     )
   })
   it('the "Scenario testing" section is open', () => {
     cy.get('#supply-chain-scenario-testing').should(
-        'have.attr',
-        'open'
+      'have.attr',
+      'open'
     )
   })
 })
