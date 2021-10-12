@@ -2,7 +2,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 
 from accounts.models import User
-from supply_chains.models import SupplyChain
+from supply_chains.models import SupplyChain, SupplyChainUmbrella
 
 
 class PaginationMixin:
@@ -33,7 +33,14 @@ class GovDepPermissionMixin:
     """
 
     def dispatch(self, *args, **kwargs):
-        supply_chain = SupplyChain.objects.get(slug=kwargs.get("supply_chain_slug"))
+        try:
+            supply_chain = SupplyChain.objects.get(slug=kwargs.get("supply_chain_slug"))
+        except SupplyChain.DoesNotExist:
+            supply_chain = (
+                SupplyChainUmbrella.objects.get(slug=kwargs.get("supply_chain_slug"))
+                .supply_chains.all()
+                .first()
+            )
 
         if not check_matching_gov_department(self.request.user, supply_chain):
             raise PermissionDenied

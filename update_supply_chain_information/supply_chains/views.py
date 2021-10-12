@@ -1,10 +1,13 @@
 from datetime import date
 from typing import List, Dict
+from itertools import groupby
 
-
+from django.db.models import Subquery
+from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.expressions import Q, F
 from django.http import HttpResponseRedirect
-from django.template.defaultfilters import date as date_filter
+from django.template.defaultfilters import date as date_filter, first
 from django.db.models import Count, When, Case, Value
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
@@ -26,6 +29,7 @@ from supply_chains.forms import (
 )
 from supply_chains.models import (
     SupplyChain,
+    SupplyChainUmbrella,
     StrategicAction,
     StrategicActionUpdate,
     RAGRating,
@@ -53,18 +57,62 @@ class SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView):
             )
         ).order_by("name")
 
+    def _inject_sc_umbrellas(self):
+        """Update supply chain list with umbrella details
+
+        This method over-rides supply chain list with removing chains that are part of an umbrella
+        and inserting unique umbrella details in their place, which is expected to be 1, per
+        department.
+        """
+        # Due to annotate within get_queryset, distinct can't be used
+        i = self.object_list.filter(supply_chain_umbrella__isnull=False)
+        tuples = [(x.supply_chain_umbrella, x.id) for x in i]
+        unique_umbrellas = [next(g) for _, g in groupby(tuples, key=lambda x: x[0])]
+
+        chains = self.object_list.filter(
+            Q(supply_chain_umbrella__isnull=True)
+            | Q(id__in=[x[1] for x in unique_umbrellas])
+        )
+
+        # Tried to unify the query set with required fields like name, slug etc which
+        # worked fine for pure supply chains while for chains under umbrella annotation queries
+        # got bigger and needed Subquery as Djnago doesn't support expressions. Even with
+        # subqueries, there were exceptions being thrown. Further investigation could resolve this
+        # However in the interest of time left and per KISS priciples, retuning tuple of queryset
+        # and umbrells details required for the page!
+        u = self.request.user.gov_department.supply_chain_umbrellas.all()
+        umbrella_last_update = (
+            u.first()
+            and u.first().supply_chains.all().order_by("-last_submission_date").first()
+        )
+
+        if umbrella_last_update:
+            umbrella_last_update = umbrella_last_update.last_submission_date
+
+        sum = u.first() and u.first().supply_chains.annotate(
+            strategic_action_count=Count(
+                Case(When(strategic_actions__is_archived=False, then=Value(1)))
+            )
+        )
+        umbrella_sa_count = (
+            sum
+            and sum.aggregate(Sum("strategic_action_count"))[
+                "strategic_action_count__sum"
+            ]
+        )
+
+        return (chains, (umbrella_sa_count, umbrella_last_update))
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         last_deadline = get_last_working_day_of_previous_month()
 
-        context["supply_chains"] = self.paginate(self.object_list, 5)
         context["deadline"] = get_last_working_day_of_a_month(
             get_last_day_of_this_month()
         )
         context["num_updated_supply_chains"] = self.object_list.submitted_since(
             last_deadline
         ).count()
-        context["gov_department_name"] = self.request.user.gov_department.name
 
         # Total supply chains are aways sum of supply chains with active SAs.
         # Though SC with 0 active SA are listed, no action is required and hence not included
@@ -78,6 +126,18 @@ class SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView):
 
         context["num_in_prog_supply_chains"] = (
             total_sc_with_active_sa - context["num_updated_supply_chains"]
+        )
+        context["gov_department_name"] = self.request.user.gov_department.name
+
+        chain_list, (
+            umbrella_sa_count,
+            umbrella_last_update,
+        ) = self._inject_sc_umbrellas()
+
+        context["supply_chains"] = self.paginate(chain_list, 5)
+        context["umbrella_sa_count"], context["umbrella_last_update"] = (
+            umbrella_sa_count,
+            umbrella_last_update,
         )
 
         return context
