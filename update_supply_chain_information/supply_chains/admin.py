@@ -17,6 +17,12 @@ from supply_chains.models import (
     SupplyChainStageSection,
     ScenarioAssessment,
     SupplyChainUmbrella,
+    VulnerabilityAssessment,
+    VulAssessmentSupplyStage,
+    VulAssessmentReceiveStage,
+    VulAssessmentMakeStage,
+    VulAssessmentStoreStage,
+    VulAssessmentDeliverStage,
 )
 
 
@@ -232,6 +238,63 @@ class SupplyChainUmbrellaAdmin(admin.ModelAdmin):
         return linebreaks_filter("\n".join(names))
 
 
+class VulSupplyStageInline(admin.StackedInline):
+    model = VulAssessmentSupplyStage
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class VulReceiveStageInline(admin.StackedInline):
+    model = VulAssessmentReceiveStage
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class VulMakeStageInline(admin.StackedInline):
+    model = VulAssessmentMakeStage
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class VulStoreStageInline(admin.StackedInline):
+    model = VulAssessmentStoreStage
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class VulDeliverStageInline(admin.StackedInline):
+    model = VulAssessmentDeliverStage
+    extra = 0
+    min_num = 1
+    max_num = 1
+
+
+class VulnerabilityAssessmentAdmin(admin.ModelAdmin):
+    fields = (
+        "supply_chain",
+        "gsc_updated_on",
+        "gsc_last_changed_by",
+        "gsc_review_on",
+    )
+
+    list_filter = (
+        "supply_chain__gov_department",
+        "supply_chain",
+    )
+
+    inlines = (
+        VulSupplyStageInline,
+        VulReceiveStageInline,
+        VulMakeStageInline,
+        VulStoreStageInline,
+        VulDeliverStageInline,
+    )
+
+
 admin_site.register(GovDepartment, GovDepartmentAdmin)
 admin_site.register(User, UserAdmin)
 admin_site.register(SupplyChain, SupplyChainAdmin)
@@ -242,3 +305,4 @@ admin_site.register(ScenarioAssessment, ScenarioAssessmentAdmin)
 admin_site.register(Country)
 admin_site.register(CountryDependency, CountryDependencyAdmin)
 admin_site.register(SupplyChainUmbrella, SupplyChainUmbrellaAdmin)
+admin_site.register(VulnerabilityAssessment, VulnerabilityAssessmentAdmin)
