@@ -1,5 +1,5 @@
 from datetime import date
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from itertools import groupby
 
 from django.db.models import Sum
@@ -319,22 +319,38 @@ class SCTaskListView(
 
     def post(self, *args, **kwargs):
         if self.total_sa == self.ready_to_submit_updates and self.total_sa:
-            self.supply_chain.last_submission_date = date.today()
-            self.supply_chain.save()
+            supply_chain_slug = kwargs.get("supply_chain_slug", None)
+            scs = list()
+            try:
+                self.supply_chain = SupplyChain.objects.get(
+                    slug=supply_chain_slug, is_archived=False
+                )
+                scs.append(self.supply_chain)
+            except SupplyChain.DoesNotExist:
+                umbrella = SupplyChainUmbrella.objects.get(slug=supply_chain_slug)
 
-            updates = StrategicActionUpdate.objects.since(
-                self.last_deadline,
-                supply_chain=self.supply_chain,
-                status=StrategicActionUpdate.Status.READY_TO_SUBMIT,
-            )
+                if umbrella:
+                    scs.extend(umbrella.supply_chains.all())
+                else:
+                    raise
 
-            for update in updates.iterator():
-                update.submission_date = date.today()
-                update.status = StrategicActionUpdate.Status.SUBMITTED
-                update.save()
+            for sc in scs:
+                sc.last_submission_date = date.today()
+                sc.save()
+
+                updates = StrategicActionUpdate.objects.since(
+                    self.last_deadline,
+                    supply_chain=sc,
+                    status=StrategicActionUpdate.Status.READY_TO_SUBMIT,
+                )
+
+                for update in updates.iterator():
+                    update.submission_date = date.today()
+                    update.status = StrategicActionUpdate.Status.SUBMITTED
+                    update.save()
 
             return redirect(
-                "supply-chain-update-complete", supply_chain_slug=self.supply_chain.slug
+                "supply-chain-update-complete", supply_chain_slug=supply_chain_slug
             )
         else:
             self.submit_error = True
@@ -345,40 +361,81 @@ class SCTaskListView(
 class SCCompleteView(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
     template_name = "task_complete.html"
 
-    def _validate(self) -> bool:
-        total_sa = StrategicAction.objects.filter(
-            supply_chain=self.supply_chain
-        ).count()
-        submitted = StrategicActionUpdate.objects.since(
-            self.last_deadline,
-            supply_chain=self.supply_chain,
-            status=StrategicActionUpdate.Status.SUBMITTED,
-        ).count()
+    def _extract_umbrella_details(self, umbrella) -> Tuple:
+        # TODO: Move this to a until function
+        sum = umbrella.supply_chains.annotate(
+            strategic_action_count=Count(
+                Case(When(strategic_actions__is_archived=False, then=Value(1)))
+            )
+        )
+
+        total_sa = sum.aggregate(Sum("strategic_action_count"))[
+            "strategic_action_count__sum"
+        ]
+
+        submitted = 0
+        for sc in umbrella.supply_chains.all():
+            submitted += StrategicActionUpdate.objects.since(
+                self.last_deadline,
+                supply_chain=sc,
+                status=StrategicActionUpdate.Status.SUBMITTED,
+            ).count()
+
+        return (total_sa, submitted)
+
+    def _validate(self, umbrella: SupplyChainUmbrella = None) -> bool:
+        if umbrella:
+            total_sa, submitted = self._extract_umbrella_details(umbrella)
+        else:
+            total_sa = StrategicAction.objects.filter(
+                supply_chain=self.supply_chain
+            ).count()
+            submitted = StrategicActionUpdate.objects.since(
+                self.last_deadline,
+                supply_chain=self.supply_chain,
+                status=StrategicActionUpdate.Status.SUBMITTED,
+            ).count()
 
         return total_sa == submitted
 
     def get(self, request, *args, **kwargs):
-        supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
+        self.supply_chain_slug = kwargs.get("supply_chain_slug", None)
         self.last_deadline = get_last_working_day_of_previous_month()
-        self.supply_chain = SupplyChain.objects.filter(
-            slug=supply_chain_slug, is_archived=False
-        )[0]
+        umbrella = None
+
+        try:
+            self.supply_chain = SupplyChain.objects.get(
+                slug=self.supply_chain_slug, is_archived=False
+            )
+            self.supply_chain_name = self.supply_chain.name
+        except SupplyChain.DoesNotExist:
+            umbrella = SupplyChainUmbrella.objects.get(slug=self.supply_chain_slug)
+            self.supply_chain_name = umbrella.name
 
         # This is to gaurd manual access if not actually complete, help them to complete
-        if not self._validate():
+        if not self._validate(umbrella):
             return redirect(
-                "supply-chain-task-list", supply_chain_slug=self.supply_chain.slug
+                "supply-chain-task-list", supply_chain_slug=self.supply_chain_slug
             )
 
         supply_chains = request.user.gov_department.supply_chains.filter(
             is_archived=False
         ).order_by("name")
 
-        self.sum_of_supply_chains = supply_chains.count()
-
-        self.num_updated_supply_chains = supply_chains.submitted_since(
-            self.last_deadline
+        self.sum_of_supply_chains = supply_chains.filter(
+            supply_chain_umbrella__isnull=True
         ).count()
+
+        self.num_updated_supply_chains = (
+            supply_chains.filter(supply_chain_umbrella__isnull=True)
+            .submitted_since(self.last_deadline)
+            .count()
+        )
+
+        if umbrella:
+            # There can be one umbrella per department
+            self.sum_of_supply_chains += 1
+            self.num_updated_supply_chains += 1
 
         kwargs.setdefault("view", self)
         return render(request, self.template_name, context=kwargs)

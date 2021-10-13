@@ -1,6 +1,7 @@
 import users from '../fixtures/user.json'
 import govDepartments from '../fixtures/govDepartment.json'
 import supplyChains from '../fixtures/supplyChains.json'
+import umbrellas from '../fixtures/supplyChainUmbrellas.json'
 
 const user = users[0].fields
 const govDepartment = govDepartments[0].fields
@@ -73,5 +74,16 @@ describe('Validate complete view for manual access', () => {
   })
   it('displays enabled submit button', () => {
     cy.get('form').find('button').should('be.enabled')
+  })
+})
+
+const incompletedUmbrella = umbrellas.filter(u => u.fields.name === "Snacks").map(u => u.fields)[0]
+const completeURL = Cypress.config('baseUrlSC') + `/${incompletedUmbrella.slug}/complete/`
+const tasklistURL = Cypress.config('baseUrlSC') + `/${incompletedUmbrella.slug}/`
+
+describe('Validate complete view on supply chain umbrella with manual access', () => {
+  it('successfully loads by redirecting to tasklist page', () => {
+    cy.visit(completeURL)
+    cy.url().should('eq', tasklistURL)
   })
 })
