@@ -100,10 +100,10 @@ describe('Pagination of SAP list', () => {
   })
 })
 
-const emptySC = supplyChains[2]
+const emptySC = supplyChains.filter(sc => sc.fields.name === 'Supply Chain 3')[0]
 const emptyListUrl = urls.sap + `${govDepartment.name}/` + `${emptySC.fields.slug}/`
 
-describe('Describe suply chain with no strategic actions', () => {
+describe('Describe supply chain with no strategic actions', () => {
   it('successfully loads', () => {
     cy.visit(emptyListUrl)
   })

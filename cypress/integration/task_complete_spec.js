@@ -4,7 +4,7 @@ import supplyChains from '../fixtures/supplyChains.json'
 
 const user = users[0].fields
 const govDepartment = govDepartments[0].fields
-const supplyChain = supplyChains[4].fields
+const supplyChain = supplyChains.filter(sc => sc.fields.name === 'Supply Chain 5').map(sc => sc.fields)[0]
 
 describe('The Supply Chain TaskComplete Page', () => {
   it('successfully loads', () => {

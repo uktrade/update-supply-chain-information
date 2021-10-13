@@ -6,8 +6,8 @@ import { urlBuilder } from "../support/utils.js"
 
 const adminUser = users[0].fields
 const govDepartment = govDepartments[0].fields
-const supplyChain = supplyChains[0]
-const action = actions[1]
+const supplyChain = supplyChains.filter(sc => sc.fields.name === 'Supply Chain 1')[0]
+const action = actions.filter(action => action.fields.name === 'SA 00')[0]
 const urls = urlBuilder(supplyChain);
 
 urls.sapDetail = urls.sap + `${govDepartment.name}/` + `${supplyChain.fields.slug}/` + `${action.fields.slug}/detail/`

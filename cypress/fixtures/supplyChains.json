@@ -136,7 +136,7 @@
   "pk": "c57ad8b0-ef83-487f-bc92-9f860a73156d",
   "fields": {
     "name": "Peanuts",
-    "description": "",
+    "description": "World",
     "last_submission_date": "2021-04-22",
     "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
     "supply_chain_umbrella": "e7549bce-2458-4d6b-8e59-9a564b30c7f4",
@@ -180,7 +180,7 @@
   "pk": "f644c3b7-4ecd-4b53-bff3-1a4a57a43811",
   "fields": {
     "name": "Crips",
-    "description": "",
+    "description": "Hello",
     "last_submission_date": "2021-04-15",
     "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703",
     "supply_chain_umbrella": "e7549bce-2458-4d6b-8e59-9a564b30c7f4",
