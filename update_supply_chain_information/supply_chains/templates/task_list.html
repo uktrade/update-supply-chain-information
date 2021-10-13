@@ -108,7 +108,7 @@
     {% endif %}
 
     {% if not view.update_submitted %}
-        <form action={% url 'supply-chain-task-list' supply_chain_slug=view.supply_chain.slug %} method="post">
+        <form action="" method="post">
             {% csrf_token %}
             <button class="govuk-button" data-module="govuk-button" type="submit">
                 Submit monthly update

@@ -2,7 +2,6 @@ from datetime import date
 from typing import List, Dict
 from itertools import groupby
 
-from django.db.models import Subquery
 from django.db.models import Sum
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.expressions import Q, F
@@ -174,7 +173,7 @@ class SCTaskListView(
 
         return updates
 
-    def _get_sa_update_list(self, sa_qset) -> List[Dict]:
+    def _get_sa_update_list(self, sa_qset, supply_chain: SupplyChain) -> List[Dict]:
         sa_updates = list()
 
         for sa in sa_qset.iterator():
@@ -185,7 +184,7 @@ class SCTaskListView(
 
             sau = StrategicActionUpdate.objects.since(
                 self.last_deadline,
-                supply_chain=self.supply_chain,
+                supply_chain=supply_chain,
                 strategic_action=sa,
             )
 
@@ -196,7 +195,7 @@ class SCTaskListView(
                 update["route"] = reverse(
                     "monthly-update-info-edit",
                     kwargs={
-                        "supply_chain_slug": self.supply_chain.slug,
+                        "supply_chain_slug": supply_chain.slug,
                         "action_slug": sa.slug,
                         "update_slug": sau[0].slug,
                     },
@@ -206,7 +205,7 @@ class SCTaskListView(
                 update["route"] = reverse(
                     "monthly-update-create",
                     kwargs={
-                        "supply_chain_slug": self.supply_chain.slug,
+                        "supply_chain_slug": supply_chain.slug,
                         "action_slug": sa.slug,
                     },
                 )
@@ -215,41 +214,85 @@ class SCTaskListView(
 
         return self._sort_updates(sa_updates)
 
+    def _process_umbrella(self, umbrella) -> None:
+        scs = umbrella.supply_chains.all()
+        sa_qset = StrategicAction.objects.none()
+        self.sa_updates = []
+        self.submitted_only_updates = self.ready_to_submit_updates = 0
+
+        for sc in scs:
+            qs = StrategicAction.objects.filter(supply_chain=sc, is_archived=False)
+            self.sa_updates.extend(self._get_sa_update_list(qs, sc))
+
+            self.ready_to_submit_updates += (
+                StrategicActionUpdate.objects.since(
+                    self.last_deadline,
+                    supply_chain=sc,
+                    status__in=[
+                        StrategicActionUpdate.Status.READY_TO_SUBMIT,
+                        StrategicActionUpdate.Status.SUBMITTED,
+                    ],
+                )
+                .filter(strategic_action__is_archived=False)
+                .count()
+            )
+
+            self.submitted_only_updates += (
+                StrategicActionUpdate.objects.since(
+                    self.last_deadline,
+                    supply_chain=sc,
+                    status=StrategicActionUpdate.Status.SUBMITTED,
+                )
+                .filter(strategic_action__is_archived=False)
+                .count()
+            )
+
+            sa_qset |= qs
+        self.total_sa = len(sa_qset)
+        self.sa_updates = self._sort_updates(self.sa_updates)
+
+        return
+
     def _extract_view_data(self, *args, **kwargs):
         supply_chain_slug = kwargs.get("supply_chain_slug", "DEFAULT")
-        self.supply_chain = SupplyChain.objects.get(
-            slug=supply_chain_slug, is_archived=False
-        )
 
-        sa_qset = StrategicAction.objects.filter(
-            supply_chain=self.supply_chain, is_archived=False
-        )
-        self.total_sa = sa_qset.count()
-
-        self.sa_updates = self._get_sa_update_list(sa_qset)
-
-        self.ready_to_submit_updates = (
-            StrategicActionUpdate.objects.since(
-                self.last_deadline,
-                supply_chain=self.supply_chain,
-                status__in=[
-                    StrategicActionUpdate.Status.READY_TO_SUBMIT,
-                    StrategicActionUpdate.Status.SUBMITTED,
-                ],
+        try:
+            self.supply_chain = SupplyChain.objects.get(
+                slug=supply_chain_slug, is_archived=False
             )
-            .filter(strategic_action__is_archived=False)
-            .count()
-        )
+        except SupplyChain.DoesNotExist:
+            umbrella = SupplyChainUmbrella.objects.get(slug=supply_chain_slug)
+            self._process_umbrella(umbrella)
 
-        self.submitted_only_updates = (
-            StrategicActionUpdate.objects.since(
-                self.last_deadline,
-                supply_chain=self.supply_chain,
-                status=StrategicActionUpdate.Status.SUBMITTED,
+        else:
+            sa_qset = StrategicAction.objects.filter(
+                supply_chain=self.supply_chain, is_archived=False
             )
-            .filter(strategic_action__is_archived=False)
-            .count()
-        )
+            self.total_sa = sa_qset.count()
+            self.sa_updates = self._get_sa_update_list(sa_qset, self.supply_chain)
+
+            self.ready_to_submit_updates = (
+                StrategicActionUpdate.objects.since(
+                    self.last_deadline,
+                    supply_chain=self.supply_chain,
+                    status__in=[
+                        StrategicActionUpdate.Status.READY_TO_SUBMIT,
+                        StrategicActionUpdate.Status.SUBMITTED,
+                    ],
+                )
+                .filter(strategic_action__is_archived=False)
+                .count()
+            )
+
+            self.submitted_only_updates = (
+                StrategicActionUpdate.objects.since(
+                    self.last_deadline,
+                    supply_chain=self.supply_chain,
+                    status=StrategicActionUpdate.Status.SUBMITTED,
+                )
+                .filter(strategic_action__is_archived=False)
+                .count()
+            )
 
         self.incomplete_updates = self.total_sa - self.ready_to_submit_updates
 
