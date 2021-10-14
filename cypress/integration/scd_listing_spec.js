@@ -39,9 +39,10 @@ describe('The SCD listing page', () => {
   })
 
   it('expect sections within filtered results', () => {
-    const scNames = supplyChains.slice(0, 5).map(sc => sc.fields.name)
-    const scDescriptions = supplyChains.slice(0, 5).map(sc => sc.fields.description)
-    const scdInfoLinks = supplyChains.slice(0, 5).map(sc =>  `/chain-details/${govDepartment.name}/${sc.fields.slug}/`)
+    const scs = supplyChains.sort((a,b) => (a.fields.name > b.fields.name) ? 1 : ((b.fields.name > a.fields.name) ? -1 : 0))
+    const scNames = scs.slice(0, 5).map(sc => sc.fields.name)
+    const scDescriptions = scs.slice(0, 5).map(sc => sc.fields.description)
+    const scdInfoLinks = scs.slice(0, 5).map(sc => `/chain-details/${govDepartment.name}/${sc.fields.slug}/`)
 
     cy.get('h2').contains(`${govDepartment.name}`)
     cy.get('p').contains('Select a profile to view supply chain information')

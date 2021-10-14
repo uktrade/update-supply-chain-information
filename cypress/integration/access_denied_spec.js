@@ -1,7 +1,7 @@
 import supplyChains from '../fixtures/supplyChains.json'
 import users from '../fixtures/user.json'
 
-const supplyChain = supplyChains[7].fields
+const supplyChain = supplyChains.filter(sc => sc.fields.name === 'Supply chain of other dep').map(sc => sc.fields)[0]
 const adminUser = users[1].fields
 
 describe('The access denied page', () => {

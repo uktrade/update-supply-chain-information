@@ -1,6 +1,7 @@
 import users from '../fixtures/user.json'
 import govDepartments from '../fixtures/govDepartment.json'
 import supplyChains from '../fixtures/supplyChains.json'
+import umbrellas from '../fixtures/supplyChainUmbrellas.json'
 
 const user = users[0].fields
 const govDepartment = govDepartments[0].fields
@@ -43,7 +44,7 @@ describe('The Supply Chain Tasklist Page', () => {
   })
 })
 
-const completedSC = supplyChains[1].fields
+const completedSC = supplyChains.filter(sc => sc.fields.name == "Supply Chain 2").map(sc => sc.fields)[0]
 
 describe('Allowed to submit ready_to_submit Supply Chains', () => {
   it('successfully loads', () => {
@@ -77,7 +78,7 @@ describe('Allowed to submit ready_to_submit Supply Chains', () => {
   }
 })
 
-const submittedSC = supplyChains[4].fields
+const submittedSC = supplyChains.filter(sc => sc.fields.name === "Supply Chain 5").map(sc => sc.fields)[0]
 
 describe('Allowed to view submitted Supply chain', () => {
   it('successfully loads', () => {
@@ -170,4 +171,20 @@ describe('Error handling while submitting incomplete updates', () => {
       .should('have.attr', 'href')
       .and('equal', '#updates')
   })
+})
+
+const umbrella = umbrellas.filter(u => u.fields.name === "Snacks").map(u => u.fields)[0]
+
+describe('SC umbrella behaviour', () => {
+  it('successfully loads', () => {
+    cy.visit(Cypress.config('baseUrlSC') + `/${umbrella.slug}`)
+  })
+  it('displays update in-complete', () => {
+    cy.get('div.govuk-warning-text strong.govuk-warning-text__text').contains('Update incomplete')
+  })
+  it('displays 4 strategic action in the table', () => {
+    cy.get('tbody').find('tr').should('have.length', 4)
+    cy.get('tbody').find('td').should('have.length', 8)
+  })
+
 })

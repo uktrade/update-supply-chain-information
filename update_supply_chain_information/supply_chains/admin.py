@@ -228,7 +228,7 @@ class CountryDependencyAdmin(admin.ModelAdmin):
 
 
 class SupplyChainUmbrellaAdmin(admin.ModelAdmin):
-    readonly_fields = ("id",)
+    readonly_fields = ("id", "slug")
 
     list_display = ("name", "gov_department", "supply_chains")
 

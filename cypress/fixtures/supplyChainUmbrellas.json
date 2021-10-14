@@ -1,0 +1,24 @@
+[
+{
+  "model": "supply_chains.supplychainumbrella",
+  "pk": "587d9ac0-5921-4094-ae05-c9ae9b26fd4c",
+  "fields": {
+    "name": "Wines",
+    "description": "",
+    "last_modified": "2021-10-12T16:21:17.287Z",
+    "slug": "wines",
+    "gov_department": "35727354-6698-4586-9b78-a0f426b86bc9"
+  }
+},
+{
+  "model": "supply_chains.supplychainumbrella",
+  "pk": "e7549bce-2458-4d6b-8e59-9a564b30c7f4",
+  "fields": {
+    "name": "Snacks",
+    "description": "Umbrella to hold all junk food supply chains",
+    "last_modified": "2021-10-12T16:21:12.986Z",
+    "slug": "snacks",
+    "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703"
+  }
+}
+]
