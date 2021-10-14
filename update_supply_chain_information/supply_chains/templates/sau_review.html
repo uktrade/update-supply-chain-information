@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block page_title %}Current monthly update - {{ strategic_action.name }} – {{ supply_chain.name }} – {{ block.super }}{% endblock page_title %}
+{% block page_title %}Current monthly update - {{ strategic_action.name }} – {{ supply_chain_name }} – {{ block.super }}{% endblock page_title %}
 
 {% block breadcrumbs %}
 <nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
@@ -12,7 +12,7 @@
         <a class="govuk-breadcrumbs__link" href="{% url 'sc-home' %}">Monthly update</a>
       </li>
       <li class="govuk-breadcrumbs__list-item">
-        <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' supply_chain.slug %}">{{ supply_chain.name }}</a>
+        <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' supply_chain_slug %}">{{ supply_chain_name }}</a>
       </li>
     </ol>
   </nav>
@@ -60,6 +60,6 @@
     </div>
   </dl>
 
-  <a href={% url 'supply-chain-task-list' supply_chain.slug %} class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back</a>
+  <a href={% url 'supply-chain-task-list' supply_chain_slug %} class="govuk-button govuk-button--secondary btn" data-module="govuk-button">Back</a>
 
 {% endblock %}

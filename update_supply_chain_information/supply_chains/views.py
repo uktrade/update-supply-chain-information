@@ -842,21 +842,29 @@ class SAUReview(LoginRequiredMixin, GovDepPermissionMixin, TemplateView):
     def get_context_data(self, **kwargs):
         self.last_deadline = get_last_working_day_of_previous_month()
         context = super().get_context_data(**kwargs)
-        supply_chain_slug, sa_slug, update_slug = (
+
+        self.supply_chain_slug, sa_slug, update_slug = (
             kwargs.get("supply_chain_slug"),
             kwargs.get("action_slug"),
             kwargs.get("update_slug"),
         )
 
+        # Now that umbrella can be passed in place of supply chain, better not look for
+        # supply_chain_slug for this look up
         sau = StrategicActionUpdate.objects.since(
             deadline=self.last_deadline,
             status=StrategicActionUpdate.Status.SUBMITTED,
             slug=update_slug,
-            supply_chain__slug=supply_chain_slug,
             strategic_action__slug=sa_slug,
-        )[0]
+        ).first()
 
-        context["supply_chain"] = sau.supply_chain
+        try:
+            sc = SupplyChain.objects.get(slug=self.supply_chain_slug)
+            context["supply_chain_name"] = sc.name
+        except SupplyChain.DoesNotExist:
+            u = SupplyChainUmbrella.objects.get(slug=self.supply_chain_slug)
+            context["supply_chain_name"] = u.name
+
         context["strategic_action"] = sau.strategic_action
         context["update"] = sau
 
