@@ -10,7 +10,7 @@
         <h3 class="govuk-heading-m">{{ sc.criticality_rating_text|title }}</h3>
         <hr>
         <p class="govuk-body-s">View more information about each level</p>
-        {% include "includes/criticality/categories.html" %}
+        {% include "includes/criticality/categories.html" criticality_rating=sc.criticality_rating %}
         {% gsc_notes instance=sc %}
     </div>
 </details>

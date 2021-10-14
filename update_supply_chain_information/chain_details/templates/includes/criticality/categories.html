@@ -2,7 +2,7 @@
 
 <div class="custom-criticality-ratings">
     {% for criticality_rating_type in criticality_rating_types %}
-    <details class="govuk-details component-panel" data-module="govuk-details" id="chain-stages">
+    <details class="govuk-details component-panel" data-module="govuk-details" id="chain-stages" {% if criticality_rating == forloop.counter %}open{% endif %}>
         <summary class="govuk-details__summary">
             <span class="govuk-details__summary-text govuk-!-font-weight-bold">
                 {{ criticality_rating_type|title }} - {{ forloop.counter }}
