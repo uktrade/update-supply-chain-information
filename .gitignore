@@ -1,7 +1,7 @@
 __pycache__/
 *.py[cod]
 # virtual env
-env 
+env
 # environment variables
 .env
 
@@ -23,3 +23,6 @@ settings.json
 
 # pytest coverage
 *coverage*
+
+# OS x
+.DS_Store

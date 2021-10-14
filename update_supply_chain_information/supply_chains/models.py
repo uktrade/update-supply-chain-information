@@ -2,6 +2,9 @@ import uuid
 from datetime import datetime, date, timedelta
 
 import reversion
+
+from simple_history.models import HistoricalRecords
+
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -35,6 +38,31 @@ class NullableRAGRating(models.TextChoices):
 
 class SupplyChainUmbrellaQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     pass
+
+
+class GSCUpdateModel(models.Model):
+    gsc_last_changed_by = models.CharField(
+        max_length=64,
+        blank=True,
+        default="",
+        verbose_name="last updated by",
+        help_text="The entity responsible for the most recent change",
+    )
+    gsc_updated_on = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="last updated",
+        help_text="The date of the most recent change",
+    )
+    gsc_review_on = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="review on",
+        help_text="The date when a review should be carried out",
+    )
+
+    class Meta:
+        abstract = True
 
 
 class SupplyChainUmbrella(models.Model):
@@ -72,11 +100,27 @@ class SupplyChainQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
         return self.filter(last_submission_date__gt=deadline)
 
 
-class SupplyChain(models.Model):
+CRITICALITY_RATING = [
+    "limited",
+    "minor",
+    "moderate",
+    "significant",
+    "catastrophic"
+]
+
+
+class SupplyChain(GSCUpdateModel):
     class StatusRating(models.TextChoices):
         LOW = ("low", "Low")
         MEDIUM = ("medium", "Medium")
         HIGH = ("high", "High")
+
+    class CriticalityRating(models.IntegerChoices):
+        LIMITED = 1
+        MINOR = 2
+        MODERATE = 3
+        SIGNIFICANT = 4
+        CATASTROPHIC = 5
 
     objects = SupplyChainQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -122,6 +166,19 @@ class SupplyChain(models.Model):
     archived_reason = models.TextField(blank=True)
     archived_date = models.DateField(null=True, blank=True)
     last_modified = models.DateTimeField(auto_now=True)
+    criticality_rating = models.IntegerField(
+        choices=CriticalityRating.choices,
+        null=True,
+        blank=True,
+    )
+    history = HistoricalRecords()
+
+    @property
+    def criticality_rating_text(self):
+        if self.criticality_rating:
+            return f"{CRITICALITY_RATING[self.criticality_rating - 1]} - {self.criticality_rating}"
+
+        return "Criticality rating not set"
 
     def clean(self) -> None:
         error_dict = {}
@@ -613,31 +670,6 @@ class StrategicActionUpdate(models.Model):
 
     def __str__(self):
         return f"Update {self.slug} for {self.strategic_action}"
-
-
-class GSCUpdateModel(models.Model):
-    gsc_last_changed_by = models.CharField(
-        max_length=64,
-        blank=True,
-        default="",
-        verbose_name="last updated by",
-        help_text="The entity responsible for the most recent change",
-    )
-    gsc_updated_on = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name="last updated",
-        help_text="The date of the most recent change",
-    )
-    gsc_review_on = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name="review on",
-        help_text="The date when a review should be carried out",
-    )
-
-    class Meta:
-        abstract = True
 
 
 class MaturitySelfAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):

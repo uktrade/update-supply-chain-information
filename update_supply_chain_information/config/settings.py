@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django.forms",
     "action_progress",
     "chain_details",
+    "simple_history",
 ]
 
 # Elastic APM middleware automatically added to trace django requests
@@ -65,6 +66,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "reversion.middleware.RevisionMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -98,15 +100,10 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        **env.db("DATABASE_URL"),
-    },
-}
+DATABASE_URL = os.getenv("DATABASE_URL")
 
+DATABASES = {"default": env.db()}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
