@@ -165,6 +165,13 @@ class SupplyChain(GSCUpdateModel):
         MEDIUM = ("medium", "Medium")
         HIGH = ("high", "High")
 
+    class CriticalityRating(models.IntegerChoices):
+        LIMITED = 1
+        MINOR = 2
+        MODERATE = 3
+        SIGNIFICANT = 4
+        CATASTROPHIC = 5
+
     objects = SupplyChainQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
@@ -209,6 +216,19 @@ class SupplyChain(GSCUpdateModel):
     archived_reason = models.TextField(blank=True)
     archived_date = models.DateField(null=True, blank=True)
     last_modified = models.DateTimeField(auto_now=True)
+    criticality_rating = models.IntegerField(
+        choices=CriticalityRating.choices,
+        null=True,
+        blank=True,
+    )
+    history = HistoricalRecords()
+
+    @property
+    def criticality_rating_text(self):
+        if self.criticality_rating:
+            return f"{CRITICALITY_RATING[self.criticality_rating - 1]} - {self.criticality_rating}"
+
+        return "Criticality rating not set"
 
     history = HistoricalRecords()
 
