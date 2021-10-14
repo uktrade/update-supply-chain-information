@@ -39,6 +39,7 @@ from supply_chains.utils import (
     get_last_working_day_of_previous_month,
 )
 from supply_chains.mixins import PaginationMixin, GovDepPermissionMixin
+from supply_chains.templatetags.supply_chain_tags import get_tasklist_link
 
 
 class SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView):
@@ -260,8 +261,10 @@ class SCTaskListView(
             self.supply_chain = SupplyChain.objects.get(
                 slug=supply_chain_slug, is_archived=False
             )
+            self.supply_chain_name = self.supply_chain.name
         except SupplyChain.DoesNotExist:
             umbrella = SupplyChainUmbrella.objects.get(slug=supply_chain_slug)
+            self.supply_chain_name = umbrella.name
             self._process_umbrella(umbrella)
 
         else:
@@ -796,10 +799,7 @@ class MonthlyUpdateSummaryView(
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
-        return reverse(
-            "supply-chain-task-list",
-            kwargs={"supply_chain_slug": self.object.supply_chain.slug},
-        )
+        return get_tasklist_link(self.object.supply_chain.slug)
 
 
 class SASummaryView(
