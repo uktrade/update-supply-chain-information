@@ -20,5 +20,16 @@
     "slug": "snacks",
     "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703"
   }
+},
+{
+  "model": "supply_chains.supplychainumbrella",
+  "pk": "fa054f6c-2e49-4454-8bb3-eed6f7e9b35c",
+  "fields": {
+    "name": "Flowers",
+    "description": "Bloom",
+    "last_modified": "2021-10-15T09:50:28.660Z",
+    "slug": "flowers",
+    "gov_department": "15fb0d63-2ee6-4652-8acd-222bd2718703"
+  }
 }
 ]

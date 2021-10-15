@@ -49,7 +49,7 @@ describe('The SAP filters page for admin user', () => {
     cy.url().should('eq', urls.sap + `${govDepartment.name}/`)
   })
   it('can views supply chains', () => {
-    cy.get('div > #id_supply_chain > option').should('have.length', 10)
+    cy.get('div > #id_supply_chain > option').should('have.length', 12)
 
   })
   it('can select supply chain and submit', () => {

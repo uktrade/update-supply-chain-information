@@ -433,6 +433,30 @@
 },
 {
   "model": "supply_chains.strategicaction",
+  "pk": "a8b83724-7909-48bf-9aef-f6fa63d1d693",
+  "fields": {
+    "name": "Gather seeds",
+    "start_date": null,
+    "description": "For Rose",
+    "impact": "",
+    "category": "create",
+    "geographic_scope": "uk_wide",
+    "supporting_organisations": "",
+    "is_ongoing": false,
+    "target_completion_date": null,
+    "is_archived": false,
+    "archived_date": null,
+    "archived_reason": "",
+    "specific_related_products": "",
+    "other_dependencies": "",
+    "gsc_notes": "",
+    "supply_chain": "d7e783df-8753-4822-893d-75da39a408f4",
+    "slug": "gather-seeds",
+    "last_modified": "2021-10-15T09:57:09.212Z"
+  }
+},
+{
+  "model": "supply_chains.strategicaction",
   "pk": "b5a37c2d-67e4-4f4e-a0d5-e04173a76c2c",
   "fields": {
     "name": "MU Form Test 5 NPU NCD WE",
@@ -525,6 +549,30 @@
     "supply_chain": "f6787b31-a016-4c9a-92a9-03be1b656cb4",
     "slug": "strategic-action-1",
     "last_modified": "2021-05-31T23:00:00Z"
+  }
+},
+{
+  "model": "supply_chains.strategicaction",
+  "pk": "e5df238c-c19f-44a9-9cfb-dd0f84436fcd",
+  "fields": {
+    "name": "Gather manure",
+    "start_date": null,
+    "description": "For daffodil",
+    "impact": "",
+    "category": "create",
+    "geographic_scope": "uk_wide",
+    "supporting_organisations": "",
+    "is_ongoing": false,
+    "target_completion_date": null,
+    "is_archived": false,
+    "archived_date": null,
+    "archived_reason": "",
+    "specific_related_products": "",
+    "other_dependencies": "",
+    "gsc_notes": "",
+    "supply_chain": "3202ab76-6f0a-4ce6-a6a9-0787c52d22d2",
+    "slug": "gather-manure",
+    "last_modified": "2021-10-15T09:57:35.004Z"
   }
 },
 {

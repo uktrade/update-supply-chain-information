@@ -71,7 +71,7 @@ describe('The Supply Chain Home Page', () => {
     cy.contains('Next').click()
     cy.url().should('eq', Cypress.config('baseUrlSC') + '/?page=2')
     cy.get('tbody.govuk-table__body tr.govuk-table__row')
-    .should('have.length', 3)
+    .should('have.length', 4)
     .each(($ele) => {
       cy.wrap($ele).get('a.govuk-link').should('not.eq', 'Peanuts').should('not.eq', 'Crips')
     })

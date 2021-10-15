@@ -10,6 +10,7 @@ from django.template.defaultfilters import date as date_filter, first
 from django.db.models import Count, When, Case, Value
 from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
+from django.template.defaultfilters import date as date_tag
 from django.views.generic import (
     ListView,
     UpdateView,
@@ -57,6 +58,31 @@ class SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView):
             )
         ).order_by("name")
 
+    def get_unique_umbrella_tuples(self) -> List:
+        # Due to annotate within get_queryset, distinct can't be used
+        i = self.object_list.filter(supply_chain_umbrella__isnull=False)
+        tuples = [(x.supply_chain_umbrella, x.id) for x in i]
+        unique_umbrellas = set(e[0] for e in tuples)
+        unique_tuples = []
+
+        for u in unique_umbrellas:
+            for t in tuples:
+                if u == t[0]:
+                    unique_tuples.append(t)
+                    break
+
+        return unique_tuples
+
+    def _get_umbrella_sa_count(self, u: SupplyChainUmbrella) -> int:
+        sum = u.supply_chains.annotate(
+            strategic_action_count=Count(
+                Case(When(strategic_actions__is_archived=False, then=Value(1)))
+            )
+        )
+        return sum.aggregate(Sum("strategic_action_count"))[
+            "strategic_action_count__sum"
+        ]
+
     def _inject_sc_umbrellas(self):
         """Update supply chain list with umbrella details
 
@@ -64,44 +90,48 @@ class SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView):
         and inserting unique umbrella details in their place, which is expected to be 1, per
         department.
         """
-        # Due to annotate within get_queryset, distinct can't be used
-        i = self.object_list.filter(supply_chain_umbrella__isnull=False)
-        tuples = [(x.supply_chain_umbrella, x.id) for x in i]
-        unique_umbrellas = [next(g) for _, g in groupby(tuples, key=lambda x: x[0])]
+        unique_tuples = self.get_unique_umbrella_tuples()
 
-        chains = self.object_list.filter(
+        qs = self.object_list.filter(
             Q(supply_chain_umbrella__isnull=True)
-            | Q(id__in=[x[1] for x in unique_umbrellas])
+            | Q(id__in=[x[1] for x in unique_tuples])
         )
 
         # Tried to unify the query set with required fields like name, slug etc which
         # worked fine for pure supply chains while for chains under umbrella annotation queries
         # got bigger and needed Subquery as Djnago doesn't support expressions. Even with
         # subqueries, there were exceptions being thrown. Further investigation could resolve this
-        # However in the interest of time left and per KISS priciples, retuning tuple of queryset
-        # and umbrells details required for the page!
-        u = self.request.user.gov_department.supply_chain_umbrellas.all()
-        umbrella_last_update = (
-            u.first()
-            and u.first().supply_chains.all().order_by("-last_submission_date").first()
-        )
+        # However in the interest of time left and per KISS priciples, retuning list of dicts
+        # with info required for the page!
 
-        if umbrella_last_update:
-            umbrella_last_update = umbrella_last_update.last_submission_date
+        chains = list()
 
-        sum = u.first() and u.first().supply_chains.annotate(
-            strategic_action_count=Count(
-                Case(When(strategic_actions__is_archived=False, then=Value(1)))
-            )
-        )
-        umbrella_sa_count = (
-            sum
-            and sum.aggregate(Sum("strategic_action_count"))[
-                "strategic_action_count__sum"
-            ]
-        )
+        for item in qs.iterator():
+            if item.supply_chain_umbrella:
+                u = item.supply_chain_umbrella
+                sc = u.supply_chains.all().order_by("-last_submission_date").first()
+                last_updated = date_tag(sc.last_submission_date, "j M Y")
+                sa_count = self._get_umbrella_sa_count(u)
 
-        return (chains, (umbrella_sa_count, umbrella_last_update))
+                chains.append(
+                    {
+                        "name": u.name,
+                        "slug": u.slug,
+                        "sa_count": sa_count,
+                        "last_updated": last_updated,
+                    }
+                )
+            else:
+                chains.append(
+                    {
+                        "name": item.name,
+                        "slug": item.slug,
+                        "sa_count": item.strategic_action_count,
+                        "last_updated": date_tag(item.last_submission_date, "j M Y"),
+                    }
+                )
+
+        return chains
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -129,16 +159,9 @@ class SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView):
         )
         context["gov_department_name"] = self.request.user.gov_department.name
 
-        chain_list, (
-            umbrella_sa_count,
-            umbrella_last_update,
-        ) = self._inject_sc_umbrellas()
+        chain_list = self._inject_sc_umbrellas()
 
         context["supply_chains"] = self.paginate(chain_list, 5)
-        context["umbrella_sa_count"], context["umbrella_last_update"] = (
-            umbrella_sa_count,
-            umbrella_last_update,
-        )
 
         return context
 
