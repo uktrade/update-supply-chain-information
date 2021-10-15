@@ -4,8 +4,8 @@
   "pk": "0d439851-27e9-413a-8948-8360e17970d0",
   "fields": {
     "status": "submitted",
-    "submission_date": "2021-08-07",
-    "date_created": "2021-08-07",
+    "submission_date": "2021-02-07",
+    "date_created": "2021-02-07",
     "content": "Polymers on track",
     "implementation_rag_rating": "GREEN",
     "reason_for_delays": "",
@@ -15,7 +15,7 @@
     "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
     "strategic_action": "7069b950-c5b4-41ad-a7e7-dff49e904c1e",
     "supply_chain": "f644c3b7-4ecd-4b53-bff3-1a4a57a43811",
-    "slug": "09-2021",
+    "slug": "02-2021",
     "last_modified": "2021-10-12T12:27:55.649Z"
   }
 },
@@ -44,8 +44,8 @@
   "pk": "1b888246-6312-48fc-b8ee-7752f4b7807d",
   "fields": {
     "status": "submitted",
-    "submission_date": "2021-09-15",
-    "date_created": "2021-09-15",
+    "submission_date": "2021-03-15",
+    "date_created": "2021-03-15",
     "content": "Collaboration with oil refineries",
     "implementation_rag_rating": "GREEN",
     "reason_for_delays": "",
@@ -55,7 +55,7 @@
     "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
     "strategic_action": "05aa04b3-671d-48d0-9e42-2b784fc3865a",
     "supply_chain": "f644c3b7-4ecd-4b53-bff3-1a4a57a43811",
-    "slug": "08-2021",
+    "slug": "03-2021",
     "last_modified": "2021-10-12T12:29:34.452Z"
   }
 },
@@ -84,8 +84,8 @@
   "pk": "262c896e-cb34-4c3b-b77a-569f0e81a174",
   "fields": {
     "status": "submitted",
-    "submission_date": "2021-09-22",
-    "date_created": "2021-09-22",
+    "submission_date": "2021-04-22",
+    "date_created": "2021-04-22",
     "content": "Agreement with farmers",
     "implementation_rag_rating": "GREEN",
     "reason_for_delays": "",
@@ -95,7 +95,7 @@
     "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
     "strategic_action": "956a6649-b0c2-45fc-aafc-70c59bd992e9",
     "supply_chain": "c57ad8b0-ef83-487f-bc92-9f860a73156d",
-    "slug": "09-2021",
+    "slug": "04-2021",
     "last_modified": "2021-10-12T12:30:25.103Z"
   }
 },
@@ -144,8 +144,8 @@
   "pk": "58cc7715-f82d-44d7-a683-b9e88d304ff2",
   "fields": {
     "status": "submitted",
-    "submission_date": "2021-06-30",
-    "date_created": "2021-06-30",
+    "submission_date": "2021-03-30",
+    "date_created": "2021-03-30",
     "content": "Contract initiated with spice whole sales",
     "implementation_rag_rating": "GREEN",
     "reason_for_delays": "",
@@ -155,7 +155,7 @@
     "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
     "strategic_action": "e372dbff-3546-4764-8e86-d5f733865674",
     "supply_chain": "c57ad8b0-ef83-487f-bc92-9f860a73156d",
-    "slug": "09-2021",
+    "slug": "03-2021",
     "last_modified": "2021-10-12T12:31:32.298Z"
   }
 },
@@ -204,8 +204,8 @@
   "pk": "ad5a2460-439f-46de-8cab-c2bb1edd859e",
   "fields": {
     "status": "submitted",
-    "submission_date": "2021-08-03",
-    "date_created": "2021-08-03",
+    "submission_date": "2021-04-03",
+    "date_created": "2021-04-03",
     "content": "Meeting with polymer distributors",
     "implementation_rag_rating": "GREEN",
     "reason_for_delays": "",
@@ -215,7 +215,7 @@
     "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
     "strategic_action": "7069b950-c5b4-41ad-a7e7-dff49e904c1e",
     "supply_chain": "f644c3b7-4ecd-4b53-bff3-1a4a57a43811",
-    "slug": "08-2021",
+    "slug": "04-2021",
     "last_modified": "2021-10-12T12:28:38.461Z"
   }
 },
