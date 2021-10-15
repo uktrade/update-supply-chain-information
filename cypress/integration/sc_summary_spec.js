@@ -8,7 +8,7 @@ const govDepartment = govDepartments[0].fields
 const supplyChain = supplyChains.filter(sc => sc.fields.name == 'Supply Chain 1')[0]
 const user = users[0].fields
 
-describe('Supply chain summary page', () => {
+describe.skip('Supply chain summary page', () => {
   it('successfully loads', () => {
     cy.visit(urls.summary)
     cy.injectAxe()
@@ -48,7 +48,7 @@ describe('Supply chain summary page', () => {
   })
 })
 
-describe('Paginate Supply chains', () => {
+describe.skip('Paginate Supply chains', () => {
   it('successfully loads', () => {
     cy.visit(urls.summary)
   })
