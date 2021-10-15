@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block page_title %}Update {{ view.supply_chain.name }} – {{ block.super }}{% endblock %}
+{% block page_title %}Update {{ view.supply_chain_name }} – {{ block.super }}{% endblock %}
 
 {% block breadcrumbs %}
 <nav class="govuk-breadcrumbs" aria-label="breadcrumbs">
@@ -17,7 +17,7 @@
 
 {% block body %}
 
-    <h1 class="govuk-heading-xl"> Update {{ view.supply_chain.name }} </h1>
+    <h1 class="govuk-heading-xl"> Update {{ view.supply_chain_name }} </h1>
 
     {% if not view.update_submitted %}
         {% if view.update_complete %}
@@ -108,7 +108,7 @@
     {% endif %}
 
     {% if not view.update_submitted %}
-        <form action={% url 'supply-chain-task-list' supply_chain_slug=view.supply_chain.slug %} method="post">
+        <form action="" method="post">
             {% csrf_token %}
             <button class="govuk-button" data-module="govuk-button" type="submit">
                 Submit monthly update

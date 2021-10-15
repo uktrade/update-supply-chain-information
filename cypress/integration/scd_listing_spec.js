@@ -39,9 +39,10 @@ describe('The SCD listing page', () => {
   })
 
   it('expect sections within filtered results', () => {
-    const scNames = supplyChains.slice(0, 5).map(sc => sc.fields.name)
-    const scDescriptions = supplyChains.slice(0, 5).map(sc => sc.fields.description)
-    const scdInfoLinks = supplyChains.slice(0, 5).map(sc =>  `/chain-details/${govDepartment.name}/${sc.fields.slug}/`)
+    const scs = supplyChains.sort((a,b) => (a.fields.name > b.fields.name) ? 1 : ((b.fields.name > a.fields.name) ? -1 : 0))
+    const scNames = scs.slice(0, 5).map(sc => sc.fields.name)
+    const scDescriptions = scs.slice(0, 5).map(sc => sc.fields.description)
+    const scdInfoLinks = scs.slice(0, 5).map(sc => `/chain-details/${govDepartment.name}/${sc.fields.slug}/`)
 
     cy.get('h2').contains(`${govDepartment.name}`)
     cy.get('p').contains('Select a profile to view supply chain information')
@@ -76,7 +77,7 @@ describe('Pagination of SCD list', () => {
     cy.visit(scdListingUrl)
   })
   it('displays correct items in pagination list', () => {
-    cy.get('.moj-pagination__list').find('li').should('have.length', 3)
+    cy.get('.moj-pagination__list').find('li').should('have.length', 4)
     cy.get('.moj-pagination__item--active').contains('1')
     cy.get('.moj-pagination__item').contains('2')
     cy.get('.moj-pagination__item').contains('Next')

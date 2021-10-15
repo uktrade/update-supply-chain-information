@@ -59,8 +59,8 @@
                     <th scope="row" class="govuk-table__header">
                         <a href={% url 'supply-chain-task-list' supply_chain_slug=supplychain.slug %}  class="govuk-link">{{ supplychain.name }}</a>
                     </th>
-                    <td class="govuk-table__cell">{{supplychain.strategic_action_count}}</td>
-                    <td class="govuk-table__cell govuk-table__cell--numeric">{{supplychain.last_submission_date|date:"j M Y"}}</td>
+                    <td class="govuk-table__cell">{{supplychain.sa_count}}</td>
+                    <td class="govuk-table__cell govuk-table__cell--numeric">{{supplychain.last_updated}}</td>
                 </tr>
             {% endfor %}
         </tbody>

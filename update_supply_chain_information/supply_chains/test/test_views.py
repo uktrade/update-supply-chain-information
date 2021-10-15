@@ -51,7 +51,6 @@ def test_sc_homepage_pagination(
     assert response.status_code == 200
     assert response.context["gov_department_name"] == test_user.gov_department.name
     assert len(response.context["supply_chains"]) == num_supply_chains_returned
-    assert hasattr(response.context["supply_chains"][0], "strategic_action_count")
 
 
 def test_sc_homepage_update_complete(logged_in_client, test_user):
@@ -164,7 +163,7 @@ def test_sc_homepage_filters_out_archived_SAs(logged_in_client, test_user):
 
     # Assert
     supply_chain = resp.context["supply_chains"].object_list[0]
-    assert supply_chain.strategic_action_count == archived_count
+    assert supply_chain["sa_count"] == archived_count
 
 
 def test_sc_homepage_summary_with_archived_SAs(logged_in_client, test_user):

@@ -14,7 +14,7 @@ const actions = allActions
   .map(action => action.fields)
 
 
-describe('The strategic action summary page', () => {
+describe.skip('The strategic action summary page', () => {
   it('successfully loads', () => {
     cy.visit(urls.supplyChain.strategicActions.summary)
     cy.injectAxe()

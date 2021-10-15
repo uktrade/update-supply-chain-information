@@ -9,6 +9,7 @@ from django.template.defaultfilters import date as date_filter
 from supply_chains.models import StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,
+    SupplyChainUmbrellaFactory,
     StrategicActionFactory,
     StrategicActionUpdateFactory,
     GovDepartmentFactory,
@@ -118,7 +119,7 @@ class TestSAUReview:
         resp = logged_in_client.get(update_stub["url"])
 
         # Assert
-        assert resp.context["supply_chain"].name == update_stub["sc_name"]
+        assert resp.context["supply_chain_name"] == update_stub["sc_name"]
         assert resp.context["completion_estimation"] == date_filter(
             datetime.strptime(update_stub["sa_completion"], r"%Y-%m-%d"), "j F Y"
         )
@@ -140,7 +141,7 @@ class TestSAUReview:
             gov_department=test_user.gov_department,
             last_submission_date=date.today(),
         )
-        sa = sa = StrategicActionFactory.create(
+        sa = StrategicActionFactory.create(
             name=sa_name, supply_chain=sc, is_ongoing=True
         )
         StrategicActionUpdateFactory(
@@ -164,5 +165,45 @@ class TestSAUReview:
         )
 
         # Assert
-        assert resp.context["supply_chain"].name == sc_name
+        assert resp.context["supply_chain_name"] == sc_name
         assert resp.context["completion_estimation"] == "Ongoing"
+
+    def test_update_on_umbrella(slef, logged_in_client, test_user):
+        # Arrange
+        u_name = "houseware"
+        sc_name = "ceramics"
+        sa_name = "action 01"
+        update_slug = "05-2021"
+        u = SupplyChainUmbrellaFactory.create(name=u_name)
+        sc = SupplyChainFactory.create(
+            name=sc_name,
+            gov_department=test_user.gov_department,
+            supply_chain_umbrella=u,
+            last_submission_date=date.today(),
+        )
+        sa = StrategicActionFactory.create(
+            name=sa_name, supply_chain=sc, is_ongoing=True
+        )
+        StrategicActionUpdateFactory(
+            slug=update_slug,
+            status=Status.SUBMITTED,
+            submission_date=date.today(),
+            strategic_action=sa,
+            supply_chain=sc,
+        )
+
+        # Act
+        resp = logged_in_client.get(
+            reverse(
+                "monthly-update-review",
+                kwargs={
+                    "supply_chain_slug": u_name,
+                    "action_slug": slugify(sa_name),
+                    "update_slug": update_slug,
+                },
+            )
+        )
+
+        # Assert
+        assert resp.context["supply_chain_name"] == u_name
+        assert resp.context["supply_chain_slug"] == u_name
