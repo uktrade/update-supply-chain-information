@@ -55,7 +55,11 @@ describe('The Supply Chain Home Page', () => {
     cy.get('th').contains('Last updated')
   })
   it('displays 5 supply chains in the table', () => {
-    cy.get('tbody').find('tr').should('have.length', 5)
+    cy.get('tbody.govuk-table__body tr.govuk-table__row')
+    .should('have.length', 5)
+    .each(($ele) => {
+      cy.wrap($ele).get('a.govuk-link').should('not.eq', 'Peanuts').should('not.eq', 'Crips')
+    })
   })
   it('displays correct items in pagination list', () => {
     cy.get('.moj-pagination__list').find('li').should('have.length', 3)
@@ -66,7 +70,11 @@ describe('The Supply Chain Home Page', () => {
   it('displays second page of supply chains after clicking Next', () => {
     cy.contains('Next').click()
     cy.url().should('eq', Cypress.config('baseUrlSC') + '/?page=2')
-    cy.get('tbody').find('tr').should('have.length', 2)
+    cy.get('tbody.govuk-table__body tr.govuk-table__row')
+    .should('have.length', 4)
+    .each(($ele) => {
+      cy.wrap($ele).get('a.govuk-link').should('not.eq', 'Peanuts').should('not.eq', 'Crips')
+    })
   })
   it('displays first page of supply chains after clicking Previous', () => {
     cy.contains('Previous').click()

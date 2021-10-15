@@ -6,6 +6,7 @@ from django.template.defaultfilters import slugify
 from supply_chains.models import StrategicAction, StrategicActionUpdate
 from supply_chains.test.factories import (
     SupplyChainFactory,
+    SupplyChainUmbrellaFactory,
     StrategicActionFactory,
     StrategicActionUpdateFactory,
     GovDepartmentFactory,
@@ -299,3 +300,25 @@ class TestTaskListView:
 
         assert resp.status_code == 200
         assert len(p.object_list) == actions_returned
+
+    def test_update_on_umbrella(slef, logged_in_client, test_user):
+        # Arrange
+        u_name = "houseware"
+        sc_name = "ceramics"
+
+        u = SupplyChainUmbrellaFactory.create(name=u_name)
+        SupplyChainFactory.create(
+            name=sc_name,
+            gov_department=test_user.gov_department,
+            supply_chain_umbrella=u,
+        )
+
+        # Act
+        resp = logged_in_client.get(
+            reverse(
+                "supply-chain-task-list", kwargs={"supply_chain_slug": slugify(u_name)}
+            ),
+        )
+
+        # Assert
+        assert resp.context["view"].supply_chain_name == u_name

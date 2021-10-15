@@ -12,7 +12,7 @@
             <a class="govuk-breadcrumbs__link" href="{% url 'sc-home' %}">Monthly update</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' view.supply_chain.slug %}">{{ view.supply_chain.name }}</a>
+            <a class="govuk-breadcrumbs__link" href="{% url 'supply-chain-task-list' view.supply_chain_slug %}">{{ view.supply_chain_name }}</a>
         </li>
     </ol>
 </nav>
@@ -24,7 +24,7 @@
             Update complete
         </h1>
         <div class="govuk-panel__body">
-            Thank you for submitting your monthly update for the <strong>{{ view.supply_chain.name }}</strong> supply chain.
+            Thank you for submitting your monthly update for the <strong>{{ view.supply_chain_name }}</strong> supply chain.
         </div>
     </div>
 
