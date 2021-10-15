@@ -1,3 +1,5 @@
+from datetime import date
+
 from django import forms
 from django.contrib import admin
 from django.contrib.admin import AdminSite
@@ -124,6 +126,14 @@ class StrategicActionUpdateAdmin(admin.ModelAdmin):
     @admin.display(ordering="supply_chain__gov_department")
     def gov_department(self, obj):
         return obj.supply_chain.gov_department
+
+    def save_model(self, request: Any, obj, form: Any, change: Any) -> None:
+        if obj.status == StrategicActionUpdate.Status.SUBMITTED:
+            sc = obj.supply_chain
+            sc.last_submission_date = date.today()
+            sc.save()
+
+        return super().save_model(request, obj, form, change)
 
 
 class ScenarioAssessmentAdmin(admin.ModelAdmin):
