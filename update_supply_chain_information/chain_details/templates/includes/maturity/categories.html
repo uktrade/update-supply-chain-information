@@ -1,0 +1,25 @@
+{% load get_criticality_category_text %}
+
+<div class="custom-criticality-ratings">
+    {% for criticality_rating_type in criticality_rating_types %}
+    <details class="govuk-details component-panel" data-module="govuk-details" id="chain-stages" {% if criticality_rating == forloop.counter %}open{% endif %}>
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+                {{ criticality_rating_type|title }} - {{ forloop.counter }}
+            </span>
+        </summary>
+        <div class="govuk-details__text app-dit-details__text">
+            <h4 class="govuk-heading-s">Level 1</h4>
+            <p class="govuk-body-s">Supply chain risks have been identified and understood, building upon the vulnerability assessment.</p>
+            <h4 class="govuk-heading-s">Level 2</h4>
+            <p class="govuk-body-s">The period within which any risks may materialise is understood, including the critical scenarios, the risk events, early warning indicators and timeframes.</p>
+            <h4 class="govuk-heading-s">Level 3</h4>
+            <p class="govuk-body-s">The Strategic Framework has been applied to identify the most effective risk mitigations.</p>
+            <h4 class="govuk-heading-s">Level 4</h4>
+            <p class="govuk-body-s">A specific mitigation plan is in place, with convincing rationale that the adopted strategic objectives are most appropriate to address the vulnerability. </p>
+            <h4 class="govuk-heading-s">Level 5</h4>
+            <p class="govuk-body-s">A clear implementation plan is in place, with SMART actions, and a clear timeframe for completion.</p>
+        </div>
+    </details>
+    {% endfor %}
+</div>

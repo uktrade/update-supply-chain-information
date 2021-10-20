@@ -115,13 +115,6 @@ class SupplyChain(GSCUpdateModel):
         MEDIUM = ("medium", "Medium")
         HIGH = ("high", "High")
 
-    class CriticalityRating(models.IntegerChoices):
-        LIMITED = 1
-        MINOR = 2
-        MODERATE = 3
-        SIGNIFICANT = 4
-        CATASTROPHIC = 5
-
     objects = SupplyChainQuerySet.as_manager()
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=settings.CHARFIELD_MAX_LENGTH)
@@ -166,17 +159,46 @@ class SupplyChain(GSCUpdateModel):
     archived_reason = models.TextField(blank=True)
     archived_date = models.DateField(null=True, blank=True)
     last_modified = models.DateTimeField(auto_now=True)
+
+    class CriticalityRating(models.IntegerChoices):
+        LIMITED = 1
+        MINOR = 2
+        MODERATE = 3
+        SIGNIFICANT = 4
+        CATASTROPHIC = 5
+
     criticality_rating = models.IntegerField(
         choices=CriticalityRating.choices,
         null=True,
         blank=True,
     )
+
+    class MaturityRating(models.IntegerChoices):
+        LEVEL_1 = 1
+        LEVEL_2 = 2
+        LEVEL_3 = 3
+        LEVEL_4 = 4
+        LEVEL_5 = 5
+
+    maturity_rating = models.IntegerField(
+        choices=MaturityRating.choices,
+        null=True,
+        blank=True,
+    )
+
     history = HistoricalRecords()
 
     @property
+    def maturity_rating_text(self):
+        if self.maturity:
+            return f"Level {self.maturity_rating}"
+
+        return "Maturity rating not set"
+
+    @property
     def criticality_rating_text(self):
-        if self.criticality_rating:
-            return f"{CRITICALITY_RATING[self.criticality_rating - 1]} - {self.criticality_rating}"
+        if self.criticality:
+            return f"{CRITICALITY_RATING[self.criticality_rating - 1].title()} - {self.criticality_rating}"
 
         return "Criticality rating not set"
 
@@ -225,6 +247,22 @@ class SupplyChain(GSCUpdateModel):
 
     def __str__(self):
         return self.name
+
+
+class SupplyChainCriticalityGSC(GSCUpdateModel):
+    supply_chain = models.ForeignKey(
+        SupplyChain,
+        on_delete=models.CASCADE,
+        related_name="criticality_gsc"
+    )
+
+
+class SupplyChainMaturityGSC(GSCUpdateModel):
+    supply_chain = models.ForeignKey(
+        SupplyChain,
+        on_delete=models.CASCADE,
+        related_name="maturity_gsc"
+    )
 
 
 class StrategicActionQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
