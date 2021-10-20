@@ -25,10 +25,6 @@ settings.json
 
 # OS x
 .DS_Store
-<<<<<<< HEAD
 
 # IDE
 .idea
-
-=======
->>>>>>> c0a0720... Add criticality rating
