@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "axe-core": "^4.3.3",
-    "cypress": "^6.9.1",
+    "cypress": "^8.6.0",
     "cypress-axe": "^0.13.0",
     "webpack-dev-server": "^3.9.0",
     "set-value": ">=4.0.1"
