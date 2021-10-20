@@ -20,8 +20,8 @@
             </dd>
         </div>
     </dl>
-    {% include "includes/criticality/rating.html" %}
-    {% include "includes/maturity/rating.html" %}
+    {% include "includes/rating.html" with rating_type="criticality" %}
+    {% include "includes/rating.html" with rating_type="maturity" %}
     {% include "includes/chain_stages.html" %}
     {% include "includes/chain_vulnerabilities.html" %}
     {% include "scenario_assessment.html" %}

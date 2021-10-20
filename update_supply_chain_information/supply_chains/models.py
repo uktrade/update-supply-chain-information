@@ -109,6 +109,56 @@ CRITICALITY_RATING = [
 ]
 
 
+class SupplyChainCriticality(GSCUpdateModel):
+    class CriticalityRating(models.IntegerChoices):
+        LIMITED = 1
+        MINOR = 2
+        MODERATE = 3
+        SIGNIFICANT = 4
+        CATASTROPHIC = 5
+
+    rating = models.IntegerField(
+        choices=CriticalityRating.choices,
+        null=True,
+        blank=True,
+    )
+
+    supply_chain = models.OneToOneField(
+        "SupplyChain",
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="criticality"
+    )
+
+    def __str__(self):
+        return f"{self.supply_chain} criticality"
+
+
+class SupplyChainMaturity(GSCUpdateModel):
+    class MaturityRating(models.IntegerChoices):
+        LEVEL_1 = 1
+        LEVEL_2 = 2
+        LEVEL_3 = 3
+        LEVEL_4 = 4
+        LEVEL_5 = 5
+
+    rating = models.IntegerField(
+        choices=MaturityRating.choices,
+        null=True,
+        blank=True,
+    )
+
+    supply_chain = models.OneToOneField(
+        "SupplyChain",
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="maturity"
+    )
+
+    def __str__(self):
+        return f"{self.supply_chain} maturity"
+
+
 class SupplyChain(GSCUpdateModel):
     class StatusRating(models.TextChoices):
         LOW = ("low", "Low")
@@ -160,47 +210,21 @@ class SupplyChain(GSCUpdateModel):
     archived_date = models.DateField(null=True, blank=True)
     last_modified = models.DateTimeField(auto_now=True)
 
-    class CriticalityRating(models.IntegerChoices):
-        LIMITED = 1
-        MINOR = 2
-        MODERATE = 3
-        SIGNIFICANT = 4
-        CATASTROPHIC = 5
-
-    criticality_rating = models.IntegerField(
-        choices=CriticalityRating.choices,
-        null=True,
-        blank=True,
-    )
-
-    class MaturityRating(models.IntegerChoices):
-        LEVEL_1 = 1
-        LEVEL_2 = 2
-        LEVEL_3 = 3
-        LEVEL_4 = 4
-        LEVEL_5 = 5
-
-    maturity_rating = models.IntegerField(
-        choices=MaturityRating.choices,
-        null=True,
-        blank=True,
-    )
-
     history = HistoricalRecords()
-
-    @property
-    def maturity_rating_text(self):
-        if self.maturity:
-            return f"Level {self.maturity_rating}"
-
-        return "Maturity rating not set"
 
     @property
     def criticality_rating_text(self):
         if self.criticality:
-            return f"{CRITICALITY_RATING[self.criticality_rating - 1].title()} - {self.criticality_rating}"
+            return f"{CRITICALITY_RATING[self.criticality.rating - 1].title()} - {self.criticality.rating}"
 
         return "Criticality rating not set"
+
+    @property
+    def maturity_rating_text(self):
+        if self.maturity:
+            return f"Level {self.maturity.rating}"
+
+        return "Maturity rating not set"
 
     def clean(self) -> None:
         error_dict = {}
@@ -247,22 +271,6 @@ class SupplyChain(GSCUpdateModel):
 
     def __str__(self):
         return self.name
-
-
-class SupplyChainCriticalityGSC(GSCUpdateModel):
-    supply_chain = models.ForeignKey(
-        SupplyChain,
-        on_delete=models.CASCADE,
-        related_name="criticality_gsc"
-    )
-
-
-class SupplyChainMaturityGSC(GSCUpdateModel):
-    supply_chain = models.ForeignKey(
-        SupplyChain,
-        on_delete=models.CASCADE,
-        related_name="maturity_gsc"
-    )
 
 
 class StrategicActionQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
