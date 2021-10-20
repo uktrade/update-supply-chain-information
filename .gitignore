@@ -10,7 +10,6 @@ npm-debug.log*
 update_supply_chain_information/assets/webpack_bundles
 static
 webpack-stats.json
-.idea
 
 backend.pid
 
@@ -26,3 +25,7 @@ settings.json
 
 # OS x
 .DS_Store
+
+# IDE
+.idea
+
