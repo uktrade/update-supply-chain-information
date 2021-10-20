@@ -10,6 +10,9 @@ down:
 migrations:
 	docker-compose run --rm supply_chain python manage.py makemigrations
 
+migrate:
+	docker-compose run --rm supply_chain python manage.py migrate
+
 first-use:
 	docker-compose run --rm supply_chain python manage.py migrate
 	docker-compose run --rm supply_chain python manage.py createinitialrevisions
