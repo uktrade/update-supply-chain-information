@@ -15,13 +15,13 @@
             {% endif %}
         </h3>
         <hr>
-        {% if rating_type == "criticality" %}
             <p class="govuk-body-s">View more information about each level</p>
+        {% if rating_type == "criticality" %}
             {% include "includes/criticality_categories.html" with criticality_rating=sc.criticality.rating %}
-            {% gsc_notes instance=sc.criticality.0  %}
+            {% gsc_notes instance=sc.criticality  %}
         {% elif rating_type == "maturity" %}
             {% include "includes/maturity_categories.html" with maturity_rating=sc.maturity.rating %}
-            {% gsc_notes instance=sc.maturity.0  %}
+            {% gsc_notes instance=sc.maturity  %}
         {% endif %}
     </div>
 </details>

@@ -130,6 +130,9 @@ class SupplyChainCriticality(GSCUpdateModel):
         related_name="criticality"
     )
 
+    class Meta:
+        verbose_name_plural = "Criticality"
+
     def __str__(self):
         return f"{self.supply_chain} criticality"
 
@@ -154,6 +157,9 @@ class SupplyChainMaturity(GSCUpdateModel):
         primary_key=True,
         related_name="maturity"
     )
+
+    class Meta:
+        verbose_name_plural = "Maturity"
 
     def __str__(self):
         return f"{self.supply_chain} maturity"

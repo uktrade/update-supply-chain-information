@@ -213,4 +213,12 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
             },
         }
 
+        context["levels"] = [
+            "Supply chain risks have been identified and understood, building upon the vulnerability assessment.",
+            "The period within which any risks may materialise is understood, including the critical scenarios, the risk events, early warning indicators and timeframes.",
+            "The Strategic Framework has been applied to identify the most effective risk mitigations.",
+            "A specific mitigation plan is in place, with convincing rationale that the adopted strategic objectives are most appropriate to address the vulnerability.",
+            "A clear implementation plan is in place, with SMART actions, and a clear timeframe for completion.",
+        ]
+
         return context
