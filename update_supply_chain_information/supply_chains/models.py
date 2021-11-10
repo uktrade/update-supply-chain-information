@@ -2,9 +2,12 @@ import uuid
 from datetime import datetime, date, timedelta
 
 import reversion
+
+from simple_history.models import HistoricalRecords
+
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils import timezone
@@ -35,6 +38,31 @@ class NullableRAGRating(models.TextChoices):
 
 class SupplyChainUmbrellaQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     pass
+
+
+class GSCUpdateModel(models.Model):
+    gsc_last_changed_by = models.CharField(
+        max_length=64,
+        blank=True,
+        default="",
+        verbose_name="last updated by",
+        help_text="The entity responsible for the most recent change",
+    )
+    gsc_updated_on = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="last updated",
+        help_text="The date of the most recent change",
+    )
+    gsc_review_on = models.DateField(
+        null=True,
+        blank=True,
+        verbose_name="review on",
+        help_text="The date when a review should be carried out",
+    )
+
+    class Meta:
+        abstract = True
 
 
 class SupplyChainUmbrella(models.Model):
@@ -72,7 +100,66 @@ class SupplyChainQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
         return self.filter(last_submission_date__gt=deadline)
 
 
-class SupplyChain(models.Model):
+CRITICALITY_RATING = ["limited", "minor", "moderate", "significant", "catastrophic"]
+
+
+class SupplyChainCriticality(GSCUpdateModel):
+    class CriticalityRating(models.IntegerChoices):
+        LIMITED = 1
+        MINOR = 2
+        MODERATE = 3
+        SIGNIFICANT = 4
+        CATASTROPHIC = 5
+
+    rating = models.IntegerField(
+        choices=CriticalityRating.choices,
+        null=True,
+        blank=True,
+    )
+
+    supply_chain = models.OneToOneField(
+        "SupplyChain",
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="criticality",
+    )
+
+    class Meta:
+        verbose_name_plural = "Criticality"
+
+    def __str__(self):
+        return f"{self.supply_chain} criticality"
+
+
+class SupplyChainMaturity(GSCUpdateModel):
+    class MaturityRating(models.IntegerChoices):
+        LEVEL_1 = 1
+        LEVEL_2 = 2
+        LEVEL_3 = 3
+        LEVEL_4 = 4
+        LEVEL_5 = 5
+
+    rating = models.IntegerField(
+        choices=MaturityRating.choices,
+        null=True,
+        blank=True,
+    )
+
+    supply_chain = models.OneToOneField(
+        "SupplyChain",
+        on_delete=models.CASCADE,
+        primary_key=True,
+        related_name="maturity",
+    )
+
+    class Meta:
+        verbose_name_plural = "Maturity"
+
+    def __str__(self):
+        return f"{self.supply_chain} maturity"
+
+
+class SupplyChain(GSCUpdateModel):
     class StatusRating(models.TextChoices):
         LOW = ("low", "Low")
         MEDIUM = ("medium", "Medium")
@@ -122,6 +209,21 @@ class SupplyChain(models.Model):
     archived_reason = models.TextField(blank=True)
     archived_date = models.DateField(null=True, blank=True)
     last_modified = models.DateTimeField(auto_now=True)
+    history = HistoricalRecords()
+
+    @property
+    def criticality_rating_text(self):
+        try:
+            return f"{CRITICALITY_RATING[self.criticality.rating - 1].title()} - {self.criticality.rating}"
+        except ObjectDoesNotExist:
+            return "Criticality rating not set"
+
+    @property
+    def maturity_rating_text(self):
+        try:
+            return f"Level {self.maturity.rating}"
+        except ObjectDoesNotExist:
+            return "Maturity rating not set"
 
     def clean(self) -> None:
         error_dict = {}
@@ -615,31 +717,6 @@ class StrategicActionUpdate(models.Model):
         return f"Update {self.slug} for {self.strategic_action}"
 
 
-class GSCUpdateModel(models.Model):
-    gsc_last_changed_by = models.CharField(
-        max_length=64,
-        blank=True,
-        default="",
-        verbose_name="last updated by",
-        help_text="The entity responsible for the most recent change",
-    )
-    gsc_updated_on = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name="last updated",
-        help_text="The date of the most recent change",
-    )
-    gsc_review_on = models.DateField(
-        null=True,
-        blank=True,
-        verbose_name="review on",
-        help_text="The date when a review should be carried out",
-    )
-
-    class Meta:
-        abstract = True
-
-
 class MaturitySelfAssessmentQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
     pass
 
@@ -725,17 +802,17 @@ class VulAssessmentSupplyStage(models.Model):
         max_length=5,
         choices=NullableRAGRating.choices,
         default=NullableRAGRating.NONE,
-        verbose_name="Supply stage 2 - Ability to source alternative products - RAG Rating",
+        verbose_name="Supply stage 2 - Ability to source alternative products - RAG Rating",
     )
     supply_stage_summary_2 = models.TextField(
         help_text="""Summary of supply stage.""",
         default="",
-        verbose_name="Supply stage 2 - Ability to source alternative products - Summary",
+        verbose_name="Supply stage 2 - Ability to source alternative products - Summary",
     )
     supply_stage_rationale_2 = models.TextField(
         help_text="""Rationale of supply stage.""",
         default="",
-        verbose_name="Supply stage 2 - Ability to source alternative products - Rationale",
+        verbose_name="Supply stage 2 - Ability to source alternative products - Rationale",
     )
     supply_rag_rating_3 = models.CharField(
         max_length=5,

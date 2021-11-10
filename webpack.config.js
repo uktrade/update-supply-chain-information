@@ -9,6 +9,7 @@ module.exports = {
     main: [
       './update_supply_chain_information/assets/js/application.js',
       './update_supply_chain_information/assets/stylesheets/application.scss',
+      './update_supply_chain_information/assets/stylesheets/criticality.scss',
       './update_supply_chain_information/assets/stylesheets/supply_chain.scss',
     ],
   },

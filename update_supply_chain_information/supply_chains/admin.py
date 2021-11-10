@@ -13,8 +13,10 @@ from supply_chains.models import (
     StrategicActionUpdate,
     Country,
     CountryDependency,
+    SupplyChainCriticality,
     SupplyChainStage,
     SupplyChainStageSection,
+    SupplyChainMaturity,
     ScenarioAssessment,
     SupplyChainUmbrella,
     VulnerabilityAssessment,
@@ -306,3 +308,5 @@ admin_site.register(Country)
 admin_site.register(CountryDependency, CountryDependencyAdmin)
 admin_site.register(SupplyChainUmbrella, SupplyChainUmbrellaAdmin)
 admin_site.register(VulnerabilityAssessment, VulnerabilityAssessmentAdmin)
+admin_site.register(SupplyChainCriticality)
+admin_site.register(SupplyChainMaturity)

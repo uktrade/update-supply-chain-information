@@ -8,9 +8,13 @@ from django.views.generic import FormView, DetailView
 
 from chain_details.forms import SCDForm
 from accounts.models import GovDepartment
-from supply_chains.models import SupplyChain, SupplyChainStage
 from supply_chains.mixins import PaginationMixin
-from supply_chains.models import ScenarioAssessment
+from supply_chains.models import (
+    ScenarioAssessment,
+    SupplyChain,
+    SupplyChainStage,
+    CRITICALITY_RATING,
+)
 
 
 class ChainDetailsView(LoginRequiredMixin, FormView):
@@ -60,8 +64,8 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
     template_name = "chain_details_info.html"
     VUL_STAGE_TITLES = [
         None,
-        "Dependence on foreign suppliers for product",
-        "Ability to source alternative products",
+        "Dependence on foreign suppliers for product",
+        "Ability to source alternative products",
         "Resilience of supply base",
         "Reliance on long shipping lead times",
         "Susceptibility to port congestion",
@@ -174,5 +178,47 @@ class ChainDetailsInfoView(LoginRequiredMixin, TemplateView):
             context["vul_deliver"] = vul.vulnerability_deliver_stage
 
             context["vul_title_list"] = self.VUL_STAGE_TITLES
+
+        context["criticality_rating_types"] = CRITICALITY_RATING
+        context["criticality_rating_details"] = {
+            CRITICALITY_RATING[0]: {
+                "human_health": "Limited risk of loss of life or damage to health (<10 casualties)",
+                "national_security": "Limited threat to national security, defence or functioning of the UK",
+                "economic": "Limited impact on UK economy (£millions) and/or net zero goal",
+                "essential_services": "Limited impact ability to deliver essential services",
+            },
+            CRITICALITY_RATING[1]: {
+                "human_health": "Minor risk of loss of life or damage to health (recoverable in the short term) (10-50 casualties)",
+                "national_security": "Minor threat to national security, defence or functioning of the UK",
+                "economic": "Minor impact on UK economy (£10s of millions) and/or net zero goals",
+                "essential_services": "Minor impact on ability to deliver essential services",
+            },
+            CRITICALITY_RATING[2]: {
+                "human_health": "Moderate risk to loss of life or damage to health (50-100 casualties)",
+                "national_security": "Moderate threat to national security, defence or functioning of the UK",
+                "economic": "Moderate impact on UK economy (£100s of millions) and/or net zero goals ",
+                "essential_services": "Moderate impact on ability to deliver essential services",
+            },
+            CRITICALITY_RATING[3]: {
+                "human_health": "Significant risk to loss of life or serious damage to health (100s casualties)",
+                "national_security": "Significant threat to national security, defence or functioning of the UK",
+                "economic": "Significant impact on UK economy (£billions) and/or net zero goals",
+                "essential_services": "Significant impact on ability to deliver essential services ",
+            },
+            CRITICALITY_RATING[4]: {
+                "human_health": "Catastrophic risk to loss of life or permanent serious damage to health (1000s casualties)",
+                "national_security": "Catastrophic threat to national security, defence or functioning of the UK ",
+                "economic": "Catastrophic impact on UK economy (£10s of billions) and/or net zero goals ",
+                "essential_services": "Catastrophic impact on ability to deliver essential services ",
+            },
+        }
+
+        context["levels"] = [
+            "Supply chain risks have been identified and understood, building upon the vulnerability assessment.",
+            "The period within which any risks may materialise is understood, including the critical scenarios, the risk events, early warning indicators and timeframes.",
+            "The Strategic Framework has been applied to identify the most effective risk mitigations.",
+            "A specific mitigation plan is in place, with convincing rationale that the adopted strategic objectives are most appropriate to address the vulnerability.",
+            "A clear implementation plan is in place, with SMART actions, and a clear timeframe for completion.",
+        ]
 
         return context

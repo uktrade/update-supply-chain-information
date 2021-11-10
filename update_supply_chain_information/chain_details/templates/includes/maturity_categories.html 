@@ -1,0 +1,14 @@
+<div class="custom-criticality-ratings">
+    {% for level in levels %}
+    <details class="govuk-details component-panel" data-module="govuk-details" id="chain-stages" {% if maturity_rating == forloop.counter %}open{% endif %}>
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+                Level {{ forloop.counter }}
+            </span>
+        </summary>
+        <div class="govuk-details__text app-dit-details__text">
+            <p class="govuk-body-s">{{ level }}</p>
+        </div>
+    </details>
+    {% endfor %}
+</div>

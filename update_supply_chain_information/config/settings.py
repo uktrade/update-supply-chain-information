@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "django.forms",
     "action_progress",
     "chain_details",
+    "simple_history",
 ]
 
 # Elastic APM middleware automatically added to trace django requests
@@ -65,6 +66,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "reversion.middleware.RevisionMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
