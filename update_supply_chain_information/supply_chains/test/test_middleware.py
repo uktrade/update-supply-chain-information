@@ -1,24 +1,5 @@
-import pytest
 from django.test import Client
 from django.urls import reverse
-
-from config import settings
-
-
-def test_correct_middleware_exists():
-    assert settings.MIDDLEWARE == [
-        "elasticapm.contrib.django.middleware.TracingMiddleware",
-        "django.middleware.security.SecurityMiddleware",
-        "whitenoise.middleware.WhiteNoiseMiddleware",
-        "config.middleware.add_cache_control_header_middleware",
-        "django.contrib.sessions.middleware.SessionMiddleware",
-        "django.middleware.common.CommonMiddleware",
-        "django.middleware.csrf.CsrfViewMiddleware",
-        "django.contrib.auth.middleware.AuthenticationMiddleware",
-        "django.contrib.messages.middleware.MessageMiddleware",
-        "django.middleware.clickjacking.XFrameOptionsMiddleware",
-        "reversion.middleware.RevisionMiddleware",
-    ]
 
 
 class TestCustomMiddleware:

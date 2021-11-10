@@ -44,7 +44,7 @@ class ActivityStreamSerializer(serializers.ModelSerializer):
     def _update_foreign_keys(self, foreign_keys, object_representation):
         # As the Activity Stream format uses a specific format for ID fields
         # we duplicate foreign keys in that format
-        # to make searching for related itewms in ElasticSearch easier
+        # to make searching for related items in ElasticSearch easier
         for foreign_key, related_object_type in foreign_keys:
             related_item = object_representation[foreign_key]
             if related_item:

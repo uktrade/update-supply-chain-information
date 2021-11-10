@@ -32,7 +32,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, **options):
-        db_name = connection.settings_dict['NAME']
+        db_name = connection.settings_dict["NAME"]
 
         if not options["noinput"]:
             if not self.get_confirmtion():

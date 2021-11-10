@@ -12,7 +12,7 @@ from supply_chains.models import StrategicAction, StrategicActionUpdate, SupplyC
 
 
 pytestmark = pytest.mark.django_db
-DATA_FILES_LOC = "update_supply_chain_information/supply_chains/test/data"
+DATA_FILES_LOC = "supply_chains/test/data"
 
 
 class TestDataLoader:

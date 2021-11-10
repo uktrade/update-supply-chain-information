@@ -8,10 +8,19 @@ down:
 	docker-compose down
 
 migrations:
-	docker-compose run --rm supply_chain python manage.py makemigrations
+	docker-compose run --rm supply_chain python manage.py makemigrations supply_chains
 
 migrate:
 	docker-compose run --rm supply_chain python manage.py migrate
+
+checkmigrations:
+	docker-compose run --rm --no-deps supply_chain python manage.py makemigrations --check
+
+flake8:
+	docker-compose run --rm --no-deps supply_chain flake8
+
+black:
+	docker-compose run --rm --no-deps supply_chain black .
 
 first-use:
 	docker-compose run --rm supply_chain python manage.py migrate
@@ -24,5 +33,8 @@ load-data:
 	docker-compose run --rm supply_chain python manage.py loaddata cypress/fixtures/*.json
 	docker-compose run --rm supply_chain python manage.py datafixup --noinput
 
-tests:
-	pytest update_supply_chain_information
+test:
+	docker-compose run --rm supply_chain pytest /app
+
+bash:
+	docker-compose run --rm supply_chain bash

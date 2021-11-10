@@ -100,13 +100,7 @@ class SupplyChainQuerySet(ActivityStreamQuerySetMixin, models.QuerySet):
         return self.filter(last_submission_date__gt=deadline)
 
 
-CRITICALITY_RATING = [
-    "limited",
-    "minor",
-    "moderate",
-    "significant",
-    "catastrophic"
-]
+CRITICALITY_RATING = ["limited", "minor", "moderate", "significant", "catastrophic"]
 
 
 class SupplyChainCriticality(GSCUpdateModel):
@@ -127,7 +121,7 @@ class SupplyChainCriticality(GSCUpdateModel):
         "SupplyChain",
         on_delete=models.CASCADE,
         primary_key=True,
-        related_name="criticality"
+        related_name="criticality",
     )
 
     class Meta:
@@ -155,7 +149,7 @@ class SupplyChainMaturity(GSCUpdateModel):
         "SupplyChain",
         on_delete=models.CASCADE,
         primary_key=True,
-        related_name="maturity"
+        related_name="maturity",
     )
 
     class Meta:
