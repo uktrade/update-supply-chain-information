@@ -38,3 +38,6 @@ test:
 
 bash:
 	docker-compose run --rm supply_chain bash
+
+shell:
+	docker-compose run --rm supply_chain python manage.py shell
