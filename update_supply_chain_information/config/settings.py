@@ -98,15 +98,9 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
-# Database
-# https://docs.djangoproject.com/en/3.1/ref/settings/#databases
+DATABASE_URL = os.getenv("DATABASE_URL")
 
-DATABASES = {
-    "default": {
-        **env.db("DATABASE_URL"),
-    },
-}
-
+DATABASES = {"default": env.db()}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
