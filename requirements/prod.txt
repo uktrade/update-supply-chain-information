@@ -107,6 +107,8 @@ greenlet==0.4.16
     # via
     #   -r requirements.in/prod.in
     #   gevent
+gunicorn==20.1.0
+    # via -r requirements.in/prod.in
 hawkrest==1.0.1
     # via -r requirements.in/../requirements/base.txt
 hijri-converter==2.1.1
