@@ -6,7 +6,7 @@ The app uses the standard Django MVC architecture, alongside some Django REST fr
 
 ## Running the app and its tests
 
-Python version 3.8 is required to run this project - [install here](https://www.python.org/downloads/release/python-380/).
+Docker is required to run this project and the project use docker compose extensively.
 
 The project uses a `Makefile` to make running commands easier. `make` commands need to be run at the same directory level as the Makefile.
 
