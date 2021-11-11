@@ -7,15 +7,15 @@ module.exports = {
   context: __dirname,
   entry: {
     main: [
-      './update_supply_chain_information/assets/js/application.js',
-      './update_supply_chain_information/assets/stylesheets/application.scss',
-      './update_supply_chain_information/assets/stylesheets/criticality.scss',
-      './update_supply_chain_information/assets/stylesheets/supply_chain.scss',
+      './assets/js/application.js',
+      './assets/stylesheets/application.scss',
+      './assets/stylesheets/criticality.scss',
+      './assets/stylesheets/supply_chain.scss',
     ],
   },
   output: {
     // Where Webpack will compile assets to
-    path: path.resolve('./update_supply_chain_information/assets/webpack_bundles/'),
+    path: path.resolve('./assets/webpack_bundles/'),
     // Where the compiled assets will be accessed through Django
     // (they are picked up by `collectstatic`)
     publicPath: '/static/',
