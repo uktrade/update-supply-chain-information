@@ -78,6 +78,7 @@ class ActivityStreamQuerySetWrapper:
     """
 
     _ordering = None
+    _queryset = None
 
     def __init__(self) -> None:
         super().__init__()
@@ -105,7 +106,12 @@ class ActivityStreamQuerySetWrapper:
 
     @property
     def _all_querysets(self):
-        return [model.objects.for_activity_stream() for model in self._models]
+        return [
+            model.objects.for_activity_stream() for model in self._models if hasattr(
+                model.objects,
+                "for_activity_stream",
+            )
+        ]
 
     def __getattr__(self, item):
         """
@@ -130,7 +136,7 @@ class ActivityStreamQuerySetWrapper:
 
                 return _wrapped_queryset_method
             return attr
-        raise AttributeError
+        return self.__getattribute__(item)
 
     def __getitem__(self, item):
         """

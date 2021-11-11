@@ -39,7 +39,7 @@ load-data:
 	docker-compose run --rm supply_chain python manage.py datafixup --noinput
 
 test:
-	docker-compose run --rm supply_chain pytest /app
+	docker-compose run --rm supply_chain pytest /app --capture=no
 
 bash:
 	docker-compose run --rm supply_chain bash
