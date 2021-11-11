@@ -1,0 +1,7 @@
+# Constrain to base requirements
+-r ../requirements/base.txt
+
+django-debug-toolbar==3.2.1
+
+# Development tools
+pip-tools>=6.0.1

@@ -1,0 +1,161 @@
+[
+{
+  "model": "supply_chains.strategicactionupdate",
+  "pk": "3ac4b5ac-bba3-47e5-9964-7613aa2fcd88",
+  "fields": {
+    "status": "ready_to_submit",
+    "submission_date": null,
+    "date_created": "2021-05-01",
+    "content": "",
+    "implementation_rag_rating": "",
+    "reason_for_delays": "",
+    "user": null,
+    "strategic_action": "35f39db6-fa71-4f82-b86a-238e8398b753",
+    "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+    "slug": "05-2021",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
+  }
+},
+{
+  "model": "supply_chains.strategicactionupdate",
+  "pk": "7c18ca98-5947-4ea1-9e2d-2a834462a453",
+  "fields": {
+    "status": "ready_to_submit",
+    "submission_date": null,
+    "date_created": "2021-05-01",
+    "content": "",
+    "implementation_rag_rating": "",
+    "reason_for_delays": "",
+    "user": null,
+    "strategic_action": "fa87e1d4-baaa-4317-89b6-fcade510b015",
+    "supply_chain": "14201f69-2d95-4b4c-9523-b44c6c732a80",
+    "slug": "05-2021",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
+  }
+},
+{
+  "model": "supply_chains.strategicactionupdate",
+  "pk": "c9325de0-8233-4758-a908-b31042b0cb66",
+  "fields": {
+    "status": "in_progress",
+    "submission_date": null,
+    "date_created": "2021-04-08",
+    "content": "Updated ..",
+    "implementation_rag_rating": "GREEN",
+    "reason_for_delays": "None",
+    "user": null,
+    "strategic_action": "18a8b9c3-f85c-49f6-8db0-e5194743b9c6",
+    "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+    "slug": "04-2021",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
+  }
+},
+{
+  "model": "supply_chains.strategicactionupdate",
+  "pk": "e3fcd971-1d5a-4eab-a891-ba634d9703f3",
+  "fields": {
+    "status": "submitted",
+    "submission_date": "2021-05-01",
+    "date_created": "2021-05-01",
+    "content": "Updated ..",
+    "implementation_rag_rating": "Green",
+    "reason_for_delays": "",
+    "user": null,
+    "strategic_action": "fd317f3e-9ce0-4ed0-9a6a-baf7c6e65989",
+    "supply_chain": "e7e81077-399f-4004-a907-e0a2862a84de",
+    "slug": "05-2021",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
+  }
+},
+{
+  "model": "supply_chains.strategicactionupdate",
+  "pk": "f49fddb2-02e1-4ea2-a3bb-e8a20a107fc9",
+  "fields": {
+    "status": "ready_to_submit",
+    "submission_date": null,
+    "date_created": "2021-05-01",
+    "content": "",
+    "implementation_rag_rating": "",
+    "reason_for_delays": "",
+    "user": null,
+    "strategic_action": "eec5752e-55ac-4f3e-a96e-75825526b313",
+    "supply_chain": "14201f69-2d95-4b4c-9523-b44c6c732a80",
+    "slug": "05-2021",
+    "last_modified": "2021-06-01 00:00:00.000000+01:00"
+  }
+},
+  {
+    "model": "supply_chains.strategicactionupdate",
+    "pk": "1303cbce-82c5-4cb9-b1d6-d96519f40882",
+    "fields": {
+      "status": "submitted",
+      "submission_date": "2021-04-22",
+      "date_created": "2021-04-07",
+      "content": "MU Form Test 1",
+      "implementation_rag_rating": "GREEN",
+      "reason_for_delays": "",
+      "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
+      "strategic_action": "223f148b-7fa8-4b55-9f94-41e812a2b285",
+      "supply_chain": "a69d5624-1316-49a6-8a1a-4ac935ad13e3",
+      "slug": "04-2021",
+      "last_modified": "2021-06-01 00:00:00.000000+01:00"
+    }
+  },
+  {
+    "model": "supply_chains.strategicactionupdate",
+    "pk": "1c18c53b-2f7a-4539-8b34-6a12d7ba371e",
+    "fields": {
+      "status": "submitted",
+      "submission_date": "2021-04-22",
+      "date_created": "2021-04-07",
+      "content": "MU Form Test 0",
+      "implementation_rag_rating": "GREEN",
+      "reason_for_delays": "",
+      "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
+      "strategic_action": "668be471-acd3-4eee-9a37-8debdff786a1",
+      "supply_chain": "a69d5624-1316-49a6-8a1a-4ac935ad13e3",
+      "slug": "04-2021",
+      "last_modified": "2021-06-01 00:00:00.000000+01:00"
+    }
+  },
+  {
+    "model": "supply_chains.strategicactionupdate",
+    "pk": "ae9a9de0-1e98-4c36-96bd-1cc98b0eaf51",
+    "fields": {
+      "status": "ready_to_submit",
+      "submission_date": null,
+      "date_created": "2021-05-21",
+      "content": "Created for the page title tests.",
+      "implementation_rag_rating": null,
+      "reason_for_delays": "",
+      "changed_value_for_target_completion_date": null,
+      "reason_for_completion_date_change": "",
+      "changed_value_for_is_ongoing": false,
+      "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
+      "strategic_action": "94de03d1-416e-438b-92f5-2dfcd5f531af",
+      "supply_chain": "3dcb2693-5ce7-420b-bfcf-ee70be2921fc",
+      "slug": "05-2021",
+      "last_modified": "2021-06-01 00:00:00.000000+01:00"
+    }
+  },
+  {
+    "model": "supply_chains.strategicactionupdate",
+    "pk": "2c30b0a2-9bfa-4e9b-8763-efbc4f177bf6",
+    "fields": {
+      "status": "submitted",
+      "submission_date": "2021-07-15",
+      "date_created": "2021-07-15",
+      "content": "Retro fit last submissions",
+      "implementation_rag_rating": "AMBER",
+      "reason_for_delays": "Too busy",
+      "changed_value_for_target_completion_date": null,
+      "reason_for_completion_date_change": "",
+      "changed_value_for_is_ongoing": false,
+      "user": "8ffdf4f4-ea0d-4727-947c-f741f0ac6959",
+      "strategic_action": "35f39db6-fa71-4f82-b86a-238e8398b753",
+      "supply_chain": "107f8ea4-aec0-4bea-b68d-a65720c97022",
+      "slug": "07-2021",
+      "last_modified": "2021-08-27T10:11:19.760Z"
+    }
+  }
+]
