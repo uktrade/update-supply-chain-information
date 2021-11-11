@@ -11,35 +11,31 @@ Python version 3.8 is required to run this project - [install here](https://www.
 The project uses a `Makefile` to make running commands easier. `make` commands need to be run at the same directory level as the Makefile.
 
 ### Setting up environment variables:
-- Environment variables can be found in the `update_supply_chain_information/sample.env`
-- Copy these to a `.env` file in the `update_supply_chain_information` folder
+- Environment variables can be found in the `.env.example`
+- Copy these to a `.env` file in the root folder
 - The `AUTHBROKER_CLIENT_ID` and `AUTHBROKER_CLIENT_SECRET` values needed for staff SSO can be found in [passman](https://passman.ci.uktrade.digital/2fa/verify/?next=/secret/61f0a3bf-33f3-427e-8ade-cdee0c637031/)
 
 ### Setting up static files
 The project uses [webpack](https://webpack.js.org/) to build static files, to setup:
 - Install node version 14.x
 - Run `npm install` to install all node modules, including webpack and the govuk-frontend npm package
-- Run `npm run dev` - webpack will then bundle all static files in `update_supply_chain_information/assets` and create 'bundles' in `update_supply_chain_information/assets/webpack_bundles`. When making changes to static files, e.g. updating `application.scss`, webpack will recompile the files when edited and create a new bundle.
+- Run `npm run dev` - webpack will then bundle all static files in `assets` and create 'bundles' in `assets/webpack_bundles`. When making changes to static files, e.g. updating `application.scss`, webpack will recompile the files when edited and create a new bundle.
 
 ### Styles
 The project mainly uses styles from the [govuk-frontend](https://github.com/alphagov/govuk-frontend) npm package. Examples of how to use these styles can be found in components on the [GOVUK design system](https://design-system.service.gov.uk/components/).
 
-Where it is not possible to use a govuk style, the [moj-frontend](https://github.com/ministryofjustice/moj-frontend) library (an extension of govuk-frontend) has been used, and any custom styles added to `update_supply_chain_information/assets/application.scss`, with classes prefixed with `.app-`.
+Where it is not possible to use a govuk style, the [moj-frontend](https://github.com/ministryofjustice/moj-frontend) library (an extension of govuk-frontend) has been used, and any custom styles added to `assets/application.scss`, with classes prefixed with `.app-`.
 
-### To run the app:
-- Create a virtual environment using `python3 -m venv env`, and activate it using `source env/bin/activate`
-- Run `pip install -r requirements.txt` to install the dependencies into your environment
-- If you haven't yet created a local database, run `make create-db`. This will create the database, run migrations, create  initial reversions and load fixture data.
-- If you have already created a local db, run `make setup` to bring up the database container, or `make setup-db` to bring up the container, apply database migrations and load fixture data.
-- cd into the `/update_supply_chain_information` folder and run `python manage.py runserver`
+### To run the app for the first time:
+- run `make build`
+- run `first-use`
 - You must access the app on http://localhost:8000 as this is the URL which is configured as the 'redirect URL' for our authbroker credentials in staff SSO
 
 ### To just load fixture data:
-- When you have your database container running and with up-to-date migrations, you can run `make load-data` to load fixture data into the database.
+- Run `make load-data` to load fixture data into the database.
 
 ### To run tests:
-- To run the suite of python unit tests, written in pytest, run `make tests`
-- To run the suite of functional tests, using cypress, run `make functional-tests`. These run against DIT's [mock-sso](https://github.com/uktrade/mock-sso) application which runs in a docker container on port 8080. As mock-sso's `api/v1/user/me` endpoint returns [a specific user profile fixture](https://github.com/uktrade/mock-sso/blob/master/app/oauth/user.js#L51), the same fixture has been created for use in the functional tests at `cypress/fixtures/user.json`.
+- To run the suite of python unit tests, written in pytest, run `make test`
 
 ## Load testing
 
@@ -59,17 +55,10 @@ locust --config .locust.conf
 
 Refer to the tool's docs for more info on the flags used.
 
-### Automated accessibility testing:
-The project uses the [cypress-axe](https://github.com/component-driven/cypress-axe) package which allows for the automation of accessibility testing within tests written with cypress.
-
-To add accessibility testing to a cypress spec:
-- Add the command `cy.injectAxe()` after wherever `cy.visit(url)` is called. This injects the axe-core runtime into the page being tested.
-- Add a test to check for accessibility issues on a page using the command `cy.runA11y()`. This will output details of any accessibility violations into a table in the terminal where cypress is running.
-
 ## Adding Black pre-commit hook
 
 - Generate your pre-commit hooks by running `pre-commit install`.
-- When commiting your files, there will be output from Black saying your file has failed, which kickstarts the autocorrector.
+- When committing your files, there will be output from Black saying your file has failed, which kickstarts the autocorrector.
 - Stage the files again with the Black corrections, and commit.
 
 ## Integrations
@@ -116,7 +105,6 @@ This integration is achieved by the creation of multiple DAGs (Python classes ba
 with each DAG corresponding to one of the models serialised by `activity_stream`,
 in accordance with the general process described in [How to get data into a table in Data Workspace](https://readme.trade.gov.uk/docs/howtos/data-workspace-pipeline.html).
 
-
 The DAGS implemented for this project follow the pattern set by other DAGs in the Data Flow application that consume Activity Stream data,
 which can be found [in Data Flow's GitHub repository](https://github.com/uktrade/data-flow/blob/master/dataflow/dags/activity_stream_pipelines.py).
 Each DAG stores the data it retrieves in a Data Workspace table corresponding to the type of the model retrieved.
@@ -132,5 +120,3 @@ can be found in [How to use Data Workspace datasets in your application](https:/
 Note that Data Workspace presents data tables in a flat form - it does not use Foreign Key relationships.
 As this project uses UUIDs as primary keys, it is still possible to follow relationships within Data Workspace,
 but this would have to be implemented at the application level.
-
-
