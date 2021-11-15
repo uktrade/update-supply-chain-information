@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     "django.contrib.postgres",
     "django.contrib.sessions",
     "django.contrib.staticfiles",
-    "elasticapm.contrib.django",
     "supply_chains",
     "accounts",
     "healthcheck",
@@ -181,7 +180,7 @@ USE_TZ = True
 # webpack-stats file is generated at the top level of the project
 WEBPACK_LOADER = {
     "DEFAULT": {
-        "STATS_FILE": os.path.join(BASE_DIR, "/webpack-stats.json"),
+        "STATS_FILE": os.path.join(BASE_DIR, "webpack-stats.json"),
     },
 }
 
