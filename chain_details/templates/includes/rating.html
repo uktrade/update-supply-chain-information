@@ -1,0 +1,27 @@
+{% load gsc_notes %}
+
+<details class="govuk-details component-panel" data-module="govuk-details" id="chain-stages">
+    <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text govuk-!-font-weight-bold">
+            {{ rating_type|title }} level
+        </span>
+    </summary>
+    <div class="govuk-details__text app-dit-details__text">
+        <h3 class="govuk-heading-m">
+            {% if rating_type == "criticality" %}
+                {{ sc.criticality_rating_text }}
+            {% elif rating_type == "maturity" %}
+                {{ sc.maturity_rating_text }}
+            {% endif %}
+        </h3>
+        <hr>
+            <p class="govuk-body-s">View more information about each level</p>
+        {% if rating_type == "criticality" %}
+            {% include "includes/criticality_categories.html" with criticality_rating=sc.criticality.rating %}
+            {% gsc_notes instance=sc.criticality  %}
+        {% elif rating_type == "maturity" %}
+            {% include "includes/maturity_categories.html" with maturity_rating=sc.maturity.rating %}
+            {% gsc_notes instance=sc.maturity  %}
+        {% endif %}
+    </div>
+</details>

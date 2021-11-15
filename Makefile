@@ -16,6 +16,11 @@ migrate:
 checkmigrations:
 	docker-compose run --rm --no-deps supply_chain python manage.py makemigrations --check
 
+all-requirements:
+	docker-compose run --rm supply_chain pip-compile --output-file requirements/base.txt requirements.in/base.in
+	docker-compose run --rm supply_chain pip-compile --output-file requirements/dev.txt requirements.in/dev.in
+	docker-compose run --rm supply_chain pip-compile --output-file requirements/prod.txt requirements.in/prod.in
+
 flake8:
 	docker-compose run --rm --no-deps supply_chain flake8
 
@@ -30,11 +35,14 @@ first-use:
 	make load-data
 
 load-data:
-	docker-compose run --rm supply_chain python manage.py loaddata cypress/fixtures/*.json
+	docker-compose run --rm supply_chain python manage.py loaddata fixtures/*.json
 	docker-compose run --rm supply_chain python manage.py datafixup --noinput
 
 test:
-	docker-compose run --rm supply_chain pytest /app
+	docker-compose run --rm supply_chain pytest /app --capture=no
 
 bash:
 	docker-compose run --rm supply_chain bash
+
+shell:
+	docker-compose run --rm supply_chain python manage.py shell
