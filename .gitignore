@@ -29,3 +29,6 @@ settings.json
 
 # IDE
 .idea
+
+# webpack
+assets/webpack_bundles/*
