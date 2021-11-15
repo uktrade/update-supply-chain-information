@@ -181,7 +181,7 @@ USE_TZ = True
 # webpack-stats file is generated at the top level of the project
 WEBPACK_LOADER = {
     "DEFAULT": {
-        "STATS_FILE": os.path.join(BASE_DIR, "../webpack-stats.json"),
+        "STATS_FILE": os.path.join(BASE_DIR, "/webpack-stats.json"),
     },
 }
 
