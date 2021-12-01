@@ -130,22 +130,57 @@ AUTHENTICATION_BACKENDS = [
 if not DEBUG:
     LOGGING = {
         "version": 1,
+        "disable_existing_loggers": False,
         "formatters": {
             "ecs_formatter": {
                 "()": ECSFormatter,
             },
+            "simple": {
+                "format": "{asctime} {levelname} {message}",
+                "style": "{",
+            },
         },
         "handlers": {
             "ecs": {
-                "formatter": "ecs_formatter",
                 "class": "logging.StreamHandler",
-                "stream": sys.stdout,
+                "formatter": "ecs_formatter",
             },
+            "simple": {
+                "class": "logging.StreamHandler",
+                "formatter": "simple",
+            },
+        },
+        "root": {
+            "handlers": [
+                "ecs",
+                "simple",
+            ],
+            "level": os.getenv("ROOT_LOG_LEVEL", "INFO"),  # noqa F405
         },
         "loggers": {
             "django": {
-                "handlers": ["ecs"],
-                "level": "INFO",
+                "handlers": [
+                    "ecs",
+                    "simple",
+                ],
+                "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),  # noqa F405
+                "propagate": False,
+            },
+            "django.server": {
+                "handlers": [
+                    "ecs",
+                    "simple",
+                ],
+                "level": os.getenv("DJANGO_SERVER_LOG_LEVEL", "ERROR"),  # noqa F405
+                "propagate": False,
+            },
+            "django.db.backends": {
+                "handlers": [
+                    "ecs",
+                    "simple",
+                ],
+                "level": os.getenv("DJANGO_DB_LOG_LEVEL", "ERROR"),  # noqa F405
+                "propagate": False,
             },
         },
     }
