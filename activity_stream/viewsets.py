@@ -9,6 +9,7 @@ from activity_stream.serializers import ActivityStreamSerializer
 
 
 class ActivityStreamViewSet(mixins.ListModelMixin, GenericViewSet):
+    permission_classes = ()  # as long authed, can view
     pagination_class = ActivityStreamCursorPagination
     serializer_class = ActivityStreamSerializer
 
