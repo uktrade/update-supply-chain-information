@@ -9,6 +9,10 @@ class ActivityStreamSerializer(serializers.ModelSerializer):
     exclude_keys = [
         "password",
         "sso_email_user_id",
+        "first_name",
+        "last_name",
+        "username",
+        "email",
     ]
 
     def _get_generator(self):
