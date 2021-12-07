@@ -153,26 +153,15 @@ def wrapped_union_queryset(bit_of_everything_queryset) -> ActivityStreamQuerySet
 
 
 @pytest.fixture(scope="session")
-def hawk_credentials_setting():
-    return {
-        "testsettings": {
-            "id": "testsettings",
-            "key": "A secret key",
-            "algorithm": "sha256",
-        },
-    }
-
-
-@pytest.fixture(scope="session")
 def endpoint():
     return f'{reverse("activity-stream-list")}?a=c'
 
 
 @pytest.fixture()
-def hawk_authentication_header(hawk_credentials_setting, endpoint):
+def hawk_authentication_header(endpoint):
     return get_hawk_header(
-        access_key_id=hawk_credentials_setting["testsettings"]["id"],
-        secret_access_key=hawk_credentials_setting["testsettings"]["key"],
+        access_key_id="xxx",
+        secret_access_key="xxx",
         method="GET",
         host="testserver",
         port="80",
