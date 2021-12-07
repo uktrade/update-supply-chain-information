@@ -90,7 +90,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "activity_stream.authentication.ActivityStreamHawkAuthentication",
+        "activity_stream.hawk.HawkAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
@@ -273,15 +273,8 @@ ACTIVITY_STREAM_APPS = [
 # These credentials are provided to consumers of the AS feed to authenticate themselves,
 # and used by activity_stream.authentication.ActivityStreamHawkAuthentication to validate authenticate headers
 # via the Hawkrest and Mohawk libraries.
-
-HAWK_CREDENTIALS = {
-    "usci_activitystream": {
-        "id": env.str("HAWK_UNIQUE_ID"),
-        "key": env.str("HAWK_SECRET_ACCESS_KEY"),
-        "algorithm": "sha256",
-    },
-}
-HAWK_MESSAGE_EXPIRATION = 60  # seconds until a Hawk header is regarded as expired
+HAWK_INCOMING_ACCESS_KEY = env.str('HAWK_INCOMING_ACCESS_KEY')
+HAWK_INCOMING_SECRET_KEY = env.str('HAWK_INCOMING_SECRET_KEY')
 
 # This value is set in Vault so it can be readily updated once the correct link is available
 QUICKSIGHT_COUNTRIES_DASHBOARD_URL = env.str(
