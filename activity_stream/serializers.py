@@ -6,6 +6,11 @@ class ActivityStreamSerializer(serializers.ModelSerializer):
     app_name = "ResilienceTool"
     app_key_prefix = f"{department_prefix}:{app_name}"
 
+    exclude_keys = [
+        "password",
+        "sso_email_user_id",
+    ]
+
     def _get_generator(self):
         """
         Get a serialized representation of the generator.
@@ -39,6 +44,11 @@ class ActivityStreamSerializer(serializers.ModelSerializer):
             },
         }
         representation["object"].update(object_representation)
+
+        # remove passwords and sso emails from output
+        for key in self.exclude_keys:
+            representation["object"].pop(key, None)
+
         return representation
 
     def _update_foreign_keys(self, foreign_keys, object_representation):
