@@ -47,7 +47,12 @@ class ActivityStreamSerializer(serializers.ModelSerializer):
                 "type": f"{self.app_key_prefix}:{object_type}",
             },
         }
-        representation["object"].update(object_representation)
+        if hasattr(instance, "activity_stream_fields"):
+            for key, value in object_representation.iter():
+                if key not in instance.activity_stream_fields:
+                    object_representation.pop(key)
+
+            representation["object"].update(object_representation)
 
         # remove passwords and sso emails from output
         for key in self.exclude_keys:

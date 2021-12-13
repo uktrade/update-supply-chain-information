@@ -61,6 +61,15 @@ class GSCUpdateModel(models.Model):
         help_text="The date when a review should be carried out",
     )
 
+    # I don't think we actually need the 'activity_stream_fields' in this model, as this
+    # is never actually directly accessed by the activity_stream processing - the fields
+    # are accessed through inheritance.
+    activity_stream_fields = [
+        "gsc_last_changed_by",
+        "gsc_updated_on",
+        "gsc_review_on",
+    ]
+
     class Meta:
         abstract = True
 
@@ -332,6 +341,28 @@ class StrategicAction(models.Model):
     )
     slug = models.SlugField(null=True, blank=True, max_length=MAX_SLUG_LENGTH)
     last_modified = models.DateTimeField(auto_now=True)
+
+    activity_stream_fields = [
+        "id",
+        "name",
+        "start_date",
+        "description",
+        "impact",
+        "category",
+        "geographic_scope",
+        "supporting_organisations",
+        "is_ongoing",
+        "target_completion_date",
+        "is_archived",
+        "archived_date",
+        "archived_reason",
+        "specific_related_products",
+        "other_dependencies",
+        "gsc_notes",
+        "supply_chain",
+        "slug",
+        "last_modified",
+    ]
 
     def clean_fields(self, exclude=None):
         super().clean_fields(exclude=exclude)
