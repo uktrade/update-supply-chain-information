@@ -64,11 +64,11 @@ class GSCUpdateModel(models.Model):
     # I don't think we actually need the 'activity_stream_fields' in this model, as this
     # is never actually directly accessed by the activity_stream processing - the fields
     # are accessed through inheritance.
-    activity_stream_fields = [
-        "gsc_last_changed_by",
-        "gsc_updated_on",
-        "gsc_review_on",
-    ]
+    # activity_stream_fields = [
+    #     "gsc_last_changed_by",
+    #     "gsc_updated_on",
+    #     "gsc_review_on",
+    # ]
 
     class Meta:
         abstract = True

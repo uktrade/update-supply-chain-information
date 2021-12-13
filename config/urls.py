@@ -22,7 +22,7 @@ from supply_chains.views import (
     PrivacyNoticeView,
 )
 from activity_stream.viewsets import (
-    ActivityStreamViewSet,
+    SupplyChainActivityStreamViewSet,
 )
 from action_progress.views import (
     ActionProgressView,
@@ -38,7 +38,7 @@ from chain_details.views import (
 
 
 router = routers.DefaultRouter()
-router.register(r"activity-stream", ActivityStreamViewSet, basename="activity-stream")
+router.register(r"activity-stream", SupplyChainActivityStreamViewSet, basename="activity-stream")
 
 monthly_update_urlpatterns = [
     path(
