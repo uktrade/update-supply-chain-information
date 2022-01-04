@@ -171,7 +171,6 @@ class TestActivityStreamCursorPagination:
         for which `last_modified` has the same value
         are not having all instances included, as they are replaced by duplicate occurrences of other instances.
         This was due to the pagination only ordering by `last_modified`.
-        https://uktrade.atlassian.net/browse/RT-434?atlOrigin=eyJpIjoiZDVjMTM2NDQ0M2UwNGVmZjkwZjg3NDc5MGM1MGQxNmUiLCJwIjoiaiJ9
         """
         page_length = 10
         with mock.patch(
@@ -218,7 +217,6 @@ class TestActivityStreamCursorPagination:
         for which `last_modified` has the same value
         are not having all instances included, as they are replaced by duplicate occurrences of other instances.
         This was due to the pagination only ordering by `last_modified`.
-        https://uktrade.atlassian.net/browse/RT-434?atlOrigin=eyJpIjoiZDVjMTM2NDQ0M2UwNGVmZjkwZjg3NDc5MGM1MGQxNmUiLCJwIjoiaiJ9
         """
         page_length = 10
         with mock.patch(

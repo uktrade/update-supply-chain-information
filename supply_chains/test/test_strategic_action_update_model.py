@@ -574,7 +574,7 @@ class TestStrategicActionUpdate:
             + relativedelta(months=6)
         )
 
-        expected_user_email = "test_user@example.com"
+        expected_user_email = "test_user@example.com"  # /PS-IGNORE
         expected_department = GovDepartment.objects.first()
         expected_user = django_user_model.objects.create(
             email=expected_user_email, gov_department=expected_department

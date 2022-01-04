@@ -10,7 +10,7 @@ class GovDepartmentFactory(factory.django.DjangoModelFactory):
 
 
 class UserFactory(factory.django.DjangoModelFactory):
-    sso_email_user_id = factory.Sequence(lambda n: f"foo-{n}@sso.com")
+    sso_email_user_id = factory.Sequence(lambda n: f"foo-{n}@sso.com")  # /PS-IGNORE
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     email = factory.Faker("email")

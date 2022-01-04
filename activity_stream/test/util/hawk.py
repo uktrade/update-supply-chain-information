@@ -1,5 +1,5 @@
 from base64 import (
-    b64encode,
+    b64encode,  # /PS-IGNORE
 )
 from datetime import (
     datetime,
@@ -18,7 +18,7 @@ def get_hawk_header(
     payload_hash = get_payload_hash(content_type, content)
 
     timestamp = str(int(datetime.now().timestamp()))
-    nonce = b64encode(os.urandom(5)).decode("utf-8")[:6]
+    nonce = b64encode(os.urandom(5)).decode("utf-8")[:6]  # /PS-IGNORE
     mac = get_mac(
         secret_access_key, timestamp, nonce, method, path, host, port, payload_hash
     )
@@ -51,8 +51,12 @@ def get_mac(
 
 
 def base64_digest(data):
-    return b64encode(hashlib.sha256(data).digest()).decode("utf-8")
+    return b64encode(hashlib.sha256(data).digest()).decode("utf-8")  # /PS-IGNORE
 
 
 def base64_mac(key, data):
-    return b64encode(hmac.new(key, data, hashlib.sha256).digest()).decode("utf-8")
+    # fmt: off
+    return b64encode(hmac.new(key, data, hashlib.sha256).digest()).decode(  # /PS-IGNORE
+        "utf-8"
+    )
+    # fmt: on

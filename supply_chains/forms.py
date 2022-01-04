@@ -543,7 +543,7 @@ class MonthlyUpdateModifiedTimingForm(MonthlyUpdateTimingForm):
 
 
 class MonthlyUpdateSubmissionForm:
-    """ Not actually a form, this wraps the necessary forms and delegates to them """
+    """Not actually a form, this wraps the necessary forms and delegates to them"""
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__()
