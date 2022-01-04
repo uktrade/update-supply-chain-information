@@ -1,0 +1,635 @@
+summary_page_error_summary.html
+MonthlyUpdateInfoForm
+MonthlyUpdateStatusForm
+status</span
+TestHomePageView
+Assert
+sc_name
+GovDepartment
+SupplyChain
+error_messages=
+accounts.test.factories
+@pytest.mark.django_db
+assert new_profile
+assert
+test_backend_create_user_creates_user_with_valid_data
+assert new_profile.email ==
+assert new_profile.sso_email_user_id
+assert new_profile.last_name
+db_check
+HealthStatus
+HealthCheckView(TemplateView
+response["Cache-Control
+widget.dit_detail %
+dateutil.relativedelta import
+relativedelta
+StrategicActionUpdate
+RagReason
+Missing reason_for_delays
+CompletionDateChangeReason
+pytest.fail(f"No
+assert StrategicActionUpdate.objects.all().count
+self.validate(sau
+SubDate
+{CompletionDateChangeReason:
+sau1
+sau = StrategicActionUpdate.objects.get(strategic_action
+CustomAuthbrokerBackend(AuthbrokerBackend
+UserModel
+update_stub(test_user
+Supply Chain 1
+Brexit
+SUBMITTED
+sa.slug
+assert resp.context["completion_estimation
+assert resp.context["update"].submission_date.strftime
+sc_stub(test_user
+assert SupplyChain.objects.all().count
+assert len(resp.context["supply_chains
+assert len(p.object_list
+the Update Supply Chain Information
+DIT
+SELECT
+LIMIT
+order_by
+Django REST Framework
+DRF
+ElasticSearch
+Activity Stream
+Serializer
+Activity Stream's
+UUID
+Data Flow
+CursorPagination
+get_models
+AttributeError
+Data Workspace
+monthly_update_form_base.html
+developments.</li
+form.content.errors
+VulnerabilityAssessment
+Sequence(lambda
+nb_sentences=6
+SupplyChainFactory(factory.django
+f"Strategic
+GeographicScope
+min_value=0
+max_value=50
+SupplyChainStageSectionFactory(factory.django
+supply_stage_summary_1
+receive_stage_rationale_6
+make_stage_rationale_7
+make_stage_summary_9
+AlterField
+Context
+supply_chain_tags
+META
+TestQuickSightURLTemplateTag
+default=
+StrategicAction
+assert v.total_sa =
+tasklist_in_prog
+NOT_STARTED
+Status
+assert len(v.sa_updates
+assert len(des_set
+num_sas
+assert form.is_valid
+CreateModel
+verbose_name="password
+is_superuser
+EmailField
+max_length=254
+ingest_csv
+accounts_sample.csv
+SC_FILE
+assert re.match(f".*(Successfully)
+GovDepartment.objects.count
+r"'id
+INV_ACCOUNTS_FILE
+assert SupplyChain.objects.count
+assert SupplyChain.objects.filter(name__startswith="Medic").count
+StrategicAction.objects.count
+assert StrategicActionUpdate.objects.count
+gsc_notes
+Token
+logged_in_client(test_user
+test_client_with_token(test_user
+test_submitted_strategic_action_update
+SupplyChainFactory
+current_assessment_kwargs
+KeyError
+kwargs[rag_rating_key].upper
+fieldnames=
+human health</h4
+order)</h4
+PermissionsMixin
+get_gov_department_id_from_user_email(email
+UserManager(BaseUserManager
+sso_email_user_id
+help_text="If True
+Supply
+scenario_assessments.two_full_scenario_assessments_csv
+assert len(data_read
+assert len(transition_period_values
+Supply Chain One
+Supply Chain Two
+npm-debug.log
+Folders
+VS
+settings.json
+IDE
+IntegrityError
+assert SupplyChainStage.objects.count
+SupplyChainStageSection.objects.count
+Where Webpack
+BundleTracker
+// c.f
+JS
+two_full_scenario_assessments_csv
+Raw Materials Extraction/Mining
+Raw Materials Processing/Refining
+Chemical Processing
+Raw Materials Suppliers
+Intermediate Goods/Capital
+Delivery/Shipping
+Finished Goods Supplier
+Assembly
+"Testing/Verification/Approval/Release
+Finished Product
+Packaging/Repackaging
+Outbound Logistics
+Retailer, Hospital,
+Service Provider
+Decommission  Assets
+{ rating_type|title }
+level</p
+sc.maturity  %
+Django 3.2.2
+assert expected_month
+test_month
+widget.value_from_datadict(form_data
+assert hasattr(widget
+widget.govuk_hint
+DJANGO_SECRET_KEY=supersecretkey
+# Staff
+Hawk
+HAWK_INCOMING_ACCESS_KEY
+MODEL_SUPPLY_CHAIN
+Refer https://docs.djangoproject.com/en/3.2/topics/serialization/#serialization-formats-json
+row.items
+formatted_row["fields"][k
+in_date
+r"%m/%d/%y
+row["model
+admin command loaddata
+ingested_model.objects.all
+mode="w
+middleware(request
+gsc_review_on
+name="contact_email
+Value
+Convert
+DB
+# Finally
+BCE
+Django REST Framework's
+item)(*args
+ApproximateTimingForm
+assert saved_instance.pk
+assert saved_instance.changed_value_for_target_completion_date
+assert self.strategic_action.target_completion_date
+assert bool(detail_form.errors
+assert saved_instance.changed_value_for_is_ongoing
+ApproximateTimingForm(data=
+isinstance(detail_form
+assert f"{choices
+ApproximateTimings
+ONE_YEAR
+test_monthly_update_submission_form_classes_for_known_completion_date_becoming_ongoing_with_new_data
+test_all_fields_valid_when_completion_date_unknown_becomes_known_and_rag_rating_green
+test_all_fields_valid_when_completion_date_known_is_changed_and_rag_rating_green
+WSGI
+HealthCheck
+FAIL
+assert response.context["response_time
+should\n
+black==20.8b1
+django.template.defaulttags import register
+SupplyChainUmbrella
+route.startswith("chain-details/
+user.gov_department
+get_tasklist_link(supply_chain_slug
+SC Umbrella
+Strip
+DFT
+RunPython(sanitise_supporting_orgs
+include(debug_toolbar.urls
+f"GovDepartment{n
+RadioSelect
+MultiWidget
+HintedSelectMixin
+DetailSelectMixin
+self.govuk_hint
+django.core.asgi
+jS F Y
+reverse("admin
+Overview
+HMT
+Treasury
+DEFRA
+Home Office
+DfT
+ModelSerializer
+Application
+Activity
+isinstance(related_item
+Y/N
+help="do
+self.get_confirmtion
+Partner
+risk_severity_status_disagree_reason
+supply_rating_reason
+\n
+Level 2
+Level 4
+ChainDetailsConfig(AppConfig
+FormView
+PaginationMixin
+ActionProgressView(LoginRequiredMixin, FormView
+None)).id
+kwargs["data
+chosen department
+Version
+assert sau_comp.count
+AMBER
+assert self.strategic_action_update.is_changing_target_completion_date
+# Guard
+self.strategic_action_update.strategic_action.target_completion_date
+assert version.revision.user.email
+assert self.strategic_action_update.has_new_timing
+scenario_assessment_queryset
+assert isinstance(instance["json
+halfway - 1
+enumerate(strategic_action_update_queryset
+assert updates_for_feed.count
+TestActivityStreamQuerySetWrapper
+assert len(queryset_slice
+test_queryset_wrapper_delegates_count
+assert count
+assert ordered_filtered_union_queryset._queryset._result_cache
+RemoveField
+TestSAPList
+"Return URL for the filter
+get_action_completion(action_slug
+self.health_check_field
+django.core.cache
+django.utils.crypto import
+constant_time_compare
+HawkFail
+BaseAuthentication
+AuthenticationFailed
+Raises
+access_key_id=access_key_id
+seen_nonce(access_key_id
+access_key_id
+activity_stream:{access_key_id}:{nonce}".format
+WWW
+hawk_receiver = authorise(request
+get_response
+minutes=17
+SA
+method="GET
+attrs==20.3.0
+django-reversion==3.0.9
+holidays==0.10.5.2
+importlib-metadata==4.0.1
+jdcal==1.4.1
+Jinja2==3.0.1
+oauthlib==3.1.0
+pluggy==0.13.1
+pyparsing==2.4.7
+pyzmq==22.1.0
+regex==2020.11.13
+django.utils.decorators
+decorator_from_middleware
+StatsMiddleware
+healthcheck.views
+SAUReview
+MonthlyUpdateSummaryView
+ChainDetailsInfoView
+ActionProgressDeptView.as_view
+HomePageView.as_view
+FAIL"
+UnitedKingdom
+"Returns the last day of the current month
+IntegerField
+Level 1
+Level 5
+history_id
+history_change_reason
+HistoricalChanges
+raise CommandError("No
+ErrorDict
+strategic_action_update
+ValueError("No StrategicActionUpdate
+use_will_completion_date_change
+Sum
+SCHomePageView(LoginRequiredMixin, PaginationMixin, ListView
+Djnago
+# However
+u = item.supply_chain_umbrella
+SAs
+SC
+url_kwargs.update(self.kwargs
+self.sa_updates.extend(self._get_sa_update_list(qs
+SCCompleteView(LoginRequiredMixin
+StrategicAction.objects.filter
+MonthlyUpdateMixin
+StrategicAction.objects.get
+self.__class
+get_navigation_links(self
+self.object.strategic_action.slug
+Info
+next_page_url
+form_kwargs["data
+self.object.implementation_rag_rating
+RED
+self.object.is_changing_target_completion_date
+self.object.has_no_timing_information
+kwargs["form"].is_valid
+sa_slug
+PrivacyNoticeView(LoginRequiredMixin
+href="{%
+import hashlib
+mac
+range(len(domain_tokens
+newline=
+len(data
+writer.writerows(data
+django.contrib import
+MIT License
+Department for International Trade
+Software
+IMPLIED
+DAMAGES
+LIABILITY
+information{%
+target="_blank
+name="deliver_rating_reason
+supply_stage_summary_2
+supply_stage_summary_3
+supply_stage_rationale_3
+Vulnerability Assessment Supply Stage
+Vulnerability Assessment Store Stage"
+receive_stage_rationale_4
+receive_stage_rationale_5
+Vulnerability Assessment Receive Stage
+Vulnerability Assessment Make Stage"
+Vulnerability Assessment Deliver Stage
+the Department for International Trade (DIT) Clients
+The Department for International Trade (DIT
+UK Data Protection
+the General Data Protection Regulation
+the Freedom of Information Act 2000
+FOIA
+the Head of Information Rights Unit
+Contacting
+the European Economic Area
+The Data Protection Officer
+the Data Protection Officer
+The General Data Protection Regulation
+the European Union
+European Economic Area
+Wycliffe House
+Water Lane
+The Department for International Trade
+Data Controller
+the General Data Protection Regulation and Data Protection
+range(6
+assert response.context["update_complete
+assert supply_chain["sa_count
+test_strat_action_summary_page_unauthorised
+StrategicActionFactory.create_batch(14
+strategic_action.supply_chain.slug
+self.strategic_action_update.slug
+RevisedTiming
+test_revised_timing_view_has_info_status_revisedtiming_summary_links
+day=31
+ImportError
+exc
+PYTHONPATH
+height="17
+Forms and Visualisation
+gtm.start
+Date().getTime
+https://www.googletagmanager.com/gtm.js?id=
+viewBox="0 0 483.2
+8.7 39.7 21.8l42.7-27.2A97.63
+href="https://www.nationalarchives.gov.uk
+Crown
+assert hasattr(outer_form
+assert isinstance(config
+assert outer_form.is_valid
+assert isinstance(inner_red_form
+assert isinstance(inner_amber_form
+completion</h2
+Ongoing</p
+django_log_formatter_ecs
+Build
+# Quick
+# See
+environ
+# Application
+# Elastic APM
+https://www.elastic.co/guide/en/apm/agent/python/current/configuration.html#config-django-autoinsert-middleware
+RevisionMiddleware
+DIRS
+OPTIONS
+DEFAULT_PERMISSION_CLASSES
+https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
+NAME
+Format
+ECS
+ELK
+ECSFormatter
+StreamHandler
+App
+env("AUTHBROKER_CLIENT_ID
+https://docs.djangoproject.com/en/3.1/howto/static-files/
+# Enable HSTS
+SET_HSTS_HEADERS=
+# Set security
+HTTP
+SERVICE_NAME
+AS
+the Hawkrest and Mohawk
+HAWK_INCOMING_ACCESS_KEY = env.str("HAWK_INCOMING_ACCESS_KEY
+Request
+ActivityStreamCursorPagination
+TestActivityStreamCursorPagination
+drf_request
+assert len(page_items
+assert name.endswith(expected_end_of_name
+pagination.has_next
+test_pagination_has_no_next_page_when_queryset_is_empty
+pagination.get_paginated_response(data
+pagination.paginate_queryset(empty_queryset
+assert len(all_last_modified_set
+assert isinstance(queryset
+ImproperlyConfigured
+Response
+Update Supply Chain Information
+self.has_next
+Command
+strategicActionUpdates.json
+self.call_command
+updated_submission_dates.items
+ActivityStreamSerializer
+dept.name
+sc_slug
+role="alert
+HistoricalRecords
+NullableRAGRating(models
+SupplyChainUmbrellaQuerySet(ActivityStreamQuerySetMixin
+GSCUpdateModel(models
+SupplyChainUmbrella(models
+SlugField
+SupplyChainCriticality(GSCUpdateModel
+LEVEL_3
+StrategicAction(models
+Category(models
+self.full_clean
+reversion.create_revision
+reversion.set_user(user
+StrategicActionUpdate(models
+max_length=15
+Missing implementation_rag_rating
+self.slug = self.date_created.strftime("%m-%Y
+self.action_status_complete
+supply_rag_rating_1
+help_text="""Rationale
+Vulnerability Assessment Supply Stage"
+VulAssessmentReceiveStageQuerySet(ActivityStreamQuerySetMixin
+Vulnerability Assessment Receive Stage"
+VulAssessmentMakeStage(models
+VulAssessmentStoreStageQuerySet(ActivityStreamQuerySetMixin
+VulAssessmentDeliverStageQuerySet(ActivityStreamQuerySetMixin
+VulAssessmentDeliverStageQuerySet.as_manager
+Vulnerability Assessment Deliver Stage"
+raw_material_shortage_critical_scenario
+SupplyChainStageQuerySet(ActivityStreamQuerySetMixin
+StageName(models
+ASSEMBLY
+MAINTENANCE
+SupplyChainStageSection(models
+KEYSERVICES
+KEYSECTORS
+TextField(default=
+test_archived_date_set_when_save_supply_chain
+assert sc.archived_reason
+SCUmbrella
+objects_saved=0
+archived_reason="Hello World
+ArcReason
+assert VulnerabilityAssessment.objects.count
+assert VulAssessmentSupplyStage.objects.count
+assert VulAssessmentReceiveStage.objects.count
+assert VulAssessmentMakeStage.objects.count
+assert VulAssessmentStoreStage.objects.count
+assert VulAssessmentDeliverStage.objects.count
+exc_info
+test_manager_create_user_creates_user
+test_get_gov_department_id_from_user_email
+gov_department_id
+test_manager_create_superuser_creates_superuser
+UserModel.objects.create_superuser
+assert new_profile.is_staff
+new_profile.is_superuser
+test_manager_create_user_does_not_create_staff_user
+get_formatted_deadline
+supply_chains.templatetags.supply_chain_tags import get_active_menu
+assert menu
+url_name
+ner_output_file.txt
+2.5em
+class="tasklist
+Remove
+ScenarioAssessmentFactory
+django.urls.base
+date(year=2021
+reason_for_completion_date_change="It
+supply_chains.views.get_last_working_day_of_previous_month
+assert responding_view.update_submitted
+strategic_action_without_timing(test_user
+strategic_action_with_completion_date(test_user
+strategic_action_update_info_timing_status_incomplete
+strategic_action_update_revised_timing_incomplete
+reason_for_delays="Foo
+test_update_status_view_not_linked_to_self_when_not_completed
+TestNoCompletionDateSummaryPageNavigationLinks
+extract_csv"
+GovDepartmentFactory(email_domains=[trade_domian
+self.load_csv
+assert len(rows
+assert all(k
+exp_sc_ids.append(str(sc.id
+assert all([a
+assert all([x.startswith("Strategic
+HttpUser
+ResponseError
+raise ResponseError
+@task
+AutoField
+RenameField
+li class="moj-sub
+"Test False
+test_check_matching_gov_department_success
+"Test True
+assert check_matching_gov_department(user
+-O codecov.sh https://codecov.io/bash
+the Global Supply Chains
+Programme Board
+Supply Chain Name
+Spreadsheet
+choice[1].lower
+CountryDependency.objects.get_or_create
+hasattr(obj
+li class="moj-pagination__item
+href="?page=
+departmental auth
+Chain"].strip
+char_id
+rag_field
+setattr(sub_obj
+RAG
+len(sc_from_vul_data.difference(sc_from_overall_data
+ingest_vul_object(sc
+assert comment.endswith(scenario_assessment.supply_chain.name
+assert versions.count
+AdminSite
+SplitArrayField
+CustomAdminSite(AdminSite
+request.user.is_staff
+CharField(max_length=255
+help_text="An email
+StackedInline
+admin_site.register(User
+UserAdmin
+SupplyChainAdmin
+admin_site.register(SupplyChainUmbrella
+Dockerfile.dev
+raw_material_sup
+key_services"
+key_activities
+key_companies
+Dep
+@extend .description
+b1b4b6
+radio.data.dit_detail
+ChainDetailsView(LoginRequiredMixin, FormView
+ChainDetailsInfoView(LoginRequiredMixin
+100s
+The Strategic Framework
+SMART
+^12.1.0

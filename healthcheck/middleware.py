@@ -6,5 +6,5 @@ class StatsMiddleware:
         self.get_response = get_response
 
     def process_request(self, request):
-        """ Start time at request coming in """
+        """Start time at request coming in"""
         request.start_time = time.time()

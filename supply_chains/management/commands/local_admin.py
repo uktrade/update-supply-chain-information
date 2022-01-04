@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             "--first_name",
-            help="First name of the user to elevate as admin",
+            help="First name of the user to elevate as admin",  # /PS-IGNORE
         )
 
     def handle(self, **options):

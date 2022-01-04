@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from django_log_formatter_ecs import ECSFormatter
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-#BASE_DIR = Path(__file__).resolve().parent.parent
+# BASE_DIR = Path(__file__).resolve().parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -89,9 +89,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "config.wsgi.application"
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "activity_stream.hawk.HawkAuthentication",
-    ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("activity_stream.hawk.HawkAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
@@ -273,8 +271,8 @@ ACTIVITY_STREAM_APPS = [
 # These credentials are provided to consumers of the AS feed to authenticate themselves,
 # and used by activity_stream.authentication.ActivityStreamHawkAuthentication to validate authenticate headers
 # via the Hawkrest and Mohawk libraries.
-HAWK_INCOMING_ACCESS_KEY = env.str('HAWK_INCOMING_ACCESS_KEY')
-HAWK_INCOMING_SECRET_KEY = env.str('HAWK_INCOMING_SECRET_KEY')
+HAWK_INCOMING_ACCESS_KEY = env.str("HAWK_INCOMING_ACCESS_KEY")
+HAWK_INCOMING_SECRET_KEY = env.str("HAWK_INCOMING_SECRET_KEY")
 
 # This value is set in Vault so it can be readily updated once the correct link is available
 QUICKSIGHT_COUNTRIES_DASHBOARD_URL = env.str(

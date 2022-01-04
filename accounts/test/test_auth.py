@@ -16,8 +16,8 @@ def test_backend_create_user_does_not_create_user_for_unknown_department():
     """
     gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
-        "email": "mr.test@dosac.gov.uk",
-        "email_user_id": "mr.test-1234@dosac.gov.uk",
+        "email": "mr.test@dosac.gov.uk",  # /PS-IGNORE
+        "email_user_id": "mr.test-1234@dosac.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
     }
@@ -34,8 +34,8 @@ def test_new_user_calls_user_manager_create_user_method():
     """
     gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
-        "email": "mr.test@email.gov.uk",
-        "email_user_id": "mr.test-1234@email.gov.uk",
+        "email": "mr.test@email.gov.uk",  # /PS-IGNORE
+        "email_user_id": "mr.test-1234@email.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
     }
@@ -52,8 +52,8 @@ def test_backend_create_user_creates_user_with_valid_data():
     """
     gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
-        "email": "mr.test@email.gov.uk",
-        "email_user_id": "mr.test-1234@email.gov.uk",
+        "email": "mr.test@email.gov.uk",  # /PS-IGNORE
+        "email_user_id": "mr.test-1234@email.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
     }
@@ -70,7 +70,7 @@ def test_backend_create_user_creates_user_with_valid_data():
 def test_two_departments_with_same_email_domain_prevents_login():
     preferred_department_name = "Good"
     disavowed_department_name = "Bad"
-    shared_email_domain = "email.gov.uk"
+    shared_email_domain = "email.gov.uk"  # /PS-IGNORE
     GovDepartmentFactory(
         name=preferred_department_name, email_domains=[shared_email_domain]
     )
@@ -78,8 +78,8 @@ def test_two_departments_with_same_email_domain_prevents_login():
         name=disavowed_department_name, email_domains=[shared_email_domain]
     )
     mock_profile = {
-        "email": "mr.test@email.gov.uk",
-        "email_user_id": "mr.test-1234@email.gov.uk",
+        "email": "mr.test@email.gov.uk",  # /PS-IGNORE
+        "email_user_id": "mr.test-1234@email.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
     }

@@ -30,12 +30,12 @@ def test_manager_create_user_creates_user():
         ]
     )
     mock_profile = {
-        "sso_email_user_id": "mr.test-1234@email.gov.uk",
+        "sso_email_user_id": "mr.test-1234@email.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
         "gov_department": new_dep,
     }
-    email = "mr.test@email.gov.uk"
+    email = "mr.test@email.gov.uk"  # /PS-IGNORE
     new_profile = UserModel.objects.create_user(email=email, **mock_profile)
     assert new_profile is not None
     assert new_profile.email == email
@@ -55,12 +55,12 @@ def test_manager_create_user_calls_set_unusable_password():
         ]
     )
     mock_profile = {
-        "sso_email_user_id": "mr.test-1234@email.gov.uk",
+        "sso_email_user_id": "mr.test-1234@email.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
         "gov_department": new_dep,
     }
-    email = "mr.test@email.gov.uk"
+    email = "mr.test@email.gov.uk"  # /PS-IGNORE
     with mock.patch.object(UserModel, "set_unusable_password") as mocked_method:
         new_profile = UserModel.objects.create_user(email=email, **mock_profile)
         assert mocked_method.called
@@ -73,11 +73,11 @@ def test_manager_create_user_adds_department_using_email_address():
     """
     expected_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
-        "sso_email_user_id": "mr.test-1234@email.gov.uk",
+        "sso_email_user_id": "mr.test-1234@email.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
     }
-    email = "mr.test@email.gov.uk"
+    email = "mr.test@email.gov.uk"  # /PS-IGNORE
     new_profile = UserModel.objects.create_user(email=email, **mock_profile)
     assert new_profile.gov_department == expected_department
 
@@ -89,11 +89,11 @@ def test_manager_create_user_for_unknown_email_domain_returns_none():
     """
     expected_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
     mock_profile = {
-        "sso_email_user_id": "mr.test-1234@dosac.gov.uk",
+        "sso_email_user_id": "mr.test-1234@dosac.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
     }
-    email = "mr.test@dosac.gov.uk"
+    email = "mr.test@dosac.gov.uk"  # /PS-IGNORE
     new_profile = UserModel.objects.create_user(email=email, **mock_profile)
     assert new_profile is None
 
@@ -105,7 +105,7 @@ def test_get_gov_department_id_from_user_email():
     the email passed in.
     """
     gov_department = GovDepartmentFactory(email_domains=["email.gov.uk"])
-    email = "mr.test@email.gov.uk"
+    email = "mr.test@email.gov.uk"  # /PS-IGNORE
     gov_department_id = get_gov_department_id_from_user_email(email).id
     assert gov_department_id == gov_department.id
 
@@ -117,16 +117,16 @@ def test_manager_create_superuser_creates_superuser():
     """
     new_dep = GovDepartmentFactory(
         email_domains=[
-            "email.gov.uk",
+            "email.gov.uk",  # /PS-IGNORE
         ]
     )
     mock_profile = {
-        "sso_email_user_id": "mr.test-1234@email.gov.uk",
+        "sso_email_user_id": "mr.test-1234@email.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
         "gov_department": new_dep,
     }
-    email = "mr.test@email.gov.uk"
+    email = "mr.test@email.gov.uk"  # /PS-IGNORE
     new_profile = UserModel.objects.create_superuser(email=email, **mock_profile)
     assert new_profile.is_staff
     assert new_profile.is_superuser
@@ -143,12 +143,12 @@ def test_manager_create_user_does_not_create_staff_user():
         ]
     )
     mock_profile = {
-        "sso_email_user_id": "mr.test-1234@email.gov.uk",
+        "sso_email_user_id": "mr.test-1234@email.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
         "gov_department": new_dep,
     }
-    email = "mr.test@email.gov.uk"
+    email = "mr.test@email.gov.uk"  # /PS-IGNORE
     new_profile = UserModel.objects.create_user(email=email, **mock_profile)
     assert not new_profile.is_staff
 
@@ -164,11 +164,11 @@ def test_manager_create_user_does_not_create_superuser():
         ]
     )
     mock_profile = {
-        "sso_email_user_id": "mr.test-1234@email.gov.uk",
+        "sso_email_user_id": "mr.test-1234@email.gov.uk",  # /PS-IGNORE
         "first_name": "Mr",
         "last_name": "Test",
         "gov_department": new_dep,
     }
-    email = "mr.test@email.gov.uk"
+    email = "mr.test@email.gov.uk"  # /PS-IGNORE
     new_profile = UserModel.objects.create_user(email=email, **mock_profile)
     assert not new_profile.is_superuser

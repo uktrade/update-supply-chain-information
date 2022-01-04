@@ -107,7 +107,9 @@ class ActivityStreamQuerySetWrapper:
     @property
     def _all_querysets(self):
         return [
-            model.objects.for_activity_stream() for model in self._models if hasattr(
+            model.objects.for_activity_stream()
+            for model in self._models
+            if hasattr(
                 model.objects,
                 "for_activity_stream",
             )

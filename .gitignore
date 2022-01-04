@@ -32,3 +32,6 @@ settings.json
 
 # webpack
 assets/webpack_bundles/*
+
+# PII and secrets cache
+.pii-secret-hook
