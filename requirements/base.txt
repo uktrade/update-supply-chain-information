@@ -55,7 +55,7 @@ distlib==0.3.1
     # via
     #   -r requirements.in/base.in
     #   virtualenv
-django==3.2.5
+django==3.2.11
     # via
     #   -r requirements.in/base.in
     #   django-import-export
