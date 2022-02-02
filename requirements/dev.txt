@@ -63,7 +63,7 @@ distlib==0.3.1
     # via
     #   -r requirements.in/../requirements/base.txt
     #   virtualenv
-django==3.2.5
+django==3.2.12
     # via
     #   -r requirements.in/../requirements/base.txt
     #   django-debug-toolbar
@@ -220,13 +220,9 @@ pathspec==0.8.1
     #   -r requirements.in/../requirements/base.txt
     #   black
 pep517==0.12.0
-    # via
-    #   -r requirements.in/../requirements/base.txt
-    #   pip-tools
+    # via pip-tools
 pip-tools==6.4.0
-    # via
-    #   -r requirements.in/../requirements/base.txt
-    #   -r requirements.in/dev.in
+    # via -r requirements.in/dev.in
 pluggy==0.13.1
     # via
     #   -r requirements.in/../requirements/base.txt
@@ -327,9 +323,7 @@ toml==0.10.2
     #   pre-commit
     #   pytest
 tomli==1.2.2
-    # via
-    #   -r requirements.in/../requirements/base.txt
-    #   pep517
+    # via pep517
 typed-ast==1.4.2
     # via
     #   -r requirements.in/../requirements/base.txt
@@ -353,9 +347,7 @@ werkzeug==2.0.1
     #   flask
     #   locust
 wheel==0.37.0
-    # via
-    #   -r requirements.in/../requirements/base.txt
-    #   pip-tools
+    # via pip-tools
 whitenoise==5.2.0
     # via -r requirements.in/../requirements/base.txt
 xlrd==2.0.1

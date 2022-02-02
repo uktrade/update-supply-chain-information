@@ -35,3 +35,6 @@ assets/webpack_bundles/*
 
 # PII and secrets cache
 .pii-secret-hook
+
+# Local testing
+cypress/

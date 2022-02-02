@@ -30,9 +30,7 @@ chardet==4.0.0
     #   -r requirements.in/base.in
     #   requests
 click==7.1.2
-    # via
-    #   -r requirements.in/base.in
-    #   pip-tools
+    # via -r requirements.in/base.in
 configargparse==1.4.1
     # via -r requirements.in/base.in
 convertdate==2.3.2
@@ -55,7 +53,7 @@ distlib==0.3.1
     # via
     #   -r requirements.in/base.in
     #   virtualenv
-django==3.2.5
+django==3.2.12
     # via
     #   -r requirements.in/base.in
     #   django-import-export
@@ -178,10 +176,6 @@ packaging==20.9
     #   pytest
 pathspec==0.8.1
     # via -r requirements.in/base.in
-pep517==0.12.0
-    # via pip-tools
-pip-tools==6.4.0
-    # via -r requirements.in/base.in
 pluggy==0.13.1
     # via
     #   -r requirements.in/base.in
@@ -267,8 +261,6 @@ toml==0.10.2
     #   coverage
     #   pre-commit
     #   pytest
-tomli==1.2.2
-    # via pep517
 typed-ast==1.4.2
     # via -r requirements.in/base.in
 typing-extensions==3.7.4.3
@@ -284,8 +276,6 @@ virtualenv==20.4.0
     #   pre-commit
 werkzeug==2.0.1
     # via -r requirements.in/base.in
-wheel==0.37.0
-    # via pip-tools
 whitenoise==5.2.0
     # via -r requirements.in/base.in
 xlrd==2.0.1
@@ -306,5 +296,4 @@ zope.interface==5.4.0
     # via -r requirements.in/base.in
 
 # The following packages are considered to be unsafe in a requirements file:
-# pip
 # setuptools
