@@ -1,11 +1,11 @@
 repos:
   - repo: https://github.com/psf/black
-    rev: 21.12b0
+    rev: 22.3.0
     hooks:
       - id: black
         language_version: python3.8
   - repo: https://github.com/uktrade/pii-secret-check-hooks
-    rev: 0.0.0.33
+    rev: 0.0.0.34
     hooks:
     -   id: pii_secret_filename
         files: ''

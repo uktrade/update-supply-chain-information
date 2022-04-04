@@ -36,6 +36,8 @@
 </p>
 
 
+<h3 class="govuk-heading-m" style="margin-bottom: 15px;">Supply chain information</h3>
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
         <ul class="govuk-list">
@@ -75,6 +77,11 @@
             </li>
         </ul>
     </div>
+</div>
+
+<h3 class="govuk-heading-m" style="margin-bottom: 15px;">Visualisations</h3>
+
+<div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
         <ul class="govuk-list">
             <li>
@@ -86,8 +93,42 @@
             </li>
         </ul>
     </div>
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href="{% quicksight_risk_monitoring_dashboard_url %}" class="services-heading govuk-link govuk-!-font-weight-bold">Risk monitoring</a>
 
+                <p class="home-services-para">
+                    Find out more about disruptive events that pose a risk to supply chains.
+                </p>
+            </li>
+        </ul>
+    </div>
 </div>
 
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href="{% quicksight_overseas_intelligence_dashboard_url %}" class="services-heading govuk-link govuk-!-font-weight-bold">Overseas Intelligence</a>
+
+                <p class="home-services-para">
+                    Overseas Intelligence: View overseas intelligence information to identity global risks to supply chains.
+                </p>
+            </li>
+        </ul>
+    </div>
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href="{% quicksight_vulnerability_analysis_dashboard_url %}" class="services-heading govuk-link govuk-!-font-weight-bold">Vulnerability analysis</a>
+
+                <p class="home-services-para">
+                    View information about the vulnerability of UK imports and Global exports to supply chain disruption.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
 
 {% endblock %}
