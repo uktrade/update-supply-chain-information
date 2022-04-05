@@ -51,6 +51,21 @@ def quicksight_countries_dashboard_url():
     return settings.QUICKSIGHT_COUNTRIES_DASHBOARD_URL
 
 
+@register.simple_tag(takes_context=False)
+def quicksight_overseas_intelligence_dashboard_url():
+    return settings.QUICKSIGHT_OVERSEAS_INTELLIGENCE_DASHBOARD_URL
+
+
+@register.simple_tag(takes_context=False)
+def quicksight_risk_monitoring_dashboard_url():
+    return settings.QUICKSIGHT_RISK_MONITORING_DASHBOARD_URL
+
+
+@register.simple_tag(takes_context=False)
+def quicksight_vulnerability_analysis_dashboard_url():
+    return settings.QUICKSIGHT_VULNERABILITY_ANALYSIS_DASHBOARD_URL
+
+
 @register.simple_tag(takes_context=True)
 def visualisation_link(context):
     request = context["request"]

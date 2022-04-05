@@ -30,11 +30,13 @@
 
 
 
-<h2 class="govuk-heading-l" style="margin-bottom: 15px;">Reporting summary</h2>
+<h2 class="govuk-heading-l" style="margin-bottom: 15px;">Reports and dashboards</h2>
 <p class="govuk-body-l">
     Information on how to strengthen<br> future supply chain resilience.
 </p>
 
+
+<h3 class="govuk-heading-m" style="margin-bottom: 15px;">Assurance portfolio</h3>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
@@ -75,6 +77,11 @@
             </li>
         </ul>
     </div>
+</div>
+
+<h3 class="govuk-heading-m" style="margin-bottom: 15px;">Analysis</h3>
+
+<div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
         <ul class="govuk-list">
             <li>
@@ -86,8 +93,42 @@
             </li>
         </ul>
     </div>
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href="{% quicksight_risk_monitoring_dashboard_url %}" class="services-heading govuk-link govuk-!-font-weight-bold">Risk monitoring</a>
 
+                <p class="home-services-para">
+                    Find out more about disruptive events that pose a risk to supply chains.
+                </p>
+            </li>
+        </ul>
+    </div>
 </div>
 
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href="{% quicksight_overseas_intelligence_dashboard_url %}" class="services-heading govuk-link govuk-!-font-weight-bold">Overseas Intelligence</a>
+
+                <p class="home-services-para">
+                    View overseas intelligence information to identify global risks to supply chains.
+                </p>
+            </li>
+        </ul>
+    </div>
+    <div class="govuk-grid-column-one-half">
+        <ul class="govuk-list">
+            <li>
+                <a href="{% quicksight_vulnerability_analysis_dashboard_url %}" class="services-heading govuk-link govuk-!-font-weight-bold">Vulnerability analysis</a>
+
+                <p class="home-services-para">
+                    View information about the vulnerability of UK imports and Global exports to supply chain disruption.
+                </p>
+            </li>
+        </ul>
+    </div>
+</div>
 
 {% endblock %}
