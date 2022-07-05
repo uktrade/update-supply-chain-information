@@ -53,7 +53,7 @@ distlib==0.3.1
     # via
     #   -r requirements.in/base.in
     #   virtualenv
-django==3.2.13
+django==3.2.14
     # via
     #   -r requirements.in/base.in
     #   django-import-export
