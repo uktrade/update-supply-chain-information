@@ -28,7 +28,9 @@ Where it is not possible to use a govuk style, the [moj-frontend](https://github
 
 ### To run the app for the first time:
 - run `make build`
-- run `first-use`
+- run `make first-use`
+- run `make up` - this will bring the service up and stream logs to your console; OR
+- run `make up-d` - this will bring the service up and detach from your console using the `-d` switch
 - You must access the app on http://localhost:8000 as this is the URL which is configured as the 'redirect URL' for our authbroker credentials in staff SSO
 
 ### To just load fixture data:
