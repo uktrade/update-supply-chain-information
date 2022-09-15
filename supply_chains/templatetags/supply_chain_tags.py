@@ -66,6 +66,14 @@ def quicksight_vulnerability_analysis_dashboard_url():
     return settings.QUICKSIGHT_VULNERABILITY_ANALYSIS_DASHBOARD_URL
 
 
+@register.simple_tag(takes_context=False)
+def quicksight_vulnerability_analysis_countries_dashboard_url():
+    return settings.QUICKSIGHT_VULNERABILITY_ANALYSIS_COUNTRIES_DASHBOARD_URL
+
+@register.simple_tag(takes_context=False)
+def quicksight_vulnerability_analysis_products_dashboard_url():
+    return settings.QUICKSIGHT_VULNERABILITY_ANALYSIS_PRODUCTS_DASHBOARD_URL
+
 @register.simple_tag(takes_context=True)
 def visualisation_link(context):
     request = context["request"]
