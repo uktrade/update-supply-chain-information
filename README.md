@@ -120,3 +120,19 @@ can be found in [How to use Data Workspace datasets in your application](https:/
 Note that Data Workspace presents data tables in a flat form - it does not use Foreign Key relationships.
 As this project uses UUIDs as primary keys, it is still possible to follow relationships within Data Workspace,
 but this would have to be implemented at the application level.
+
+
+## Links to Analyses
+
+The data gathered by this service are used to create a number of dashboards in Data Workspace.
+These are linked to from the "Analysis" section of the home page of the service.
+
+### Adding a Link
+
+* Add the link to Vault under a suitable name; this makes it available in the deployment environment.
+* In `config/settings/base.py` add the link as a setting, obtaining the value from the environment.
+* In `supply_chains.templatetags.supply_chain_tags` add a template tag that renders the content of the setting.
+* In `supply_chains/templates/supply_chains/index.html` copy and paste one of the existing visualisation link blocks,
+updating the title, description, and template tag used for rendering the link's `href` attribute appropriately.
+* Update `env.example` to include the new value.
+* For local development, add the new value in your `.env` file.
