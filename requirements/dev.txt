@@ -63,7 +63,7 @@ distlib==0.3.1
     # via
     #   -r requirements.in/../requirements/base.txt
     #   virtualenv
-django==3.2.15
+django==3.2.16
     # via
     #   -r requirements.in/../requirements/base.txt
     #   django-debug-toolbar
