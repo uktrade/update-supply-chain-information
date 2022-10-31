@@ -198,7 +198,7 @@ pyparsing==2.4.7
     # via
     #   -r requirements.in/base.in
     #   packaging
-pytest==6.2.2
+pytest==7.2.0
     # via
     #   -r requirements.in/base.in
     #   pytest-cov
