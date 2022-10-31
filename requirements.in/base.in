@@ -52,7 +52,7 @@ pluggy==0.13.1
 pre-commit==2.10.0
 psutil==5.8.0
 psycopg2-binary==2.8.6
-py==1.10.0
+py==1.11.0
 PyMeeus==0.5.11
 pyparsing==2.4.7
 pytest==7.2.0

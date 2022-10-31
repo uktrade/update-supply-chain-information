@@ -235,7 +235,7 @@ psutil==5.8.0
     #   locust
 psycopg2-binary==2.8.6
     # via -r requirements.in/../requirements/base.txt
-py==1.10.0
+py==1.11.0
     # via
     #   -r requirements.in/../requirements/base.txt
     #   pytest
