@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "axe-core": "^4.3.3",
-    "webpack-dev-server": "^4.7.3"
+    "webpack-dev-server": "^4.11.1"
   },
   "scripts": {
     "dev": "webpack --config webpack.config.js --mode=development --watch",
