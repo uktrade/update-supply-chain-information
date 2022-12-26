@@ -346,7 +346,7 @@ werkzeug==2.0.1
     #   -r requirements.in/../requirements/base.txt
     #   flask
     #   locust
-wheel==0.37.0
+wheel==0.38.1
     # via pip-tools
 whitenoise==5.2.0
     # via -r requirements.in/../requirements/base.txt
