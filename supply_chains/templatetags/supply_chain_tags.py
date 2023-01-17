@@ -62,17 +62,19 @@ def quicksight_risk_monitoring_dashboard_url():
 
 
 @register.simple_tag(takes_context=False)
-def quicksight_vulnerability_analysis_dashboard_url():
-    return settings.QUICKSIGHT_VULNERABILITY_ANALYSIS_DASHBOARD_URL
+def quicksight_commodity_uses_by_industry_dashboard_url():
+    return settings.QUICKSIGHT_COMMODITY_USES_BY_INDUSTRY_DASHBOARD_URL
 
 
 @register.simple_tag(takes_context=False)
 def quicksight_vulnerability_analysis_countries_dashboard_url():
     return settings.QUICKSIGHT_VULNERABILITY_ANALYSIS_COUNTRIES_DASHBOARD_URL
 
+
 @register.simple_tag(takes_context=False)
 def quicksight_vulnerability_analysis_products_dashboard_url():
     return settings.QUICKSIGHT_VULNERABILITY_ANALYSIS_PRODUCTS_DASHBOARD_URL
+
 
 @register.simple_tag(takes_context=True)
 def visualisation_link(context):
