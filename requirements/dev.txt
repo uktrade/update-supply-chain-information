@@ -341,7 +341,7 @@ virtualenv==20.4.0
     # via
     #   -r requirements.in/../requirements/base.txt
     #   pre-commit
-werkzeug==2.0.1
+werkzeug==2.2.3
     # via
     #   -r requirements.in/../requirements/base.txt
     #   flask
