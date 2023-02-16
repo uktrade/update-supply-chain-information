@@ -149,7 +149,7 @@ markuppy==1.14
     # via
     #   -r requirements.in/../requirements/base.txt
     #   tablib
-markupsafe==2.0.1
+markupsafe==2.1.2
     # via
     #   -r requirements.in/../requirements/base.txt
     #   jinja2
