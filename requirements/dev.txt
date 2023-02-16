@@ -173,7 +173,7 @@ markuppy==1.14
     # via
     #   -r requirements.in/../requirements/base.txt
     #   tablib
-markupsafe==2.0.1
+markupsafe==2.1.2
     # via
     #   -r requirements.in/../requirements/base.txt
     #   jinja2
@@ -341,7 +341,7 @@ virtualenv==20.4.0
     # via
     #   -r requirements.in/../requirements/base.txt
     #   pre-commit
-werkzeug==2.0.1
+werkzeug==2.2.3
     # via
     #   -r requirements.in/../requirements/base.txt
     #   flask
