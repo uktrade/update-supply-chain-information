@@ -332,7 +332,7 @@ typing-extensions==3.7.4.3
     # via
     #   -r requirements.in/../requirements/base.txt
     #   black
-urllib3==1.26.5
+urllib3==1.26.15
     # via
     #   -r requirements.in/../requirements/base.txt
     #   requests

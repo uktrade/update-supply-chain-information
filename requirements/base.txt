@@ -265,7 +265,7 @@ typed-ast==1.4.2
     # via -r requirements.in/base.in
 typing-extensions==3.7.4.3
     # via -r requirements.in/base.in
-urllib3==1.26.5
+urllib3==1.26.15
     # via
     #   -r requirements.in/base.in
     #   requests
