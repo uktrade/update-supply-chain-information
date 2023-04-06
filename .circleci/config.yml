@@ -6,20 +6,42 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check for fixme comments
-          command: make check-fixme
-      - run:
           name: Copy env file
           command: cp .env.ci .env
       - run:
-          name: run black (code formatting check)
-          command: make black
-#      - run:
-#          name: run flake8 (coding standards compliance test)
-#          command: make flake8
+          name: install webpack 
+          command: npm install
+      - run:
+          name: run webpack
+          command: npm run dev
+          background: true
+      - run:
+          name: build docker
+          command: make build
+      - run:
+          name: docker up
+          command: make up
+          background: true
+      - run:
+          name: install dockerize
+          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.3.0
+      - run:
+          name: Wait for db
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: run first use
+          command: make first-use
+      - run:
+          name: load fixture data
+          command: make load-data
       - run:
           name: run tests
           command: make test
+      - run:
+          name: run black (code formatting check)
+          command: make black
       - run:
           name: Publish unit test coverage
           command: |

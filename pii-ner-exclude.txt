@@ -635,3 +635,7 @@ SMART
 ^12.1.0
 Global
 0.0.0.34
+wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz &&
+npm install
+npm run dev
+{CODECOV_TOKEN} -s
