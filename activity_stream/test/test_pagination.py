@@ -31,9 +31,7 @@ class TestActivityStreamCursorPagination:
             pagination.paginate_queryset(wrapped_union_queryset, drf_request)
             assert pagination.has_next
 
-    def test_modified_item_appears_on_next_page(
-        self, wrapped_union_queryset, rf, bit_of_everything_last_modified_times
-    ):
+    def test_modified_item_appears_on_next_page(self, wrapped_union_queryset, rf):
         """
         Ensure the pagination links to a next page,
         even when that page will be empty as the queryset has been exhausted on this page.
@@ -47,27 +45,36 @@ class TestActivityStreamCursorPagination:
             drf_request = Request(request)
             pagination = ActivityStreamCursorPagination()
             pagination.paginate_queryset(wrapped_union_queryset, drf_request)
+
             # Change a supply chain so its last_modified date is later
             # than the last_modified date of the last item on the page we've just built
-            supply_chain_being_modified = SupplyChain.objects.order_by(
-                "last_modified"
-            ).first()
+            supply_chain_being_modified_id = wrapped_union_queryset.first()["id"]
+            supply_chain_being_modified = SupplyChain.objects.get(
+                id=str(supply_chain_being_modified_id)
+            )
             expected_end_of_name = " modified"
             supply_chain_being_modified.name = (
                 supply_chain_being_modified.name + expected_end_of_name
             )
+
             # Get a last_modified datetime later than the end of the existing queryset
-            latest_timestamp = bit_of_everything_last_modified_times[-1]
+            latest_item = wrapped_union_queryset.latest("last_modified")
+            latest_timestamp = latest_item["last_modified"]
             offset = relativedelta(months=1)
             new_timestamp = latest_timestamp + offset
+
+            # Commit the change to the supply chain
             with mock.patch("django.utils.timezone.now") as mock_now:
                 mock_now.return_value = new_timestamp
                 supply_chain_being_modified.save()
+
             # Ensure we have an updated queryset
             updated_queryset = ActivityStreamQuerySetWrapper()
+            updated_queryset.order_by("last_modified")
             next_link = pagination.get_next_link()
             request = rf.get(next_link)
             drf_request = Request(request)
+
             # Ensure we start with a clean slate to prevent any previous pagination state affecting things
             pagination = ActivityStreamCursorPagination()
             page_items = pagination.paginate_queryset(updated_queryset, drf_request)
