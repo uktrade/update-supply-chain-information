@@ -17,7 +17,7 @@ The project uses a `Makefile` to make running commands easier. `make` commands n
 
 ### Setting up static files
 The project uses [webpack](https://webpack.js.org/) to build static files, to setup:
-- Install node version 14.x
+- Install node version 18.x
 - Run `npm install` to install all node modules, including webpack and the govuk-frontend npm package
 - Run `npm run dev` - webpack will then bundle all static files in `assets` and create 'bundles' in `assets/webpack_bundles`. When making changes to static files, e.g. updating `application.scss`, webpack will recompile the files when edited and create a new bundle.
 
