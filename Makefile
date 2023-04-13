@@ -11,6 +11,8 @@ migrations:
 	docker-compose run --rm supply_chain python manage.py makemigrations supply_chains
 
 migrate:
+	# This is bit hacky, but on a first time run on a new container the migrations seemed to reliably fail...
+	docker-compose run --rm supply_chain echo "Making sure the container is fully up before we try to run the migrations" && sleep 2
 	docker-compose run --rm supply_chain python manage.py migrate
 
 checkmigrations:
@@ -28,11 +30,13 @@ black:
 	docker-compose run --rm --no-deps supply_chain black .
 
 first-use:
-	docker-compose run --rm supply_chain python manage.py migrate
+	make build
+	make migrate
 	docker-compose run --rm supply_chain python manage.py createinitialrevisions
 	# Remove the DIT gov department added in a data migration
 	docker-compose run --rm supply_chain python manage.py flush --no-input
 	make load-data
+	make up
 
 load-data:
 	docker-compose run --rm supply_chain python manage.py loaddata fixtures/*.json
