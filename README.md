@@ -27,7 +27,9 @@ The project mainly uses styles from the [govuk-frontend](https://github.com/alph
 Where it is not possible to use a govuk style, the [moj-frontend](https://github.com/ministryofjustice/moj-frontend) library (an extension of govuk-frontend) has been used, and any custom styles added to `assets/application.scss`, with classes prefixed with `.app-`.
 
 ### To run the app for the first time:
+- run `make build`
 - run `make first-use`
+- run `make up`
 - You must access the app on http://localhost:8000 as this is the URL which is configured as the 'redirect URL' for our authbroker credentials in staff SSO
 - Note: Being connected to the VPN can lead to http://localhost:8000 to fail to load. Disconnect to test locally.
 

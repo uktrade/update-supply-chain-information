@@ -30,13 +30,11 @@ black:
 	docker-compose run --rm --no-deps supply_chain black .
 
 first-use:
-	make build
 	make migrate
 	docker-compose run --rm supply_chain python manage.py createinitialrevisions
 	# Remove the DIT gov department added in a data migration
 	docker-compose run --rm supply_chain python manage.py flush --no-input
 	make load-data
-	make up
 
 load-data:
 	docker-compose run --rm supply_chain python manage.py loaddata fixtures/*.json
