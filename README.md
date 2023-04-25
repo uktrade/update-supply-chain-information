@@ -13,7 +13,7 @@ The project uses a `Makefile` to make running commands easier. `make` commands n
 ### Setting up environment variables:
 - Environment variables can be found in the `.env.example`
 - Copy these to a `.env` file in the root folder
-- The `AUTHBROKER_CLIENT_ID` and `AUTHBROKER_CLIENT_SECRET` values needed for staff SSO can be found in [passman](https://passman.ci.uktrade.digital/2fa/verify/?next=/secret/61f0a3bf-33f3-427e-8ade-cdee0c637031/)
+- The `AUTHBROKER_CLIENT_ID` and `AUTHBROKER_CLIENT_SECRET` values needed for staff SSO can be found in [passman](https://passman.ci.uktrade.digital/secret/61f0a3bf-33f3-427e-8ade-cdee0c637031/)
 
 ### Setting up static files
 The project uses [webpack](https://webpack.js.org/) to build static files, to setup:
