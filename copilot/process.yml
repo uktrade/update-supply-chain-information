@@ -1,0 +1,4 @@
+application:
+  name: update-supply-chain-information
+  process:
+    - web
