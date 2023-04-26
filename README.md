@@ -19,7 +19,7 @@ The project uses a `Makefile` to make running commands easier. `make` commands n
 The project uses [webpack](https://webpack.js.org/) to build static files, to setup:
 - Install node version 18.x
 - Run `npm install` to install all node modules, including webpack and the govuk-frontend npm package
-- Run `npm run dev` - webpack will then bundle all static files in `assets` and create 'bundles' in `assets/webpack_bundles`. When making changes to static files, e.g. updating `application.scss`, webpack will recompile the files when edited and create a new bundle.
+- Run `npm run dev` - webpack will then bundle all static files in `assets` and create 'bundles' in `assets/webpack_bundles`. When making changes to static files, e.g. updating `application.scss`, webpack will recompile the files when edited and create a new bundle. You can quit this process when it's complete if you are not going to be working on things that would need recompiling.
 
 ### Styles
 The project mainly uses styles from the [govuk-frontend](https://github.com/alphagov/govuk-frontend) npm package. Examples of how to use these styles can be found in components on the [GOVUK design system](https://design-system.service.gov.uk/components/).
@@ -29,6 +29,7 @@ Where it is not possible to use a govuk style, the [moj-frontend](https://github
 ### To run the app for the first time:
 - run `make build`
 - run `make first-use`
+- run `make up`
 - You must access the app on http://localhost:8000 as this is the URL which is configured as the 'redirect URL' for our authbroker credentials in staff SSO
 - Note: Being connected to the VPN can lead to http://localhost:8000 to fail to load. Disconnect to test locally.
 
