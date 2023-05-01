@@ -111,7 +111,7 @@ filelock==3.0.12
     #   virtualenv
 flake8==4.0.1
     # via -r requirements.in/dev.in
-flask==1.1.2
+flask==2.3.2
     # via
     #   flask-basicauth
     #   locust
