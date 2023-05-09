@@ -97,7 +97,11 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_CREDS = env.json("DATABASE_CREDS", default={})
+
+if DATABASE_CREDS:
+    db_url = "{engine}://{username}:{password}@{host}:{port}/{dbname}".format(**DATABASE_CREDS)
+    os.environ["DATABASE_URL"] = db_url
 
 DATABASES = {"default": env.db()}
 
