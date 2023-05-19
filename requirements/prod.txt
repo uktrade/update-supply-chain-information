@@ -30,7 +30,7 @@ chardet==4.0.0
     # via
     #   -r requirements.in/../requirements/base.txt
     #   requests
-click==7.1.2
+click==8.1.3
     # via -r requirements.in/../requirements/base.txt
 configargparse==1.4.1
     # via -r requirements.in/../requirements/base.txt
@@ -99,9 +99,9 @@ filelock==3.0.12
     # via
     #   -r requirements.in/../requirements/base.txt
     #   virtualenv
-gevent==20.6.1
+gevent==22.10.2
     # via -r requirements.in/prod.in
-greenlet==0.4.16
+greenlet==2.0.0
     # via
     #   -r requirements.in/prod.in
     #   gevent
@@ -129,13 +129,13 @@ iniconfig==1.1.1
     # via
     #   -r requirements.in/../requirements/base.txt
     #   pytest
-itsdangerous==2.0.1
+itsdangerous==2.1.2
     # via -r requirements.in/../requirements/base.txt
 jdcal==1.4.1
     # via
     #   -r requirements.in/../requirements/base.txt
     #   openpyxl
-jinja2==3.0.1
+jinja2==3.1.2
     # via -r requirements.in/../requirements/base.txt
 korean-lunar-calendar==0.2.1
     # via
@@ -185,7 +185,7 @@ packaging==20.9
     # via
     #   -r requirements.in/../requirements/base.txt
     #   pytest
-pathspec==0.8.1
+pathspec==0.9.0
     # via -r requirements.in/../requirements/base.txt
 pluggy==0.13.1
     # via
@@ -197,7 +197,7 @@ psutil==5.8.0
     # via -r requirements.in/../requirements/base.txt
 psycogreen==1.0.2
     # via -r requirements.in/prod.in
-psycopg2-binary==2.8.6
+psycopg2-binary==2.9.5
     # via -r requirements.in/../requirements/base.txt
 py==1.11.0
     # via
@@ -235,7 +235,7 @@ pyyaml==5.4.1
     #   -r requirements.in/../requirements/base.txt
     #   pre-commit
     #   tablib
-pyzmq==22.1.0
+pyzmq==22.2.1
     # via -r requirements.in/../requirements/base.txt
 regex==2020.11.13
     # via -r requirements.in/../requirements/base.txt
@@ -274,9 +274,9 @@ toml==0.10.2
     #   coverage
     #   pre-commit
     #   pytest
-typed-ast==1.4.2
+typed-ast==1.5.4
     # via -r requirements.in/../requirements/base.txt
-typing-extensions==3.7.4.3
+typing-extensions==3.10.0.0
     # via -r requirements.in/../requirements/base.txt
 urllib3==1.26.15
     # via
@@ -288,7 +288,7 @@ virtualenv==20.4.0
     # via
     #   -r requirements.in/../requirements/base.txt
     #   pre-commit
-werkzeug==2.2.3
+werkzeug==2.3.3
     # via -r requirements.in/../requirements/base.txt
 whitenoise==5.2.0
     # via -r requirements.in/../requirements/base.txt
