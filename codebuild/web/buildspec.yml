@@ -13,4 +13,5 @@ phases:
 
   build:
     commands:
+      - cat runtime.txt |awk -F - '{print $2}'
       - /work/build.sh
