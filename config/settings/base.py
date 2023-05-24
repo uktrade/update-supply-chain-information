@@ -97,12 +97,13 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
-DATABASE_CREDS = env.json("DATABASE_CREDS", default={})
+DATABASE_CREDENTIALS = env.json("DATABASE_CREDENTIALS", default={})
 
-if DATABASE_CREDS:
-    db_url = "{engine}://{username}:{password}@{host}:{port}/{dbname}".format(**DATABASE_CREDS)
-    os.environ["DATABASE_URL"] = db_url
-
+os.environ[
+    "DATABASE_URL"
+] = "{engine}://{username}:{password}@{host}:{port}/{dbname}".format(
+    **DATABASE_CREDENTIALS
+)
 DATABASES = {"default": env.db()}
 
 # Password validation
