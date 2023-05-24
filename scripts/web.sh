@@ -1,10 +1,13 @@
 #!/usr/bin/env bash
 
+echo "Running scripts/web.sh"
+
 set -e
 
 rootPath="$(dirname "$( cd "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )")"
 
 cd "${rootPath}"
+python --version
 
 python manage.py migrate --noinput
 
