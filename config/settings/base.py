@@ -223,7 +223,7 @@ WEBPACK_LOADER = {
 }
 
 STATIC_URL = "/static/"
-STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", "static"))
+STATIC_ROOT = os.path.abspath(os.path.join(BASE_DIR, "static"))
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "assets/webpack_bundles"),
