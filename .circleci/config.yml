@@ -18,7 +18,7 @@ jobs:
           name: docker up
           command: make up
           background: true
-     - run:
+      - run:
           name: run webpack
           command: npm run dev
           background: true
