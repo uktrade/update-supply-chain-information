@@ -12,15 +12,15 @@ jobs:
           name: install webpack 
           command: npm install
       - run:
-          name: run webpack
-          command: npm run dev
-          #background: true
-      - run:
           name: build docker
           command: make build
       - run:
           name: docker up
           command: make up
+          background: true
+     - run:
+          name: run webpack
+          command: npm run dev
           background: true
       - run:
           name: install dockerize
