@@ -283,7 +283,7 @@ regex==2020.11.13
     # via
     #   -r requirements.in/../requirements/base.txt
     #   black
-requests==2.25.1
+requests==2.31.0
     # via
     #   -r requirements.in/../requirements/base.txt
     #   locust
