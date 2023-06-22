@@ -1,8 +1,8 @@
 version: 2
 jobs:
   build:
-    machine:
-      image: ubuntu-2004:202101-01
+    docker:
+      - image: "circleci/python:3.9.9"
     steps:
       - checkout
       - run:
