@@ -1,6 +1,6 @@
-FROM python:3.8.16
+FROM python:3.8.17
 ADD . /app
 WORKDIR /app
 
-RUN pip install pip~=21.2
+#RUN pip install pip~=21.2
 RUN pip install -r requirements/dev.txt
