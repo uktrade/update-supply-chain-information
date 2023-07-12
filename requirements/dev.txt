@@ -294,7 +294,7 @@ pyzmq==22.2.1
     #   locust
 regex==2020.11.13
     # via -r requirements.in/../requirements/base.txt
-requests==2.25.1
+requests==2.31.0
     # via
     #   -r requirements.in/../requirements/base.txt
     #   locust
