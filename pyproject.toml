@@ -5,6 +5,7 @@ description = ""
 authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
+poetry = "*"
 python = "~=3.8.17"
 appdirs= "~=1.4.4"
 asgiref= "~=3.3.2"
