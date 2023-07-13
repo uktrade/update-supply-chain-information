@@ -7,6 +7,7 @@
 appdirs==1.4.4
     # via
     #   -r requirements.in/../requirements/base.txt
+    #   black
     #   virtualenv
 asgiref==3.3.2
     # via
@@ -18,11 +19,7 @@ attrs==20.3.0
     #   pytest
 black==22.3.0
     # via -r requirements.in/dev.in
-blinker==1.6.2
-    # via flask
-brotli==1.0.9
-    # via geventhttpclient
-certifi==2020.12.5
+certifi==2022.12.7
     # via
     #   -r requirements.in/../requirements/base.txt
     #   geventhttpclient
@@ -66,7 +63,7 @@ distlib==0.3.1
     # via
     #   -r requirements.in/../requirements/base.txt
     #   virtualenv
-django==3.2.20
+django==3.2.19
     # via
     #   -r requirements.in/../requirements/base.txt
     #   django-debug-toolbar
@@ -102,10 +99,6 @@ et-xmlfile==1.0.1
     # via
     #   -r requirements.in/../requirements/base.txt
     #   openpyxl
-exceptiongroup==1.1.2
-    # via
-    #   -r requirements.in/../requirements/base.txt
-    #   pytest
 factory-boy==3.2.0
     # via -r requirements.in/../requirements/base.txt
 faker==6.0.0
@@ -121,11 +114,8 @@ flake8==4.0.1
 flask==2.3.2
     # via
     #   flask-basicauth
-    #   flask-cors
     #   locust
 flask-basicauth==0.2.0
-    # via locust
-flask-cors==4.0.0
     # via locust
 gevent==22.10.2
     # via
@@ -152,9 +142,7 @@ idna==2.10
     #   -r requirements.in/../requirements/base.txt
     #   requests
 importlib-metadata==4.0.1
-    # via
-    #   -r requirements.in/../requirements/base.txt
-    #   flask
+    # via -r requirements.in/../requirements/base.txt
 iniconfig==1.1.1
     # via
     #   -r requirements.in/../requirements/base.txt
@@ -189,7 +177,6 @@ markupsafe==2.1.2
     # via
     #   -r requirements.in/../requirements/base.txt
     #   jinja2
-    #   werkzeug
 marshmallow==3.6.1
     # via
     #   -r requirements.in/../requirements/base.txt
@@ -236,8 +223,6 @@ pep517==0.12.0
     # via pip-tools
 pip-tools==6.4.0
     # via -r requirements.in/dev.in
-platformdirs==3.8.1
-    # via black
 pluggy==0.13.1
     # via
     #   -r requirements.in/../requirements/base.txt
@@ -251,7 +236,9 @@ psutil==5.8.0
 psycopg2-binary==2.9.5
     # via -r requirements.in/../requirements/base.txt
 py==1.11.0
-    # via -r requirements.in/../requirements/base.txt
+    # via
+    #   -r requirements.in/../requirements/base.txt
+    #   pytest
 pycodestyle==2.8.0
     # via flake8
 pyflakes==2.4.0
@@ -293,8 +280,10 @@ pyzmq==22.2.1
     #   -r requirements.in/../requirements/base.txt
     #   locust
 regex==2020.11.13
-    # via -r requirements.in/../requirements/base.txt
-requests==2.25.1
+    # via
+    #   -r requirements.in/../requirements/base.txt
+    #   black
+requests==2.31.0
     # via
     #   -r requirements.in/../requirements/base.txt
     #   locust
@@ -303,9 +292,7 @@ requests-oauthlib==1.3.0
     # via
     #   -r requirements.in/../requirements/base.txt
     #   django-staff-sso-client
-roundrobin==0.0.4
-    # via locust
-sentry-sdk==0.20.3
+sentry-sdk==1.14.0
     # via -r requirements.in/../requirements/base.txt
 six==1.15.0
     # via
@@ -315,7 +302,7 @@ six==1.15.0
     #   mohawk
     #   python-dateutil
     #   virtualenv
-sqlparse==0.4.2
+sqlparse==0.4.4
     # via
     #   -r requirements.in/../requirements/base.txt
     #   django
@@ -331,21 +318,20 @@ text-unidecode==1.3
 toml==0.10.2
     # via
     #   -r requirements.in/../requirements/base.txt
+    #   black
     #   coverage
     #   pre-commit
-tomli==2.0.1
+    #   pytest
+tomli==1.2.2
+    # via pep517
+typed-ast==1.5.4
     # via
     #   -r requirements.in/../requirements/base.txt
     #   black
-    #   pep517
-    #   pytest
-typed-ast==1.5.4
-    # via -r requirements.in/../requirements/base.txt
 typing-extensions==3.10.0.0
     # via
     #   -r requirements.in/../requirements/base.txt
     #   black
-    #   locust
 urllib3==1.26.15
     # via
     #   -r requirements.in/../requirements/base.txt
