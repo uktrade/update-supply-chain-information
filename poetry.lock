@@ -228,7 +228,7 @@ python-versions = ">=3.7,<4.0"
 
 [[package]]
 name = "cryptography"
-version = "41.0.2"
+version = "41.0.3"
 description = "cryptography is a package which provides cryptographic recipes and primitives to Python developers."
 category = "main"
 optional = false
@@ -1728,7 +1728,7 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "1.1"
 python-versions = "~=3.8.17"
-content-hash = "77a61c67a64c39fab10c56a7d0a439d7e4fa217f919492c4c3979e6f809c8c76"
+content-hash = "b4ebb5d6a3d22dfd8a3f79244f895fb9a5fc9490fa8ee7f694f84e26342006b4"
 
 [metadata.files]
 appdirs = []
