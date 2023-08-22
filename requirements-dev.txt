@@ -18,7 +18,7 @@ configargparse==1.4.1; (python_version >= "2.7" and python_full_version < "3.0.0
 convertdate==2.3.2; python_version >= "3.5"
 coverage==5.5; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0" and python_version < "4")
 crashtest==0.4.1; python_version >= "3.7" and python_version < "4.0"
-cryptography==41.0.2; python_version >= "3.7" and python_version < "4.0" and sys_platform == "linux"
+cryptography==41.0.3; python_version >= "3.7"
 defusedxml==0.6.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
 diff-match-patch==20200713; python_version >= "2.7"
 distlib==0.3.7
