@@ -5,6 +5,8 @@ env:
     SLACK_WORKSPACE_ID: "/codebuild/slack_workspace_id"
     SLACK_CHANNEL_ID: "/codebuild/slack_channel_id"
     SLACK_TOKEN: "/codebuild/slack_api_token"
+  variables:
+    BUILDER_VERSION: 0.2.395-full
 
 phases:
   pre_build:
