@@ -19,9 +19,9 @@ checkmigrations:
 	docker-compose run --rm --no-deps supply_chain python manage.py makemigrations --check
 
 all-requirements:
-	docker-compose run --rm supply_chain pip-compile --output-file requirements/base.txt requirements.in/base.in
-	docker-compose run --rm supply_chain pip-compile --output-file requirements/dev.txt requirements.in/dev.in
-	docker-compose run --rm supply_chain pip-compile --output-file requirements/prod.txt requirements.in/prod.in
+	docker-compose run --rm supply_chain poetry lock
+	docker-compose run --rm supply_chain poetry export --without-hashes -f requirements.txt -o requirements.txt
+	docker-compose run --rm supply_chain poetry export --dev --without-hashes -f requirements.txt -o requirements-dev.txt
 
 flake8:
 	docker-compose run --rm --no-deps supply_chain flake8
