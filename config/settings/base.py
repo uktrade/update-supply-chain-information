@@ -1,10 +1,10 @@
-from pathlib import Path
+import dj_database_url
 import environ
-import sys
 import os
-
+from dbt_copilot_python.database import database_url_from_env
 from django.urls import reverse_lazy
 from django_log_formatter_ecs import ECSFormatter
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 # BASE_DIR = Path(__file__).resolve().parent.parent
@@ -97,14 +97,11 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
-DATABASE_CREDENTIALS = env.json("DATABASE_CREDENTIALS", default={})
-
-os.environ[
-    "DATABASE_URL"
-] = "{engine}://{username}:{password}@{host}:{port}/{dbname}".format(
-    **DATABASE_CREDENTIALS
-)
-DATABASES = {"default": env.db()}
+DATABASES = {
+    "default": dj_database_url.config(
+        default=database_url_from_env("DATABASE_CREDENTIALS")
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
