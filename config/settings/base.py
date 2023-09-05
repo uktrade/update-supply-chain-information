@@ -97,11 +97,13 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
-DATABASES = {
-    "default": dj_database_url.config(
-        default=database_url_from_env("DATABASE_CREDENTIALS")
-    )
-}
+# If it's not defined, we are probably running the build packs to build the image, so skip this...
+if "DATABASE_CREDENTIALS" in os.environ:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=database_url_from_env("DATABASE_CREDENTIALS")
+        )
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
