@@ -3,6 +3,8 @@ jobs:
   build:
     machine:
       image: ubuntu-2004:2023.04.2
+      environment:
+        DATABASE_CREDENTIALS: '{"password":"postgres","dbname":"usci_test","engine":"postgres","port":5432,"host":"localhost","username":"ubuntu"}'
     steps:
       - checkout
       - run:
