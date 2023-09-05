@@ -2,5 +2,8 @@ FROM python:3.9.16
 ADD . /app
 WORKDIR /app
 
+# Suppress distracting "Error reading /workspace/.env" warning...
+RUN touch .env
+
 RUN pip install pip~=21.2
 RUN pip install -r requirements-dev.txt
