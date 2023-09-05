@@ -7,14 +7,10 @@ env:
     SLACK_TOKEN: "/codebuild/slack_api_token"
   variables:
     PAKETO_BUILDER_VERSION: 0.2.443-full
-    # 0.2.443-full
-    # 0.2.430-full
-    # 0.2.427-full
-    # 0.2.423-full
-    # 0.2.410-full
-    # 0.2.404-full
-    # 0.2.400-full
     LIFECYCLE_VERSION: 0.16.0
+    DATABASE_CREDENTIALS: '{"username":"does-not-matter","password":"does-not-matter","dbname":"does-not-matter","engine":"postgres","port":5432,"host":"localhost"}'
+    HAWK_INCOMING_ACCESS_KEY: "does-not-matter"
+    HAWK_INCOMING_SECRET_KEY: "does-not-matter"
 
 phases:
   pre_build:
