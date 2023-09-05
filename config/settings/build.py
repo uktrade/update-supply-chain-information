@@ -72,7 +72,7 @@ AUTH_PASSWORD_VALIDATORS = [
 {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-AUTH_USER_MODEL = "user.User"
+AUTH_USER_MODEL = "accounts.User"
 AUTHBROKER_URL = "dont-use-in-prod"
 
 STATIC_URL = "/static/"
