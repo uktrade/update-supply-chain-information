@@ -91,3 +91,5 @@ MIDDLEWARE = [
     "reversion.middleware.RevisionMiddleware",
     "simple_history.middleware.HistoryRequestMiddleware",
 ]
+
+CHARFIELD_MAX_LENGTH = 250
