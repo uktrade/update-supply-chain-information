@@ -21,7 +21,7 @@ checkmigrations:
 all-requirements:
 	docker-compose run --rm supply_chain poetry lock
 	docker-compose run --rm supply_chain poetry export --without-hashes -f requirements.txt -o requirements.txt
-	docker-compose run --rm supply_chain poetry export --dev --without-hashes -f requirements.txt -o requirements-dev.txt
+	docker-compose run --rm supply_chain poetry export --with dev --without-hashes -f requirements.txt -o requirements-dev.txt
 
 flake8:
 	docker-compose run --rm --no-deps supply_chain flake8
