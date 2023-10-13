@@ -6,7 +6,7 @@ authors = ["Your Name <you@example.com>"]
 
 [tool.poetry.dependencies]
 poetry = "1.5.1"
-python = "~=3.10.4"
+python = "~=3.10.13"
 appdirs= "~=1.4.4"
 asgiref= "~=3.3.2"
 attrs= "~=20.3.0"
